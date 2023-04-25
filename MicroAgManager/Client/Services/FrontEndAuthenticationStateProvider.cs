@@ -30,15 +30,11 @@ namespace FrontEnd.Services
                 var tokenHandler = new JwtSecurityTokenHandler();
                 for (int i = 0; i < 2; i++)
                 {
-                    if (_currentToken is null && await GetJWT() is string cachedClaimsJson)
-                    {
-                        if (string.IsNullOrEmpty(cachedClaimsJson))
-                            break;
-
-                        var token = tokenHandler.ReadJwtToken(cachedClaimsJson);
-                        user = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
-                        if (user.Identity?.IsAuthenticated ?? false) return new AuthenticationState(user);
-                    }
+                    var cachedClaimsJson = await GetJWT();
+                    if (_currentToken is null && string.IsNullOrEmpty(cachedClaimsJson)) break;
+                    var token = tokenHandler.ReadJwtToken(cachedClaimsJson);
+                    user = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
+                    if (user.Identity?.IsAuthenticated ?? false) return new AuthenticationState(user);
                     await RefreshToken();
                 }
             }
@@ -50,7 +46,7 @@ namespace FrontEnd.Services
             return new AuthenticationState(user);
         }
 
-        private async Task<string> GetJWT()
+        public async Task<string?> GetJWT()
         {
             var userdata = await _localStorage.GetOfflineTokenKey();
             if (!string.IsNullOrWhiteSpace(userdata))
@@ -59,9 +55,8 @@ namespace FrontEnd.Services
                 if (dataArray.Length == 2)
                     return dataArray[0];
             }
-            return string.Empty;
+            return null;
         }
-
         public async Task<TokenModel> RefreshToken(TokenModel token)
         {
             var result = await _httpClient.PostAsJsonAsync("api/security/refreshtoken", token);
@@ -109,15 +104,17 @@ namespace FrontEnd.Services
         {
             var token = new TokenModel();
             var userdata = await _localStorage.GetOfflineTokenKey();
-            if (!string.IsNullOrWhiteSpace(userdata))
+            if (string.IsNullOrWhiteSpace(userdata))
             {
-                var dataArray = userdata.Split(';', 3);
-                if (dataArray.Length == 3)
-                {
-                    token.jwtBearer = dataArray[0];
-                    token.refreshToken = dataArray[1];
-                    token.expiration = DateTime.Parse(dataArray[2]);
-                }
+                await StoreAuthentication(null);
+                return;
+            }
+            var dataArray = userdata.Split(';', 3);
+            if (dataArray.Length == 3)
+            {
+                token.jwtBearer = dataArray[0];
+                token.refreshToken = dataArray[1];
+                token.expiration = DateTime.Parse(dataArray[2]);
             }
             try
             {
