@@ -1,0 +1,67 @@
+﻿.ValidatedField {
+    display: flex;
+    flex-wrap: wrap;
+    width: inherit;
+    border-radius: 0.5em;
+    position: relative;
+    border-color: transparent;
+
+    & legend {
+        padding: 0.2em;
+        border-radius: 1em;
+        width: fit-content;
+    }
+
+
+    &:has(input.modified.valid) {
+        & legend {
+
+            &::before {
+                margin-right: 0.1em;
+                padding-inline: 0.2em;
+                border-radius: 1em;
+                content: '\2713';
+                background-color: var(--background-color-validation-validmodified);
+                color: var(--color-validation-validmodified);
+            }
+        }
+        //        border-color: var(--background-color-validation-validmodified);
+    }
+
+    &:has(input.invalid) {
+        & legend {
+            &::before {
+                margin-right: 0.1em;
+                padding-inline: 0.2em;
+                border-radius: 1em;
+                content: 'X';
+                background-color: var(--background-color-validation-invalid);
+                color: var(--color-validation-invalid);
+            }
+            //border-color: var(--background-color-validation-invalid);
+        }
+    }
+
+    & ::deep .validation-message {
+        position: absolute;
+        bottom: -0.2em;
+        color: var(--background-color-validation-invalid);
+    }
+
+    & ::deep input {
+        border: none;
+        width: inherit;
+
+        &:focus-visible {
+            outline: none;
+            border-bottom: 1px solid var(--color-action-primary);
+            ;
+        }
+    }
+
+    & ::deep input[type=checkbox] {
+        height: 1em;
+        width: 1em;
+        margin: auto;
+    }
+}

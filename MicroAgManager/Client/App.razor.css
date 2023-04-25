@@ -1,0 +1,47 @@
+﻿.App {
+  margin: 0;
+  width: 100%;
+  --font-stack: Tahoma, Geneva, sans-serif;
+  --color-validation-validmodified: white;
+  --background-color-validation-validmodified: green;
+  --color-validation-invalid: white;
+  --background-color-validation-invalid: red;
+  --color-action-primary: lightblue;
+  width: 100%;
+}
+@media (prefers-color-scheme: dark) {
+  .App {
+    --color-validation-validmodified: white;
+    --background-color-validation-validmodified: green;
+    --color-validation-invalid: white;
+    --background-color-validation-invalid: red;
+    --color-action-primary: lightblue;
+  }
+}
+.App ::deep *, .App ::deep *::before, .App ::deep *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+.App ::deep *:focus {
+  outline: none;
+  border-color: inherit;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.App ::deep form {
+  margin: auto;
+  padding: 0.5em;
+  display: grid;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+}
+.App ::deep form > .dataSection {
+  width: 100%;
+  display: grid;
+  gap: 0.25em;
+  grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+  align-items: stretch;
+  justify-items: center;
+}

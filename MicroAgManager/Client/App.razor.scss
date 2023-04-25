@@ -1,0 +1,55 @@
+﻿
+
+.App {
+    margin: 0;
+    width: 100%;
+    --font-stack: Tahoma, Geneva, sans-serif;
+    --color-validation-validmodified: white;
+    --background-color-validation-validmodified: green;
+    --color-validation-invalid: white;
+    --background-color-validation-invalid: red;
+    --color-action-primary: lightblue;
+
+    @media (prefers-color-scheme: dark) {
+        --color-validation-validmodified: white;
+        --background-color-validation-validmodified: green;
+        --color-validation-invalid: white;
+        --background-color-validation-invalid: red;
+        --color-action-primary: lightblue;
+    }
+
+    width: 100%;
+
+    & ::deep {
+        & *, & *::before, & *::after {
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        & *:focus {
+            outline: none;
+            border-color: inherit;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        & form {
+            margin:auto;
+            padding: 0.5em;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+            align-items: center;
+            justify-content: center;
+
+            & > .dataSection {
+                width: 100%;
+                display: grid;
+                gap: 0.25em;
+                grid-template-columns: repeat( auto-fit, minmax(12em, 1fr) );
+                align-items: stretch;
+                justify-items: center;
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+﻿@typeparam TValue
+
+<fieldset class="ValidatedField">
+    <legend>
+        @if (LegendContent == null)
+            {@Legend }
+        else
+            {@LegendContent}                    
+    </legend>
+    @ChildContent
+    @if (@ValidationMessageFor != null)
+    {<ValidationMessage For="@ValidationMessageFor" />}
+</fieldset>
+

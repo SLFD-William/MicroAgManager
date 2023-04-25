@@ -1,0 +1,27 @@
+﻿
+@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+<AuthorizeView>
+    <Authorized>
+        <NavMenuMain></NavMenuMain>
+        <article>
+            @Body
+        </article>
+@*        <CascadingModal>
+            <NavMenuMain></NavMenuMain>
+            <article>
+                @Body
+            </article>
+            <footer></footer>
+        </CascadingModal>*@
+    </Authorized>
+    <Authorizing>
+        @Body
+    </Authorizing>
+    <NotAuthorized>
+        @if (!(navigationManager.Uri.Contains("/authentication/")) || navigationManager.Uri.Contains("logged-out"))
+        {<LandingPage></LandingPage>}
+        else
+        {@Body}
+    </NotAuthorized>
+</AuthorizeView>

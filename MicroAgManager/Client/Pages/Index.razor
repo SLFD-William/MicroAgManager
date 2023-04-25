@@ -1,0 +1,37 @@
+﻿@layout MainLayout
+@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+<PageTitle>Index</PageTitle>
+
+<h1>Client Page</h1>
+
+
+@code {
+
+    private HubConnection? hubConnection;
+    protected override async Task OnInitializedAsync()
+    {
+
+        var address = Navigation.ToAbsoluteUri("/chathub");
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(address)
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            throw new NotImplementedException();
+        });
+
+        await hubConnection.StartAsync();
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

@@ -1,0 +1,42 @@
+﻿<h3>Welcome</h3>
+<div class="Welcome">
+@*    <EditForm OnValidSubmit="OnSubmit" Model="registerRequest">
+        <DataAnnotationsValidator />
+        <div class="dataSection">
+            <ValidatedField Legend="Email" ValidationMessageFor="@(() => registerRequest.Email)">
+                <InputText id="inputUsername" placeholder="Email" autofocus @bind-Value="@registerRequest.Email" />
+            </ValidatedField>
+            @if (IsRegistering)
+            {
+                <ValidatedField Legend="Farm" ValidationMessageFor="@(() => registerRequest.Name)">
+                    <InputText id="inputFarmName" placeholder="Farm Name" @bind-Value="@registerRequest.Name" />
+                </ValidatedField>
+            }
+            <ValidatedField Legend="Password" ValidationMessageFor="@(() => registerRequest.Password)">
+                <InputText type="password" id="inputPassword" placeholder="Password" @bind-Value="@registerRequest.Password" />
+            </ValidatedField>
+            @if (IsRegistering)
+            {
+                <ValidatedField Legend="Password Confirmation" ValidationMessageFor="@(() => registerRequest.ConfirmPassword)">
+                    <InputText type="password" id="inputPasswordConfirm" placeholder="Password Confirmation" @bind-Value="@registerRequest.ConfirmPassword" />
+                </ValidatedField>
+            }
+        </div>
+        <div>
+            <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@registerRequest.RememberMe" />
+            <label class="form-check-label" for="inputRememberMe">Remember Me</label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">@SubmitString()</button>
+        @if (!loginResult.success)
+        {
+            <div class="validation-message">@loginResult.message</div>
+        }
+        <NavLink href=@HrefString()>
+            <h6 class="font-weight-normal text-center">@NavLinkString()</h6>
+        </NavLink>
+    </EditForm>*@
+</div>
+
+@code {
+
+}
