@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Server.Models.Authentication
+namespace BackEnd.Models.Authentication
 {
     public class UserRegistrationModel : LoginModel
     {

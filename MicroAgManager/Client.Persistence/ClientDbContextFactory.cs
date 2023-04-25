@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Client.Persistence
+namespace FrontEnd.Persistence
 {
     internal class ClientDbContextFactory : DesignTimeDbContextFactoryBase<ClientDbContext>
     {

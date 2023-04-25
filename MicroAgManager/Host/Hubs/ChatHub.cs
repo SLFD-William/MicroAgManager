@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace MicroAgManager.Server.Hubs
+namespace Host.Hubs
 {
     public class ChatHub : Hub
     {

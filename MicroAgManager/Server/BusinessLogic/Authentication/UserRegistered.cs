@@ -2,7 +2,7 @@
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.BusinessLogic.Authentication
+namespace BackEnd.BusinessLogic.Authentication
 {
     public class UserRegistered:INotification
     {

@@ -1,8 +1,8 @@
-﻿using Client.Data;
+﻿using FrontEnd.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace Client
+namespace FrontEnd
 {
     public partial class App:IAsyncDisposable
     {

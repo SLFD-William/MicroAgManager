@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SLFD-William\MicroAgManagementFull\Client\Client.csproj" />
+    <ProjectReference Include="..\Client\FrontEnd.csproj" />
   </ItemGroup>
 
   <ItemGroup>

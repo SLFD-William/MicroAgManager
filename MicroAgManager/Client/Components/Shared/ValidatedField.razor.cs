@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Linq.Expressions;
 
-namespace Client.Components.Shared
+namespace FrontEnd.Components.Shared
 {
     public partial class ValidatedField<TValue>
     {

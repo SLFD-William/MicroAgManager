@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Abstracts
+namespace BackEnd.Abstracts
 {
     public class BaseCommand : IRequest<long>
     {

@@ -1,13 +1,13 @@
-﻿using Server.Models.Authentication;
+﻿using BackEnd.Models.Authentication;
 using MediatR;
-using Server.Abstracts;
+using BackEnd.Abstracts;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Domain.Entity;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.BusinessLogic.Authentication
+namespace BackEnd.BusinessLogic.Authentication
 {
     public class RefreshTokenCommand:IRequest<TokenModel>
     {

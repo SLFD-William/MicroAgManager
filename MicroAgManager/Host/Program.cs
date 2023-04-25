@@ -1,16 +1,16 @@
 using Domain.Entity;
 using Domain.Interfaces;
 using MediatR;
-using MicroAgManager.Server;
-using MicroAgManager.Server.Hubs;
+using Host;
+using Host.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
-using Server.Hubs;
-using Server.Infrastructure;
+using BackEnd.Hubs;
+using BackEnd.Infrastructure;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

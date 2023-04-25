@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
-namespace Server.Abstracts
+namespace BackEnd.Abstracts
 {
     public abstract class AuthenticationCommandHandler 
     {

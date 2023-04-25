@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 
-namespace Client.Persistence
+namespace FrontEnd.Persistence
 {
     public abstract class DesignTimeDbContextFactoryBase<TContext> :
           IDesignTimeDbContextFactory<TContext> where TContext : DbContext

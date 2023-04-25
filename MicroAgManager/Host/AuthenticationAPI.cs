@@ -1,11 +1,11 @@
 ﻿using Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Server.Abstracts;
-using Server.BusinessLogic.Authentication;
-using Server.Models.Authentication;
+using BackEnd.Abstracts;
+using BackEnd.BusinessLogic.Authentication;
+using BackEnd.Models.Authentication;
 
-namespace MicroAgManager.Server
+namespace Host
 {
     public static class AuthenticationAPI
     {

@@ -1,7 +1,7 @@
 ﻿using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 
-namespace Server.Infrastructure
+namespace BackEnd.Infrastructure
 {
     public class RequestLogger<TRequest> : IRequestPreProcessor<TRequest>
     {

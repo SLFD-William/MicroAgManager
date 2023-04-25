@@ -1,4 +1,4 @@
-﻿namespace Client.Interfaces
+﻿namespace FrontEnd.Interfaces
 {
     public interface ILocalStorage
     {

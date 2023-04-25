@@ -1,7 +1,7 @@
 ﻿using Domain.Abstracts;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Abstracts
+namespace BackEnd.Abstracts
 {
     public abstract class BaseQuery
     {

@@ -1,21 +1,21 @@
-﻿using Client.Interfaces;
+﻿using FrontEnd.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
-using Server.BusinessLogic.Authentication;
-using Server.Models.Authentication;
+using BackEnd.BusinessLogic.Authentication;
+using BackEnd.Models.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 
-namespace Client.Services
+namespace FrontEnd.Services
 {
-    internal class ClientAuthenticationStateProvider : AuthenticationStateProvider
+    internal class FrontEndAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorage _localStorage;
         private readonly HttpClient _httpClient;
         public ClaimsPrincipal? User { get; private set; }
         public Guid UserId() => Guid.Parse(User?.FindFirstValue("sub") ?? string.Empty);
 
-        public ClientAuthenticationStateProvider(ILocalStorage localStorage, HttpClient httpClient)
+        public FrontEndAuthenticationStateProvider(ILocalStorage localStorage, HttpClient httpClient)
         {
             _localStorage = localStorage;
             _httpClient = httpClient;

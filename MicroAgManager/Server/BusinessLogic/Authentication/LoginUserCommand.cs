@@ -1,13 +1,13 @@
-﻿using Server.Abstracts;
+﻿using BackEnd.Abstracts;
 using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Server.Models.Authentication;
+using BackEnd.Models.Authentication;
 
-namespace Server.BusinessLogic.Authentication
+namespace BackEnd.BusinessLogic.Authentication
 {
     public class LoginUserCommand : AuthenticationCommand
     {

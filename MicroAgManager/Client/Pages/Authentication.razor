@@ -1,10 +1,10 @@
 ﻿@page "/authentication/register"
 @page "/authentication/login"
-@using Server.Abstracts
-@using Server.BusinessLogic.Authentication
-@using Server.Models.Authentication
+@using BackEnd.Abstracts
+@using BackEnd.BusinessLogic.Authentication
+@using BackEnd.Models.Authentication
 @inject NavigationManager navigationManager
-@inject ClientAuthenticationStateProvider authStateProvider
+@inject FrontEndAuthenticationStateProvider authStateProvider
 <div class="Authentication">
     <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />

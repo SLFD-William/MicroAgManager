@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using Server.Models.Authentication;
+using BackEnd.Models.Authentication;
 using System.ComponentModel.DataAnnotations;
 
-namespace Server.Abstracts
+namespace BackEnd.Abstracts
 {
     public class AuthenticationCommand :IRequest<LoginResult>
     {

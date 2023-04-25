@@ -1,8 +1,8 @@
 ﻿@using Microsoft.EntityFrameworkCore;
-@using Client.Data;
-@inject ClientAuthenticationStateProvider authentication
+@using FrontEnd.Data;
+@inject FrontEndAuthenticationStateProvider authentication
 @inject NavigationManager navigation
-@inject IDbContextFactory<ClientDbContext> dbContextFactory
+@inject IDbContextFactory<FrontEndDbContext> dbContextFactory
 @inject IJSRuntime js
 
 <div class="App">

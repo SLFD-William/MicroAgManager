@@ -1,6 +1,6 @@
-using Client;
-using Client.Interfaces;
-using MicroAgManager.Client.ClientServices;
+using FrontEnd;
+using FrontEnd.Interfaces;
+using WASM.ClientServices;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -18,6 +18,6 @@ builder.Services.AddOidcAuthentication(options =>
 
 builder.Services.AddSingleton<ILocalStorage, LocalStorageService>();
 
-builder.Services.AddMicroAgManagementClientServices();
+builder.Services.AddMicroAgManagementFrontEndServices();
 
 await builder.Build().RunAsync();

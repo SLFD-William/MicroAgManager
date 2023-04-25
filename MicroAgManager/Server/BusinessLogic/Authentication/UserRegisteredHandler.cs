@@ -1,7 +1,7 @@
 ﻿using Domain.Interfaces;
 using MediatR;
 
-namespace Server.BusinessLogic.Authentication
+namespace BackEnd.BusinessLogic.Authentication
 {
     public class UserRegisteredHandler : INotificationHandler<UserRegistered>
     {

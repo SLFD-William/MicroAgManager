@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Server.BusinessLogic.Authentication
+namespace BackEnd.BusinessLogic.Authentication
 {
     public class TestCommand : IRequest
     {

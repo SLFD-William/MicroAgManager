@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Server\Server.csproj" />
+    <ProjectReference Include="..\Server\BackEnd.csproj" />
   </ItemGroup>
 
 </Project>

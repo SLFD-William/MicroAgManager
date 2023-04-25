@@ -2,7 +2,7 @@
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Client.Persistence
+namespace FrontEnd.Persistence
 {
     public class ClientDbContext : DbContext, IClientDbContext
     {

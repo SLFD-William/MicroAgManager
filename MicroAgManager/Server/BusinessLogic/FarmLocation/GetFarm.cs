@@ -3,7 +3,7 @@ using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Server.BusinessLogic.FarmLocation
+namespace BackEnd.BusinessLogic.FarmLocation
 {
     public class GetFarm : FarmLocationsQueries, IRequest<FarmLocationModel?>
     {

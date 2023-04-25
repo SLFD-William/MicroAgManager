@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 
 @inject NavigationManager Navigation
-@inject ClientAuthenticationStateProvider _auth;
+@inject FrontEndAuthenticationStateProvider _auth;
 <AuthorizeView>
     <Authorized>
         @*<a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>*@

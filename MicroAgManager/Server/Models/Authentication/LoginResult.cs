@@ -1,4 +1,4 @@
-﻿namespace Server.Models.Authentication
+﻿namespace BackEnd.Models.Authentication
 {
     public class LoginResult
     {

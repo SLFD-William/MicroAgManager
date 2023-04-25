@@ -1,9 +1,9 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Client.Interfaces
+namespace FrontEnd.Interfaces
 {
-    public interface IClientDbContext
+    public interface IFrontEndDbContext
     {
         public DbSet<FarmLocationModel> Farms { get; set; }
     }

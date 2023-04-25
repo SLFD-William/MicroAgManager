@@ -1,8 +1,8 @@
 ﻿using Domain.Interfaces;
 using Domain.Models;
-using Server.Abstracts;
+using BackEnd.Abstracts;
 
-namespace Server.BusinessLogic.FarmLocation
+namespace BackEnd.BusinessLogic.FarmLocation
 {
     public class FarmLocationsQueries : BaseQuery
     {

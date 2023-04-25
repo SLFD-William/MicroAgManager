@@ -1,5 +1,5 @@
 ﻿using Domain.Entity;
-using Server.Models.Authentication;
+using BackEnd.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Server.BusinessLogic.Authentication
+namespace BackEnd.BusinessLogic.Authentication
 {
     internal static class AuthenticationHelpers
     {

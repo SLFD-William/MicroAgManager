@@ -4,15 +4,15 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Client.Data
+namespace FrontEnd.Data
 {
     public class DataSynchronizer
     {
         public const string SqliteDbFilename = "app.db";
         private readonly Task _firstTimeSetupTask;
-        private readonly IDbContextFactory<ClientDbContext> _dbContextFactory;
+        private readonly IDbContextFactory<FrontEndDbContext> _dbContextFactory;
         private bool _isSynchronizing;
-        public DataSynchronizer(IJSRuntime js, IDbContextFactory<ClientDbContext> dbContextFactory)
+        public DataSynchronizer(IJSRuntime js, IDbContextFactory<FrontEndDbContext> dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
             _firstTimeSetupTask = FirstTimeSetupAsync(js);
@@ -22,7 +22,7 @@ namespace Client.Data
         public int SyncTotal { get; private set; }
         public event Action? OnUpdate;
         public event Action<Exception>? OnError;
-        public async Task<ClientDbContext> GetPreparedDbContextAsync()
+        public async Task<FrontEndDbContext> GetPreparedDbContextAsync()
         {
             await _firstTimeSetupTask;
             DatabaseInitialized = true;
@@ -33,7 +33,7 @@ namespace Client.Data
         private async Task FirstTimeSetupAsync(IJSRuntime js)
         {
             try { 
-                var module = await js.InvokeAsync<IJSObjectReference>("import", "./_content/Client/dbstorage.js");
+                var module = await js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/dbstorage.js");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("browser")))
                     await module.InvokeVoidAsync("synchronizeFileWithIndexedDb", SqliteDbFilename);
             }

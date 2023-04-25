@@ -1,7 +1,7 @@
-﻿using Client.Interfaces;
+﻿using FrontEnd.Interfaces;
 using Microsoft.JSInterop;
 
-namespace MicroAgManager.Client.ClientServices
+namespace WASM.ClientServices
 {
     public class LocalStorageService : ILocalStorage
     {

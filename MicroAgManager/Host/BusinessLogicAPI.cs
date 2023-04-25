@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Server.Abstracts;
+using BackEnd.Abstracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace MicroAgManager.Server
+namespace Host
 {
     public static class BusinessLogicAPI
     {
