@@ -1,0 +1,19 @@
+﻿@using FrontEnd.Data
+<h3>OnboardingWizard</h3>
+@if(dbContext is not null)
+{
+<CascadingValue Value="dbContext">
+     @if(Step == 1)
+    {
+        <Welcome />
+    }
+        @if (Step != 1)
+        {
+            <button @onclick="Prev" type="button">Prev</button>
+        }
+        @if (Step != 4)
+        {
+            <button @onclick="Next" type="button">Next</button>
+        }
+</CascadingValue>
+}

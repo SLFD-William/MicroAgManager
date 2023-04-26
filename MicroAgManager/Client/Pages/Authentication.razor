@@ -87,11 +87,11 @@
                 : await authStateProvider.Login((LoginUserCommand)registerRequest);
             if (!loginResult.success)
                 return;
-
+            StateHasChanged();
             if (IsRegistering)//TODO Handle Email Confirmation
                 navigationManager.NavigateTo("onboarding");
             else
-                navigationManager.NavigateTo("");
+                navigationManager.NavigateTo("onboarding"); //TODO remove this once wizard is complete.
         }
         catch (Exception ex)
         {

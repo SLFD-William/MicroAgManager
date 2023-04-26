@@ -50,7 +50,9 @@ namespace Host
         {
             app.MapPost("/api/GetTenants",[Authorize] async (GetTenantList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetFarms", [Authorize] async (GetFarmList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            //app.MapPost("/api/Command", async (IRequest command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/CreateFarmLocation", [Authorize] async (CreateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateFarmLocation", [Authorize] async (UpdateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
         }
     }
 }

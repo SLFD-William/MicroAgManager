@@ -1,0 +1,23 @@
+﻿<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
+    <DataAnnotationsValidator />
+      <div class="dataSection">
+        <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
+            <InputText placeholder="Name" @bind-Value="@farm.Name" />
+        </ValidatedField>
+        <ValidatedField Legend="Address" ValidationMessageFor="@(() => farm.StreetAddress)">
+            <InputText placeholder="Street Address" @bind-Value="@farm.StreetAddress" />
+        </ValidatedField>
+        <ValidatedField Legend="City" ValidationMessageFor="@(() => farm.City)">
+            <InputText placeholder="City" @bind-Value="@farm.City" />
+        </ValidatedField>
+        <ValidatedField Legend="State" ValidationMessageFor="@(() => farm.State)">
+            <InputText placeholder="State" @bind-Value="@farm.State" />
+        </ValidatedField>
+        <ValidatedField Legend="Zip" ValidationMessageFor="@(() => farm.Zip)">
+            <InputText placeholder="Zip" @bind-Value="@farm.Zip" />
+        </ValidatedField>
+        <ValidatedField Legend="Country" ValidationMessageFor="@(() => farm.Country)">
+            <InputText placeholder="Country" @bind-Value="@farm.Country" />
+        </ValidatedField>
+      </div>
+</EditForm>

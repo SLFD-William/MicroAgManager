@@ -10,6 +10,7 @@ namespace FrontEnd.Services
     public interface IFrontEndApiServices 
     {
         public Task<Tuple<long, ICollection<T?>>> ProcessQuery<T, TQuery>(string address, TQuery query) where T : BaseModel where TQuery : BaseQuery;
+        public Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand;
     }
     internal class FrontEndApiServices: IFrontEndApiServices
     {
@@ -21,6 +22,20 @@ namespace FrontEnd.Services
             _httpClient = httpClient;
             _auth = auth;
         }
+
+        public async Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand
+        {
+            if (command.Model is null) return -1;
+            JsonSerializerSettings jsSettings = new JsonSerializerSettings();
+            jsSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            var commandString = new StringContent(JsonConvert.SerializeObject(command, jsSettings), Encoding.UTF8, "application/json");
+            var result = await SendTheRequest(HttpMethod.Post, address, commandString);
+            if (result.StatusCode == HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
+            result.EnsureSuccessStatusCode();
+            var list = await result.Content.ReadFromJsonAsync<long>();
+            return list;
+        }
+
 
         public async Task<Tuple<long, ICollection<T?>>> ProcessQuery<T,TQuery>(string address, TQuery query) where  T : BaseModel where TQuery : BaseQuery
         {
