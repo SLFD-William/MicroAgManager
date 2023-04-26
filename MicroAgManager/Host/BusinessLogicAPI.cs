@@ -1,8 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using BackEnd.Abstracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using BackEnd.BusinessLogic.Tenant;
+using BackEnd.BusinessLogic.FarmLocation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Host
 {
@@ -46,8 +48,9 @@ namespace Host
         }
         public static void Map(WebApplication app)
         {
-            app.MapPost("/api/Query", [Authorize] async (BaseQuery query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            app.MapPost("/api/Command", [Authorize] async (BaseCommand command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/GetTenants",[Authorize] async (GetTenantList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetFarms", async (GetFarmList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            //app.MapPost("/api/Command", async (IRequest command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
         }
     }
 }

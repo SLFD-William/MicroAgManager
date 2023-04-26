@@ -1,4 +1,4 @@
-﻿.App {
+﻿body {
   margin: 0;
   width: 100%;
   --font-stack: Tahoma, Geneva, sans-serif;
@@ -10,7 +10,7 @@
   width: 100%;
 }
 @media (prefers-color-scheme: dark) {
-  .App {
+  body {
     --color-validation-validmodified: white;
     --background-color-validation-validmodified: green;
     --color-validation-invalid: white;
@@ -18,26 +18,29 @@
     --color-action-primary: lightblue;
   }
 }
-.App ::deep *, .App ::deep *::before, .App ::deep *::after {
+
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
 }
-.App ::deep *:focus {
+
+*:focus {
   outline: none;
   border-color: inherit;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-.App ::deep form {
+
+form {
   margin: auto;
   padding: 0.5em;
-  display: grid;
+  display: flex;
   flex-wrap: wrap;
   gap: 1em;
   align-items: center;
   justify-content: center;
 }
-.App ::deep form > .dataSection {
+form > .dataSection {
   width: 100%;
   display: grid;
   gap: 0.25em;

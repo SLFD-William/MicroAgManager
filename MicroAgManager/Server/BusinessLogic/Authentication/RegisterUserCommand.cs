@@ -32,7 +32,7 @@ namespace BackEnd.BusinessLogic.Authentication
                     return new LoginResult { success = false, message = AuthenticationConstants.RegistrationUserExists };
 
                 var newTenant = Guid.NewGuid();
-                var tenant = new Tenant(newTenant) { Id=newTenant, Name = request.Name ?? string.Empty, TenantUserAdminId =newTenant};
+                var tenant = new Domain.Entity.Tenant(newTenant) { Id=newTenant, Name = request.Name ?? string.Empty, TenantUserAdminId =newTenant};
 
                 ApplicationUser user = new()
                 {

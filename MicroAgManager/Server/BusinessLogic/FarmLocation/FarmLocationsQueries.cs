@@ -27,8 +27,8 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 throw new ArgumentNullException(nameof(query));
             if (!(GetDeleted ?? false))
                 query = query.Where(_ => !_.Deleted.HasValue);
-            if (Take > 0)
-                query = query.Skip(Skip ?? 0).Take(Take ?? 10);
+            if (Take.HasValue && Take > 0)
+                query = query.Skip(Skip ?? 0).Take(Take.Value);
             if (Name != null)
                 query = query.Where(_ => _.Name != null && _.Name.Contains(Name));
             if (Longitude != null)
@@ -45,8 +45,9 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 query = query.Where(_ => _.Zip != null && _.Zip.Contains(Zip));
             if (Country != null)
                 query = query.Where(_ => _.Country != null && _.Country.Contains(Country));
-
-            query = query.OrderBy(_ => _.Id);
+            if (LastModified.HasValue)
+                query = query.Where(_ => _.ModifiedOn >= LastModified);
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             return query;
         }
     }

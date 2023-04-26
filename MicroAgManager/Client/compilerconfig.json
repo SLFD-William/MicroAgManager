@@ -1,14 +1,14 @@
 ﻿[
   {
-    "outputFile": "App.razor.css",
-    "inputFile": "App.razor.scss"
-  },
-  {
     "outputFile": "Pages/Authentication.razor.css",
     "inputFile": "Pages/Authentication.razor.scss"
   },
   {
     "outputFile": "Components/Shared/ValidatedField.razor.css",
     "inputFile": "Components/Shared/ValidatedField.razor.scss"
+  },
+  {
+    "outputFile": "wwwroot/App.css",
+    "inputFile": "wwwroot/App.scss"
   }
 ]
