@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Persistence
 {
-    public class ClientDbContext : DbContext, IClientDbContext
+    public class FrontEndDbContext : DbContext, IFrontEndDbContext
     {
         
-        public ClientDbContext(DbContextOptions options) : base(options) { }
+        public FrontEndDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<FarmLocationModel> Farms { get; set; }
+        public DbSet<TenantModel> Tenants { get; set; }
     }
 }

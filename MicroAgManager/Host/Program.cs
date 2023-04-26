@@ -31,12 +31,6 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
                .AddMessagePackProtocol();
-               
-
-
-
-
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -44,8 +38,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.UseResponseCompression();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -70,17 +62,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 AuthenticationAPI.Map(app);
 BusinessLogicAPI.Map(app);
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHub<NotificationHub>("/notificationhub",
-        options => { 
-            options.CloseOnAuthenticationExpiration = true;
-        }
-        );
-}
-);
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapHub<NotificationHub>("/notificationhub",
+//        options => { 
+//            options.CloseOnAuthenticationExpiration = true;
+//        }
+//        );
+//}
+//);
 
-//app.MapHub<NotificationHub>("/notificationhub");
+app.MapHub<NotificationHub>("/notificationhub");
 app.MapFallbackToFile("index.html");
 
 app.Run();

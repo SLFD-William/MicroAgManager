@@ -1,6 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BackEnd.BusinessLogic.FarmLocation;
+using BackEnd.BusinessLogic.Tenant;
+using Domain.Abstracts;
+using Domain.Models;
+using FrontEnd.Persistence;
+using FrontEnd.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -12,8 +17,11 @@ namespace FrontEnd.Data
         private readonly Task _firstTimeSetupTask;
         private readonly IDbContextFactory<FrontEndDbContext> _dbContextFactory;
         private bool _isSynchronizing;
-        public DataSynchronizer(IJSRuntime js, IDbContextFactory<FrontEndDbContext> dbContextFactory)
+        private readonly IFrontEndApiServices _api;
+
+        public DataSynchronizer(IJSRuntime js, IDbContextFactory<FrontEndDbContext> dbContextFactory, IFrontEndApiServices api)
         {
+            _api = api;
             _dbContextFactory = dbContextFactory;
             _firstTimeSetupTask = FirstTimeSetupAsync(js);
         }
@@ -29,7 +37,7 @@ namespace FrontEnd.Data
             OnUpdate?.Invoke();
             return await _dbContextFactory.CreateDbContextAsync();
         }
-        public void SynchronizeInBackground(Guid userId, Guid tenantId) => _ = EnsureSynchronizingAsync(userId, tenantId);
+        public async Task SynchronizeInBackground(List<string>? entityModel=null) => await EnsureSynchronizingAsync(entityModel);
         private async Task FirstTimeSetupAsync(IJSRuntime js)
         {
             try { 
@@ -46,7 +54,7 @@ namespace FrontEnd.Data
             await db.Database.MigrateAsync();
             await db.Database.EnsureCreatedAsync();
         }
-        private async Task EnsureSynchronizingAsync(Guid userId, Guid tenantId)
+        private async Task EnsureSynchronizingAsync(List<string>? entityModels)
         {
             // Don't run multiple syncs in parallel. This simple logic is adequate because of single-threadedness.
             if (_isSynchronizing)
@@ -63,30 +71,9 @@ namespace FrontEnd.Data
                 db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
                 // Begin fetching any updates to the dataset from the backend server
-                //var mostRecentUpdate = db.Parts.OrderByDescending(p => p.ModifiedTicks).FirstOrDefault()?.ModifiedTicks;
+                if (ShouldEntityBeUpdated(entityModels, nameof(TenantModel))) await BulkUpdateTenants(db,_api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(FarmLocationModel))) await BulkUpdateFarmLocations(db, _api);
 
-                //var connection = db.Database.GetDbConnection();
-                //connection.Open();
-
-                //while (true)
-                //{
-                //    var request = new PartsRequest { MaxCount = 5000, ModifiedSinceTicks = mostRecentUpdate ?? -1 };
-                //    var response = await manufacturingData.GetPartsAsync(request);
-                //    var syncRemaining = response.ModifiedCount - response.Parts.Count;
-                //    SyncCompleted += response.Parts.Count;
-                //    SyncTotal = SyncCompleted + syncRemaining;
-
-                //    if (response.Parts.Count == 0)
-                //    {
-                //        break;
-                //    }
-                //    else
-                //    {
-                //        mostRecentUpdate = response.Parts.Last().ModifiedTicks;
-                //        BulkInsert(connection, response.Parts);
-                //        OnUpdate?.Invoke();
-                //    }
-                //}
             }
             catch (Exception ex)
             {
@@ -98,49 +85,53 @@ namespace FrontEnd.Data
                 _isSynchronizing = false;
             }
         }
+        private static bool ShouldEntityBeUpdated(List<string>? entityModels, string modelName)
+            => !(entityModels?.Any() ?? false) || (entityModels?.Contains(modelName) ?? false);
 
-        private void BulkInsert(DbConnection connection)
+        private async static Task BulkUpdateModels(FrontEndDbContext db, HashSet<Guid> existingModels, ICollection<TenantModel> models)
         {
-            // Since we're inserting so much data, we can save a huge amount of time by dropping down below EF Core and
-            // using the fastest bulk insertion technique for Sqlite.
-            using (var transaction = connection.BeginTransaction())
+            foreach (var model in models)
             {
-                var command = connection.CreateCommand();
-                var partId = AddNamedParameter(command, "$PartId");
-                var category = AddNamedParameter(command, "$Category");
-                var subcategory = AddNamedParameter(command, "$Subcategory");
-                var name = AddNamedParameter(command, "$Name");
-                var location = AddNamedParameter(command, "$Location");
-                var stock = AddNamedParameter(command, "$Stock");
-                var priceCents = AddNamedParameter(command, "$PriceCents");
-                var modifiedTicks = AddNamedParameter(command, "$ModifiedTicks");
-
-                command.CommandText =
-                    $"INSERT OR REPLACE INTO Parts (PartId, Category, Subcategory, Name, Location, Stock, PriceCents, ModifiedTicks) " +
-                    $"VALUES ({partId.ParameterName}, {category.ParameterName}, {subcategory.ParameterName}, {name.ParameterName}, {location.ParameterName}, {stock.ParameterName}, {priceCents.ParameterName}, {modifiedTicks.ParameterName})";
-
-                //foreach (var part in parts)
-                //{
-                //    partId.Value = part.PartId;
-                //    category.Value = part.Category;
-                //    subcategory.Value = part.Subcategory;
-                //    name.Value = part.Name;
-                //    location.Value = part.Location;
-                //    stock.Value = part.Stock;
-                //    priceCents.Value = part.PriceCents;
-                //    modifiedTicks.Value = part.ModifiedTicks;
-                //    command.ExecuteNonQuery();
-                //}
-
-                transaction.Commit();
+                db.Attach(model);
+                db.Entry(model).State = existingModels.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
             }
-
-            static DbParameter AddNamedParameter(DbCommand command, string name)
+            await db.SaveChangesAsync();
+        }
+        private async static Task BulkUpdateModels(FrontEndDbContext db, HashSet<long> existingModels, ICollection<BaseModel> models)
+        {
+            foreach (var model in models)
             {
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = name;
-                command.Parameters.Add(parameter);
-                return parameter;
+                db.Attach(model);
+                db.Entry(model).State = existingModels.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+            }
+            await db.SaveChangesAsync();
+        }
+        private async static Task BulkUpdateTenants(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t=>t.Id));
+            var mostRecentUpdate = db.Tenants.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<TenantModel, GetTenantList>("api/GetTenants", new GetTenantList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                await BulkUpdateModels(db,existingAccountIds, returned.Item2);
+                
+            }
+        }
+        private async static Task BulkUpdateFarmLocations(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.Farms.Select(t => t.Id));
+            var mostRecentUpdate = db.Farms.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<FarmLocationModel, GetFarmList>("api/GetFarms", new GetFarmList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                await BulkUpdateModels(db, existingAccountIds, (ICollection<BaseModel>)returned.Item2);
+
             }
         }
     }

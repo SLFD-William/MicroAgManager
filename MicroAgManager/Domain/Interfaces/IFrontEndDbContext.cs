@@ -3,8 +3,9 @@ using Domain.Models;
 
 namespace Domain.Interfaces
 {
-    public interface IClientDbContext
+    public interface IFrontEndDbContext
     {
         public DbSet<FarmLocationModel> Farms { get; set; }
+        public DbSet<TenantModel> Tenants { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace Domain.Models
                 State = farm.State,
                 Zip = farm.Zip,
                 Country = farm.Country,
-                Plots=farm.Plots?.Select(p=>LandPlotModel.Create(p)).ToList() ?? new List<LandPlotModel?>()
+                Plots=farm.Plots?.Select(LandPlotModel.Create).ToList() ?? new List<LandPlotModel?>()
             }) as FarmLocationModel;
             return model;
         }
