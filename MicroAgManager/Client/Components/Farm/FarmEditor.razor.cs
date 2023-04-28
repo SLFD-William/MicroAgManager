@@ -11,26 +11,30 @@ namespace FrontEnd.Components.Farm
     public partial class FarmEditor
     {
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
+        [CascadingParameter] IFrontEndApiServices api { get; set; }
+
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
-        [Inject] IFrontEndApiServices api { get; set; }
+        
+        [Parameter]public EventCallback<FarmLocationModel> Submitted { get; set; }
         FarmLocationModel farm { get; set; }
-        private EditContext? editContext;
+        public EditContext editContext { get; private set; }
         protected async override Task OnInitializedAsync()
         {
             if (dbContext is null) return;
             var query= dbContext.Farms.AsQueryable();
             if (farmId.HasValue)
                 query = query.Where(f => f.Id == farmId);
-            farm = await query.FirstOrDefaultAsync() ?? new FarmLocationModel();
+            farm = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
             if (string.IsNullOrEmpty(farm.Name) && !string.IsNullOrEmpty(farmName))
                 farm.Name = farmName;
             editContext=new EditContext(farm);
         }
-        async Task OnSubmit()
+        public async Task OnSubmit()
         {
             try
             {
+              
                 var state= farm.Id <= 0 ? EntityState.Added: EntityState.Modified;
 
                 if (state== EntityState.Added)
@@ -42,6 +46,7 @@ namespace FrontEnd.Components.Farm
                 dbContext.Entry(farm).State = state;
                 await dbContext.SaveChangesAsync();
                 editContext = new EditContext(farm);
+                await Submitted.InvokeAsync(farm);
                 StateHasChanged();
             }
             catch (Exception ex)

@@ -17,36 +17,6 @@ namespace FrontEnd.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
 
-            modelBuilder.Entity("Domain.Enums.PlotUseEnum", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PlotUseEnum");
-                });
-
-            modelBuilder.Entity("Domain.Enums.UnitEnum", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UnitEnum");
-                });
-
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
                 {
                     b.Property<long>("Id")
@@ -90,6 +60,9 @@ namespace FrontEnd.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid?>("TenantModelId")
                         .HasColumnType("TEXT");
 
@@ -113,7 +86,7 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<decimal>("Area")
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("AreaUnitId")
+                    b.Property<long>("AreaUnit")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("Deleted")
@@ -132,6 +105,9 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long?>("FarmLocationModelId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("LandPlotModelId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -145,18 +121,16 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long?>("ParentPlotId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("UsageId")
+                    b.Property<long>("Usage")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaUnitId");
-
                     b.HasIndex("FarmLocationModelId");
 
-                    b.HasIndex("UsageId");
+                    b.HasIndex("LandPlotModelId");
 
-                    b.ToTable("LandPlotModel");
+                    b.ToTable("LandPlots");
                 });
 
             modelBuilder.Entity("Domain.Models.TenantModel", b =>
@@ -199,30 +173,23 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
-                    b.HasOne("Domain.Enums.UnitEnum", "AreaUnit")
-                        .WithMany()
-                        .HasForeignKey("AreaUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Models.FarmLocationModel", null)
                         .WithMany("Plots")
                         .HasForeignKey("FarmLocationModelId");
 
-                    b.HasOne("Domain.Enums.PlotUseEnum", "Usage")
-                        .WithMany()
-                        .HasForeignKey("UsageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AreaUnit");
-
-                    b.Navigation("Usage");
+                    b.HasOne("Domain.Models.LandPlotModel", null)
+                        .WithMany("Subplots")
+                        .HasForeignKey("LandPlotModelId");
                 });
 
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
                 {
                     b.Navigation("Plots");
+                });
+
+            modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
+                {
+                    b.Navigation("Subplots");
                 });
 
             modelBuilder.Entity("Domain.Models.TenantModel", b =>

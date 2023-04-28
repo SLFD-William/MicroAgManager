@@ -11,5 +11,6 @@ namespace FrontEnd.Persistence
 
         public DbSet<FarmLocationModel> Farms { get; set; }
         public DbSet<TenantModel> Tenants { get; set; }
+        public DbSet<LandPlotModel> LandPlots { get; set; }
     }
 }

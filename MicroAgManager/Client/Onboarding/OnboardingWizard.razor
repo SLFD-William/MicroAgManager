@@ -1,19 +1,51 @@
-﻿@using FrontEnd.Data
-<h3>OnboardingWizard</h3>
-@if(dbContext is not null)
+﻿@if(dbContext is not null)
 {
 <CascadingValue Value="dbContext">
-     @if(Step == 1)
-    {
-        <Welcome />
-    }
+        <h3>Welcome @tenant.Name</h3>
+         @if(Step == (int)Steps.FarmLocation)
+        {
+            <p>Please enter information about your farm's location</p>
+            <FarmEditor @ref="farmEditor" farmId="@farm.Id" farmName="@farm.Name" Submitted="@FarmLocationUpdated"></FarmEditor>
+        }
+        @if (Step == (int)Steps.MainPlot)
+        {
+            <p>Tell us about your land</p>
+            <CascadingValue Value="farm">
+                <LandPlotEditor @ref="landPlotEditor" landPlotId="@landPlot.Id" Submitted="@LandPlotUpdated"></LandPlotEditor>
+            </CascadingValue>
+        }
+        @if (Step == (int)Steps.FarmProduction)
+        {
+            <p>What would you like to produce on your farm?</p>
+        }
+        @if (Step == (int)Steps.LiveStockDefinition)
+        {
+            <p>What kind of live stock are you raising?</p>
+        }
+        @if (Step == (int)Steps.LiveStockFeed)
+        {
+            <p>What are you feeding your livestock?</p>
+        }
+        @if (Step == (int)Steps.LiveStockFeedAnalysis)
+        {
+            <p>Do you want to track feed nutrition?</p>
+        }
+        @if (Step == (int)Steps.LiveStockFeedAnalysis)
+        {
+            <p>How much do you want to feed per serving?</p>
+        }
+        @if (Step == (int)Steps.LiveStockFeedChore)
+        {
+            <p>Do you want to schedule a feed chore?</p>
+        }
         @if (Step != 1)
         {
             <button @onclick="Prev" type="button">Prev</button>
         }
         @if (Step != 4)
         {
-            <button @onclick="Next" type="button">Next</button>
+            <button @onclick="Next" type="submit">Next</button>
         }
-</CascadingValue>
+        </CascadingValue>
+
 }

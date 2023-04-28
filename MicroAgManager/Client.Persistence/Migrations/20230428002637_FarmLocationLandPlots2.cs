@@ -1,28 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FrontEnd.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FrontEndDBInit : Migration
+    public partial class FarmLocationLandPlots2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "PlotUseEnum",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlotUseEnum", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Tenants",
                 columns: table => new
@@ -41,24 +29,12 @@ namespace FrontEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UnitEnum",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UnitEnum", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Farms",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    TenantId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Longitude = table.Column<string>(type: "TEXT", nullable: true),
                     Latitude = table.Column<string>(type: "TEXT", nullable: true),
@@ -84,7 +60,7 @@ namespace FrontEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LandPlotModel",
+                name: "LandPlots",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
@@ -93,10 +69,11 @@ namespace FrontEnd.Persistence.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     Area = table.Column<decimal>(type: "TEXT", nullable: false),
-                    AreaUnitId = table.Column<long>(type: "INTEGER", nullable: false),
-                    UsageId = table.Column<long>(type: "INTEGER", nullable: false),
+                    AreaUnit = table.Column<long>(type: "INTEGER", nullable: false),
+                    Usage = table.Column<long>(type: "INTEGER", nullable: false),
                     ParentPlotId = table.Column<long>(type: "INTEGER", nullable: true),
                     FarmLocationModelId = table.Column<long>(type: "INTEGER", nullable: true),
+                    LandPlotModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -104,24 +81,17 @@ namespace FrontEnd.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LandPlotModel", x => x.Id);
+                    table.PrimaryKey("PK_LandPlots", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LandPlotModel_Farms_FarmLocationModelId",
+                        name: "FK_LandPlots_Farms_FarmLocationModelId",
                         column: x => x.FarmLocationModelId,
                         principalTable: "Farms",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_LandPlotModel_PlotUseEnum_UsageId",
-                        column: x => x.UsageId,
-                        principalTable: "PlotUseEnum",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LandPlotModel_UnitEnum_AreaUnitId",
-                        column: x => x.AreaUnitId,
-                        principalTable: "UnitEnum",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_LandPlots_LandPlots_LandPlotModelId",
+                        column: x => x.LandPlotModelId,
+                        principalTable: "LandPlots",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -130,35 +100,24 @@ namespace FrontEnd.Persistence.Migrations
                 column: "TenantModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LandPlotModel_AreaUnitId",
-                table: "LandPlotModel",
-                column: "AreaUnitId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LandPlotModel_FarmLocationModelId",
-                table: "LandPlotModel",
+                name: "IX_LandPlots_FarmLocationModelId",
+                table: "LandPlots",
                 column: "FarmLocationModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LandPlotModel_UsageId",
-                table: "LandPlotModel",
-                column: "UsageId");
+                name: "IX_LandPlots_LandPlotModelId",
+                table: "LandPlots",
+                column: "LandPlotModelId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LandPlotModel");
+                name: "LandPlots");
 
             migrationBuilder.DropTable(
                 name: "Farms");
-
-            migrationBuilder.DropTable(
-                name: "PlotUseEnum");
-
-            migrationBuilder.DropTable(
-                name: "UnitEnum");
 
             migrationBuilder.DropTable(
                 name: "Tenants");

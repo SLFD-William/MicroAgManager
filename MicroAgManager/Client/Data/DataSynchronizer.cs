@@ -1,6 +1,6 @@
 ﻿using BackEnd.BusinessLogic.FarmLocation;
+using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Tenant;
-using Domain.Abstracts;
 using Domain.Models;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
@@ -73,7 +73,8 @@ namespace FrontEnd.Data
                 // Begin fetching any updates to the dataset from the backend server
                 if (ShouldEntityBeUpdated(entityModels, nameof(TenantModel))) await BulkUpdateTenants(db,_api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(FarmLocationModel))) await BulkUpdateFarmLocations(db, _api);
-
+                if (ShouldEntityBeUpdated(entityModels, nameof(LandPlotModel))) await BulkUpdateLandPlots(db, _api);
+                OnUpdate?.Invoke();
             }
             catch (Exception ex)
             {
@@ -87,25 +88,6 @@ namespace FrontEnd.Data
         }
         private static bool ShouldEntityBeUpdated(List<string>? entityModels, string modelName)
             => !(entityModels?.Any() ?? false) || (entityModels?.Contains(modelName) ?? false);
-
-        private async static Task BulkUpdateModels(FrontEndDbContext db, HashSet<Guid> existingModels, ICollection<TenantModel> models)
-        {
-            foreach (var model in models)
-            {
-                db.Attach(model);
-                db.Entry(model).State = existingModels.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
-            }
-            await db.SaveChangesAsync();
-        }
-        private async static Task BulkUpdateModels(FrontEndDbContext db, HashSet<long> existingModels, ICollection<BaseModel> models)
-        {
-            foreach (var model in models)
-            {
-                db.Attach(model);
-                db.Entry(model).State = existingModels.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
-            }
-            await db.SaveChangesAsync();
-        }
         private async static Task BulkUpdateTenants(FrontEndDbContext db, IFrontEndApiServices api)
         {
             var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t=>t.Id));
@@ -116,8 +98,12 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<TenantModel, GetTenantList>("api/GetTenants", new GetTenantList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 if (returned.Item2.Count == 0) break;
                 totalCount += returned.Item2.Count;
-                await BulkUpdateModels(db,existingAccountIds, returned.Item2);
-                
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateFarmLocations(FrontEndDbContext db, IFrontEndApiServices api)
@@ -130,8 +116,30 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<FarmLocationModel, GetFarmList>("api/GetFarms", new GetFarmList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 if (returned.Item2.Count == 0) break;
                 totalCount += returned.Item2.Count;
-                await BulkUpdateModels(db, existingAccountIds, (ICollection<BaseModel>)returned.Item2);
-
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLandPlots(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.LandPlots.Select(t => t.Id));
+            var mostRecentUpdate = db.LandPlots.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LandPlotModel, GetLandPlotList>("api/GetLandPlots", new GetLandPlotList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
             }
         }
     }

@@ -25,10 +25,11 @@ namespace BackEnd.BusinessLogic.FarmLocation
             var query = context.Farms.Where(f => f.TenantId == TenantId).AsQueryable();
             if(query is null)
                 throw new ArgumentNullException(nameof(query));
-            if (!(GetDeleted ?? false))
+            if (GetDeleted.HasValue && !GetDeleted.Value)
                 query = query.Where(_ => !_.Deleted.HasValue);
-            if (Take.HasValue && Take > 0)
-                query = query.Skip(Skip ?? 0).Take(Take.Value);
+
+            if (Skip.HasValue || Take.HasValue)
+                query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
             if (Name != null)
                 query = query.Where(_ => _.Name != null && _.Name.Contains(Name));
             if (Longitude != null)

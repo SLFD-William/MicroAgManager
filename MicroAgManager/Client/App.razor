@@ -4,6 +4,7 @@
 
 <div class="App">
     <CascadingAuthenticationState>
+        <CascadingValue Value="api">
         <CascadingValue Value="_dbSynchonizer">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
@@ -28,6 +29,7 @@
                 </LayoutView>
             </NotFound>
         </Router>
+        </CascadingValue>
         </CascadingValue>
     </CascadingAuthenticationState>
 </div>

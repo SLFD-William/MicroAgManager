@@ -1,6 +1,6 @@
 ﻿body {
-  margin: 0;
-  width: 100%;
+  padding-inline: 1rem;
+  margin: auto;
   --font-stack: Tahoma, Geneva, sans-serif;
   --color-validation-validmodified: white;
   --background-color-validation-validmodified: green;

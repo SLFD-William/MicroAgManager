@@ -5,6 +5,7 @@ using System.Security.Claims;
 using BackEnd.BusinessLogic.Tenant;
 using BackEnd.BusinessLogic.FarmLocation;
 using Microsoft.AspNetCore.Authorization;
+using BackEnd.BusinessLogic.LandPlots;
 
 namespace Host
 {
@@ -31,12 +32,21 @@ namespace Host
             try
             {
                 command.TenantId = TenantId(request);
+                command.ModifiedBy = UserId(request);
                 return Results.Ok(await mediator.Send(command));
             }
             catch (Exception ex)
             {
                 return Results.BadRequest(ex);
             }
+        }
+        private static Guid UserId(HttpRequest request)
+        {
+            var headerToken = ((string)request.Headers["Authorization"]).Replace("Bearer ", string.Empty);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.ReadJwtToken(headerToken);
+            var user = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
+            return Guid.Parse(user.Claims.First(x => x.Type == "sub").Value);
         }
         private static Guid TenantId(HttpRequest request)
         {
@@ -49,9 +59,14 @@ namespace Host
         public static void Map(WebApplication app)
         {
             app.MapPost("/api/GetTenants",[Authorize] async (GetTenantList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetFarm", [Authorize] async (GetFarm query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetFarms", [Authorize] async (GetFarmList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/CreateFarmLocation", [Authorize] async (CreateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateFarmLocation", [Authorize] async (UpdateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/GetLandPlot", [Authorize] async (GetLandPlot query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetLandPlots", [Authorize] async (GetLandPlotList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/CreateLandPlot", [Authorize] async (CreateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateLandPlot", [Authorize] async (UpdateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
 
         }
     }

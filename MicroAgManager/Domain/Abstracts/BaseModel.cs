@@ -2,7 +2,7 @@
 
 namespace Domain.Abstracts
 {
-    public class BaseModel
+    public abstract class BaseModel
     {
         [Required]
         public long Id { get; set; }

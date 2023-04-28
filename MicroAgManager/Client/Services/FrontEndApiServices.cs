@@ -25,7 +25,7 @@ namespace FrontEnd.Services
 
         public async Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand
         {
-            if (command.Model is null) return -1;
+            if (command is null) return -1;
             JsonSerializerSettings jsSettings = new JsonSerializerSettings();
             jsSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             var commandString = new StringContent(JsonConvert.SerializeObject(command, jsSettings), Encoding.UTF8, "application/json");
