@@ -17,7 +17,7 @@ namespace Domain.Models
         [Required] public string? State { get; set; }
         [Required] public string? Zip { get; set; }
         public string? Country { get; set; }
-        public virtual ICollection<LandPlotModel?>? Plots { get; set; }
+        public virtual ICollection<LandPlotModel?> Plots { get; set; } = new List<LandPlotModel?>();
         public static FarmLocationModel? Create(FarmLocation? farm)
         {
             if (farm == null) return null;
@@ -48,7 +48,7 @@ namespace Domain.Models
             farm.Name = Name;
             if (farm.Plots?.Any() ?? false)
                 foreach (var plot in farm.Plots)
-                    Plots?.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
+                    Plots.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
 
             return farm;
         }

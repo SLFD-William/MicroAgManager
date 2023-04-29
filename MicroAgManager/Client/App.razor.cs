@@ -23,10 +23,12 @@ namespace FrontEnd
         {
             _dbSynchonizer = new DataSynchronizer(js, dbContextFactory, api);
             _dbSynchonizer.OnUpdate += DbChanged;
+            dbContext=await _dbSynchonizer.GetPreparedDbContextAsync();
             authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
             await authentication.RefreshToken();
             StateHasChanged();
         }
+        public FrontEndDbContext dbContext { get; private set; }
         private void DbChanged()=> StateHasChanged();
         private async void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task)
         {

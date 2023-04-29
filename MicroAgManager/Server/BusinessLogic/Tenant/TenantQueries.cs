@@ -18,10 +18,10 @@ namespace BackEnd.BusinessLogic.Tenant
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
-            if (Name != null)
+            if (!string.IsNullOrEmpty(Name))
                 query = query.Where(_ => _.Name != null && _.Name.Contains(Name));
 
-            if (TenantUserAdminId != null)
+            if (TenantUserAdminId.HasValue)
                 query = query.Where(_ => _.TenantUserAdminId== TenantUserAdminId);
 
             if (LastModified.HasValue)

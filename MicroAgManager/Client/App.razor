@@ -5,7 +5,7 @@
 <div class="App">
     <CascadingAuthenticationState>
         <CascadingValue Value="api">
-        <CascadingValue Value="_dbSynchonizer">
+            <CascadingValue Value="dbContext">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">

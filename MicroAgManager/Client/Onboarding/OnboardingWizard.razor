@@ -1,6 +1,6 @@
 ﻿@if(dbContext is not null)
 {
-<CascadingValue Value="dbContext">
+
         <h3>Welcome @tenant.Name</h3>
          @if(Step == (int)Steps.FarmLocation)
         {
@@ -17,6 +17,14 @@
         @if (Step == (int)Steps.FarmProduction)
         {
             <p>What would you like to produce on your farm?</p>
+            <select @bind=farmProduction>
+                <option value="">Select Product ...</option>
+                <option value="livestock">Livestock</option>
+        </select>
+            if (farmProduction == "livestock")
+            {
+            <LivestockTypeEditor @ref="livestockTypeEditor" livestockTypeId="@landPlot.Id" Submitted="@LivestockTypeUpdated"></LivestockTypeEditor>
+            }
         }
         @if (Step == (int)Steps.LiveStockDefinition)
         {
@@ -46,6 +54,4 @@
         {
             <button @onclick="Next" type="submit">Next</button>
         }
-        </CascadingValue>
-
 }

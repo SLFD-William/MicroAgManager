@@ -1,13 +1,14 @@
-﻿@using Domain.Enums;
+﻿@using Domain.Constants;
+@using Domain.Enums;
 <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
     <div class="dataSection">
         <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.Usage)">
             <InputSelect @bind-Value="@plot.Usage">
-                @foreach (var g in BaseEnumeration.GetAll<PlotUseEnum>())
-                {
-                    <option value="@g.Id">@g.GetDescription()</option>
-                }
+                <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
+                <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
+                <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
+                <option value="@LandPlotUseConstants.Outbuilding">@LandPlotUseConstants.Outbuilding</option>
             </InputSelect>
         </ValidatedField>
         <ValidatedField Legend="Name" ValidationMessageFor="@(() => plot.Name)">
@@ -22,7 +23,7 @@
         <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
             <InputSelect @bind-Value="@plot.AreaUnit">
                 <option value="0">Select Units ...</option>
-                @foreach (var g in BaseEnumeration.GetAll<UnitEnum>())
+                @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a=>a.Name.StartsWith("Area")))
                 {
                     <option value="@g.Id">@g.GetDescription()</option>
                 }

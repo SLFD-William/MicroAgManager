@@ -5,17 +5,31 @@ namespace BackEnd.Abstracts
 {
     public abstract class BaseQuery
     {
-#nullable enable
         public long? Id { get; set; }
-#nullable disable
         [Required] public Guid TenantId { get; set; }
-        public BaseModel NewModel { get; set; }
+        public BaseModel? NewModel { get; set; }
         public int? Take { get; set; }
         public int? Skip { get; set; }
+        public bool? GetDeleted { get; set; }
+
         public DateTime? LastModified { get; set; }
 
-        //public abstract Task<BaseModel> GetModel(CancellationToken cancellationToken);
-        //public abstract Task<Tuple<long, ICollection<BaseModel>>> GetModels(CancellationToken cancellationToken);
+        protected IQueryable<T> PopulateBaseQuery<T>(IQueryable<T> query) where T : BaseEntity
+        {
+            if (query is null)
+                throw new ArgumentNullException(nameof(query));
+            query = query.Where(t => t.TenantId == TenantId);
 
+            if (GetDeleted.HasValue && !GetDeleted.Value)
+                query = query.Where(_ => !_.Deleted.HasValue);
+
+            if (Skip.HasValue || Take.HasValue)
+                query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
+
+            if (LastModified.HasValue)
+                query = query.Where(_ => _.ModifiedOn >= LastModified);
+
+            return query.AsQueryable();
+        }
     }
 }

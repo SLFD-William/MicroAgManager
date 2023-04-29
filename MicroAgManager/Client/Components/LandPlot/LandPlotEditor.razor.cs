@@ -1,5 +1,4 @@
 ﻿using BackEnd.BusinessLogic.LandPlots;
-using Domain.Enums;
 using Domain.Models;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
@@ -28,22 +27,6 @@ namespace FrontEnd.Components.LandPlot
             plot = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LandPlotModel() {FarmLocationId=farm.Id};
             editContext = new EditContext(plot);
         }
-        //private long areaUnit
-        //{
-        //    get => plot.AreaUnit?.Id ?? 0;
-        //    set
-        //    {
-        //        plot.AreaUnit = value == 0 ? null : BaseEnumeration.FromId<UnitEnum>(value);
-        //    }
-        //}
-        //private long usage
-        //{
-        //    get => plot.Usage?.Id ?? 0;
-        //    set
-        //    {
-        //        plot.Usage = value == 0 ? null : BaseEnumeration.FromId<PlotUseEnum>(value);
-        //    }
-        //}
         public async Task OnSubmit()
         {
             try

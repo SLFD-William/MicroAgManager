@@ -25,7 +25,7 @@ namespace BackEnd.Infrastructure
 
             if (failures.Count != 0)
             {
-                throw new FluentValidation.ValidationException(failures);
+                throw new ValidationException(failures);
             }
 
             return next();

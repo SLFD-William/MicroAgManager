@@ -1,5 +1,7 @@
 ﻿using BackEnd.BusinessLogic.FarmLocation;
 using BackEnd.BusinessLogic.LandPlots;
+using BackEnd.BusinessLogic.Livestock;
+using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.Tenant;
 using Domain.Models;
 using FrontEnd.Persistence;
@@ -74,6 +76,15 @@ namespace FrontEnd.Data
                 if (ShouldEntityBeUpdated(entityModels, nameof(TenantModel))) await BulkUpdateTenants(db,_api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(FarmLocationModel))) await BulkUpdateFarmLocations(db, _api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(LandPlotModel))) await BulkUpdateLandPlots(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockTypeModel))) await BulkUpdateLivestockTypes(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockBreedModel))) await BulkUpdateLivestockBreeds(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockStatusModel))) await BulkUpdateLivestockStatuses(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedServingModel))) await BulkUpdateLivestockFeedServings(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedDistributionModel))) await BulkUpdateLivestockFeedDistributions(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisParameterModel))) await BulkUpdateLivestockFeedAnalysisParameters(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisModel))) await BulkUpdateLivestockFeedAnalyses(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisResultModel))) await BulkUpdateLivestockFeedAnalysisResults(db, _api);
                 OnUpdate?.Invoke();
             }
             catch (Exception ex)
@@ -132,6 +143,168 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LandPlotModel, GetLandPlotList>("api/GetLandPlots", new GetLandPlotList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockTypes(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.LivestockTypes.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockTypes.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockTypeModel, GetLivestockTypeList>("api/GetLivestockTypes", new GetLivestockTypeList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockBreeds(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.LivestockBreeds.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockBreeds.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockBreedModel, GetLivestockBreedList>("api/GetLivestockBreeds", new GetLivestockBreedList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockStatuses(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.LivestockStatuses.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockStatuses.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockStatusModel, GetLivestockStatusList>("api/GetLivestockStatuses", new GetLivestockStatusList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockFeeds(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.LivestockFeeds.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockFeeds.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockFeedModel, GetLivestockFeedList>("api/GetLivestockFeeds", new GetLivestockFeedList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockFeedServings(FrontEndDbContext db, IFrontEndApiServices api)
+        { 
+            var existingAccountIds = new HashSet<long>(db.LivestockFeedServings.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockFeedServings.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockFeedServingModel, GetLivestockFeedServingList>("api/GetLivestockFeedServings", new GetLivestockFeedServingList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockFeedDistributions(FrontEndDbContext db, IFrontEndApiServices api)
+        { 
+            var existingAccountIds = new HashSet<long>(db.LivestockFeedDistributions.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockFeedDistributions.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockFeedDistributionModel, GetLivestockFeedDistributionList>("api/GetLivestockFeedDistributions", new GetLivestockFeedDistributionList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockFeedAnalysisParameters(FrontEndDbContext db, IFrontEndApiServices api)
+        { 
+            var existingAccountIds = new HashSet<long>(db.LivestockFeedAnalysisParameters.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockFeedAnalysisParameters.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockFeedAnalysisParameterModel, GetLivestockFeedAnalysisParameterList>("api/GetLivestockFeedAnalysisParameters", new GetLivestockFeedAnalysisParameterList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockFeedAnalyses(FrontEndDbContext db, IFrontEndApiServices api)
+        { 
+            var existingAccountIds = new HashSet<long>(db.LivestockFeedAnalyses.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockFeedAnalyses.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockFeedAnalysisModel, GetLivestockFeedAnalysisList>("api/GetLivestockFeedAnalyses", new GetLivestockFeedAnalysisList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateLivestockFeedAnalysisResults(FrontEndDbContext db, IFrontEndApiServices api)
+        { 
+            var existingAccountIds = new HashSet<long>(db.LivestockFeedAnalysisResults.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockFeedAnalysisResults.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockFeedAnalysisResultModel, GetLivestockFeedAnalysisResultList>("api/GetLivestockFeedAnalysisResults", new GetLivestockFeedAnalysisResultList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 if (returned.Item2.Count == 0) break;
                 totalCount += returned.Item2.Count;
                 foreach (var model in returned.Item2)

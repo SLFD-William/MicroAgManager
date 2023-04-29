@@ -1,10 +1,10 @@
 ﻿using Domain.Models;
-using FrontEnd.Data;
 using FrontEnd.Persistence;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
+using FrontEnd.Components.LivestockType;
 
 namespace FrontEnd.Onboarding
 {
@@ -22,10 +22,9 @@ namespace FrontEnd.Onboarding
             LiveStockFeedChore = 13,
         }
 
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
+        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         public int Step { get; set; } = 1;
-        private FrontEndDbContext dbContext { get; set; }
-
+        
         protected TenantModel tenant;
 
         private FarmEditor? farmEditor;
@@ -33,13 +32,19 @@ namespace FrontEnd.Onboarding
         
         private LandPlotEditor? landPlotEditor;
         protected LandPlotModel landPlot = new();
+
+        private LivestockTypeEditor? livestockTypeEditor;
+        protected LandPlotModel livestockType = new();
+
+
+        private string farmProduction = string.Empty;
         private void FarmLocationUpdated(FarmLocationModel args)=>farm = args;
         private void LandPlotUpdated(LandPlotModel args) => landPlot = args;
+        private void LivestockTypeUpdated(LandPlotModel args) => landPlot = args;
 
         protected async override Task OnInitializedAsync()
         {
-            if (dbSync is null) return;
-            dbContext = await dbSync.GetPreparedDbContextAsync();
+            if (dbContext is null) return;
             tenant = await dbContext.Tenants.SingleAsync();
             farm = await dbContext.Farms.Include(f=>f.Plots).OrderBy(f=>f.Id).FirstOrDefaultAsync(f=>f.TenantId==tenant.Id);
             if (farm is null)
@@ -52,35 +57,43 @@ namespace FrontEnd.Onboarding
         }
         private async Task Next()
         {
-            if(!await ProcessStepOnNextTransition()) return;
-            Step++;
+            Step = await ProcessStepOnNextTransition();
             StateHasChanged();
         }
         private void Prev()
         {
-            Step--;
+            Step = ProcessStepOnPrevTransition();
             StateHasChanged();
         }
-        private async Task<bool> ProcessStepOnNextTransition()
+        private int ProcessStepOnPrevTransition()
         {
             switch (Step)
             {
-                case 1:
+                case (int)Steps.LiveStockDefinition:
+                    return 3;
+            }
+            return Step-1;
+        }
+        private async Task<int> ProcessStepOnNextTransition()
+        {
+            switch (Step)
+            {
+                case (int)Steps.FarmLocation:
                     if (farmEditor is not null && farmEditor.editContext.IsModified())
                     {
-                        if (!farmEditor.editContext.Validate()) return false;
+                        if (!farmEditor.editContext.Validate()) return (int)Steps.FarmLocation;
                         await farmEditor.OnSubmit();
                     }
-                    break;
-                case 2:
+                    return (int)Steps.MainPlot;
+                case (int)Steps.MainPlot:
                     if (landPlotEditor is not null && landPlotEditor.editContext.IsModified())
                     {
-                        if (!landPlotEditor.editContext.Validate()) return false;
+                        if (!landPlotEditor.editContext.Validate()) return (int)Steps.MainPlot;
                         await landPlotEditor.OnSubmit();
                     }
-                    break;
+                    return (int)Steps.FarmProduction;
             }
-            return true;
+            return Step+1;
         }
 
     }

@@ -74,7 +74,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("TenantModelId");
 
-                    b.ToTable("Farms");
+                    b.ToTable("Farms", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
@@ -84,6 +84,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Area")
+                        .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
                     b.Property<long>("AreaUnit")
@@ -121,8 +122,9 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long?>("ParentPlotId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("Usage")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Usage")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -130,7 +132,551 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LandPlotModelId");
 
-                    b.ToTable("LandPlots");
+                    b.ToTable("LandPlots", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EmojiChar")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GestationPeriod")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HeatPeriod")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("LivestockTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockTypeModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockTypeModelId");
+
+                    b.ToTable("LivestockBreeds", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("DatePrinted")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateReceived")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateReported")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateSampled")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FeedId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LabNumber")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TestCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LivestockFeedAnalyses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisParameterModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Parameter")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReportOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SubParameter")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LivestockFeedAnalysisParameters", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AnalysisId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("AsFed")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Dry")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("LivestockFeedAnalysisModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ParameterId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockFeedAnalysisModelId");
+
+                    b.ToTable("LivestockFeedAnalysisResults", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedDistributionModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DatePerformed")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("Discarded")
+                        .IsRequired()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FeedId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockFeedModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockFeedModelId");
+
+                    b.ToTable("LivestockFeedDistributions", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("Active")
+                        .IsRequired()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Cutting")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Distribution")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FeedType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("LivestockTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockTypeModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("QuantityUnit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("QuantityWarning")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockTypeModelId");
+
+                    b.ToTable("LivestockFeeds", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedServingModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FeedId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockFeedModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Serving")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ServingFrequency")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("StatusId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockFeedModelId");
+
+                    b.ToTable("LivestockFeedServings", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("BeingManaged")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BirthDefect")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Birthdate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("BornDefective")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("BottleFed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("FatherId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ForSale")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("InMilk")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("LivestockBreedId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockBreedModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("MotherId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Sterile")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Variety")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockBreedModelId");
+
+                    b.ToTable("Livestocks", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BeingManaged")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BottleFed")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ForSale")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InMilk")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("LivestockTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockTypeModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sterile")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockTypeModelId");
+
+                    b.ToTable("LivestockStatuses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockTypeModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Care")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DefaultStatus")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ParentFemaleName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ParentMaleName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("LivestockTypes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.TenantModel", b =>
@@ -161,7 +707,22 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", (string)null);
+                });
+
+            modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
+                {
+                    b.Property<long>("LivestocksId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("StatusesId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("LivestocksId", "StatusesId");
+
+                    b.HasIndex("StatusesId");
+
+                    b.ToTable("LivestockModelLivestockStatusModel", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
@@ -182,6 +743,70 @@ namespace FrontEnd.Persistence.Migrations
                         .HasForeignKey("LandPlotModelId");
                 });
 
+            modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockTypeModel", null)
+                        .WithMany("Breeds")
+                        .HasForeignKey("LivestockTypeModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockFeedAnalysisModel", null)
+                        .WithMany("Results")
+                        .HasForeignKey("LivestockFeedAnalysisModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedDistributionModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockFeedModel", null)
+                        .WithMany("Distributions")
+                        .HasForeignKey("LivestockFeedModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockTypeModel", null)
+                        .WithMany("Feeds")
+                        .HasForeignKey("LivestockTypeModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedServingModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockFeedModel", null)
+                        .WithMany("Servings")
+                        .HasForeignKey("LivestockFeedModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockBreedModel", null)
+                        .WithMany("Livestocks")
+                        .HasForeignKey("LivestockBreedModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockTypeModel", null)
+                        .WithMany("Statuses")
+                        .HasForeignKey("LivestockTypeModelId");
+                });
+
+            modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockModel", null)
+                        .WithMany()
+                        .HasForeignKey("LivestocksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.LivestockStatusModel", null)
+                        .WithMany()
+                        .HasForeignKey("StatusesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
                 {
                     b.Navigation("Plots");
@@ -190,6 +815,32 @@ namespace FrontEnd.Persistence.Migrations
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
                     b.Navigation("Subplots");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
+                {
+                    b.Navigation("Livestocks");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisModel", b =>
+                {
+                    b.Navigation("Results");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
+                {
+                    b.Navigation("Distributions");
+
+                    b.Navigation("Servings");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockTypeModel", b =>
+                {
+                    b.Navigation("Breeds");
+
+                    b.Navigation("Feeds");
+
+                    b.Navigation("Statuses");
                 });
 
             modelBuilder.Entity("Domain.Models.TenantModel", b =>

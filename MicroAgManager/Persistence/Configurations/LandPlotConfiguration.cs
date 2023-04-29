@@ -10,11 +10,10 @@ namespace Persistence.Configurations
             base.Configure(builder);
             builder.Property(e=>e.Name).IsRequired().HasMaxLength(50);
             builder.Property(e => e.Description).IsRequired().HasMaxLength(255);
-            builder.Property(e => e.Area).HasPrecision(20, 3);
+            builder.Property(e => e.Area).HasPrecision(18, 3);
             builder.OwnEnumeration(e => e.AreaUnit);
             builder.Property(e => e.AreaUnit);
-            builder.OwnEnumeration(e => e.Usage);
-            builder.Property(e => e.Usage);
+            builder.Property(e => e.Usage).IsRequired().HasMaxLength(20);
             builder.Property(e => e.FarmLocationId).IsRequired();
         }
     }
