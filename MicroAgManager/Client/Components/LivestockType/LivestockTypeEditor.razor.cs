@@ -4,7 +4,6 @@ using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockType

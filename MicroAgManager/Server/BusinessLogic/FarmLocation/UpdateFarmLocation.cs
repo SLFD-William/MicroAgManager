@@ -23,13 +23,6 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 farm.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);
-                //await _mediator.Publish(new NotificationMessage
-                //{
-                //    To = request.TenantId.ToString(),
-                //    Body = $"{nameof(FarmLocationModel)} {farm.Id}",
-                //    From = request.ModifiedBy.ToString(),
-                //    Subject = "Update"
-                //}, cancellationToken);
                 return farm.Id;
             }
         }

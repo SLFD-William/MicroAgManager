@@ -26,6 +26,7 @@ namespace Domain.Entity
         public bool ForSale { get; set; }
         public ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();
         public ICollection<LandPlot> Locations { get; set; } = new List<LandPlot>();
+        public ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
 
     }
 }

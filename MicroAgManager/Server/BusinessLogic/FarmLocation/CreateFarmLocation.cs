@@ -33,14 +33,6 @@ namespace BackEnd.BusinessLogic.FarmLocation
                     await _context.SaveChangesAsync(cancellationToken);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-
-                //await _mediator.Publish(new NotificationMessage
-                //{
-                //    To = request.TenantId.ToString(),
-                //    Body = $"{nameof(FarmLocationModel)} {farm.Id}",
-                //    From = request.ModifiedBy.ToString(),
-                //    Subject = "Create"
-                //}, cancellationToken);
                 return farm.Id;
             }
 

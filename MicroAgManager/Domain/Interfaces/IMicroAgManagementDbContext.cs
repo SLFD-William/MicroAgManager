@@ -18,6 +18,12 @@ namespace Domain.Interfaces
         DbSet<LivestockFeedAnalysis> LivestockFeedAnalyses { get; set; }
         DbSet<LivestockFeedAnalysisParameter> LivestockFeedAnalysisParameters { get; set; }
         DbSet<LivestockFeedAnalysisResult> LivestockFeedAnalysisResults { get; set; }
+        DbSet<Duty> Duties { get; set; }
+        DbSet<Event> Events { get; set; }
+        DbSet<Milestone> Milestones { get; set; }
+        DbSet<ScheduledDuty> ScheduledDuties { get; set; }
+
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         int SaveChanges();
     }

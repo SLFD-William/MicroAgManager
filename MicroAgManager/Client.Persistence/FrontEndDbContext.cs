@@ -22,5 +22,9 @@ namespace FrontEnd.Persistence
         public DbSet<LivestockFeedAnalysisModel> LivestockFeedAnalyses { get; set; }
         public DbSet<LivestockFeedAnalysisParameterModel> LivestockFeedAnalysisParameters { get; set; }
         public DbSet<LivestockFeedAnalysisResultModel> LivestockFeedAnalysisResults { get; set; }
+        public DbSet<DutyModel> Duties { get; set; }
+        public DbSet<EventModel> Events { get; set; }
+        public DbSet<MilestoneModel> Milestones { get; set; }
+        public DbSet<ScheduledDutyModel> ScheduledDuties { get; set; }
     }
 }

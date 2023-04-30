@@ -1,9 +1,13 @@
-﻿using BackEnd.BusinessLogic.FarmLocation;
+﻿using BackEnd.BusinessLogic.Duty;
+using BackEnd.BusinessLogic.Event;
+using BackEnd.BusinessLogic.FarmLocation;
 using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
 using BackEnd.BusinessLogic.Livestock.Types;
 using BackEnd.BusinessLogic.LivestockFeed;
+using BackEnd.BusinessLogic.Milestone;
+using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
 using Domain.Models;
 using FrontEnd.Persistence;
@@ -87,6 +91,10 @@ namespace FrontEnd.Data
                 if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisParameterModel))) await BulkUpdateLivestockFeedAnalysisParameters(db, _api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisModel))) await BulkUpdateLivestockFeedAnalyses(db, _api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisResultModel))) await BulkUpdateLivestockFeedAnalysisResults(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) await BulkUpdateDuties(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) await BulkUpdateScheduledDuties(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel))) await BulkUpdateMilestones(db, _api);
+                if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, _api);
                 OnUpdate?.Invoke();
             }
             catch (Exception ex)
@@ -307,6 +315,78 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LivestockFeedAnalysisResultModel, GetLivestockFeedAnalysisResultList>("api/GetLivestockFeedAnalysisResults", new GetLivestockFeedAnalysisResultList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateDuties(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.Duties.Select(t => t.Id));
+            var mostRecentUpdate = db.Duties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<DutyModel, GetDutyList>("api/GetDuties", new GetDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateScheduledDuties(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
+            var mostRecentUpdate = db.ScheduledDuties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<ScheduledDutyModel, GetScheduledDutyList>("api/GetScheduledDuties", new GetScheduledDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateMilestones(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
+            var mostRecentUpdate = db.Milestones.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<MilestoneModel, GetMilestoneList>("api/GetMilestones", new GetMilestoneList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                foreach (var model in returned.Item2)
+                {
+                    db.Attach(model);
+                    db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
+                }
+                await db.SaveChangesAsync();
+            }
+        }
+        private async static Task BulkUpdateEvents(FrontEndDbContext db, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
+            var mostRecentUpdate = db.Events.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<EventModel, GetEventList>("api/GetEvents", new GetEventList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 if (returned.Item2.Count == 0) break;
                 totalCount += returned.Item2.Count;
                 foreach (var model in returned.Item2)

@@ -28,6 +28,10 @@ namespace Persistence
         public DbSet<LivestockFeedAnalysis> LivestockFeedAnalyses { get; set; }
         public DbSet<LivestockFeedAnalysisParameter> LivestockFeedAnalysisParameters { get; set; }
         public DbSet<LivestockFeedAnalysisResult> LivestockFeedAnalysisResults { get; set; }
+        public DbSet<Duty> Duties { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Milestone> Milestones { get; set; }
+        public DbSet<ScheduledDuty> ScheduledDuties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

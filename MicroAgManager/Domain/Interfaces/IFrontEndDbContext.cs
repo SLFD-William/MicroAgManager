@@ -18,5 +18,9 @@ namespace Domain.Interfaces
         DbSet<LivestockFeedAnalysisModel> LivestockFeedAnalyses { get; set; }
         DbSet<LivestockFeedAnalysisParameterModel> LivestockFeedAnalysisParameters { get; set; }
         DbSet<LivestockFeedAnalysisResultModel> LivestockFeedAnalysisResults { get; set; }
+        public DbSet<DutyModel> Duties { get; set; }
+        public DbSet<EventModel> Events { get; set; }
+        public DbSet<MilestoneModel> Milestones { get; set; }
+        public DbSet<ScheduledDutyModel> ScheduledDuties { get; set; }
     }
 }

@@ -13,7 +13,9 @@ namespace Domain.Abstracts
         public DateTime EntityModifiedOn { get; set; } = DateTime.MinValue;
         [Required]
         public Guid ModifiedBy { get; set; }
-        public static BaseModel Create(object dro) => throw new NotImplementedException(dro.ToString());
+
+        
+
 
         public static BaseModel PopulateBaseModel(BaseEntity entity, BaseModel model)
         {
