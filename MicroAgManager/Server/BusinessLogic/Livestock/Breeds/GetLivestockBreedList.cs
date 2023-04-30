@@ -3,7 +3,7 @@ using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BackEnd.BusinessLogic.Livestock
+namespace BackEnd.BusinessLogic.Livestock.Breeds
 {
     public class GetLivestockBreedList : LivestockBreedQueries, IRequest<Tuple<long, ICollection<LivestockBreedModel?>>>
     {
@@ -18,7 +18,7 @@ namespace BackEnd.BusinessLogic.Livestock
             }
             public async Task<Tuple<long, ICollection<LivestockBreedModel?>>> Handle(GetLivestockBreedList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery(_context);
+                var query = request.GetQuery<Domain.Entity.LivestockBreed>(_context);
 
                 return new Tuple<long, ICollection<LivestockBreedModel?>>
                     (await query.LongCountAsync(cancellationToken),

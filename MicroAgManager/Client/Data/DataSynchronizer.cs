@@ -1,6 +1,8 @@
 ﻿using BackEnd.BusinessLogic.FarmLocation;
 using BackEnd.BusinessLogic.LandPlots;
-using BackEnd.BusinessLogic.Livestock;
+using BackEnd.BusinessLogic.Livestock.Breeds;
+using BackEnd.BusinessLogic.Livestock.Status;
+using BackEnd.BusinessLogic.Livestock.Types;
 using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.Tenant;
 using Domain.Models;

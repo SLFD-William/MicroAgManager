@@ -19,7 +19,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
         public string? FeedType { get; set; }
         public string? Distribution { get; set; }
 
-        public IQueryable<Domain.Entity.LivestockFeed> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockFeeds.AsQueryable());
             if (query is null)
@@ -37,7 +37,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (!string.IsNullOrWhiteSpace(Distribution)) query = query.Where(x => x.Distribution.Contains(Distribution));
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
 
     }

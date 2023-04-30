@@ -5,20 +5,17 @@ using MediatR;
 
 namespace BackEnd.BusinessLogic.LandPlots
 {
-    public class UpdateLandPlot : BaseCommand, IRequest<long>, IUpdateCommand
+    public class UpdateLandPlot : BaseCommand, IUpdateCommand
     {
         public LandPlotModel LandPlot { get; set; }
 
-        public class Handler : IRequestHandler<UpdateLandPlot, long>
+        public class Handler : BaseCommandHandler<UpdateLandPlot>
         {
-            protected readonly IMicroAgManagementDbContext _context;
-            protected readonly IMediator _mediator;
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
             {
-                _context = context;
-                _mediator = mediator;
             }
-            public async Task<long> Handle(UpdateLandPlot request, CancellationToken cancellationToken)
+
+            public override async Task<long> Handle(UpdateLandPlot request, CancellationToken cancellationToken)
             {
                 var farm = _context.Plots.First(f => f.TenantId == request.TenantId && f.Id == request.LandPlot.Id);
                 farm = request.LandPlot.MapToEntity(farm);

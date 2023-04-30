@@ -27,22 +27,22 @@ namespace BackEnd.BusinessLogic.Livestock
         public bool? BottleFed { get; set; }
         public bool? ForSale { get; set; }
         
-        public IQueryable<Domain.Entity.Livestock> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.Livestocks.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
             if (MotherId.HasValue) query = query.Where(_ => _.MotherId == MotherId);
             if (FatherId.HasValue) query = query.Where(_ => _.FatherId == FatherId);
-            if (LivestockBreedId.HasValue) query = query.Where(_ => _.Breed.Id== LivestockBreedId);
+            if (LivestockBreedId.HasValue) query = query.Where(_ => _.Breed.Id == LivestockBreedId);
             if (!string.IsNullOrEmpty(Name)) query = query.Where(_ => _.Name != null && _.Name.Contains(Name));
-            if (Birthdate.HasValue) query = query.Where(_ => _.Birthdate ==Birthdate);
+            if (Birthdate.HasValue) query = query.Where(_ => _.Birthdate == Birthdate);
             if (!string.IsNullOrEmpty(Gender)) query = query.Where(_ => _.Gender != null && _.Gender.Contains(Gender));
             if (!string.IsNullOrEmpty(Variety)) query = query.Where(_ => _.Variety != null && _.Variety.Contains(Variety));
             if (!string.IsNullOrEmpty(Description)) query = query.Where(_ => _.Description != null && _.Description.Contains(Description));
             if (!string.IsNullOrEmpty(BirthDefect)) query = query.Where(_ => _.BirthDefect != null && _.BirthDefect.Contains(BirthDefect));
-            if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Statuses.Any() && _.Statuses.OrderByDescending(s=>s.ModifiedOn).First().Status.Contains(Status));
+            if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Statuses.Any() && _.Statuses.OrderByDescending(s => s.ModifiedOn).First().Status.Contains(Status));
 
-            if (BeingManaged.HasValue) query = query.Where(_ => _.BeingManaged== BeingManaged );
+            if (BeingManaged.HasValue) query = query.Where(_ => _.BeingManaged == BeingManaged);
             if (BornDefective.HasValue) query = query.Where(_ => _.BornDefective == BornDefective);
             if (Sterile.HasValue) query = query.Where(_ => _.Sterile == Sterile);
             if (InMilk.HasValue) query = query.Where(_ => _.InMilk == InMilk);
@@ -50,8 +50,7 @@ namespace BackEnd.BusinessLogic.Livestock
             if (ForSale.HasValue) query = query.Where(_ => _.ForSale == ForSale);
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
-
     }
 }

@@ -1,5 +1,31 @@
-﻿<h3>LivestockTypeEditor</h3>
-
-@code {
-
+﻿@using Domain.Constants;
+@using Domain.Enums;
+@if (livestockType is not null)
+{ 
+<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
+    <DataAnnotationsValidator />
+    <div class="dataSection">
+        <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockType.Name)">
+                <input placeholder="Name" value="@livestockType.Name" onchange="@(async (ChangeEventArgs args)=>await CheckNameExists(args))" />
+        </ValidatedField>
+        <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => livestockType.GroupName)">
+            <InputText placeholder="Collective Name" @bind-Value="@livestockType.GroupName" />
+        </ValidatedField>
+        <ValidatedField Legend="Male Parent Name" ValidationMessageFor="@(() => livestockType.ParentMaleName)">
+            <InputText placeholder="Male Parent Name" @bind-Value="@livestockType.ParentMaleName" />
+        </ValidatedField>
+        <ValidatedField Legend="Female Parent Name" ValidationMessageFor="@(() => livestockType.ParentFemaleName)">
+            <InputText placeholder="Female Parent Name" @bind-Value="@livestockType.ParentFemaleName" />
+        </ValidatedField>
+        <ValidatedField Legend="Default Status" ValidationMessageFor="@(() => livestockType.DefaultStatus)">
+            <InputText placeholder="Default Status" @bind-Value="@livestockType.DefaultStatus" />
+        </ValidatedField>
+        <ValidatedField Legend="Care" ValidationMessageFor="@(() => livestockType.Care)">
+            <InputSelect @bind-Value="@livestockType.Care">
+                <option value="@LivestockCareConstants.Individual">@LivestockCareConstants.Individual</option>
+                <option value="@LivestockCareConstants.Collective">@LivestockCareConstants.Collective</option>
+            </InputSelect>
+        </ValidatedField>
+    </div>
+</EditForm>
 }

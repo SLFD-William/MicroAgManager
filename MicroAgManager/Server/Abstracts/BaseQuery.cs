@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Abstracts
@@ -13,7 +14,7 @@ namespace BackEnd.Abstracts
         public bool? GetDeleted { get; set; }
 
         public DateTime? LastModified { get; set; }
-
+        protected abstract IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context) where T : BaseEntity;
         protected IQueryable<T> PopulateBaseQuery<T>(IQueryable<T> query) where T : BaseEntity
         {
             if (query is null)
@@ -31,5 +32,6 @@ namespace BackEnd.Abstracts
 
             return query.AsQueryable();
         }
+
     }
 }

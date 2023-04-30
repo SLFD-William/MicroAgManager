@@ -6,21 +6,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.LandPlots
 {
-    public class CreateLandPlot : BaseCommand, IRequest<long>, ICreateCommand
+    public class CreateLandPlot : BaseCommand, ICreateCommand
     {
 
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
         [Required] public LandPlotModel LandPlot { get; set; }
-        public class Handler : IRequestHandler<CreateLandPlot, long>
+        public class Handler : BaseCommandHandler<CreateLandPlot>
         {
-            protected readonly IMicroAgManagementDbContext _context;
-            protected readonly IMediator _mediator;
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
             {
-                _context = context;
-                _mediator = mediator;
             }
-            public async Task<long> Handle(CreateLandPlot request, CancellationToken cancellationToken)
+
+            public override async Task<long> Handle(CreateLandPlot request, CancellationToken cancellationToken)
             {
                 var plot = new Domain.Entity.LandPlot(request.ModifiedBy, request.TenantId);
                 plot = request.LandPlot.MapToEntity(plot);

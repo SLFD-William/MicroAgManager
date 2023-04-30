@@ -11,7 +11,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
         public long? ParameterId { get; set; }
         public decimal? AsFed { get; set; }
         public decimal? Dry { get; set; }
-        public IQueryable<Domain.Entity.LivestockFeedAnalysisResult> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockFeedAnalysisResults.AsQueryable());
             if (query is null)
@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (Dry.HasValue) query = query.Where(x => x.Dry == Dry);
             
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
 
     }

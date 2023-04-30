@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entity;
+using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace BackEnd.BusinessLogic.LandPlots
                 _mediator = mediator;
             }
             public async Task<LandPlotModel?> Handle(GetLandPlot request, CancellationToken cancellationToken) =>
-                LandPlotModel.Create(await request.GetQuery(_context).FirstOrDefaultAsync(cancellationToken));
+                LandPlotModel.Create(await request.GetQuery<LandPlot>(_context).FirstOrDefaultAsync(cancellationToken));
         }
     }
 }

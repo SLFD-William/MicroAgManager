@@ -12,7 +12,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
         public bool? Discarded { get; set; }
         public string? Note { get; set; }
         public DateTime? DatePerformed { get; set; }
-        public IQueryable<Domain.Entity.LivestockFeedDistribution> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockFeedDistributions.AsQueryable());
             if (query is null)
@@ -24,7 +24,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (DatePerformed.HasValue) query = query.Where(x => x.DatePerformed == DatePerformed);
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
 
     }

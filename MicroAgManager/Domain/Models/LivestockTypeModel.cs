@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using Domain.Constants;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -13,7 +14,7 @@ namespace Domain.Models
         [Required][MaxLength(40)] public string ParentMaleName { get; set; }
         [Required][MaxLength(40)] public string ParentFemaleName { get; set; }
         [Required][MaxLength(40)] public string DefaultStatus { get; set; }
-        [Required][MaxLength(40)] public string Care { get; set; }
+        [Required][MaxLength(40)] public string Care { get; set; } = LivestockCareConstants.Individual;
         public virtual ICollection<LivestockBreedModel?> Breeds { get; set; } =new List<LivestockBreedModel?>();
         public virtual ICollection<LivestockStatusModel?> Statuses { get; set; } = new List<LivestockStatusModel?>();
         public virtual ICollection<LivestockFeedModel?> Feeds { get; set; } = new List<LivestockFeedModel?>();

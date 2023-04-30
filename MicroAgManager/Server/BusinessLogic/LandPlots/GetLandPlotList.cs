@@ -18,7 +18,7 @@ namespace BackEnd.BusinessLogic.LandPlots
             }
             public async Task<Tuple<long, ICollection<LandPlotModel?>>> Handle(GetLandPlotList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery(_context);
+                var query = request.GetQuery<Domain.Entity.LandPlot>(_context);
 
                 return new Tuple<long, ICollection<LandPlotModel?>>
                     (await query.LongCountAsync(cancellationToken),

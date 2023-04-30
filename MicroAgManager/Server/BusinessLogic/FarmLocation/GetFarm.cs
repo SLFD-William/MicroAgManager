@@ -18,7 +18,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 _mediator = mediator;
             }
             public async Task<FarmLocationModel?> Handle(GetFarm request, CancellationToken cancellationToken)=>
-                FarmLocationModel.Create(await request.GetQuery(_context).FirstOrDefaultAsync(cancellationToken));
+                FarmLocationModel.Create(await request.GetQuery<Domain.Entity.FarmLocation>(_context).FirstOrDefaultAsync(cancellationToken));
         }
     }
 }

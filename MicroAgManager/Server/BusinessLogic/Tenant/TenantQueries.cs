@@ -10,7 +10,7 @@ namespace BackEnd.BusinessLogic.Tenant
         public Guid? TenantUserAdminId { get; set; }
         public TenantModel? NewTenant { get => (TenantModel?)NewModel; set => NewModel = value; }
 
-        public IQueryable<Domain.Entity.Tenant> GetQuery(IMicroAgManagementDbContext context)
+        protected IQueryable<Domain.Entity.Tenant> GetQuery(IMicroAgManagementDbContext context)
         { 
             var query=context.Tenants.Where(t=>t.Id == TenantId).AsQueryable();
             if (query is null)
@@ -29,6 +29,11 @@ namespace BackEnd.BusinessLogic.Tenant
             
             query = query.OrderByDescending(_ => _.ModifiedOn);
             return query;
+        }
+
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

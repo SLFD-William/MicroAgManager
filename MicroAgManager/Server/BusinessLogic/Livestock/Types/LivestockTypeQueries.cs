@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.Livestock
+namespace BackEnd.BusinessLogic.Livestock.Types
 {
     public class LivestockTypeQueries : BaseQuery
     {
@@ -19,7 +19,7 @@ namespace BackEnd.BusinessLogic.Livestock
         public string? Status { get; set; }
         public string? Feed { get; set; }
 
-        public IQueryable<Domain.Entity.LivestockType> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockTypes.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
@@ -30,13 +30,14 @@ namespace BackEnd.BusinessLogic.Livestock
             if (!string.IsNullOrEmpty(ParentFemaleName)) query = query.Where(_ => _.ParentFemaleName != null && _.Name.Contains(ParentFemaleName));
             if (!string.IsNullOrEmpty(DefaultStatus)) query = query.Where(_ => _.DefaultStatus != null && _.Name.Contains(DefaultStatus));
             if (!string.IsNullOrEmpty(Care)) query = query.Where(_ => _.Care != null && _.Name.Contains(Care));
-            if (!string.IsNullOrEmpty(Breed)) query = query.Where(_ => _.Breeds.Any(b=>b.Name.Contains(Breed)));
+            if (!string.IsNullOrEmpty(Breed)) query = query.Where(_ => _.Breeds.Any(b => b.Name.Contains(Breed)));
             if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Statuses.Any(b => b.Status.Contains(Status)));
             if (!string.IsNullOrEmpty(Feed)) query = query.Where(_ => _.Feeds.Any(b => b.Name.Contains(Feed) || b.Source.Contains(Feed)));
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
+
 
     }
 }

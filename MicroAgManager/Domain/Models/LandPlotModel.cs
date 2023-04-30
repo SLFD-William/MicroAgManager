@@ -20,6 +20,7 @@ namespace Domain.Models
         public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;
         public long? ParentPlotId { get; set; }
         public virtual ICollection<LandPlotModel?> Subplots { get; set; }=new List<LandPlotModel?>();
+        public virtual ICollection<LivestockModel?> Livestocks { get; set; } = new List<LivestockModel?>();
 
         public static LandPlotModel? Create(LandPlot plot)
         {
@@ -32,7 +33,8 @@ namespace Domain.Models
                 ParentPlotId = plot.ParentPlotId,
                 Name= plot.Name,
                 Description= plot.Description,
-                Subplots=plot.Subplots?.Select(Create).ToList() ?? new List<LandPlotModel?>()
+                Subplots=plot.Subplots?.Select(Create).ToList() ?? new List<LandPlotModel?>(),
+                Livestocks=plot.Livestocks?.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel?>()
             }) as LandPlotModel;
             return model;
         }
@@ -49,6 +51,9 @@ namespace Domain.Models
             if(entity.Subplots?.Any() ?? false)
                 foreach(var subplot in entity.Subplots)
                     Subplots.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);
+            if(entity.Livestocks?.Any() ?? false)
+                foreach(var livestock in entity.Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.MapToEntity(livestock);
 
             return entity;
         }

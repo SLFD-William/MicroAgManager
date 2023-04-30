@@ -16,10 +16,7 @@ namespace FrontEnd.Onboarding
             MainPlot=2,
             FarmProduction =3,
             LiveStockDefinition=10,
-            LiveStockFeed = 11,
-            LiveStockFeedAnalysis = 12,
-            LiveStockFeedServing = 13,
-            LiveStockFeedChore = 13,
+            
         }
 
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
@@ -33,8 +30,8 @@ namespace FrontEnd.Onboarding
         private LandPlotEditor? landPlotEditor;
         protected LandPlotModel landPlot = new();
 
-        private LivestockTypeEditor? livestockTypeEditor;
-        protected LandPlotModel livestockType = new();
+        private AddLivestockTypeWizard? livestockTypeEditor;
+        //protected LandPlotModel livestockType = new();
 
 
         private string farmProduction = string.Empty;

@@ -14,7 +14,7 @@ namespace BackEnd.BusinessLogic.LivestockFeedAnalysis
         public DateTime? DateReceived { get; set; }
         public DateTime? DateReported { get; set; }
         public DateTime? DatePrinted { get; set; }
-        public IQueryable<Domain.Entity.LivestockFeedAnalysis> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockFeedAnalyses.AsQueryable());
             if (query is null)
@@ -29,7 +29,7 @@ namespace BackEnd.BusinessLogic.LivestockFeedAnalysis
             if (DatePrinted.HasValue) query = query.Where(x => x.DatePrinted == DatePrinted);
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
 
     }

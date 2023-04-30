@@ -18,7 +18,7 @@ namespace BackEnd.BusinessLogic.Livestock
             }
             public async Task<Tuple<long, ICollection<LivestockModel?>>> Handle(GetLivestockList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery(_context);
+                var query = request.GetQuery<Domain.Entity.Livestock>(_context);
 
                 return new Tuple<long, ICollection<LivestockModel?>>
                     (await query.LongCountAsync(cancellationToken),

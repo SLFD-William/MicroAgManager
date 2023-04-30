@@ -18,10 +18,10 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             }
             public async Task<Tuple<long, ICollection<LivestockFeedServingModel?>>> Handle(GetLivestockFeedServingList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery(_context);
+                var query = request.GetQuery<Domain.Entity.LivestockFeedServing>(_context);
                 return new Tuple<long, ICollection<LivestockFeedServingModel?>>
                     (await query.LongCountAsync(cancellationToken),
-                                                           await query.Select(f => LivestockFeedServingModel.Create(f)).ToListAsync(cancellationToken)
+                     await query.Select(f => LivestockFeedServingModel.Create(f)).ToListAsync(cancellationToken)
                                                                                                                      );
             }
         }

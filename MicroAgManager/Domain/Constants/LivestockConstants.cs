@@ -45,4 +45,11 @@
         public static string Calculation = "Calculation";
         public static string Other = "Other";
     }
+    public static class MilestoneSubcategorySystemRequiredConstants
+    { 
+        public static string Parturition = "Parturition";
+        public static string Birth = "Birth";
+        public static string Death = "Death";
+        public static string Breed = "Breed";
+    }
 }

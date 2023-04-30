@@ -19,6 +19,7 @@ namespace Domain.Entity
         public long? ParentPlotId { get; set; }
         public virtual ICollection<LandPlot>? Subplots { get; set; }
         public virtual FarmLocation? FarmLocation { get; set; }
-        
+        public ICollection<Livestock> Livestocks { get; set; } = new List<Livestock>();
+
     }
 }

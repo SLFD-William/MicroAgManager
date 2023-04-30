@@ -25,6 +25,7 @@ namespace Domain.Models
         [Required] public bool BottleFed { get; set; }
         [Required] public bool ForSale { get; set; }
         public virtual ICollection<LivestockStatusModel?> Statuses { get; set; } = new List<LivestockStatusModel?>();
+        public virtual ICollection<LandPlotModel?> Locations { get; set; } = new List<LandPlotModel?>();
         public static LivestockModel? Create(Livestock livestock)
         {
             var model = PopulateBaseModel(livestock, new LivestockModel
@@ -44,7 +45,8 @@ namespace Domain.Models
                 Variety = livestock.Variety,
                 Sterile = livestock.Sterile,
                 Name = livestock.Name,
-                Statuses = livestock.Statuses.Select(LivestockStatusModel.Create).ToList() ?? new List<LivestockStatusModel?>()
+                Statuses = livestock.Statuses.Select(LivestockStatusModel.Create).ToList() ?? new List<LivestockStatusModel?>(),
+                Locations = livestock.Locations.Select(LandPlotModel.Create).ToList() ?? new List<LandPlotModel?>()
             }) as LivestockModel;
             return model;
         }
@@ -68,6 +70,9 @@ namespace Domain.Models
             if (entity.Statuses?.Any() ?? false)
                 foreach (var breed in entity.Statuses)
                     Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
+            if(entity.Locations?.Any() ?? false)
+                foreach (var breed in entity.Locations)
+                    Locations?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
 
 
             return entity;

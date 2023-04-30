@@ -1,9 +1,8 @@
 ﻿using BackEnd.Abstracts;
-using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.Livestock
+namespace BackEnd.BusinessLogic.Livestock.Breeds
 {
     public class LivestockBreedQueries : BaseQuery
     {
@@ -13,19 +12,20 @@ namespace BackEnd.BusinessLogic.Livestock
         public string? EmojiChar { get; set; }
         public int? GestationPeriod { get; set; }
         public int? HeatPeriod { get; set; }
-        public IQueryable<LivestockBreed> GetQuery(IMicroAgManagementDbContext context)
+
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockBreeds.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
-            
-            if(LivestockTypeId.HasValue) query = query.Where(_ => _.Livestock.Id == LivestockTypeId);
+
+            if (LivestockTypeId.HasValue) query = query.Where(_ => _.Livestock.Id == LivestockTypeId);
             if (!string.IsNullOrEmpty(Name)) query = query.Where(_ => _.Name != null && _.Name.Contains(Name));
             if (!string.IsNullOrEmpty(EmojiChar)) query = query.Where(_ => _.EmojiChar != null && _.EmojiChar.Contains(EmojiChar));
-            if (GestationPeriod.HasValue) query = query.Where(_ => _.GestationPeriod==GestationPeriod);
+            if (GestationPeriod.HasValue) query = query.Where(_ => _.GestationPeriod == GestationPeriod);
             if (HeatPeriod.HasValue) query = query.Where(_ => _.HeatPeriod == HeatPeriod);
-            
+
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
     }
 }

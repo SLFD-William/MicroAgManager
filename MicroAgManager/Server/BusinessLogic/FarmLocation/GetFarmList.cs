@@ -18,7 +18,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
             }
             public async Task<Tuple<long, ICollection<FarmLocationModel?>>> Handle(GetFarmList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery(_context);
+                var query = request.GetQuery<Domain.Entity.FarmLocation>(_context);
 
                 return new Tuple<long, ICollection<FarmLocationModel?>>
                     (await query.LongCountAsync(cancellationToken),

@@ -13,7 +13,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
         public int? ReportOrder { get; set; }
         public string? SubParameter { get; set; }
 
-        public IQueryable<Domain.Entity.LivestockFeedAnalysisParameter> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockFeedAnalysisParameters.AsQueryable());
             if (query is null)
@@ -26,7 +26,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (!string.IsNullOrWhiteSpace(SubParameter)) query = query.Where(x => x.SubParameter == SubParameter);
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
 
     }

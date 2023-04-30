@@ -12,7 +12,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
         public long? StatusId { get; set; }
         public decimal? Serving { get; set; }
         public string? ServingFrequency { get; set; }
-        public IQueryable<Domain.Entity.LivestockFeedServing> GetQuery(IMicroAgManagementDbContext context)
+        protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
             var query = PopulateBaseQuery(context.LivestockFeedServings.AsQueryable());
             if (query is null)
@@ -24,7 +24,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (Serving.HasValue) query = query.Where(f=>f.Serving==Serving);
 
             query = query.OrderByDescending(_ => _.ModifiedOn);
-            return query;
+            return (IQueryable<T>)query;
         }
 
     }

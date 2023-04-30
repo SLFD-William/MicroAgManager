@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Livestock;
 using BackEnd.BusinessLogic.LivestockFeed;
+using BackEnd.BusinessLogic.Livestock.Types;
+using BackEnd.BusinessLogic.Livestock.Breeds;
+using BackEnd.BusinessLogic.Livestock.Status;
 
 namespace Host
 {
@@ -83,6 +86,8 @@ namespace Host
             app.MapPost("/api/UpdateFarmLocation", [Authorize] async (UpdateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateLandPlot", [Authorize] async (CreateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateLandPlot", [Authorize] async (UpdateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/CreateLivestockType", [Authorize] async (CreateLivestockType command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateLivestockType", [Authorize] async (UpdateLivestockType command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
 
 
         }
