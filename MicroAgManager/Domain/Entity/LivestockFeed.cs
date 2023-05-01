@@ -11,7 +11,7 @@ namespace Domain.Entity
         public string Name { get; set; }
         public string Source { get; set; }
         public int? Cutting { get; set; } //Hay Only
-        public bool? Active { get; set; }
+        public bool Active { get; set; }
         public decimal Quantity { get; set; }
         public string QuantityUnit { get; set; }
         public decimal QuantityWarning { get; set; }

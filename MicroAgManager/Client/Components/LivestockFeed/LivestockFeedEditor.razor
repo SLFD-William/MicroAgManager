@@ -1,0 +1,58 @@
+﻿@using Domain.Constants;
+@using Domain.Enums;
+@if (livestockFeed is not null)
+{
+    <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
+        <DataAnnotationsValidator />
+        <div class="dataSection">
+            <ValidatedField Legend="Active" ValidationMessageFor="@(() => livestockFeed.Active)">
+                <InputCheckbox @bind-Value="@livestockFeed.Active" />
+            </ValidatedField>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockFeed.Name)">
+                <InputText placeholder="Name" @bind-Value="@livestockFeed.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Source" ValidationMessageFor="@(() => livestockFeed.Source)">
+                <InputText placeholder="Source" @bind-Value="@livestockFeed.Source" />
+            </ValidatedField>
+            <ValidatedField Legend="Type" ValidationMessageFor="@(() => livestockFeed.FeedType)">
+                <InputSelect @bind-Value="@livestockFeed.FeedType">
+                    <option value="">Select Feed Type...</option>
+                    <option value="@LivestockFeedTypeConstants.Concentrate">@LivestockFeedTypeConstants.Concentrate</option>
+                    <option value="@LivestockFeedTypeConstants.Hay">@LivestockFeedTypeConstants.Hay</option>
+                    <option value="@LivestockFeedTypeConstants.Haylage">@LivestockFeedTypeConstants.Haylage</option>
+                    <option value="@LivestockFeedTypeConstants.Silage">@LivestockFeedTypeConstants.Silage</option>
+                    <option value="@LivestockFeedTypeConstants.Supplement">@LivestockFeedTypeConstants.Supplement</option>
+                </InputSelect>
+            </ValidatedField>
+            @if (livestockFeed.FeedType == LivestockFeedTypeConstants.Hay || livestockFeed.FeedType == LivestockFeedTypeConstants.Haylage)
+            {
+                <ValidatedField Legend="Cutting" ValidationMessageFor="@(() => livestockFeed.Cutting)">
+                    <InputNumber @bind-Value="@livestockFeed.Cutting" />
+                </ValidatedField>
+            }
+            <ValidatedField Legend="Distribution" ValidationMessageFor="@(() => livestockFeed.Distribution)">
+                <InputSelect @bind-Value="@livestockFeed.Distribution">
+                    <option value="">Select Distribution Type...</option>
+                    <option value="@LivestockFeedDistributionConstants.FreeRange">@LivestockFeedDistributionConstants.FreeRange</option>
+                    <option value="@LivestockFeedDistributionConstants.Serving">@LivestockFeedDistributionConstants.Serving</option>
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Quantity" ValidationMessageFor="@(() => livestockFeed.Quantity)">
+                <InputNumber @bind-Value="@livestockFeed.Quantity" />
+            </ValidatedField>
+            <ValidatedField Legend="Units" ValidationMessageFor="@(() => livestockFeed.QuantityUnit)">
+                <InputSelect @bind-Value="@livestockFeed.QuantityUnit">
+                    <option value="">Select Units...</option>
+                    <option value="@LivestockFeedQuantityUnitsConstants.Pounds">@LivestockFeedQuantityUnitsConstants.Pounds</option>
+                    <option value="@LivestockFeedQuantityUnitsConstants.Bales">@LivestockFeedQuantityUnitsConstants.Bales</option>
+                </InputSelect>
+            </ValidatedField>
+            @if (!string.IsNullOrWhiteSpace(livestockFeed.QuantityUnit))
+            {
+                <ValidatedField Legend="@($"Quantity Warning ({livestockFeed.QuantityUnit})")" ValidationMessageFor="@(() => livestockFeed.Cutting)">
+                    <InputNumber @bind-Value="@livestockFeed.QuantityWarning" />
+                </ValidatedField>
+            }
+        </div>
+    </EditForm>
+}

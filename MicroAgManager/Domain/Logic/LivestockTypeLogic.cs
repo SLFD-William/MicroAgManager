@@ -4,7 +4,6 @@ using Domain.Entity;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 
 namespace Domain.Logic
 {
@@ -15,7 +14,7 @@ namespace Domain.Logic
             var entitiesModified= new List<ModifiedEntity>();
             var livestockType = await context.LivestockTypes.FindAsync(id);
             if (livestockType == null) throw new Exception("LivestockType not found");
-           entitiesModified.Add(new ModifiedEntity(livestockType.Id.ToString(), livestockType.GetType().ToString(), "Created",livestockType.ModifiedBy));
+            entitiesModified.Add(new ModifiedEntity(livestockType.Id.ToString(), livestockType.GetType().Name, "Created",livestockType.ModifiedBy));
 
             AddLivestockTypeStatus(livestockType, context);
             AddRequiredMilestones(livestockType, context);

@@ -27,19 +27,16 @@
                 }
                 if (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock)
                 {
-                    <AddLivestockTypeWizard @ref="livestockTypeEditor"></AddLivestockTypeWizard>
+                    <CascadingValue Value="livestockType">
+                        <AddLivestockTypeWizard Completed="@LivestockTypeWizardCompleted"></AddLivestockTypeWizard>
+                    </CascadingValue>
                 }
             }
-            @if (Step == (int)Steps.LiveStockDefinition)
-            {
-                <p>What kind of live stock are you raising?</p>
-            }
-
-            @if (Step != 1)
+            @if (ShowPrevious())
             {
                 <button @onclick="Prev" type="button">Prev</button>
             }
-            @if (Step != 4)
+            @if (ShowNext())
             {
                 <button @onclick="Next" type="submit">Next</button>
             }

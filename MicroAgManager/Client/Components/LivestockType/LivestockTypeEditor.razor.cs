@@ -12,9 +12,10 @@ namespace FrontEnd.Components.LivestockType
     {
         [CascadingParameter] IFrontEndApiServices api { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
+        [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
         [Parameter] public EventCallback<LivestockTypeModel> Submitted { get; set; }
         [Parameter] public long? livestockTypeId { get; set; }
-        [Parameter] public LivestockTypeModel livestockType { get; set; }
+        
         private async Task CheckNameExists(ChangeEventArgs args)
         {
             var name = args.Value?.ToString();
@@ -33,6 +34,7 @@ namespace FrontEnd.Components.LivestockType
             if(livestockType is not null)
             { 
                 editContext = new EditContext(livestockType);
+                StateHasChanged();
                 return;
             }
             var query = dbContext.LivestockTypes.AsQueryable();
@@ -50,7 +52,7 @@ namespace FrontEnd.Components.LivestockType
                 if (livestockType.Id <= 0)
                     livestockType.Id = await api.ProcessCommand<LivestockTypeModel, CreateLivestockType>("api/CreateLivestockType", new CreateLivestockType { LivestockType=livestockType });
                 else
-                    livestockType.Id = await api.ProcessCommand<LandPlotModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
+                    livestockType.Id = await api.ProcessCommand<LivestockTypeModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
 
                 if(livestockType.Id <= 0)
                     throw new Exception("Failed to save livestock type");

@@ -550,8 +550,7 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<bool?>("Active")
-                        .IsRequired()
+                    b.Property<bool>("Active")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("Created")

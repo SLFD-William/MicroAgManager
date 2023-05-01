@@ -1,24 +1,24 @@
-﻿<article>
+﻿@using FrontEnd.Components.LivestockFeed
+<article>
 @if (dbContext is not null && livestockType is not null)
 {
-
-    @if (Step == (int)Steps.TypeDefinition)
-    {
-        <p>Please enter information about the type of livestock you want to produce</p>
-        <LivestockTypeEditor @ref="livestockTypeEditor" livestockType="@livestockType" livestockTypeId="@livestockType.Id" Submitted="@LivestockTypeUpdated"></LivestockTypeEditor>
-    }
-    @if (Step == (int)Steps.LivestockFeed)
-    {
-        <p>What are you going to feed the livestock?</p>
-        <CascadingValue Value="@livestockType">
-
-        </CascadingValue>
-    }
-    @if (Step != 1)
+        @if (Step == (int)Steps.TypeDefinition)
+        {
+            <p>Please enter information about the type of livestock you want to produce</p>
+        
+            <LivestockTypeEditor @ref="livestockTypeEditor" livestockTypeId="@livestockType.Id" Submitted="@LivestockTypeUpdated"></LivestockTypeEditor>
+        }
+        @if (Step == (int)Steps.LivestockFeed)
+        {
+            <p>What are you going to feed the livestock?</p>
+            <AddLivestockFeedWizard Completed="@LivestockFeedWizardCompleted"></AddLivestockFeedWizard>
+        }
+    
+    @if (ShowPrevious())
     {
         <button @onclick="Prev" type="button">Prev</button>
     }
-    @if (Step != 4)
+    @if (ShowNext())
     {
         <button @onclick="Next" type="submit">Next</button>
     }

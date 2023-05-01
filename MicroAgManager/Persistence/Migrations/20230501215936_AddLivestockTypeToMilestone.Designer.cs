@@ -12,7 +12,7 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230501154717_AddLivestockTypeToMilestone")]
+    [Migration("20230501215936_AddLivestockTypeToMilestone")]
     partial class AddLivestockTypeToMilestone
     {
         /// <inheritdoc />
@@ -553,8 +553,7 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<bool?>("Active")
-                        .IsRequired()
+                    b.Property<bool>("Active")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("Created")

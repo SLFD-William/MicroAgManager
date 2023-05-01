@@ -13,7 +13,7 @@ namespace Domain.Models
         [Required][MaxLength(255)] public string Source { get; set; }
         [Range(1, int.MaxValue)] public int? Cutting { get; set; } //Hay Only
         //[RequiredIf("AnimalFeedType", "Hay")]
-        [Required]public bool? Active { get; set; }
+        [Required]public bool Active { get; set; }
         [Required][Precision(18, 3)][Range(0, (double)decimal.MaxValue)] public decimal Quantity { get; set; }
         [Required][MaxLength(20)] public string QuantityUnit { get; set; }
         [Required][Precision(18, 3)][Range(0, (double)decimal.MaxValue)] public decimal QuantityWarning { get; set; }

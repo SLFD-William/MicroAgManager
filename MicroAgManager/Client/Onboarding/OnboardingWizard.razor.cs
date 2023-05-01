@@ -6,6 +6,7 @@ using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockType;
 using FrontEnd.Services;
+using Domain.Constants;
 
 namespace FrontEnd.Onboarding
 {
@@ -30,16 +31,18 @@ namespace FrontEnd.Onboarding
         
         private LandPlotEditor? landPlotEditor;
         protected LandPlotModel landPlot = new();
-
-        private AddLivestockTypeWizard? livestockTypeEditor;
-        //protected LandPlotModel livestockType = new();
-
-
+        private LivestockTypeModel livestockType;
         private string farmProduction = string.Empty;
         private void FarmLocationUpdated(FarmLocationModel args)=>farm = args;
         private void LandPlotUpdated(LandPlotModel args) => landPlot = args;
-        private void LivestockTypeUpdated(LandPlotModel args) => landPlot = args;
-
+        private async Task LivestockTypeWizardCompleted(bool args)
+        {
+            if (args)
+                Step = await ProcessStepOnNextTransition();
+            else
+                Step = ProcessStepOnPrevTransition();
+        }
+        
         protected async override Task OnInitializedAsync()
         {
             if (dbContext is null) return;
@@ -51,6 +54,8 @@ namespace FrontEnd.Onboarding
                 farm.Name = tenant.Name;
             }
             landPlot = farm.Plots?.FirstOrDefault() ?? new();
+            livestockType= await dbContext.LivestockTypes.FirstOrDefaultAsync();
+
             StateHasChanged();
         }
         private async Task Next()
@@ -58,6 +63,19 @@ namespace FrontEnd.Onboarding
             Step = await ProcessStepOnNextTransition();
             StateHasChanged();
         }
+        private bool ShowPrevious()
+        {
+            var show = Step != 1;
+            if(Step == (int)Steps.FarmProduction && (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock))
+                show = false;
+
+            return show; }
+        private bool ShowNext()
+        {
+            var show = Step != 4;
+            if (Step == (int)Steps.FarmProduction && (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock))
+                show = false;
+            return show; }
         private void Prev()
         {
             Step = ProcessStepOnPrevTransition();
@@ -65,11 +83,6 @@ namespace FrontEnd.Onboarding
         }
         private int ProcessStepOnPrevTransition()
         {
-            switch (Step)
-            {
-                case (int)Steps.LiveStockDefinition:
-                    return 3;
-            }
             return Step-1;
         }
         private async Task<int> ProcessStepOnNextTransition()
