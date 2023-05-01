@@ -11,14 +11,104 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    [Migration("20230428194635_LivestockFeed")]
-    partial class LivestockFeed
+    [Migration("20230501135208_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
+
+            modelBuilder.Entity("Domain.Models.DutyModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DaysDue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DutyType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("DutyTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(1)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("SystemRequired")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Duties");
+                });
+
+            modelBuilder.Entity("Domain.Models.EventModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Events");
+                });
 
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
                 {
@@ -185,6 +275,142 @@ namespace FrontEnd.Persistence.Migrations
                     b.ToTable("LivestockBreeds");
                 });
 
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("DatePrinted")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateReceived")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateReported")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DateSampled")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FeedId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LabNumber")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TestCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LivestockFeedAnalyses");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisParameterModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Parameter")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReportOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SubParameter")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LivestockFeedAnalysisParameters");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AnalysisId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("AsFed")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Dry")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("LivestockFeedAnalysisModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ParameterId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LivestockFeedAnalysisModelId");
+
+                    b.ToTable("LivestockFeedAnalysisResults");
+                });
+
             modelBuilder.Entity("Domain.Models.LivestockFeedDistributionModel", b =>
                 {
                     b.Property<long>("Id")
@@ -207,6 +433,9 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long>("FeedId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("LivestockFeedModelId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -223,6 +452,8 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LivestockFeedModelId");
 
                     b.ToTable("LivestockFeedDistributions");
                 });
@@ -541,6 +772,95 @@ namespace FrontEnd.Persistence.Migrations
                     b.ToTable("LivestockTypes");
                 });
 
+            modelBuilder.Entity("Domain.Models.MilestoneModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subcategory")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("SystemRequired")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Milestones");
+                });
+
+            modelBuilder.Entity("Domain.Models.ScheduledDutyModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("CompletedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CompletedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Dismissed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DueOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("DutyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("DutyModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("EventModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ReminderDays")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompletedOn");
+
+                    b.HasIndex("Dismissed");
+
+                    b.HasIndex("DueOn");
+
+                    b.HasIndex("DutyModelId");
+
+                    b.HasIndex("EventModelId");
+
+                    b.ToTable("ScheduledDuties");
+                });
+
             modelBuilder.Entity("Domain.Models.TenantModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -570,6 +890,66 @@ namespace FrontEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("DutyModelEventModel", b =>
+                {
+                    b.Property<long>("DutiesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("EventsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DutiesId", "EventsId");
+
+                    b.HasIndex("EventsId");
+
+                    b.ToTable("DutyModelEventModel");
+                });
+
+            modelBuilder.Entity("DutyModelMilestoneModel", b =>
+                {
+                    b.Property<long>("DutiesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("MilestonesId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("DutiesId", "MilestonesId");
+
+                    b.HasIndex("MilestonesId");
+
+                    b.ToTable("DutyModelMilestoneModel");
+                });
+
+            modelBuilder.Entity("EventModelMilestoneModel", b =>
+                {
+                    b.Property<long>("EventsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("MilestonesId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("EventsId", "MilestonesId");
+
+                    b.HasIndex("MilestonesId");
+
+                    b.ToTable("EventModelMilestoneModel");
+                });
+
+            modelBuilder.Entity("LandPlotModelLivestockModel", b =>
+                {
+                    b.Property<long>("LivestocksId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("LocationsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("LivestocksId", "LocationsId");
+
+                    b.HasIndex("LocationsId");
+
+                    b.ToTable("LandPlotModelLivestockModel");
                 });
 
             modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
@@ -612,6 +992,20 @@ namespace FrontEnd.Persistence.Migrations
                         .HasForeignKey("LivestockTypeModelId");
                 });
 
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockFeedAnalysisModel", null)
+                        .WithMany("Results")
+                        .HasForeignKey("LivestockFeedAnalysisModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockFeedDistributionModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockFeedModel", null)
+                        .WithMany("Distributions")
+                        .HasForeignKey("LivestockFeedModelId");
+                });
+
             modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
                 {
                     b.HasOne("Domain.Models.LivestockTypeModel", null)
@@ -640,6 +1034,77 @@ namespace FrontEnd.Persistence.Migrations
                         .HasForeignKey("LivestockTypeModelId");
                 });
 
+            modelBuilder.Entity("Domain.Models.ScheduledDutyModel", b =>
+                {
+                    b.HasOne("Domain.Models.DutyModel", null)
+                        .WithMany("ScheduledDuties")
+                        .HasForeignKey("DutyModelId");
+
+                    b.HasOne("Domain.Models.EventModel", null)
+                        .WithMany("ScheduledDuties")
+                        .HasForeignKey("EventModelId");
+                });
+
+            modelBuilder.Entity("DutyModelEventModel", b =>
+                {
+                    b.HasOne("Domain.Models.DutyModel", null)
+                        .WithMany()
+                        .HasForeignKey("DutiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.EventModel", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DutyModelMilestoneModel", b =>
+                {
+                    b.HasOne("Domain.Models.DutyModel", null)
+                        .WithMany()
+                        .HasForeignKey("DutiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.MilestoneModel", null)
+                        .WithMany()
+                        .HasForeignKey("MilestonesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EventModelMilestoneModel", b =>
+                {
+                    b.HasOne("Domain.Models.EventModel", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.MilestoneModel", null)
+                        .WithMany()
+                        .HasForeignKey("MilestonesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LandPlotModelLivestockModel", b =>
+                {
+                    b.HasOne("Domain.Models.LivestockModel", null)
+                        .WithMany()
+                        .HasForeignKey("LivestocksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.LandPlotModel", null)
+                        .WithMany()
+                        .HasForeignKey("LocationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
                 {
                     b.HasOne("Domain.Models.LivestockModel", null)
@@ -653,6 +1118,16 @@ namespace FrontEnd.Persistence.Migrations
                         .HasForeignKey("StatusesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Models.DutyModel", b =>
+                {
+                    b.Navigation("ScheduledDuties");
+                });
+
+            modelBuilder.Entity("Domain.Models.EventModel", b =>
+                {
+                    b.Navigation("ScheduledDuties");
                 });
 
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
@@ -670,8 +1145,15 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("Livestocks");
                 });
 
+            modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisModel", b =>
+                {
+                    b.Navigation("Results");
+                });
+
             modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
                 {
+                    b.Navigation("Distributions");
+
                     b.Navigation("Servings");
                 });
 

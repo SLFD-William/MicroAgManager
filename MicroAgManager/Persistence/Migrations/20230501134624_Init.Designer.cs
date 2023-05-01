@@ -9,11 +9,11 @@ using Persistence;
 
 #nullable disable
 
-namespace Persistence.Migrations
+namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230429211032_LivestockOnLandPlot")]
-    partial class LivestockOnLandPlot
+    [Migration("20230501134624_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,6 +99,130 @@ namespace Persistence.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entity.Duty", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DaysDue")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Deleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DutyType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<long>("DutyTypeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(1)
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("SystemRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Deleted" }, "Index_Duty_Deleted");
+
+                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Duty_ModifiedOn");
+
+                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Duty_TenantIdAndPrimaryKey");
+
+                    b.ToTable("Duties");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Event", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Deleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Deleted" }, "Index_Event_Deleted");
+
+                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Event_ModifiedOn");
+
+                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Event_TenantIdAndPrimaryKey");
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Domain.Entity.FarmLocation", b =>
@@ -957,6 +1081,131 @@ namespace Persistence.Migrations
                     b.ToTable("LivestockTypes");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Milestone", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Deleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subcategory")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<bool>("SystemRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Deleted" }, "Index_Milestone_Deleted");
+
+                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Milestone_ModifiedOn");
+
+                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Milestone_TenantIdAndPrimaryKey");
+
+                    b.ToTable("Milestones");
+                });
+
+            modelBuilder.Entity("Domain.Entity.ScheduledDuty", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid?>("CompletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Deleted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Dismissed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("DueOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("DutyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("EventId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("LivestockId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("ReminderDays")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DutyId");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("LivestockId");
+
+                    b.HasIndex(new[] { "CompletedOn" }, "Index_ScheduledDuty_CompletedOn");
+
+                    b.HasIndex(new[] { "Deleted" }, "Index_ScheduledDuty_Deleted");
+
+                    b.HasIndex(new[] { "Dismissed" }, "Index_ScheduledDuty_Dismissed");
+
+                    b.HasIndex(new[] { "DueOn" }, "Index_ScheduledDuty_DueOn");
+
+                    b.HasIndex(new[] { "ModifiedOn" }, "Index_ScheduledDuty_ModifiedOn");
+
+                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_ScheduledDuty_TenantIdAndPrimaryKey");
+
+                    b.ToTable("ScheduledDuties");
+                });
+
             modelBuilder.Entity("Domain.Entity.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1136,6 +1385,51 @@ namespace Persistence.Migrations
                     b.HasIndex("SubjectId", "SessionId", "Type");
 
                     b.ToTable("PersistedGrants", (string)null);
+                });
+
+            modelBuilder.Entity("DutyEvent", b =>
+                {
+                    b.Property<long>("DutiesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EventsId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("DutiesId", "EventsId");
+
+                    b.HasIndex("EventsId");
+
+                    b.ToTable("DutyEvent");
+                });
+
+            modelBuilder.Entity("DutyMilestone", b =>
+                {
+                    b.Property<long>("DutiesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MilestonesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("DutiesId", "MilestonesId");
+
+                    b.HasIndex("MilestonesId");
+
+                    b.ToTable("DutyMilestone");
+                });
+
+            modelBuilder.Entity("EventMilestone", b =>
+                {
+                    b.Property<long>("EventsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MilestonesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("EventsId", "MilestonesId");
+
+                    b.HasIndex("MilestonesId");
+
+                    b.ToTable("EventMilestone");
                 });
 
             modelBuilder.Entity("LandPlotLivestock", b =>
@@ -1488,6 +1782,70 @@ namespace Persistence.Migrations
                     b.Navigation("LivestockType");
                 });
 
+            modelBuilder.Entity("Domain.Entity.ScheduledDuty", b =>
+                {
+                    b.HasOne("Domain.Entity.Duty", "Duty")
+                        .WithMany("ScheduledDuties")
+                        .HasForeignKey("DutyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.Event", null)
+                        .WithMany("ScheduledDuties")
+                        .HasForeignKey("EventId");
+
+                    b.HasOne("Domain.Entity.Livestock", null)
+                        .WithMany("ScheduledDuties")
+                        .HasForeignKey("LivestockId");
+
+                    b.Navigation("Duty");
+                });
+
+            modelBuilder.Entity("DutyEvent", b =>
+                {
+                    b.HasOne("Domain.Entity.Duty", null)
+                        .WithMany()
+                        .HasForeignKey("DutiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DutyMilestone", b =>
+                {
+                    b.HasOne("Domain.Entity.Duty", null)
+                        .WithMany()
+                        .HasForeignKey("DutiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.Milestone", null)
+                        .WithMany()
+                        .HasForeignKey("MilestonesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EventMilestone", b =>
+                {
+                    b.HasOne("Domain.Entity.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.Milestone", null)
+                        .WithMany()
+                        .HasForeignKey("MilestonesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LandPlotLivestock", b =>
                 {
                     b.HasOne("Domain.Entity.Livestock", null)
@@ -1596,6 +1954,16 @@ namespace Persistence.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Duty", b =>
+                {
+                    b.Navigation("ScheduledDuties");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Event", b =>
+                {
+                    b.Navigation("ScheduledDuties");
+                });
+
             modelBuilder.Entity("Domain.Entity.FarmLocation", b =>
                 {
                     b.Navigation("Plots");
@@ -1604,6 +1972,11 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
                 {
                     b.Navigation("Subplots");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Livestock", b =>
+                {
+                    b.Navigation("ScheduledDuties");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockBreed", b =>

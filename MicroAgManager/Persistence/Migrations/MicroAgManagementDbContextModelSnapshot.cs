@@ -8,7 +8,7 @@ using Persistence;
 
 #nullable disable
 
-namespace Persistence.Migrations
+namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
     partial class MicroAgManagementDbContextModelSnapshot : ModelSnapshot
