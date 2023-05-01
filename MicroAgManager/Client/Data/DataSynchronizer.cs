@@ -9,9 +9,12 @@ using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
+using BackEnd.Models;
 using Domain.Models;
+using FrontEnd.Pages;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using System.Diagnostics;
@@ -62,6 +65,12 @@ namespace FrontEnd.Data
             await db.Database.MigrateAsync();
             await db.Database.EnsureCreatedAsync();
         }
+        public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
+        { 
+            var modified=notifications.EntitiesModified.Where(e=>e.ModifiedBy!=UserId || e.Modification=="Created")
+                .Select(e=>$"{e.EntityName}Model");
+            await EnsureSynchronizingAsync(modified.ToList());
+        }
         private async Task EnsureSynchronizingAsync(List<string>? entityModels)
         {
             // Don't run multiple syncs in parallel. This simple logic is adequate because of single-threadedness.
@@ -95,6 +104,7 @@ namespace FrontEnd.Data
                 if (ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) await BulkUpdateScheduledDuties(db, _api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel))) await BulkUpdateMilestones(db, _api);
                 if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, _api);
+                await db.SaveChangesAsync();
                 OnUpdate?.Invoke();
             }
             catch (Exception ex)
@@ -124,7 +134,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateFarmLocations(FrontEndDbContext db, IFrontEndApiServices api)
@@ -142,7 +151,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLandPlots(FrontEndDbContext db, IFrontEndApiServices api)
@@ -178,7 +186,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockBreeds(FrontEndDbContext db, IFrontEndApiServices api)
@@ -196,7 +203,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockStatuses(FrontEndDbContext db, IFrontEndApiServices api)
@@ -214,7 +220,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockFeeds(FrontEndDbContext db, IFrontEndApiServices api)
@@ -232,7 +237,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockFeedServings(FrontEndDbContext db, IFrontEndApiServices api)
@@ -250,7 +254,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockFeedDistributions(FrontEndDbContext db, IFrontEndApiServices api)
@@ -268,7 +271,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockFeedAnalysisParameters(FrontEndDbContext db, IFrontEndApiServices api)
@@ -286,7 +288,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockFeedAnalyses(FrontEndDbContext db, IFrontEndApiServices api)
@@ -304,7 +305,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateLivestockFeedAnalysisResults(FrontEndDbContext db, IFrontEndApiServices api)
@@ -322,7 +322,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateDuties(FrontEndDbContext db, IFrontEndApiServices api)
@@ -340,7 +339,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateScheduledDuties(FrontEndDbContext db, IFrontEndApiServices api)
@@ -358,7 +356,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateMilestones(FrontEndDbContext db, IFrontEndApiServices api)
@@ -376,7 +373,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
         private async static Task BulkUpdateEvents(FrontEndDbContext db, IFrontEndApiServices api)
@@ -394,7 +390,6 @@ namespace FrontEnd.Data
                     db.Attach(model);
                     db.Entry(model).State = existingAccountIds.Contains(model.Id) ? EntityState.Modified : EntityState.Added;
                 }
-                await db.SaveChangesAsync();
             }
         }
     }

@@ -28,7 +28,7 @@ namespace BackEnd.Abstracts
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
 
             if (LastModified.HasValue)
-                query = query.Where(_ => _.ModifiedOn >= LastModified);
+                query = query.Where(_ => _.ModifiedOn > LastModified);
 
             return query.AsQueryable();
         }

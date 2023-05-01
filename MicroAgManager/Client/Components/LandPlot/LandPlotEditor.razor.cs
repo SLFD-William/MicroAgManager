@@ -31,16 +31,15 @@ namespace FrontEnd.Components.LandPlot
         {
             try
             {
-                var state = plot.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
-                if (state == EntityState.Added)
+                if (plot.Id <= 0)
                     plot.Id = await api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = plot });
                 else
                     plot.Id = await api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = plot }); 
 
-                dbContext.Attach(plot);
-                dbContext.Entry(plot).State = state;
-                await dbContext.SaveChangesAsync();
+                if (plot.Id <= 0)
+                    throw new Exception("Unable to save plot");
+
                 editContext = new EditContext(plot);
                 await Submitted.InvokeAsync(plot);
                 StateHasChanged();

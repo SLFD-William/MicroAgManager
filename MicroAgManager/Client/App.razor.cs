@@ -1,4 +1,5 @@
-﻿using FrontEnd.Data;
+﻿using BackEnd.Models;
+using FrontEnd.Data;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
@@ -55,20 +56,22 @@ namespace FrontEnd
             _hubConnection.Closed += _hubConnection_Closed;
             _hubConnection.Reconnected += _hubConnection_Reconnected;
             _hubConnection.Reconnecting += _hubConnection_Reconnecting;
-            _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-            {
-                throw new NotImplementedException();
-            });
+            _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",
+                async (notifications) => {
+                    await _dbSynchonizer?.HandleModifiedEntities(authentication?.UserId() ?? Guid.NewGuid(), notifications);
+                });
             try
             {
                 await _hubConnection.StartAsync();
                 var foo = _hubConnection.State;
+                await _hubConnection.InvokeAsync("JoinGroup", authentication?.TenantId() ?? Guid.NewGuid());
             }
             catch (Exception ex) { Console.WriteLine(ex); }
         }
         private async Task DisposeNotificationHub()
         {
             if (_hubConnection is null) return;
+            await _hubConnection.InvokeAsync("LeaveGroup", authentication?.TenantId() ?? Guid.NewGuid());
             _hubConnection.Closed -= _hubConnection_Closed;
             _hubConnection.Reconnected -= _hubConnection_Reconnected;
             _hubConnection.Reconnecting -= _hubConnection_Reconnecting;
@@ -78,9 +81,9 @@ namespace FrontEnd
         {
             throw new NotImplementedException();
         }
-        private Task _hubConnection_Reconnected(string? arg)
+        private async Task _hubConnection_Reconnected(string? arg)
         {
-            throw new NotImplementedException();
+            await _hubConnection.InvokeAsync("JoinGroup", authentication?.TenantId() ?? Guid.NewGuid());
         }
         private Task _hubConnection_Closed(Exception? arg)
         {

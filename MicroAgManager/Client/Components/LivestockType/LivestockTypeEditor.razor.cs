@@ -47,14 +47,14 @@ namespace FrontEnd.Components.LivestockType
             {
                 var state = livestockType.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
-                if (state == EntityState.Added)
+                if (livestockType.Id <= 0)
                     livestockType.Id = await api.ProcessCommand<LivestockTypeModel, CreateLivestockType>("api/CreateLivestockType", new CreateLivestockType { LivestockType=livestockType });
                 else
                     livestockType.Id = await api.ProcessCommand<LandPlotModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
 
-                dbContext.Attach(livestockType);
-                dbContext.Entry(livestockType).State = state;
-                await dbContext.SaveChangesAsync();
+                if(livestockType.Id <= 0)
+                    throw new Exception("Failed to save livestock type");
+
                 editContext = new EditContext(livestockType);
                 await Submitted.InvokeAsync(livestockType);
                 StateHasChanged();

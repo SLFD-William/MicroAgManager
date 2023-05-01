@@ -1,6 +1,8 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Models;
 using Domain.Interfaces;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
@@ -31,16 +33,9 @@ namespace BackEnd.BusinessLogic.LandPlots
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(plot.Id.ToString(), plot.GetType().Name, "Created", plot.ModifiedBy) }), cancellationToken);
                 }
                 catch (Exception ex) {Console.WriteLine(ex.ToString());}
-
-                //await _mediator.Publish(new NotificationMessage
-                //{
-                //    To = request.TenantId.ToString(),
-                //    Body = $"{nameof(LandPlotModel)} {farm.Id}",
-                //    From = request.ModifiedBy.ToString(),
-                //    Subject = "Create"
-                //}, cancellationToken);
                 return plot.Id;
             }
 

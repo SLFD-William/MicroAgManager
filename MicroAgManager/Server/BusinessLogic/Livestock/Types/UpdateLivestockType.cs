@@ -1,5 +1,7 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Models;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 using MediatR;
 
 namespace BackEnd.BusinessLogic.Livestock.Types
@@ -25,15 +27,9 @@ namespace BackEnd.BusinessLogic.Livestock.Types
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockType.Id.ToString(), livestockType.GetType().Name, "Modified", livestockType.ModifiedBy) }), cancellationToken);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                //await _mediator.Publish(new NotificationMessage
-                //{
-                //    To = request.TenantId.ToString(),
-                //    Body = $"{nameof(LandPlotModel)} {farm.Id}",
-                //    From = request.ModifiedBy.ToString(),
-                //    Subject = "Create"
-                //}, cancellationToken);
                 return livestockType.Id;
             }
         }

@@ -3,6 +3,7 @@
 @using BackEnd.Abstracts
 @using BackEnd.BusinessLogic.Authentication
 @using BackEnd.Models.Authentication
+@using FrontEnd.Persistence;
 @inject NavigationManager navigationManager
 @inject FrontEndAuthenticationStateProvider authStateProvider
 <div class="Authentication">
@@ -44,7 +45,7 @@
 </div>
 @code{
     private EditContext? editContext;
-
+    [CascadingParameter] FrontEndDbContext dbContext { get; set; }
     public bool IsRegistering { get; private set; }
     public string Email { get => IsRegistering ? registerRequest.Email : loginRequest.Email ; 
         set{registerRequest.Email = loginRequest.Email = value;} }
@@ -87,6 +88,9 @@
                 : await authStateProvider.Login((LoginUserCommand)registerRequest);
             if (!loginResult.success)
                 return;
+            while (!dbContext.Tenants.Any(t => t.Id == authStateProvider.TenantId()))
+                await Task.Delay(100);
+
             StateHasChanged();
             if (IsRegistering)//TODO Handle Email Confirmation
                 navigationManager.NavigateTo("onboarding");

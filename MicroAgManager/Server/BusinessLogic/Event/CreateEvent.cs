@@ -1,6 +1,8 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Models;
 using Domain.Interfaces;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,18 +20,20 @@ namespace BackEnd.BusinessLogic.Event
             }
             public override async Task<long> Handle(CreateEvent request, CancellationToken cancellationToken)
             {
-                var Event = new Domain.Entity.Event(request.ModifiedBy, request.TenantId);
-                Event = request.Event.MapToEntity(Event);
-                Event.ModifiedOn = Event.Created = DateTime.Now;
-                Event.ModifiedBy = Event.CreatedBy = request.ModifiedBy;
-                Event.TenantId = request.TenantId;
-                _context.Events.Add(Event);
+                var eventEntity = new Domain.Entity.Event(request.ModifiedBy, request.TenantId);
+                eventEntity = request.Event.MapToEntity(eventEntity);
+                eventEntity.ModifiedOn = eventEntity.Created = DateTime.Now;
+                eventEntity.ModifiedBy = eventEntity.CreatedBy = request.ModifiedBy;
+                eventEntity.TenantId = request.TenantId;
+                _context.Events.Add(eventEntity);
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, 
+                        new() { new ModifiedEntity(eventEntity.Id.ToString(),eventEntity.GetType().Name, "Created", eventEntity.ModifiedBy) }), cancellationToken);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                return Event.Id;
+                return eventEntity.Id;
             }
         }
 

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using BackEnd.Models.Authentication;
 using System.ComponentModel.DataAnnotations;
+using BackEnd.Models;
+using Domain.ValueObjects;
 
 namespace BackEnd.BusinessLogic.Authentication
 {
@@ -65,7 +67,7 @@ namespace BackEnd.BusinessLogic.Authentication
                 loginResult.message = string.Empty;
                 loginResult.success = true;
                 loginResult.token = token;
-
+                await _mediator.Publish(new EntitiesModifiedNotification(tenant.Id, new() { new ModifiedEntity(tenant.Id.ToString(), tenant.GetType().Name, "Created", tenant.ModifiedBy) }), cancellationToken);
                 return loginResult;
             }
 

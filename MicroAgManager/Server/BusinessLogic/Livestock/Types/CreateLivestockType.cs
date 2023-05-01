@@ -9,7 +9,7 @@ namespace BackEnd.BusinessLogic.Livestock.Types
     public class CreateLivestockType : BaseCommand, ICreateCommand
     {
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
-        [Required] public Domain.Models.LivestockTypeModel LivestockType { get; set; }
+        [Required] public LivestockTypeModel LivestockType { get; set; }
         public class Handler : BaseCommandHandler<CreateLivestockType>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
@@ -26,16 +26,9 @@ namespace BackEnd.BusinessLogic.Livestock.Types
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new LivestockTypeCreated { EntityName=nameof(LivestockTypeModel), Id= livestockType.Id, ModifiedBy= livestockType.ModifiedBy,TenantId= livestockType.TenantId }, cancellationToken);
+                    await _mediator.Publish(new LivestockTypeCreated { EntityName=livestockType.GetType().Name, Id= livestockType.Id, ModifiedBy= livestockType.ModifiedBy,TenantId= livestockType.TenantId }, cancellationToken);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                //await _mediator.Publish(new NotificationMessage
-                //{
-                //    To = request.TenantId.ToString(),
-                //    Body = $"{nameof(LandPlotModel)} {farm.Id}",
-                //    From = request.ModifiedBy.ToString(),
-                //    Subject = "Create"
-                //}, cancellationToken);
                 return livestockType.Id;
             }
         }

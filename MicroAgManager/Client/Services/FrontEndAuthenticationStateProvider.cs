@@ -14,6 +14,7 @@ namespace FrontEnd.Services
         private readonly HttpClient _httpClient;
         public ClaimsPrincipal? User { get; private set; }
         public Guid UserId() => Guid.Parse(User?.FindFirstValue("sub") ?? string.Empty);
+        public Guid TenantId() => Guid.Parse(User?.FindFirstValue("TenantId") ?? string.Empty);
 
         public FrontEndAuthenticationStateProvider(ILocalStorage localStorage, HttpClient httpClient)
         {

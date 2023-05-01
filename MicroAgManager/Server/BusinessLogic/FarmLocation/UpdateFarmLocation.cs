@@ -1,6 +1,8 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Models;
 using Domain.Interfaces;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 
 namespace BackEnd.BusinessLogic.FarmLocation
@@ -23,6 +25,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 farm.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);
+                await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(farm.Id.ToString(), farm.GetType().Name, "Modified", farm.ModifiedBy) }), cancellationToken);
                 return farm.Id;
             }
         }

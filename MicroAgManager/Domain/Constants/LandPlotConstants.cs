@@ -6,5 +6,6 @@
         public static string Pasture = "Pasture";
         public static string Garden = "Garden";
         public static string Outbuilding = "Outbuilding";
+        public static string Livestock = "Livestock";
     }
 }

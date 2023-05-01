@@ -7,6 +7,7 @@ namespace Domain.Entity
         public Milestone(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
+        public LivestockType? LivestockType { get; set; }
         public string Subcategory { get; set; }
         public ICollection<Event> Events { get; set; } = new List<Event>();
         public ICollection<Duty> Duties { get; set; } = new List<Duty>();

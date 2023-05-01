@@ -1,6 +1,8 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Models;
 using Domain.Interfaces;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 
 namespace BackEnd.BusinessLogic.ScheduledDuty
@@ -20,6 +22,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                 duty.ModifiedOn = DateTime.Now;
                 duty.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
+                await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);
                 return duty.Id;
             }
         }

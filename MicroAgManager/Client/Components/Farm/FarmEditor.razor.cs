@@ -34,17 +34,14 @@ namespace FrontEnd.Components.Farm
         {
             try
             {
-              
-                var state= farm.Id <= 0 ? EntityState.Added: EntityState.Modified;
-
-                if (state== EntityState.Added)
+                if (farm.Id <= 0)
                     farm.Id= await api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm });
                 else
                     farm.Id = await api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
 
-                dbContext.Attach(farm);
-                dbContext.Entry(farm).State = state;
-                await dbContext.SaveChangesAsync();
+                if (farm.Id <= 0)
+                    throw new Exception("Unable to save farm location");
+
                 editContext = new EditContext(farm);
                 await Submitted.InvokeAsync(farm);
                 StateHasChanged();

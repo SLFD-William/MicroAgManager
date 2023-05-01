@@ -1,4 +1,5 @@
-﻿<article>
+﻿@using Domain.Constants;
+<article>
     @if(dbContext is not null)
     {
             <h3>Welcome @tenant.Name</h3>
@@ -16,12 +17,15 @@
             }
             @if (Step == (int)Steps.FarmProduction)
             {
-                <p>What would you like to produce on your farm?</p>
-                <select @bind=farmProduction>
-                    <option value="">Select Product ...</option>
-                    <option value="livestock">Livestock</option>
-            </select>
-                if (farmProduction == "livestock")
+                if (landPlot.Usage == LandPlotUseConstants.GeneralUse)
+                { 
+                    <p>What would you like to produce on your farm?</p>
+                    <select @bind=farmProduction>
+                        <option value="">Select Product ...</option>
+                        <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
+                    </select>
+                }
+                if (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock)
                 {
                     <AddLivestockTypeWizard @ref="livestockTypeEditor"></AddLivestockTypeWizard>
                 }

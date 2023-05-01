@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockType;
+using FrontEnd.Services;
 
 namespace FrontEnd.Onboarding
 {
@@ -18,7 +19,7 @@ namespace FrontEnd.Onboarding
             LiveStockDefinition=10,
             
         }
-
+        [Inject] FrontEndAuthenticationStateProvider authentication { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         public int Step { get; set; } = 1;
         
@@ -42,7 +43,7 @@ namespace FrontEnd.Onboarding
         protected async override Task OnInitializedAsync()
         {
             if (dbContext is null) return;
-            tenant = await dbContext.Tenants.SingleAsync();
+            tenant = await dbContext.Tenants.SingleOrDefaultAsync(t=>t.Id==authentication.TenantId());
             farm = await dbContext.Farms.Include(f=>f.Plots).OrderBy(f=>f.Id).FirstOrDefaultAsync(f=>f.TenantId==tenant.Id);
             if (farm is null)
             {

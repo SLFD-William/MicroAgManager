@@ -7,6 +7,7 @@ namespace Domain.Entity
         public Duty(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
+        public LivestockType? LivestockType { get; set; }
         public string Name { get; set; }
         public int DaysDue { get; set; }
         public string DutyType { get; set; }

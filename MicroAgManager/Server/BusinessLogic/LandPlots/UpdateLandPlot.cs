@@ -1,6 +1,8 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Models;
 using Domain.Interfaces;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 
 namespace BackEnd.BusinessLogic.LandPlots
@@ -23,13 +25,8 @@ namespace BackEnd.BusinessLogic.LandPlots
                 farm.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);
-                //await _mediator.Publish(new NotificationMessage
-                //{
-                //    To = request.TenantId.ToString(),
-                //    Body = $"{nameof(LandPlotModel)} {farm.Id}",
-                //    From = request.ModifiedBy.ToString(),
-                //    Subject = "Update"
-                //}, cancellationToken);
+                await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(farm.Id.ToString(), farm.GetType().Name, "Modified", farm.ModifiedBy) }), cancellationToken);
+
                 return farm.Id;
             }
         }
