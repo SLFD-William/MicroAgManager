@@ -1,26 +1,12 @@
 ﻿@using FrontEnd.Components.LivestockFeed
-<article>
 @if (dbContext is not null && livestockType is not null)
 {
-        @if (Step == (int)Steps.TypeDefinition)
-        {
-            <p>Please enter information about the type of livestock you want to produce</p>
-        
+    <Wizard Id="@this.GetType().Name" @ref=@wizard CanStepRetreat=@CanStepRetreat CanStepAdvance=@CanStepAdvance IsNestedWizard="@IsNestedWizard" ShowAdvancementButtons="@ShowButtons">
+        <WizardStep Name="@Step1" >
             <LivestockTypeEditor @ref="livestockTypeEditor" livestockTypeId="@livestockType.Id" Submitted="@LivestockTypeUpdated"></LivestockTypeEditor>
-        }
-        @if (Step == (int)Steps.LivestockFeed)
-        {
-            <p>What are you going to feed the livestock?</p>
-            <AddLivestockFeedWizard Completed="@LivestockFeedWizardCompleted"></AddLivestockFeedWizard>
-        }
-    
-    @if (ShowPrevious())
-    {
-        <button @onclick="Prev" type="button">Prev</button>
-    }
-    @if (ShowNext())
-    {
-        <button @onclick="Next" type="submit">Next</button>
-    }
+        </WizardStep>
+        <WizardStep Name="@Step2">
+            <AddLivestockFeedWizard Completed="@LivestockFeedWizardCompleted" IsNestedWizard="true"></AddLivestockFeedWizard>
+        </WizardStep>
+    </Wizard>
 }
-</article>

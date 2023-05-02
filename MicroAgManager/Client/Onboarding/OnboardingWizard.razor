@@ -1,44 +1,36 @@
 ﻿@using Domain.Constants;
-<article>
-    @if(dbContext is not null)
-    {
-            <h3>Welcome @tenant.Name</h3>
-             @if(Step == (int)Steps.FarmLocation)
+@using FrontEnd.Components.Shared
+@if (dbContext is not null && livestockType is not null)
+{
+    <Wizard Id="@this.GetType().Name" @ref=@wizard ShowAdvancementButtons="@ShowButtons" CanStepAdvance="@CanStepAdvance">
+        <WizardStep Name="@Step1" >
+            <p>Please enter information about your farm</p>
+            <FarmEditor @ref="farmEditor" farmId="@farm.Id" farmName="@farm.Name" Submitted="@FarmLocationUpdated"></FarmEditor>
+        </WizardStep>
+
+        <WizardStep Name="@Step2">
+            <p>Tell us about your land</p>
+            <CascadingValue Value="farm">
+                <LandPlotEditor @ref="landPlotEditor" landPlotId="@landPlot.Id" Submitted="@LandPlotUpdated"></LandPlotEditor>
+            </CascadingValue>
+        </WizardStep>
+        <WizardStep Name="@Step3">
+            @if (landPlot.Usage == LandPlotUseConstants.GeneralUse)
             {
-                <p>Please enter information about your farm's location</p>
-                <FarmEditor @ref="farmEditor" farmId="@farm.Id" farmName="@farm.Name" Submitted="@FarmLocationUpdated"></FarmEditor>
+            <p>What would you like to produce on your farm?</p>
+            <select @bind=farmProduction>
+                <option value="">Select Product ...</option>
+                <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
+            </select>
             }
-            @if (Step == (int)Steps.MainPlot)
+            @if (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock)
             {
-                <p>Tell us about your land</p>
-                <CascadingValue Value="farm">
-                    <LandPlotEditor @ref="landPlotEditor" landPlotId="@landPlot.Id" Submitted="@LandPlotUpdated"></LandPlotEditor>
+                <CascadingValue Value="livestockType">
+                    <AddLivestockTypeWizard Completed="@LivestockTypeWizardCompleted" IsNestedWizard="true"></AddLivestockTypeWizard>
                 </CascadingValue>
             }
-            @if (Step == (int)Steps.FarmProduction)
-            {
-                if (landPlot.Usage == LandPlotUseConstants.GeneralUse)
-                { 
-                    <p>What would you like to produce on your farm?</p>
-                    <select @bind=farmProduction>
-                        <option value="">Select Product ...</option>
-                        <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
-                    </select>
-                }
-                if (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock)
-                {
-                    <CascadingValue Value="livestockType">
-                        <AddLivestockTypeWizard Completed="@LivestockTypeWizardCompleted"></AddLivestockTypeWizard>
-                    </CascadingValue>
-                }
-            }
-            @if (ShowPrevious())
-            {
-                <button @onclick="Prev" type="button">Prev</button>
-            }
-            @if (ShowNext())
-            {
-                <button @onclick="Next" type="submit">Next</button>
-            }
-    }
-</article>
+        </WizardStep>
+        <WizardStep Name="@Step4">
+        </WizardStep>
+    </Wizard>
+}

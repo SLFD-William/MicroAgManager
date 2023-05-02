@@ -1,111 +1,89 @@
-﻿using Domain.Models;
-using FrontEnd.Persistence;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
+﻿using Domain.Constants;
+using Domain.Models;
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
-using FrontEnd.Components.LivestockType;
+using FrontEnd.Components.Shared;
+using FrontEnd.Persistence;
 using FrontEnd.Services;
-using Domain.Constants;
+using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Onboarding
 {
     public partial class OnboardingWizard
     {
-        enum Steps
-        { 
-            FarmLocation =1,
-            MainPlot=2,
-            FarmProduction =3,
-            LiveStockDefinition=10,
-            
-        }
+        private const string Step1 = "Farm Information";
+        private const string Step2 = "Farm Location";
+        private const string Step3 = "Main Plot";
+        private const string Step4 = "Complete";
+
+
         [Inject] FrontEndAuthenticationStateProvider authentication { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
-        public int Step { get; set; } = 1;
-        
         protected TenantModel tenant;
 
         private FarmEditor? farmEditor;
-        protected FarmLocationModel farm=new();
-        
+        protected FarmLocationModel farm = new();
+
         private LandPlotEditor? landPlotEditor;
         protected LandPlotModel landPlot = new();
-        private LivestockTypeModel livestockType;
+        private LivestockTypeModel? livestockType;
         private string farmProduction = string.Empty;
-        private void FarmLocationUpdated(FarmLocationModel args)=>farm = args;
-        private void LandPlotUpdated(LandPlotModel args) => landPlot = args;
-        private async Task LivestockTypeWizardCompleted(bool args)
+
+        private Wizard? wizard;
+        private bool _buttonsVisible = true;
+        private Task<bool> ShowButtons()
+        {
+            if (string.IsNullOrEmpty(wizard?.ActiveStep?.Name)) return Task.FromResult( _buttonsVisible);
+            _buttonsVisible = true;
+            if ((farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock) && wizard.ActiveStep.Name == Step3)
+                _buttonsVisible = false; ;
+            return Task.FromResult(_buttonsVisible);
+        }
+        private void LivestockTypeWizardCompleted(bool args)
         {
             if (args)
-                Step = await ProcessStepOnNextTransition();
+                wizard?.GoNext();
             else
-                Step = ProcessStepOnPrevTransition();
+                wizard?.GoBack();
         }
-        
         protected async override Task OnInitializedAsync()
         {
             if (dbContext is null) return;
-            tenant = await dbContext.Tenants.SingleOrDefaultAsync(t=>t.Id==authentication.TenantId());
-            farm = await dbContext.Farms.Include(f=>f.Plots).OrderBy(f=>f.Id).FirstOrDefaultAsync(f=>f.TenantId==tenant.Id);
-            if (farm is null)
-            {
-                farm = new();
-                farm.Name = tenant.Name;
-            }
+            while(authentication.TenantId()==Guid.Empty)
+                await Task.Delay(100);
+            while (!dbContext.Tenants.Any(t => t.Id == authentication.TenantId()))
+                await Task.Delay(100);
+
+            tenant = await dbContext.Tenants.SingleAsync(t => t.Id == authentication.TenantId());
+            farm = await dbContext.Farms.Include(f => f.Plots).OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.Id)
+                ?? new() { Name = tenant.Name };
+
             landPlot = farm.Plots?.FirstOrDefault() ?? new();
-            livestockType= await dbContext.LivestockTypes.FirstOrDefaultAsync();
+            livestockType = await dbContext.LivestockTypes.FirstOrDefaultAsync();
 
             StateHasChanged();
         }
-        private async Task Next()
-        {
-            Step = await ProcessStepOnNextTransition();
-            StateHasChanged();
-        }
-        private bool ShowPrevious()
-        {
-            var show = Step != 1;
-            if(Step == (int)Steps.FarmProduction && (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock))
-                show = false;
 
-            return show; }
-        private bool ShowNext()
+
+        private async Task<bool> CanStepAdvance()
         {
-            var show = Step != 4;
-            if (Step == (int)Steps.FarmProduction && (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock))
-                show = false;
-            return show; }
-        private void Prev()
-        {
-            Step = ProcessStepOnPrevTransition();
-            StateHasChanged();
+            if (wizard?.ActiveStep?.Name == Step1)
+                if (farmEditor is not null && farmEditor.editContext.IsModified())
+                {
+                    if (!farmEditor.editContext.Validate()) return false;
+                    await farmEditor.OnSubmit();
+                }
+            if (wizard?.ActiveStep?.Name == Step2)
+                if (landPlotEditor is not null && landPlotEditor.editContext.IsModified())
+                {
+                    if (!landPlotEditor.editContext.Validate()) return false;
+                    await landPlotEditor.OnSubmit();
+                }
+            return true;
         }
-        private int ProcessStepOnPrevTransition()
-        {
-            return Step-1;
-        }
-        private async Task<int> ProcessStepOnNextTransition()
-        {
-            switch (Step)
-            {
-                case (int)Steps.FarmLocation:
-                    if (farmEditor is not null && farmEditor.editContext.IsModified())
-                    {
-                        if (!farmEditor.editContext.Validate()) return (int)Steps.FarmLocation;
-                        await farmEditor.OnSubmit();
-                    }
-                    return (int)Steps.MainPlot;
-                case (int)Steps.MainPlot:
-                    if (landPlotEditor is not null && landPlotEditor.editContext.IsModified())
-                    {
-                        if (!landPlotEditor.editContext.Validate()) return (int)Steps.MainPlot;
-                        await landPlotEditor.OnSubmit();
-                    }
-                    return (int)Steps.FarmProduction;
-            }
-            return Step+1;
-        }
+        private void FarmLocationUpdated(FarmLocationModel args) => farm = args;
+        private void LandPlotUpdated(LandPlotModel args) => landPlot = args;
 
     }
 }

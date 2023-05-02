@@ -1,0 +1,28 @@
+﻿<CascadingValue Value="this">
+    <div id="@Id">
+        @if (ShowStepNavigation?.Invoke().Result ?? true)
+        { 
+            <ul>
+                @foreach (var step in Steps)
+                {
+                    <li id="step-@(StepsIndex(step) + 1)">
+                        <a class="nav-link @((ActiveStep == step) ? "active" : "")" href="javascript: void(0)"
+                       @onclick="@(e=> SetActive(step))">@step.Name</a>
+                    </li>
+                }
+            </ul>
+        }
+        <div>
+            @ChildContent
+        </div>
+    </div>
+    @if (ShowAdvancementButtons?.Invoke().Result ?? true)
+    {
+        <button type="button" disabled="@(ActiveStepIx == 0 && !IsNestedWizard)" @onclick="GoBack">
+            Previous
+        </button>
+        <button type="button" @onclick="GoNext">
+            @(IsLastStep && !IsNestedWizard ? "Submit" : "Next")
+        </button>
+    }
+</CascadingValue>

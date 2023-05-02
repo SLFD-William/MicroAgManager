@@ -88,8 +88,7 @@
                 : await authStateProvider.Login((LoginUserCommand)registerRequest);
             if (!loginResult.success)
                 return;
-            while (!dbContext.Tenants.Any(t => t.Id == authStateProvider.TenantId()))
-                await Task.Delay(100);
+
 
             StateHasChanged();
             if (IsRegistering)//TODO Handle Email Confirmation

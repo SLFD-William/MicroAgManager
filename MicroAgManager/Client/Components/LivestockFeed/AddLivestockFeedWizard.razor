@@ -1,25 +1,14 @@
-﻿<article>
-    @if (dbContext is not null && livestockType is not null)
+﻿@if (dbContext is not null && livestockType is not null)
     {
-
-        @if (Step == (int)Steps.FeedDefinition)
-        {
-            <p>Please enter information about the type of livestock you want to produce</p>
-            <LivestockFeedEditor @ref="livestockFeedEditor" livestockFeed="@livestockFeed" livestockFeedId="@livestockFeed.Id" Submitted="@LivestockFeedUpdated"></LivestockFeedEditor>
-        }
-        @if (Step == (int)Steps.CreateServings)
-        {
-            <p>What are the feed servings?</p>
-            <CascadingValue Value="@livestockFeed">
-            </CascadingValue>
-        }
-        @if (ShowPrevious())
-        {
-            <button @onclick="Prev" type="button">Prev</button>
-        }
-        @if (ShowNext())
-        {
-            <button @onclick="Next" type="submit">Next</button>
-        }
+        <Wizard Id="@this.GetType().Name" @ref=@wizard CanStepAdvance="@CanStepAdvance" CanStepRetreat="@CanStepRetreat" IsNestedWizard="@IsNestedWizard">
+            <WizardStep Name="@Step1" >
+                <p>Please enter information about the type of livestock you want to produce</p>
+                <LivestockFeedEditor @ref="livestockFeedEditor" livestockFeed="@livestockFeed" livestockFeedId="@livestockFeed.Id" Submitted="@LivestockFeedUpdated"></LivestockFeedEditor>
+            </WizardStep>
+            <WizardStep Name="@Step2">
+                <p>What are the feed servings?</p>
+                <CascadingValue Value="@livestockFeed">
+                </CascadingValue>
+            </WizardStep>
+        </Wizard>
     }
-</article>

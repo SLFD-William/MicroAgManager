@@ -1,5 +1,4 @@
-﻿using BackEnd.BusinessLogic.Livestock.Types;
-using BackEnd.BusinessLogic.LivestockFeed;
+﻿using BackEnd.BusinessLogic.LivestockFeed;
 using Domain.Models;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
