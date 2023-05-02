@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace FrontEnd.Components.Shared
 {
@@ -10,5 +12,13 @@ namespace FrontEnd.Components.Shared
         [Parameter] public RenderFragment LegendContent { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public Expression<Func<TValue>> ValidationMessageFor { get; set; }
+
+        bool IsRequired()
+        {
+            var expression = (MemberExpression)ValidationMessageFor.Body;
+            var property = (PropertyInfo)expression.Member;
+            var requiredAttribute = property.GetCustomAttribute<RequiredAttribute>();
+            return requiredAttribute != null;
+        }
     }
 }

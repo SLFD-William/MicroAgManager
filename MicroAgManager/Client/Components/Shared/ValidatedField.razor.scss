@@ -10,16 +10,28 @@
         padding: 0.2em;
         border-radius: 1em;
         width: fit-content;
-    }
 
+        &::before {
+            margin-right: 0.1em;
+            padding-inline: 0.2em;
+            border-radius: 1em;
+        }
+
+        &.required {
+            &::after {
+                margin-left: 0.1em;
+                padding-inline: 0.2em;
+                border-radius: 1em;
+                content: '*';
+                background-color: var(--background-color-validation-required);
+                color: var(--color-validation-required);
+            }
+        }
+    }
 
     &:has(input.modified.valid) {
         & legend {
-
             &::before {
-                margin-right: 0.1em;
-                padding-inline: 0.2em;
-                border-radius: 1em;
                 content: '\2713';
                 background-color: var(--background-color-validation-validmodified);
                 color: var(--color-validation-validmodified);
@@ -31,9 +43,6 @@
     &:has(input.invalid) {
         & legend {
             &::before {
-                margin-right: 0.1em;
-                padding-inline: 0.2em;
-                border-radius: 1em;
                 content: 'X';
                 background-color: var(--background-color-validation-invalid);
                 color: var(--color-validation-invalid);
@@ -41,6 +50,7 @@
             //border-color: var(--background-color-validation-invalid);
         }
     }
+
 
     & ::deep .validation-message {
         position: absolute;

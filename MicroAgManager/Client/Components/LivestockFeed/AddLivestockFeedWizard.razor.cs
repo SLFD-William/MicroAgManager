@@ -18,7 +18,7 @@ namespace FrontEnd.Components.LivestockFeed
         private LivestockFeedEditor? livestockFeedEditor;
 
         protected LivestockFeedModel livestockFeed;
-        protected async override Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             if (dbContext is null) return;
             if (livestockFeed is null) livestockFeed = new LivestockFeedModel { LivestockTypeId = livestockType.Id };

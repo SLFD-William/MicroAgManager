@@ -22,25 +22,27 @@ namespace FrontEnd.Components.Shared
         [Parameter] public EventCallback<bool> Completed { get; set; }
 
 
-        protected internal void GoBack()
+        protected async internal Task GoBack()
         {
-            if (!CanStepRetreat?.Invoke().Result ?? false) return;
+            var canStepRetreat = (CanStepRetreat is null) ? true : await CanStepRetreat.Invoke();
+            if (!canStepRetreat) return;
             if (ActiveStepIx > 0)
                 SetActive(Steps[ActiveStepIx - 1]);
             if (ActiveStepIx <= 0)
-                Completed.InvokeAsync(false);
+                await Completed.InvokeAsync(false);
         }
 
         /// <summary>
         /// Sets the <see cref="ActiveStep"/> to the next Index
         /// </summary>
-        protected internal void GoNext()
+        protected async internal Task GoNext()
         {
-            if (!CanStepAdvance?.Invoke().Result ?? false) return;
+            var canStepAdvance = (CanStepAdvance is null) ? true : await CanStepAdvance.Invoke();
+            if (!canStepAdvance) return;
             if (ActiveStepIx < Steps.Count - 1  )
                 SetActive(Steps[Steps.IndexOf(ActiveStep) + 1]);
             if (ActiveStepIx >= Steps.Count - 1)
-                Completed.InvokeAsync(true);
+                await Completed.InvokeAsync(true);
         }
 
         protected internal void SetActive(WizardStep step)

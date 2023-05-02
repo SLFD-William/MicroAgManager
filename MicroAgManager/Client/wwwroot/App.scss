@@ -1,22 +1,24 @@
 ﻿
 
 body {
-    padding-inline:1rem;
+    padding-inline: 1rem;
     margin: auto;
     --font-stack: Tahoma, Geneva, sans-serif;
     --color-validation-validmodified: white;
     --background-color-validation-validmodified: green;
     --color-validation-invalid: white;
     --background-color-validation-invalid: red;
-    --color-action-primary: lightblue;
+    --color-action-primary: blue;
+    --background-color-validation-required: transparent;
+    --color-validation-required: blue;
 
-    @media (prefers-color-scheme: dark) {
+/*    @media (prefers-color-scheme: dark) {
         --color-validation-validmodified: white;
         --background-color-validation-validmodified: green;
         --color-validation-invalid: white;
         --background-color-validation-invalid: red;
         --color-action-primary: lightblue;
-    }
+    }*/
 
     width: 100%;
 }
