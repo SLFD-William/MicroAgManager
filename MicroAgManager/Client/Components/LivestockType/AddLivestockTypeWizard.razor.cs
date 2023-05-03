@@ -2,6 +2,7 @@
 using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
+using FrontEnd.Data;
 using FrontEnd.Persistence;
 using Microsoft.AspNetCore.Components;
 
@@ -14,6 +15,7 @@ namespace FrontEnd.Components.LivestockType
         private const string Step3 = "Main Plot";
         private Wizard? wizard;
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
+        [CascadingParameter] DataSynchronizer dbSync { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [Parameter] public EventCallback<bool> Completed { get; set; }
         [Parameter] public bool IsNestedWizard { get; set; } = false;
@@ -38,10 +40,10 @@ namespace FrontEnd.Components.LivestockType
                 _buttonsVisible = false;
             return Task.FromResult(_buttonsVisible);
         }
-        protected override void OnInitialized()
+        protected async override Task OnInitializedAsync()
         {
-            if (dbContext is null) return;
-            if(livestockType is null) livestockType = new();
+            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
+            if (livestockType is null) livestockType = new();
             StateHasChanged();
         }
        

@@ -1,0 +1,26 @@
+﻿.Wizard {
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  row-gap: 1rem;
+}
+.Wizard > div {
+  width: 100%;
+  display: flex;
+}
+.Wizard ul {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.Wizard ul li {
+  flex: 1 1 auto;
+  padding: 0.5em;
+  margin: 0;
+}
+.Wizard ul li > button.active {
+  background-color: var(--background-color-active);
+  color: var(--color-active);
+}

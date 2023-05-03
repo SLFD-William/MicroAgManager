@@ -9,13 +9,15 @@
   --color-action-primary: blue;
   --background-color-validation-required: transparent;
   --color-validation-required: blue;
+  --color-active: white;
+  --background-color-active:blue;
   /*    @media (prefers-color-scheme: dark) {
-          --color-validation-validmodified: white;
-          --background-color-validation-validmodified: green;
-          --color-validation-invalid: white;
-          --background-color-validation-invalid: red;
-          --color-action-primary: lightblue;
-      }*/
+      --color-validation-validmodified: white;
+      --background-color-validation-validmodified: green;
+      --color-validation-invalid: white;
+      --background-color-validation-invalid: red;
+      --color-action-primary: lightblue;
+  }*/
   width: 100%;
 }
 

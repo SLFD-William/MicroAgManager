@@ -73,7 +73,8 @@ namespace FrontEnd.Data
         {
             // Don't run multiple syncs in parallel. This simple logic is adequate because of single-threadedness.
             if (_isSynchronizing)
-                return;
+                while (_isSynchronizing)
+                    await Task.Delay(100);
             try
             {
                 _isSynchronizing = true;

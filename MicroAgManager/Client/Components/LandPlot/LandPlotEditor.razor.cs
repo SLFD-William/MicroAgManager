@@ -1,5 +1,6 @@
 ﻿using BackEnd.BusinessLogic.LandPlots;
 using Domain.Models;
+using FrontEnd.Data;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
@@ -12,6 +13,7 @@ namespace FrontEnd.Components.LandPlot
     {
         [CascadingParameter] FarmLocationModel farm { get; set; }
         [CascadingParameter] IFrontEndApiServices api { get; set; }
+        [CascadingParameter] DataSynchronizer dbSync { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
@@ -20,7 +22,16 @@ namespace FrontEnd.Components.LandPlot
         public EditContext editContext { get; private set; }
         protected async override Task OnInitializedAsync()
         {
-            if (dbContext is null) return;
+            dbSync.OnUpdate += DbSync_OnUpdate;
+            await FreshenData();
+        }
+
+        private void DbSync_OnUpdate() => Task.Run(FreshenData);
+
+        private async Task FreshenData()
+        {
+            if (dbContext is null)
+                dbContext = await dbSync.GetPreparedDbContextAsync();
             var query = dbContext.LandPlots.AsQueryable();
             if (landPlotId.HasValue && landPlotId>0)
                 query = query.Where(f => f.Id == landPlotId);
@@ -48,6 +59,11 @@ namespace FrontEnd.Components.LandPlot
             {
 
             }
+        }
+        public ValueTask DisposeAsync()
+        {
+            dbSync.OnUpdate -= DbSync_OnUpdate;
+            return ValueTask.CompletedTask;
         }
 
     }

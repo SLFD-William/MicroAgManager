@@ -6,6 +6,7 @@
     <CascadingAuthenticationState>
         <CascadingValue Value="api">
             <CascadingValue Value="dbContext">
+                <CascadingValue Value="_dbSynchonizer">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -29,6 +30,7 @@
                 </LayoutView>
             </NotFound>
         </Router>
+                </CascadingValue>
         </CascadingValue>
         </CascadingValue>
     </CascadingAuthenticationState>

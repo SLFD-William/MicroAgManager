@@ -10,5 +10,9 @@
   {
     "outputFile": "wwwroot/App.css",
     "inputFile": "wwwroot/App.scss"
+  },
+  {
+    "outputFile": "Components/Shared/Wizard.razor.css",
+    "inputFile": "Components/Shared/Wizard.razor.scss"
   }
 ]

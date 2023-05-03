@@ -1,5 +1,6 @@
 ﻿using BackEnd.BusinessLogic.FarmLocation;
 using Domain.Models;
+using FrontEnd.Data;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
@@ -8,8 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmEditor
+    public partial class FarmEditor : IAsyncDisposable
     {
+        [CascadingParameter] DataSynchronizer dbSync { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [CascadingParameter] IFrontEndApiServices api { get; set; }
 
@@ -21,7 +23,15 @@ namespace FrontEnd.Components.Farm
         public EditContext editContext { get; private set; }
         protected async override Task OnInitializedAsync()
         {
-            if (dbContext is null) return;
+            dbSync.OnUpdate += DbSync_OnUpdate;
+            await FreshenData();
+        }
+
+        private void DbSync_OnUpdate() => Task.Run(FreshenData);
+
+        private async Task FreshenData()
+        {
+            if(dbContext is null) dbContext= await dbSync.GetPreparedDbContextAsync();
             var query= dbContext.Farms.AsQueryable();
             if (farmId.HasValue)
                 query = query.Where(f => f.Id == farmId);
@@ -50,6 +60,11 @@ namespace FrontEnd.Components.Farm
             {
 
             }
+        }
+        public ValueTask DisposeAsync()
+        {
+            dbSync.OnUpdate -= DbSync_OnUpdate;
+            return ValueTask.CompletedTask;
         }
     }
 }
