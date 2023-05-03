@@ -464,8 +464,7 @@ namespace FrontEnd.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool?>("Active")
-                        .IsRequired()
+                    b.Property<bool>("Active")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Cutting")
@@ -671,6 +670,9 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("DefaultStatus")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
@@ -723,11 +725,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Care")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DefaultStatus")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");

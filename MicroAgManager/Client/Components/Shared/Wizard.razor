@@ -23,6 +23,10 @@
         <button type="button" disabled="@(ActiveStepIx == 0 && !IsNestedWizard)" @onclick="GoBack">
             Previous
         </button>
+        @if (ActiveStep?.IsRepeating ?? false)
+        {
+            <button type="button" @onclick="Repeat">Add another</button>
+        }
         <button type="button" @onclick="GoNext">
             @(IsLastStep && !IsNestedWizard ? "Submit" : "Next")
         </button>

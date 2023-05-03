@@ -1,6 +1,4 @@
-﻿
-using Domain.Entity;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.Shared
 {
@@ -44,7 +42,12 @@ namespace FrontEnd.Components.Shared
             if (ActiveStepIx >= Steps.Count - 1)
                 await Completed.InvokeAsync(true);
         }
-
+        protected async internal Task Repeat()
+        {
+            var canStepAdvance = (CanStepAdvance is null) ? true : await CanStepAdvance.Invoke();
+            if (!canStepAdvance) return;
+            SetActive(Steps[Steps.IndexOf(ActiveStep)]);
+        }
         protected internal void SetActive(WizardStep step)
         {
             ActiveStep = step ?? throw new ArgumentNullException(nameof(step));

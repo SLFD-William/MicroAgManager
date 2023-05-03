@@ -12,7 +12,6 @@ namespace BackEnd.BusinessLogic.Livestock.Types
         public string? GroupName { get; set; }
         public string? ParentMaleName { get; set; }
         public string? ParentFemaleName { get; set; }
-        public string? DefaultStatus { get; set; }
         public string? Care { get; set; }
 
         public string? Breed { get; set; }
@@ -28,7 +27,6 @@ namespace BackEnd.BusinessLogic.Livestock.Types
             if (!string.IsNullOrEmpty(GroupName)) query = query.Where(_ => _.GroupName != null && _.Name.Contains(GroupName));
             if (!string.IsNullOrEmpty(ParentMaleName)) query = query.Where(_ => _.ParentMaleName != null && _.Name.Contains(ParentMaleName));
             if (!string.IsNullOrEmpty(ParentFemaleName)) query = query.Where(_ => _.ParentFemaleName != null && _.Name.Contains(ParentFemaleName));
-            if (!string.IsNullOrEmpty(DefaultStatus)) query = query.Where(_ => _.DefaultStatus != null && _.Name.Contains(DefaultStatus));
             if (!string.IsNullOrEmpty(Care)) query = query.Where(_ => _.Care != null && _.Name.Contains(Care));
             if (!string.IsNullOrEmpty(Breed)) query = query.Where(_ => _.Breeds.Any(b => b.Name.Contains(Breed)));
             if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Statuses.Any(b => b.Status.Contains(Status)));

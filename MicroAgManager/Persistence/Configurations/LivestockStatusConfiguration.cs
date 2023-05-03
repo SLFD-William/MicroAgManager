@@ -12,6 +12,7 @@ namespace BackEnd.Persistence.Configurations
             builder.Property(e => e.Status).IsRequired().HasMaxLength(40);
             builder.Property(e => e.BeingManaged).IsRequired().HasMaxLength(10);
             builder.Property(e => e.Sterile).IsRequired().HasMaxLength(10);
+            builder.Property(e => e.DefaultStatus).IsRequired();
             builder.Property(e => e.InMilk).IsRequired().HasMaxLength(10);
             builder.Property(e => e.BottleFed).IsRequired().HasMaxLength(10); 
             builder.Property(e => e.ForSale).IsRequired().HasMaxLength(10); 

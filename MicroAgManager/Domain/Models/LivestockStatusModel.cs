@@ -11,6 +11,7 @@ namespace Domain.Models
         [ForeignKey(nameof(LivestockTypeModel))]
         public long LivestockTypeId { get; set; }
         [Required] [MaxLength(40)]public string Status { get; set; }
+        [Required] public bool DefaultStatus { get; set; }
         [Required][MaxLength(10)] public string BeingManaged { get; set; }
         [Required][MaxLength(10)] public string Sterile { get; set; }
         [Required][MaxLength(10)] public string InMilk { get; set; }
@@ -27,6 +28,8 @@ namespace Domain.Models
                 InMilk = livestockType.InMilk, 
                 BottleFed = livestockType.BottleFed,
                 ForSale = livestockType.ForSale,
+                DefaultStatus = livestockType.DefaultStatus,
+                LivestockTypeId=livestockType.LivestockType.Id,
                 Livestocks = livestockType.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel?>()
             }) as LivestockStatusModel;
             return model;
@@ -39,6 +42,8 @@ namespace Domain.Models
             entity.BottleFed = BottleFed;
             entity.ForSale = ForSale;
             entity.Sterile = Sterile;
+            entity.DefaultStatus = DefaultStatus;
+            entity.LivestockType.Id=LivestockTypeId;
             if (entity.Livestocks.Any())
                 foreach (var subplot in entity.Livestocks)
                     Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);

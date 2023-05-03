@@ -1,11 +1,19 @@
 ﻿@using FrontEnd.Components.LivestockFeed
+@using FrontEnd.Components.LivestockStatus
 @if (dbContext is not null && livestockType is not null)
 {
     <Wizard Id="@this.GetType().Name" @ref=@wizard CanStepRetreat=@CanStepRetreat CanStepAdvance=@CanStepAdvance IsNestedWizard="@IsNestedWizard" ShowAdvancementButtons="@ShowButtons">
         <WizardStep Name="@Step1" >
             <LivestockTypeEditor @ref="livestockTypeEditor" livestockTypeId="@livestockType.Id" Submitted="@LivestockTypeUpdated"></LivestockTypeEditor>
         </WizardStep>
-        <WizardStep Name="@Step2">
+        <WizardStep Name="@Step2" IsRepeating="true">
+            @if (livestockType.Statuses.Any())
+            {
+                <LivestockStatusList></LivestockStatusList>
+            }
+            <LivestockStatusEditor @ref="livestockStatusEditor" Submitted="@LivestockStatusUpdated"></LivestockStatusEditor>
+        </WizardStep>
+        <WizardStep Name="@Step3">
             <AddLivestockFeedWizard Completed="@LivestockFeedWizardCompleted" IsNestedWizard="true"></AddLivestockFeedWizard>
         </WizardStep>
     </Wizard>

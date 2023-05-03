@@ -14,7 +14,6 @@ namespace BackEnd.Persistence.Configurations
             builder.Property(e => e.GroupName).IsRequired().HasMaxLength(40);
             builder.Property(e => e.ParentMaleName).IsRequired().HasMaxLength(40);
             builder.Property(e => e.ParentFemaleName).IsRequired().HasMaxLength(40);
-            builder.Property(e => e.DefaultStatus).IsRequired().HasMaxLength(40);
             builder.HasIndex(b => b.Name).IsUnique();
             builder.Property(e => e.Care).IsRequired().HasMaxLength(40);
         }

@@ -44,14 +44,15 @@ namespace FrontEnd.Components.Farm
         {
             try
             {
-                if (farm.Id <= 0)
+                var id = farm.Id;
+                if (id <= 0)
                     farm.Id= await api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm });
                 else
                     farm.Id = await api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
 
-                if (farm.Id <= 0)
+                if (id <= 0)
                     throw new Exception("Unable to save farm location");
-
+                farm.Id = id;
                 editContext = new EditContext(farm);
                 await Submitted.InvokeAsync(farm);
                 StateHasChanged();

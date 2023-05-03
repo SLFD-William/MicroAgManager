@@ -13,7 +13,6 @@ namespace Domain.Models
         [Required][MaxLength(40)] public string GroupName { get; set; }
         [Required][MaxLength(40)] public string ParentMaleName { get; set; }
         [Required][MaxLength(40)] public string ParentFemaleName { get; set; }
-        [Required][MaxLength(40)] public string DefaultStatus { get; set; }
         [Required][MaxLength(40)] public string Care { get; set; } = LivestockCareConstants.Individual;
         public virtual ICollection<LivestockBreedModel?> Breeds { get; set; } =new List<LivestockBreedModel?>();
         public virtual ICollection<LivestockStatusModel?> Statuses { get; set; } = new List<LivestockStatusModel?>();
@@ -25,7 +24,6 @@ namespace Domain.Models
             {
                  Care=livestockType.Care,
                  GroupName=livestockType.GroupName,
-                 DefaultStatus=livestockType.DefaultStatus,
                  Name=livestockType.Name,
                  ParentFemaleName = livestockType.ParentFemaleName,
                  ParentMaleName = livestockType.ParentMaleName,
@@ -42,7 +40,6 @@ namespace Domain.Models
             entity.ParentMaleName=ParentMaleName;
             entity.ParentFemaleName=ParentFemaleName;
             entity.Care=Care;
-            entity.DefaultStatus=DefaultStatus;
             entity.GroupName=GroupName;
             entity.Name=Name;
             if (entity.Breeds?.Any() ?? false)

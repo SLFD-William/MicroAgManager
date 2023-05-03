@@ -1,0 +1,237 @@
+﻿@typeparam TItem
+@inherits SortableDataComponent<TItem>
+@using FrontEnd.Components.Shared.Sortable.Filters
+<div class="@($"ListTemplate {ListTypeClass}")">
+
+    @if (ListType != ListPresentationTypesEnum.Table)
+    {
+        <div class="ListTemplate_Menu">
+            @*<ActionButtons Editting=@(AddItemClicked!=null) Add=@AddItemClicked  NewItemName="@NewItemName" CssClass ="flex" ></ActionButtons>*@
+            @if (Columns.Any())
+            {
+                <SearchInput ShowSearchDetail=@ShowSearchDetail SearchTerm=@SearchTerm SearchKeyUpCallback=@SearchKeyUp ShowSearchDetailCallback=@(() => ShowSearchDetail = !ShowSearchDetail) ></SearchInput>
+                @if (CountTemplate == null)
+                {<span>
+                        @TotalCount Records Visible
+                    </span> }
+                else
+                {
+                    @CountTemplate
+                }
+                
+                <div>
+                    <button type="button" title="Sort and Filter" >
+                        <span><i class="fas fa-sort"></i><i class="fas fa-filter"></i></span>
+                    </button>
+                     <ListViewSelector AvailableListTypes=@AvailableListTypes ListType=@ListType ShowViewSelector=@ShowViewSelector></ListViewSelector>
+                </div>
+                @if (CommandButtonsTemplate is not null)
+                {
+                    @CommandButtonsTemplate
+                }
+                if (ShowSearchDetail)
+                {
+                    <div class="flex-Break" />
+
+                    @foreach (Column<TItem> column in Columns)
+                    {
+                        <div class="ListTemplate_Menu_ColumnHeader">
+                            <div class=@("ListTemplate_Menu_ColumnHeader__Title" + (column.FilterOpen ? " ListTemplate_Menu_ColumnHeader__Title--FilterOpen" : string.Empty) )>
+                                <button type="button" @onclick="@((e) => column.SortBy(e))">
+                                    <span>@column.Title</span>
+                                    @if (column.SortOrder > 0)
+                                    {
+                                        <span><i class="fas fa-1x @(column.SortDescending ? "fa-caret-up" : "fa-caret-down")"></i></span>
+                                        <span>@(column.SortOrder)</span>
+                                    }
+                                </button>
+                                @if (column.Filterable)
+                                {
+                                    <button type="button" @ref="column.FilterRef" @onclick="@column.ToggleFilter">
+                                        <span style="@(column.Filter == null ? "opacity: 0.2;" : string.Empty)">&#128269;</span>
+                                    </button>
+                                }
+                            </div>
+                            @if (column.FilterOpen)
+                            {
+                                <div class="ListTemplate_Menu_ColumnHeader__FilterOptions">
+                                    <FilterManager TableItem="TItem" Column="column">
+                                        <StringFilter TableItem="TItem" />
+                                        <BooleanFilter TableItem="TItem" />
+                                        <NumberFilter TableItem="TItem" />
+                                        <DateFilter TableItem="TItem" />
+                                        <EnumFilter TableItem="TItem" />
+                                        @*@if (CustomIFilters != null)
+                                            {
+                                                @CustomIFilters(this);
+                                            }*@
+                                    </FilterManager>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+               
+            }
+        </div>
+        <div class="ListTemplate__List">
+@*            @if (UseVirtualization)
+            { 
+                <Virtualize Context="item" Items="@FilteredItems.ToList()" TItem="@TItem" OverscanCount="@OverscanCount">
+                    @ItemTemplate(item)
+                </Virtualize>
+            }
+            else
+            {*@
+                @foreach (var item in FilteredItems.ToList())
+                {
+                    @ItemTemplate(item)
+                }
+            @*}*@
+        </div>
+    }
+    else
+    {
+        <div class="ListTemplate_Menu">
+            @if (Columns.Any())
+            {
+                @if (AddItemClicked!=null && (!Columns.Any(c=>c.Title == "ControlColumn") || OnlyAddInMenuBar || !ShowHeader))
+                    {@*<ActionButtons Editting=@(AddItemClicked!=null) Add=@AddItemClicked  NewItemName="@NewItemName" CssClass ="flex"></ActionButtons>*@}
+                
+                @if (CountTemplate == null)
+                {<span>
+                        @TotalCount Records Visible
+                    </span> }
+                else
+                {
+                    @CountTemplate
+                }
+
+                <div>
+                    <button type="button" title="Sort and Filter" onclick="@(()=>ToggleHeader())" >
+                        <span><i class="fas fa-sort"></i><i class="fas fa-filter"></i></span>
+                    </button>
+                     <ListViewSelector AvailableListTypes=@AvailableListTypes ListType=@ListType ShowViewSelector=@ShowViewSelector></ListViewSelector>
+                </div>
+                @if (CommandButtonsTemplate is not null)
+                {
+                    @CommandButtonsTemplate
+                }
+            }
+        </div>
+        <div class="ListTemplate__List">
+            <table >
+                @if(ShowHeader || ShowSearchDetail)
+                {
+                <thead>
+                    <tr>
+                        @foreach (Column<TItem> column in Columns)
+                        {
+                            <th class=@($"ListTemplate--Table_ColumnHeader {column.Class} {(column.Title == "ControlColumn" ? "ListTemplate--Table_ColumnHeader--Control":string.Empty)}")>
+                                @if (column.Title == "ControlColumn" )
+                                {
+                                    if (!OnlyAddInMenuBar)
+                                    {
+                                        @*<ActionButtons Editting=@(AddItemClicked!=null) Add=@AddItemClicked  CssClass ="flex" ></ActionButtons>*@
+                                    }
+                                    else
+                                    { <span></span>}
+                                }
+                                else
+                                {
+                                    <div class=@("ListTemplate--Table_ColumnHeader__Title" + (column.FilterOpen ? " ListTemplate--Table_ColumnHeader__Title--FilterOpen" : string.Empty) )>
+                                        <button type="button" @onclick="@((e) => column.SortBy(e))">
+                                            <span>@column.Title</span>
+                                            @if (column.SortOrder > 0)
+                                            {
+                                                <span><i class="fas fa-1x @(column.SortDescending ? "fa-caret-up" : "fa-caret-down")"></i></span>
+                                                <span>@(column.SortOrder)</span>
+                                            }
+                                        </button>
+                                        @if (column.Filterable)
+                                        {
+                                            <button type="button" @ref="column.FilterRef" @onclick="@column.ToggleFilter">
+                                                <span style="@(column.Filter == null ? "opacity: 0.2;" : string.Empty)">&#128269;</span>
+                                            </button>
+                                        }
+                                    </div>
+                                    @if (column.FilterOpen)
+                                    {
+                                        <div class="ListTemplate--Table_ColumnHeader__FilterOptions">
+                                            <FilterManager TableItem="TItem" Column="column">
+                                                <StringFilter TableItem="TItem" />
+                                                <BooleanFilter TableItem="TItem" />
+                                                <NumberFilter TableItem="TItem" />
+                                                <DateFilter TableItem="TItem" />
+                                                <EnumFilter TableItem="TItem" />
+                                                @*@if (CustomIFilters != null)
+                                            {
+                                            @CustomIFilters(this);
+                                            }*@
+                                            </FilterManager>
+                                        </div>
+                                    }
+                                }
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                }
+                <tbody>
+                    @foreach (var item in FilteredItems)
+                    {
+                        ToggleAlternateRow();
+                        <tr class="@(alternateRow? string.Empty : "alternate")">
+                            @if (TableRowTemplate == null)
+                            {
+                                foreach (Column<TItem> column in Columns)
+                                {
+                                    <td>
+                                        @if (column.Title == "ControlColumn")
+                                        {
+                                            <div class="@column.Class">
+                                                @if (column.Template != null)
+                                                    @column.Template(item)
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="@column.Class">
+                                                @if (IsEditMode && column.EditTemplate != null)
+                                                    @column.EditTemplate(item)
+                                                 else
+                                                    if (column.Template == null)
+                                                        @column.Render(item)
+                                                    else
+                                                        @column.Template(item)
+                                            </div>
+                                        }
+                                        </td>
+                                    }
+                                }
+                            else
+                            {
+                                <td colspan="@Columns.Count()">
+                                    @TableRowTemplate(item)
+                                </td>
+                            }
+                        </tr>
+                        @if (TableRowDetailTemplate != null) 
+                        {
+                            <tr class="@(alternateRow? string.Empty : "alternate")">
+                                <td colspan="@Columns.Count()">
+                                    @TableRowDetailTemplate(item)
+                                </td> 
+                           </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+<div style="display:none;">
+    <CascadingValue Value="this" Name="SortableDataContainer">
+        @ColumnContent
+    </CascadingValue>
+</div>

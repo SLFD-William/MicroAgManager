@@ -1,6 +1,5 @@
-﻿using Domain.Constants;
-using Domain.Entity;
-using Domain.Models;
+﻿using Domain.Models;
+using FrontEnd.Components.LivestockStatus;
 using FrontEnd.Components.Shared;
 using FrontEnd.Data;
 using FrontEnd.Persistence;
@@ -11,8 +10,9 @@ namespace FrontEnd.Components.LivestockType
     public partial class AddLivestockTypeWizard
     {
         private const string Step1 = "Type Definition";
-        private const string Step2 = "Feeding";
-        private const string Step3 = "Main Plot";
+        private const string Step2 = "Status Definition";
+        private const string Step3 = "Feeding";
+        
         private Wizard? wizard;
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
         [CascadingParameter] DataSynchronizer dbSync { get; set; }
@@ -22,6 +22,7 @@ namespace FrontEnd.Components.LivestockType
 
 
         private LivestockTypeEditor? livestockTypeEditor;
+        private LivestockStatusEditor? livestockStatusEditor;
 
         private void LivestockFeedWizardCompleted(bool args)
         {
@@ -36,7 +37,7 @@ namespace FrontEnd.Components.LivestockType
         {
             if (string.IsNullOrEmpty(wizard?.ActiveStep?.Name)) return Task.FromResult( _buttonsVisible);
             _buttonsVisible = true;
-            if (wizard.ActiveStep.Name == Step2)
+            if (wizard.ActiveStep.Name == Step3)
                 _buttonsVisible = false;
             return Task.FromResult(_buttonsVisible);
         }
@@ -55,12 +56,12 @@ namespace FrontEnd.Components.LivestockType
                     if (!livestockTypeEditor.editContext.Validate()) return false;
                     await livestockTypeEditor.OnSubmit();
                 }
-            //if (ActiveStep.Name == Step2)
-            //    if (landPlotEditor is not null && landPlotEditor.editContext.IsModified())
-            //    {
-            //        if (!landPlotEditor.editContext.Validate()) return false;
-            //        await landPlotEditor.OnSubmit();
-            //    }
+            if (wizard?.ActiveStep?.Name == Step2)
+                if (livestockStatusEditor is not null && livestockStatusEditor.editContext.IsModified())
+                {
+                    if (!livestockStatusEditor.editContext.Validate()) return false;
+                    await livestockStatusEditor.OnSubmit();
+                }
             return true;
         }
         private async Task<bool> CanStepRetreat()
@@ -71,5 +72,6 @@ namespace FrontEnd.Components.LivestockType
             return true;
         }
         private void LivestockTypeUpdated(LivestockTypeModel args) => livestockType = args;
+        private void LivestockStatusUpdated(LivestockStatusModel args) => livestockType.Statuses.Add(args);
     }
 }

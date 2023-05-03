@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
@@ -24,7 +25,9 @@ namespace FrontEnd.Onboarding
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         protected TenantModel tenant;
 
+
         private FarmEditor? farmEditor;
+        private LandPlotList? landPlotList;
         protected FarmLocationModel farm = new();
 
         private LandPlotEditor? landPlotEditor;
@@ -65,10 +68,10 @@ namespace FrontEnd.Onboarding
 
 
             tenant = await dbContext.Tenants.SingleAsync(t => t.Id == authentication.TenantId());
-            farm = await dbContext.Farms.Include(f => f.Plots).OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.Id)
+            farm = await dbContext.Farms.OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.Id)
                 ?? new() { Name = tenant.Name };
 
-            landPlot = farm.Plots?.FirstOrDefault() ?? new();
+            landPlot = dbContext.LandPlots.OrderBy(p=>p.ModifiedOn).FirstOrDefault(p=>p.FarmLocationId==farm.Id) ?? new();
             livestockType = await dbContext.LivestockTypes.FirstOrDefaultAsync();
 
             StateHasChanged();
@@ -77,21 +80,36 @@ namespace FrontEnd.Onboarding
         private async Task<bool> CanStepAdvance()
         {
             if (wizard?.ActiveStep?.Name == Step1)
-                if (farmEditor is not null && farmEditor.editContext.IsModified())
+                if (farmEditor is not null )
                 {
-                    if (!farmEditor.editContext.Validate()) return false;
-                    await farmEditor.OnSubmit();
+                    if (farmEditor.editContext.IsModified() && !farmEditor.editContext.Validate()) return false;
+                    if(farmEditor.editContext.IsModified()) await farmEditor.OnSubmit();
                 }
             if (wizard?.ActiveStep?.Name == Step2)
-                if (landPlotEditor is not null && landPlotEditor.editContext.IsModified())
+                if (landPlotEditor is not null )
                 {
-                    if (!landPlotEditor.editContext.Validate()) return false;
-                    await landPlotEditor.OnSubmit();
+                    if(landPlotEditor.editContext.IsModified() && !landPlotEditor.editContext.Validate()) return false;
+                    if(landPlotEditor.editContext.IsModified()) await landPlotEditor.OnSubmit();
                 }
             return true;
         }
-        private void FarmLocationUpdated(FarmLocationModel args) => farm = args;
-        private void LandPlotUpdated(LandPlotModel args) => landPlot = args;
+        private async Task FarmLocationUpdated(FarmLocationModel args)
+        {
+            while (!dbContext.Farms.Any(t => t.Id == args.Id))
+                await Task.Delay(100);
+            
+            await FreshenData();
+        }
+        
+
+        private async Task LandPlotUpdated(LandPlotModel args) {
+            if(args.Id>0)
+            while (!dbContext.LandPlots.Any(t => t.Id == args.Id))
+                await Task.Delay(100);
+
+            await FreshenData();
+            landPlotList?._listComponent.Update();
+        }
 
         public ValueTask DisposeAsync()
         {

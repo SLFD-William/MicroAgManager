@@ -18,6 +18,7 @@ namespace FrontEnd.Components.Shared
         /// The Name of the step
         /// </summary>
         [Parameter]public string Name { get; set; }
+        [Parameter] public bool IsRepeating { get; set; } = false;
 
         protected override void OnInitialized()
         {

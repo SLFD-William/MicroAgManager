@@ -1,0 +1,17 @@
+﻿@using Domain.Extensions;
+@using MicroAgManagement.Client.Components.Objects.Grid.Filters;
+@typeparam TableItem
+
+@if (Column.FilterControl == this)
+{
+    <select class="form-control form-control-sm" value="@Condition" @onchange="@((x) => Condition = (StringCondition)Enum.Parse(typeof(StringCondition), x.Value.ToString()))">
+        @foreach (var option in (StringCondition[])Enum.GetValues(typeof(StringCondition)))
+        {
+            <option value="@option">@option.GetEnumDescription()</option>
+        }
+    </select>
+    @if (Condition != StringCondition.IsNotNulOrEmpty && Condition != StringCondition.IsNullOrEmpty)
+    {
+        <input type="text" class="form-control form-control-sm" @bind-value="FilterText" />
+    }
+}

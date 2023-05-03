@@ -9,6 +9,7 @@ namespace Domain.Entity
         }
         public string Status { get; set; }
         public LivestockType LivestockType { get; set; }
+        public bool DefaultStatus { get; set; }
         public string InMilk { get; set; }
         public string BeingManaged { get; set; }
         public string Sterile { get; set; }

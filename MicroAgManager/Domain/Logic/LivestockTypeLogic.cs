@@ -16,7 +16,6 @@ namespace Domain.Logic
             if (livestockType == null) throw new Exception("LivestockType not found");
             entitiesModified.Add(new ModifiedEntity(livestockType.Id.ToString(), livestockType.GetType().Name, "Created",livestockType.ModifiedBy));
 
-            AddLivestockTypeStatus(livestockType, context);
             AddRequiredMilestones(livestockType, context);
             var changes = ((DbContext)context).ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
             foreach (var change in changes)
@@ -30,27 +29,6 @@ namespace Domain.Logic
             }
             if (save) await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
-        }
-        public static void AddLivestockTypeStatus(LivestockType animalType, IMicroAgManagementDbContext context)
-        {
-            var animalStatusExists = context.LivestockStatuses.Any(_ => _.TenantId == animalType.TenantId && _.Status == animalType.DefaultStatus && _.LivestockType == animalType);
-            if (animalStatusExists)
-                return;
-
-            var animalStatus = new LivestockStatus(animalType.ModifiedBy, animalType.TenantId)
-            {
-                ModifiedBy = animalType.ModifiedBy,
-                ModifiedOn = animalType.ModifiedOn,
-                TenantId = animalType.TenantId,
-                LivestockType = animalType,
-                Status = animalType.DefaultStatus,
-                BeingManaged = LivestockStatusModeConstants.True,
-                BottleFed = LivestockStatusModeConstants.Unchanged,
-                ForSale = LivestockStatusModeConstants.Unchanged,
-                InMilk = LivestockStatusModeConstants.Unchanged,
-                Sterile = LivestockStatusModeConstants.Unchanged
-            };
-            context.LivestockStatuses.Add(animalStatus);
         }
         public static void AddRequiredMilestones(LivestockType animalType, IMicroAgManagementDbContext context)
         {

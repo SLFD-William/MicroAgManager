@@ -11,7 +11,6 @@ namespace Domain.Entity
         public string GroupName { get; set; }
         public string ParentMaleName { get; set; }
         public string ParentFemaleName { get; set; }
-        public string DefaultStatus { get; set; }
         public string Care { get; set; }
         public ICollection<LivestockBreed> Breeds { get; set; } = new List<LivestockBreed>();
         public ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();

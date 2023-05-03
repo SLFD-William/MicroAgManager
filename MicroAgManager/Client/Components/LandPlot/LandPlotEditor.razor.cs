@@ -9,12 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LandPlot
 {
-    public partial class LandPlotEditor
+    public partial class LandPlotEditor:ComponentBase, IAsyncDisposable
     {
         [CascadingParameter] FarmLocationModel farm { get; set; }
         [CascadingParameter] IFrontEndApiServices api { get; set; }
         [CascadingParameter] DataSynchronizer dbSync { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
+        [Parameter] public bool createOnly { get; set; } 
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
         [Parameter] public EventCallback<LandPlotModel> Submitted { get; set; }
@@ -30,35 +31,54 @@ namespace FrontEnd.Components.LandPlot
 
         private async Task FreshenData()
         {
+            if (_submitting) return;
             if (dbContext is null)
                 dbContext = await dbSync.GetPreparedDbContextAsync();
             var query = dbContext.LandPlots.AsQueryable();
+            if (farm is not null) query = query.Where(f => f.FarmLocationId==farm.Id);
+            if (parentPlotId.HasValue && parentPlotId > 0)
+                query = query.Where(f => f.ParentPlotId == parentPlotId);
             if (landPlotId.HasValue && landPlotId>0)
                 query = query.Where(f => f.Id == landPlotId);
-            plot = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LandPlotModel() {FarmLocationId=farm.Id};
+            plot= new LandPlotModel();
+            if(!createOnly)
+                plot = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LandPlotModel();
+            ApplyRelatedIds();
             editContext = new EditContext(plot);
         }
+        private void ApplyRelatedIds()
+        {
+            if (farm is not null) plot.FarmLocationId = farm.Id;
+            if (parentPlotId.HasValue && parentPlotId > 0) plot.ParentPlotId = parentPlotId;
+
+        }
+        private bool _submitting = false;
         public async Task OnSubmit()
         {
-            try
+            _submitting = true;
+            var id = plot.Id;
+            if (id <= 0)
+                id = await api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = plot });
+            else
+                id = await api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = plot }); 
+
+            if (id <= 0)
+                throw new Exception("Unable to save plot");
+            plot.Id=id;
+            editContext = new EditContext(plot);
+            editContext.MarkAsUnmodified();
+            await Submitted.InvokeAsync(plot);
+            _submitting = false;
+            if (createOnly)
             {
-
-                if (plot.Id <= 0)
-                    plot.Id = await api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = plot });
-                else
-                    plot.Id = await api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = plot }); 
-
-                if (plot.Id <= 0)
-                    throw new Exception("Unable to save plot");
-
+                plot = new LandPlotModel();
+                ApplyRelatedIds();
                 editContext = new EditContext(plot);
+                editContext.MarkAsUnmodified();
                 await Submitted.InvokeAsync(plot);
-                StateHasChanged();
             }
-            catch (Exception ex)
-            {
-
-            }
+               
+            StateHasChanged();
         }
         public ValueTask DisposeAsync()
         {
