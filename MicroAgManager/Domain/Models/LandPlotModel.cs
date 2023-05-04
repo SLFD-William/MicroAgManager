@@ -16,9 +16,9 @@ namespace Domain.Models
         [Required] public string? Name { get; set; }
         [Required] public string? Description { get; set; }
         [Precision(18, 3)] public decimal Area { get; set; } = 0M;
-        public long AreaUnit { get; set; } = UnitEnum.Area_Acres.Id;
+        public string AreaUnit { get; set; } = UnitEnum.Area_Acres.GetDescription();
         public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;
-        public long? ParentPlotId { get; set; }
+        [ForeignKey(nameof(LandPlotModel))] public long? ParentPlotId { get; set; }
         public virtual ICollection<LandPlotModel?> Subplots { get; set; }=new List<LandPlotModel?>();
         public virtual ICollection<LivestockModel?> Livestocks { get; set; } = new List<LivestockModel?>();
 
@@ -28,7 +28,7 @@ namespace Domain.Models
             {
                 FarmLocationId = plot.FarmLocationId,
                 Area=plot.Area,
-                AreaUnit = plot.AreaUnit.Id,
+                AreaUnit = plot.AreaUnit,
                 Usage = plot.Usage,
                 ParentPlotId = plot.ParentPlotId,
                 Name= plot.Name,
@@ -45,7 +45,7 @@ namespace Domain.Models
             entity.ParentPlotId = ParentPlotId;
             entity.Area = Area;
             entity.Usage =Usage;
-            entity.AreaUnit = BaseEnumeration.FromId<UnitEnum>(AreaUnit);
+            entity.AreaUnit = AreaUnit;
             entity.Description = Description ?? string.Empty;
             entity.FarmLocationId = FarmLocationId;
             if(entity.Subplots?.Any() ?? false)

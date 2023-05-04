@@ -16,26 +16,20 @@
                 }
                 else
                 {
-                    <LandPlotList @ref="landPlotList" Items="dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id).AsEnumerable()"></LandPlotList>
+                    <LandPlotList @ref="landPlotList" Items="dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id)"></LandPlotList>
                     <LandPlotEditor @ref="landPlotEditor" parentPlotId="@landPlot.Id" Submitted="@LandPlotUpdated" createOnly="true"></LandPlotEditor>
                 }
             </CascadingValue>
         </WizardStep>
            <WizardStep Name="@Step3">
-                @if (landPlot.Usage == LandPlotUseConstants.GeneralUse)
-                {
-                    <p>What would you like to produce on your farm?</p>
-                    <select @bind=farmProduction>
-                        <option value="">Select Product ...</option>
-                        <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
-                    </select>
-                }
-                @if (farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock)
+               <CascadingValue Value="farm">
+                @if (dbContext.LandPlots.Any(p => p.FarmLocationId == farm.Id && new List<string> { LandPlotUseConstants.Livestock, LandPlotUseConstants.GeneralUse }.Contains( p.Usage)))
                 {
                     <CascadingValue Value="livestockType">
                         <AddLivestockTypeWizard Completed="@LivestockTypeWizardCompleted" IsNestedWizard="true"></AddLivestockTypeWizard>
                     </CascadingValue>
                 }
+                </CascadingValue>
             </WizardStep>
     </Wizard>
 }

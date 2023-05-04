@@ -13,7 +13,7 @@ namespace Domain.Entity
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Area { get; set; } = 0M;
-        public UnitEnum AreaUnit { get; set; }=UnitEnum.Area_Acres;
+        public string AreaUnit { get; set; }=UnitEnum.Area_Acres.GetDescription();
         public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;
         [Required] public long FarmLocationId { get; set; }
         public long? ParentPlotId { get; set; }

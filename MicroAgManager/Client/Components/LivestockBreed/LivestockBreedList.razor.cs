@@ -4,18 +4,18 @@ using FrontEnd.Data;
 using FrontEnd.Persistence;
 using Microsoft.AspNetCore.Components;
 
-namespace FrontEnd.Components.LandPlot
+namespace FrontEnd.Components.LivestockBreed
 {
-    public partial class LandPlotList:ComponentBase, IAsyncDisposable
+    public partial class LivestockBreedList:ComponentBase, IAsyncDisposable
     {
-        public ListTemplate<LandPlotModel> _listComponent;
-        [CascadingParameter] FarmLocationModel farm { get; set; }
+        public ListTemplate<LivestockBreedModel> _listComponent;
+        [CascadingParameter] LivestockTypeModel livestockType { get; set; }
         [CascadingParameter] DataSynchronizer dbSync { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
-        [Parameter] public IEnumerable<LandPlotModel>? Items { get; set; }
+        [Parameter] public IEnumerable<LivestockBreedModel>? Items { get; set; }
         protected async override Task OnInitializedAsync()
         {
-            
+
             dbSync.OnUpdate += DbSync_OnUpdate;
             await FreshenData();
         }
@@ -29,8 +29,8 @@ namespace FrontEnd.Components.LandPlot
                 dbContext = await dbSync.GetPreparedDbContextAsync();
 
             if (Items is null)
-                Items = dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
-           
+                Items = dbContext.LivestockBreeds.Where(f => f.LivestockTypeId == livestockType.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
+
             StateHasChanged();
             _listComponent.Update();
         }

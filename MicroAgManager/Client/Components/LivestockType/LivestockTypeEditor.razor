@@ -1,12 +1,15 @@
-﻿@using Domain.Constants;
+﻿@inherits Editor<LivestockTypeModel>    
+@using Domain.Constants;
 @using Domain.Enums;
+@using Domain.Models;
 @if (livestockType is not null)
 { 
 <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
     <div class="dataSection">
         <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockType.Name)">
-                <input placeholder="Name" value="@livestockType.Name" onchange="@(async (ChangeEventArgs args)=>await CheckNameExists(args))" />
+                <InputText placeholder="Name" @bind-Value="@Name" />
+                @*<input placeholder="Name" value="@livestockType.Name" onchange="@(async (ChangeEventArgs args)=>await CheckNameExists(args))" />*@
         </ValidatedField>
         <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => livestockType.GroupName)">
             <InputText placeholder="Collective Name" @bind-Value="@livestockType.GroupName" />

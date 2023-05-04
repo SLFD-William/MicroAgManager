@@ -1,6 +1,4 @@
-﻿using Domain.Constants;
-using Domain.Entity;
-using Domain.Models;
+﻿using Domain.Models;
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.Shared;
@@ -15,8 +13,8 @@ namespace FrontEnd.Onboarding
     public partial class OnboardingWizard : IAsyncDisposable
     {
         private const string Step1 = "Farm Information";
-        private const string Step2 = "Farm Location";
-        private const string Step3 = "Main Plot";
+        private const string Step2 = "Farm Plots";
+        private const string Step3 = "Livestock";
         private const string Step4 = "Complete";
 
 
@@ -33,7 +31,6 @@ namespace FrontEnd.Onboarding
         private LandPlotEditor? landPlotEditor;
         protected LandPlotModel landPlot = new();
         private LivestockTypeModel? livestockType;
-        private string farmProduction = string.Empty;
 
         private Wizard? wizard;
         private bool _buttonsVisible = true;
@@ -41,7 +38,7 @@ namespace FrontEnd.Onboarding
         {
             if (string.IsNullOrEmpty(wizard?.ActiveStep?.Name)) return Task.FromResult( _buttonsVisible);
             _buttonsVisible = true;
-            if ((farmProduction == LandPlotUseConstants.Livestock || landPlot.Usage == LandPlotUseConstants.Livestock) && wizard.ActiveStep.Name == Step3)
+            if (wizard.ActiveStep.Name == Step3)
                 _buttonsVisible = false; ;
             return Task.FromResult(_buttonsVisible);
         }
@@ -63,8 +60,8 @@ namespace FrontEnd.Onboarding
            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             while (authentication.TenantId() == Guid.Empty)
                 await Task.Delay(100);
-            while (!dbContext.Tenants.Any(t => t.Id == authentication.TenantId()))
-                await Task.Delay(100);
+            //while (!dbContext.Tenants.Any(t => t.Id == authentication.TenantId()))
+            //    await Task.Delay(100);
 
 
             tenant = await dbContext.Tenants.SingleAsync(t => t.Id == authentication.TenantId());

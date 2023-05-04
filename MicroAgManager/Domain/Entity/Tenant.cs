@@ -13,7 +13,7 @@ namespace Domain.Entity
         public Guid? DeletedBy { get; set; }
         public string Name { get; set; } = string.Empty;
         public Guid TenantUserAdminId { get; set; }
-        public TenantAccessLevelEnum AccessLevel { get; set; }
+        public string AccessLevel { get; set; }
         public ICollection<ApplicationUser> Users { get; private set; } = new List<ApplicationUser>();
         public ICollection<FarmLocation> Farms { get; private set; } = new List<FarmLocation>();
         public Tenant(Guid createdBy)
@@ -22,7 +22,7 @@ namespace Domain.Entity
             CreatedBy = createdBy;
             ModifiedOn = Created;
             ModifiedBy = createdBy;
-            AccessLevel = TenantAccessLevelEnum.LocalStorage;
+            AccessLevel = TenantAccessLevelEnum.SingleUser.GetDescription();
         }
     }
 }

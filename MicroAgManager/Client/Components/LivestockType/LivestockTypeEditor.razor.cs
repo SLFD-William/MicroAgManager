@@ -1,86 +1,77 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Types;
+using Domain.Entity;
 using Domain.Models;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
-using FrontEnd.Services;
+using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockType
 {
-    public partial class LivestockTypeEditor : IAsyncDisposable
+    public partial class LivestockTypeEditor : Editor<LivestockTypeModel>
     {
-        [CascadingParameter] IFrontEndApiServices api { get; set; }
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
-        [Parameter] public EventCallback<LivestockTypeModel> Submitted { get; set; }
         [Parameter] public long? livestockTypeId { get; set; }
-        
-        private async Task CheckNameExists(ChangeEventArgs args)
+        public string Name { get => livestockType.Name;
+             set
+                { if(!CheckNameExists(value).Result) livestockType.Name = value; } }
+        private async Task<bool> CheckNameExists(string name)
         {
-            var name = args.Value?.ToString();
-            if (string.IsNullOrWhiteSpace(name)) return;
-            livestockType.Name = name;
-            if (!dbContext.LivestockTypes.Any(l => l.Name == livestockType.Name && l.Id!=livestockType.Id)) return;
-            var check= await dbContext.LivestockTypes.FirstOrDefaultAsync(l => l.Name == livestockType.Name);
-            if (check is not null) livestockType = check;
+            if (string.IsNullOrWhiteSpace(name)) return false;
+            if (!dbContext.LivestockTypes.Any(l => l.Name == livestockType.Name && l.Id != livestockType.Id)) return false;
+            var check= await dbContext.LivestockTypes.FirstOrDefaultAsync(l => l.Name == name);
+            if (check is null) return false;
+            livestockType = check;
             await Submitted.InvokeAsync(livestockType);
+            editContext.MarkAsUnmodified();
             StateHasChanged();
+            return true;
         }
-        public EditContext editContext { get; private set; }
-
-        protected async override Task OnInitializedAsync()
+        protected override async Task FreshenData() 
         {
-            dbSync.OnUpdate += DbSync_OnUpdate;
-            await FreshenData();
-        }
-
-        private void DbSync_OnUpdate() => Task.Run(FreshenData);
-
-        private async Task FreshenData() 
-        { 
-            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
-            if(livestockType is not null)
-            { 
-                editContext = new EditContext(livestockType);
-                StateHasChanged();
-                return;
-            }
+            if (_submitting) return;
+            if (dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
+            
             var query = dbContext.LivestockTypes.AsQueryable();
             if (livestockTypeId.HasValue && livestockTypeId > 0)
                 query = query.Where(f => f.Id == livestockTypeId);
-            livestockType = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockTypeModel();
+            livestockType = new LivestockTypeModel();
+            if (!createOnly) 
+                livestockType = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockTypeModel();
+
             editContext = new EditContext(livestockType);
         }
-        public async Task OnSubmit()
+        public override async Task OnSubmit()
         {
             try
             {
-                var state = livestockType.Id <= 0 ? EntityState.Added : EntityState.Modified;
-
-                if (livestockType.Id <= 0)
-                    livestockType.Id = await api.ProcessCommand<LivestockTypeModel, CreateLivestockType>("api/CreateLivestockType", new CreateLivestockType { LivestockType=livestockType });
+                _submitting = true;
+                var id = livestockType.Id;
+                if (id <= 0)
+                    id = await api.ProcessCommand<LivestockTypeModel, CreateLivestockType>("api/CreateLivestockType", new CreateLivestockType { LivestockType = livestockType });
                 else
-                    livestockType.Id = await api.ProcessCommand<LivestockTypeModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
+                    id = await api.ProcessCommand<LivestockTypeModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
 
-                if(livestockType.Id <= 0)
+                if (id <= 0)
                     throw new Exception("Failed to save livestock type");
 
+                livestockType.Id = id;
                 editContext = new EditContext(livestockType);
                 await Submitted.InvokeAsync(livestockType);
+                _submitting = false;
+                if (createOnly)
+                {
+                    livestockType = new LivestockTypeModel();
+                    editContext = new EditContext(livestockType);
+                    editContext.MarkAsUnmodified();
+                    await Submitted.InvokeAsync(livestockType);
+                }
                 StateHasChanged();
             }
             catch (Exception ex)
-            {
-
-            }
-        }
-        public ValueTask DisposeAsync()
-        {
-            dbSync.OnUpdate -= DbSync_OnUpdate;
-            return ValueTask.CompletedTask;
+            { }
+            finally { _submitting = false; }
+                            
         }
     }
 }

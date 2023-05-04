@@ -10,10 +10,9 @@ namespace Domain.Models
         [Required] public string? Name { get; set; }
         [Required] public Guid? TenantUserAdminId { get; set; }
         public virtual ICollection<FarmLocationModel?>? Farms { get; set; }
-        public static TenantModel? Create(Tenant? tenant)
+        public static TenantModel Create(Tenant tenant)
         {
-            if (tenant == null)
-                return null;
+            if (tenant == null) throw new ArgumentNullException(nameof(tenant));
             return new TenantModel
             {
                 Id = tenant.Id,

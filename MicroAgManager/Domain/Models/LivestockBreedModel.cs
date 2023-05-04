@@ -19,6 +19,7 @@ namespace Domain.Models
         {
             var model = PopulateBaseModel(livestockBreed, new LivestockBreedModel
             {
+                LivestockTypeId=livestockBreed.Livestock.Id,
                 Name = livestockBreed.Name,
                 EmojiChar = livestockBreed.EmojiChar,
                 GestationPeriod = livestockBreed.GestationPeriod,
@@ -29,13 +30,15 @@ namespace Domain.Models
         }
         public LivestockBreed MapToEntity(LivestockBreed entity)
         {
+            if(entity.Livestock is not null)
+                entity.Livestock.Id = LivestockTypeId;
             entity.EmojiChar = EmojiChar;
             entity.GestationPeriod = GestationPeriod;  
             entity.HeatPeriod = HeatPeriod;
             entity.Name = Name;
             if(entity.Livestocks.Any())
-                foreach (var subplot in entity.Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);
+                foreach (var livestock in entity.Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.MapToEntity(livestock);
             return entity;
         }
     }

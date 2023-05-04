@@ -2,7 +2,6 @@
 {
     public class TenantAccessLevelEnum : BaseEnumeration
     {
-        public static TenantAccessLevelEnum LocalStorage = new(1, nameof(LocalStorage));
         public static TenantAccessLevelEnum SingleUser = new(2, nameof(SingleUser));
         public static TenantAccessLevelEnum SingleUserWithAttachments = new(3, nameof(SingleUserWithAttachments));
         public static TenantAccessLevelEnum MultiUser = new(4, nameof(MultiUser));

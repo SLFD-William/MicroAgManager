@@ -1,5 +1,7 @@
-﻿@using Domain.Constants;
+﻿@inherits Editor<LivestockStatusModel>
+@using Domain.Constants;
 @using Domain.Enums;
+@using Domain.Models;
 @if (livestockStatus is not null)
 {
     <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">

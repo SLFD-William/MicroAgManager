@@ -17,8 +17,7 @@ namespace Persistence.Configurations
             builder.Property(e => e.ModifiedBy).IsRequired();
             builder.Property(e => e.TenantUserAdminId).IsRequired();
             builder.Property(e => e.Name).IsRequired().HasMaxLength(40);
-            builder.OwnEnumeration(e => e.AccessLevel);
-            builder.Property(e => e.AccessLevel).IsRequired();
+            builder.Property(e => e.AccessLevel).IsRequired().HasMaxLength(50);
         }
     }
 }

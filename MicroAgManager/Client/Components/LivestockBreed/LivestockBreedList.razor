@@ -1,0 +1,12 @@
+﻿@using Domain.Models;
+@if (dbContext != null)
+{
+    <ListTemplate @ref="_listComponent" PageSize="0" TItem="LivestockBreedModel" Items="@Items" ShowHeader="true">
+        <ColumnContent>
+            <Column TableItem="LivestockBreedModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockBreedModel" Field="@(x => x.EmojiChar)" Title="Emoji" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockBreedModel" Field="@(x => x.GestationPeriod)" Title="Gestation Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockBreedModel" Field="@(x => x.HeatPeriod)" Title="Heat Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        </ColumnContent>
+    </ListTemplate>
+}

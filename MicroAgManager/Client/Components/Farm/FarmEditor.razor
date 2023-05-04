@@ -1,4 +1,6 @@
-﻿<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
+﻿@using Domain.Models;
+@inherits Editor<FarmLocationModel>
+<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
       <div class="dataSection">
         <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">

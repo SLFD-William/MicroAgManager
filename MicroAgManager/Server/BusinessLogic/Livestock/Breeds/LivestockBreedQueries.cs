@@ -1,6 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using Domain.Interfaces;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.BusinessLogic.Livestock.Breeds
 {
@@ -15,7 +16,7 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
 
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
-            var query = PopulateBaseQuery(context.LivestockBreeds.AsQueryable());
+            var query = PopulateBaseQuery(context.LivestockBreeds.Include(l=>l.Livestock).AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
 
             if (LivestockTypeId.HasValue) query = query.Where(_ => _.Livestock.Id == LivestockTypeId);

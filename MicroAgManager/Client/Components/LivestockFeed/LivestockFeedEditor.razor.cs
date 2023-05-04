@@ -1,34 +1,20 @@
 ﻿using BackEnd.BusinessLogic.LivestockFeed;
 using Domain.Models;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
-using FrontEnd.Services;
+using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockFeed
 {
-    public partial class LivestockFeedEditor : IAsyncDisposable
+    public partial class LivestockFeedEditor : Editor<LivestockFeedModel>
     {
-        [CascadingParameter] IFrontEndApiServices api { get; set; }
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
 
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
-        [Parameter] public EventCallback<LivestockFeedModel> Submitted { get; set; }
         [Parameter] public long? livestockFeedId { get; set; }
         [Parameter] public LivestockFeedModel livestockFeed { get; set; }
-        public EditContext editContext { get; private set; }
-        protected async override Task OnInitializedAsync()
-        {
-            dbSync.OnUpdate += DbSync_OnUpdate;
-            await FreshenData();
-        }
 
-        private void DbSync_OnUpdate() => Task.Run(FreshenData);
-
-        private async Task FreshenData()
+        protected override async Task FreshenData()
         {
             if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             if (livestockFeed is not null)
@@ -42,7 +28,7 @@ namespace FrontEnd.Components.LivestockFeed
             livestockFeed = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockFeedModel{ LivestockTypeId=livestockType.Id };
             editContext = new EditContext(livestockType);
         }
-        public async Task OnSubmit()
+        public override async Task OnSubmit()
         {
             try
             {
@@ -62,11 +48,6 @@ namespace FrontEnd.Components.LivestockFeed
             {
 
             }
-        }
-        public ValueTask DisposeAsync()
-        {
-            dbSync.OnUpdate -= DbSync_OnUpdate;
-            return ValueTask.CompletedTask;
         }
     }
 }

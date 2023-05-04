@@ -41,14 +41,21 @@ namespace Domain.Enums
 
         protected BaseEnumeration(long id, string name) => (Id, Name) = (id, name);
         public override string ToString() => Name;
-        public static T FromId<T>(long id) where T : BaseEnumeration
-        {
-            return typeof(T).GetFields(BindingFlags.Public |
+        public static T FromDescription<T>(string description) where T : BaseEnumeration
+            => typeof(T).GetFields(BindingFlags.Public |
+                                BindingFlags.Static |
+                                BindingFlags.DeclaredOnly)
+                     .Select(f => f.GetValue(null))
+                     .Cast<T>().FirstOrDefault(x => x.GetDescription() == description);
+
+            
+
+        public static T FromId<T>(long id) where T : BaseEnumeration 
+            => typeof(T).GetFields(BindingFlags.Public |
                                 BindingFlags.Static |
                                 BindingFlags.DeclaredOnly)
                      .Select(f => f.GetValue(null))
                      .Cast<T>().FirstOrDefault(x => x.Id == id);
-        }
         public static IEnumerable<T> GetAll<T>() where T : BaseEnumeration =>
             typeof(T).GetFields(BindingFlags.Public |
                                 BindingFlags.Static |
@@ -76,15 +83,8 @@ namespace Domain.Enums
             throw new NotImplementedException();
         }
 
-        public static bool operator ==(BaseEnumeration left, BaseEnumeration right)
-        {
-            if (ReferenceEquals(left, null))
-            {
-                return ReferenceEquals(right, null);
-            }
-
-            return left.Equals(right);
-        }
+        public static bool operator ==(BaseEnumeration left, BaseEnumeration right)=>
+            ReferenceEquals(left, null)? ReferenceEquals(right, null): left.Equals(right);
 
         public static bool operator !=(BaseEnumeration left, BaseEnumeration right)
         {
@@ -92,23 +92,18 @@ namespace Domain.Enums
         }
 
         public static bool operator <(BaseEnumeration left, BaseEnumeration right)
-        {
-            return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
-        }
+            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+        
 
         public static bool operator <=(BaseEnumeration left, BaseEnumeration right)
-        {
-            return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
-        }
+            => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+        
 
         public static bool operator >(BaseEnumeration left, BaseEnumeration right)
-        {
-            return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
-        }
+            => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+        
 
         public static bool operator >=(BaseEnumeration left, BaseEnumeration right)
-        {
-            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
-        }
+            => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }

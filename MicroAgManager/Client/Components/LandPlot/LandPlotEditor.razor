@@ -1,5 +1,7 @@
 ﻿@using Domain.Constants;
 @using Domain.Enums;
+@using Domain.Models;
+@inherits Editor<LandPlotModel>
 <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
     <div class="dataSection">
@@ -23,10 +25,10 @@
         </ValidatedField>
         <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
             <InputSelect @bind-Value="@plot.AreaUnit">
-                <option value="0">Select Units ...</option>
+                <option value="">Select Units ...</option>
                 @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a=>a.Name.StartsWith("Area")))
                 {
-                    <option value="@g.Id">@g.GetDescription()</option>
+                    <option value="@g.GetDescription()">@g.GetDescription()</option>
                 }
             </InputSelect>
         </ValidatedField>
