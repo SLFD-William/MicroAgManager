@@ -73,8 +73,8 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -283,8 +283,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex(new[] { "Deleted" }, "Index_FarmLocation_Deleted");
 
@@ -1211,9 +1209,11 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.Tenant", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AccessLevel")
                         .IsRequired()
@@ -1230,6 +1230,9 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GuidId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModifiedBy")
@@ -1639,7 +1642,7 @@ namespace BackEnd.Persistence.Migrations
             modelBuilder.Entity("Domain.Entity.ApplicationUser", b =>
                 {
                     b.HasOne("Domain.Entity.Tenant", "Tenant")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1654,15 +1657,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasForeignKey("LivestockTypeId");
 
                     b.Navigation("LivestockType");
-                });
-
-            modelBuilder.Entity("Domain.Entity.FarmLocation", b =>
-                {
-                    b.HasOne("Domain.Entity.Tenant", null)
-                        .WithMany("Farms")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
@@ -2040,13 +2034,6 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("Feeds");
 
                     b.Navigation("Statuses");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Tenant", b =>
-                {
-                    b.Navigation("Farms");
-
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

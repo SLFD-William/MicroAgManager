@@ -4,7 +4,8 @@ namespace Domain.Entity
 {
     public class Tenant
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
+        public Guid GuidId { get; set; }
         public DateTime Created { get; set; }
         public DateTime ModifiedOn { get; set; }
         public DateTime? Deleted { get; set; }
@@ -14,8 +15,6 @@ namespace Domain.Entity
         public string Name { get; set; } = string.Empty;
         public Guid TenantUserAdminId { get; set; }
         public string AccessLevel { get; set; }
-        public ICollection<ApplicationUser> Users { get; private set; } = new List<ApplicationUser>();
-        public ICollection<FarmLocation> Farms { get; private set; } = new List<FarmLocation>();
         public Tenant(Guid createdBy)
         {
             Created = DateTime.Now;

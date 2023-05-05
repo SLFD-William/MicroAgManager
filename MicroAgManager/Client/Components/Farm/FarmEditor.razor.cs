@@ -16,7 +16,7 @@ namespace FrontEnd.Components.Farm
         {
             if(dbContext is null) dbContext= await dbSync.GetPreparedDbContextAsync();
             var query= dbContext.Farms.AsQueryable();
-            if (farmId.HasValue)
+            if (farmId.HasValue && farmId>0)
                 query = query.Where(f => f.Id == farmId);
             farm = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
             if (string.IsNullOrEmpty(farm.Name) && !string.IsNullOrEmpty(farmName))

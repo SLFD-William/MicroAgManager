@@ -12,8 +12,8 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230501215936_AddLivestockTypeToMilestone")]
-    partial class AddLivestockTypeToMilestone
+    [Migration("20230505002752_MakingGuidIdSeparate")]
+    partial class MakingGuidIdSeparate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,8 +76,8 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("TenantId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -287,8 +287,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TenantId");
-
                     b.HasIndex(new[] { "Deleted" }, "Index_FarmLocation_Deleted");
 
                     b.HasIndex(new[] { "ModifiedOn" }, "Index_FarmLocation_ModifiedOn");
@@ -310,8 +308,10 @@ namespace BackEnd.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<long>("AreaUnit")
-                        .HasColumnType("bigint");
+                    b.Property<string>("AreaUnit")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -331,9 +331,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<long>("FarmLocationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("LandPlotId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -362,7 +359,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("FarmLocationId");
 
-                    b.HasIndex("LandPlotId");
+                    b.HasIndex("ParentPlotId");
 
                     b.HasIndex(new[] { "Deleted" }, "Index_LandPlot_Deleted");
 
@@ -961,6 +958,9 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("DefaultStatus")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("Deleted")
                         .HasColumnType("datetime2");
 
@@ -1030,11 +1030,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("DefaultStatus")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
 
                     b.Property<DateTime?>("Deleted")
                         .HasColumnType("datetime2");
@@ -1217,12 +1212,16 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.Tenant", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("AccessLevel")
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AccessLevel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -1234,6 +1233,9 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GuidId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModifiedBy")
@@ -1643,7 +1645,7 @@ namespace BackEnd.Persistence.Migrations
             modelBuilder.Entity("Domain.Entity.ApplicationUser", b =>
                 {
                     b.HasOne("Domain.Entity.Tenant", "Tenant")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1660,15 +1662,6 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("LivestockType");
                 });
 
-            modelBuilder.Entity("Domain.Entity.FarmLocation", b =>
-                {
-                    b.HasOne("Domain.Entity.Tenant", null)
-                        .WithMany("Farms")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
                 {
                     b.HasOne("Domain.Entity.FarmLocation", "FarmLocation")
@@ -1677,11 +1670,13 @@ namespace BackEnd.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entity.LandPlot", null)
+                    b.HasOne("Domain.Entity.LandPlot", "ParentPlot")
                         .WithMany("Subplots")
-                        .HasForeignKey("LandPlotId");
+                        .HasForeignKey("ParentPlotId");
 
                     b.Navigation("FarmLocation");
+
+                    b.Navigation("ParentPlot");
                 });
 
             modelBuilder.Entity("Domain.Entity.Livestock", b =>
@@ -2042,13 +2037,6 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("Feeds");
 
                     b.Navigation("Statuses");
-                });
-
-            modelBuilder.Entity("Domain.Entity.Tenant", b =>
-                {
-                    b.Navigation("Farms");
-
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

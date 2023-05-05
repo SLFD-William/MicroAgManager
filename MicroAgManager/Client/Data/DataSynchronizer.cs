@@ -153,7 +153,7 @@ namespace FrontEnd.Data
             => !(entityModels?.Any() ?? false) || (entityModels?.Contains(modelName) ?? false);
         private async static Task BulkUpdateTenants(FrontEndDbContext db,DbConnection connection, IFrontEndApiServices api)
         {
-            var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t=>t.Id));
+            var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t=>t.GuidId));
             var mostRecentUpdate = db.Tenants.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             while (true)
@@ -164,15 +164,17 @@ namespace FrontEnd.Data
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
+                var guidId = AddNamedParameter(command, "$GuidId");
                 var tenantUserAdminId = AddNamedParameter(command, "$TenantUserAdminId");
-                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy) " +
-                    $"Values ({baseParameters["Id"].ParameterName},{name.ParameterName},{tenantUserAdminId.ParameterName},{baseParameters["Deleted"].ParameterName}," +
+                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy) " +
+                    $"Values ({baseParameters["Id"].ParameterName},{guidId.ParameterName},{name.ParameterName},{tenantUserAdminId.ParameterName},{baseParameters["Deleted"].ParameterName}," +
                     $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
                     name.Value = model.Name;
+                    guidId.Value = model.GuidId;
                     tenantUserAdminId.Value = model.TenantUserAdminId;
                     await command.ExecuteNonQueryAsync();
                 }
@@ -214,13 +216,13 @@ namespace FrontEnd.Data
                     baseParameters["ModifiedBy"].Value = model.ModifiedBy;
                     tenantId.Value = model.TenantId;
                     name.Value = model.Name;
-                    longitude.Value = model.Longitude;
-                    latitude.Value = model.Latitude;
-                    streetAddress.Value = model.StreetAddress;
-                    city.Value = model.City;
-                    state.Value = model.State;
-                    zipCode.Value = model.Zip;
-                    country.Value = model.Country;
+                    longitude.Value = model.Longitude ?? string.Empty;
+                    latitude.Value = model.Latitude ?? string.Empty;
+                    streetAddress.Value = model.StreetAddress ?? string.Empty;
+                    city.Value = model.City ?? string.Empty;
+                    state.Value = model.State ?? string.Empty;
+                    zipCode.Value = model.Zip ?? string.Empty;
+                    country.Value = model.Country ?? string.Empty;
                     await command.ExecuteNonQueryAsync();
                 }
 
@@ -264,7 +266,8 @@ namespace FrontEnd.Data
                     area.Value = model.Area;
                     areaUnit.Value = model.AreaUnit;
                     usage.Value = model.Usage;
-                    parentPlotId.Value = model.ParentPlotId;
+                    
+                    parentPlotId.Value = model.ParentPlotId.HasValue ? model.ParentPlotId.Value :DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
 

@@ -59,7 +59,7 @@ namespace BackEnd.BusinessLogic.Authentication
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("TenantId", user.TenantId.ToString()),
+                new Claim("TenantId", user.Tenant.GuidId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             };
             foreach (var userRole in userRoles)

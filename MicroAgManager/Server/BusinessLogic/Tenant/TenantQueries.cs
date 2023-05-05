@@ -12,7 +12,7 @@ namespace BackEnd.BusinessLogic.Tenant
 
         protected IQueryable<Domain.Entity.Tenant> GetQuery(IMicroAgManagementDbContext context)
         { 
-            var query=context.Tenants.Where(t=>t.Id == TenantId).AsQueryable();
+            var query=context.Tenants.Where(t=>t.GuidId == TenantId).AsQueryable();
             if (query is null)
                 throw new ArgumentNullException(nameof(query));
 

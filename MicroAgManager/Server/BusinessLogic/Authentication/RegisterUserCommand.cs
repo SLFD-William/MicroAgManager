@@ -34,7 +34,7 @@ namespace BackEnd.BusinessLogic.Authentication
                     return new LoginResult { success = false, message = AuthenticationConstants.RegistrationUserExists };
 
                 var newTenant = Guid.NewGuid();
-                var tenant = new Domain.Entity.Tenant(newTenant) { Id=newTenant, Name = request.Name ?? string.Empty, TenantUserAdminId =newTenant};
+                var tenant = new Domain.Entity.Tenant(newTenant) { GuidId =newTenant, Name = request.Name ?? string.Empty, TenantUserAdminId =newTenant};
 
                 ApplicationUser user = new()
                 {
@@ -67,7 +67,7 @@ namespace BackEnd.BusinessLogic.Authentication
                 loginResult.message = string.Empty;
                 loginResult.success = true;
                 loginResult.token = token;
-                await _mediator.Publish(new EntitiesModifiedNotification(tenant.Id, new() { new ModifiedEntity(tenant.Id.ToString(), tenant.GetType().Name, "Created", tenant.ModifiedBy) }), cancellationToken);
+                await _mediator.Publish(new EntitiesModifiedNotification(tenant.GuidId, new() { new ModifiedEntity(tenant.GuidId.ToString(), tenant.GetType().Name, "Created", tenant.ModifiedBy) }), cancellationToken);
                 return loginResult;
             }
 

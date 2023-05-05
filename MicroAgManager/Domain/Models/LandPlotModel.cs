@@ -13,8 +13,8 @@ namespace Domain.Models
         [Required]
         [ForeignKey(nameof(FarmLocationModel))]
         public long FarmLocationId { get; set; }
-        [Required] public string? Name { get; set; }
-        [Required] public string? Description { get; set; }
+        [Required] public string Name { get; set; }
+        [Required] public string Description { get; set; }
         [Precision(18, 3)] public decimal Area { get; set; } = 0M;
         public string AreaUnit { get; set; } = UnitEnum.Area_Acres.GetDescription();
         public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;

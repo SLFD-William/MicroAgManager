@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    [Migration("20230503174137_RemoveDefaultStatusFromLivestockTypeCorrection")]
-    partial class RemoveDefaultStatusFromLivestockTypeCorrection
+    [Migration("20230505004704_MakingGuidIdSeparate2")]
+    partial class MakingGuidIdSeparate2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,16 +159,11 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("TenantId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("TenantModelId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Zip")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TenantModelId");
 
                     b.ToTable("Farms");
                 });
@@ -183,8 +178,9 @@ namespace FrontEnd.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("AreaUnit")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("AreaUnit")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
@@ -197,9 +193,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<long>("FarmLocationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("FarmLocationModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<long?>("LandPlotModelId")
@@ -223,8 +216,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FarmLocationModelId");
 
                     b.HasIndex("LandPlotModelId");
 
@@ -866,14 +857,17 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.TenantModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("GuidId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ModifiedBy")
@@ -970,19 +964,8 @@ namespace FrontEnd.Persistence.Migrations
                     b.ToTable("LivestockModelLivestockStatusModel");
                 });
 
-            modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
-                {
-                    b.HasOne("Domain.Models.TenantModel", null)
-                        .WithMany("Farms")
-                        .HasForeignKey("TenantModelId");
-                });
-
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
-                    b.HasOne("Domain.Models.FarmLocationModel", null)
-                        .WithMany("Plots")
-                        .HasForeignKey("FarmLocationModelId");
-
                     b.HasOne("Domain.Models.LandPlotModel", null)
                         .WithMany("Subplots")
                         .HasForeignKey("LandPlotModelId");
@@ -1133,11 +1116,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("ScheduledDuties");
                 });
 
-            modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
-                {
-                    b.Navigation("Plots");
-                });
-
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
                     b.Navigation("Subplots");
@@ -1167,11 +1145,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("Feeds");
 
                     b.Navigation("Statuses");
-                });
-
-            modelBuilder.Entity("Domain.Models.TenantModel", b =>
-                {
-                    b.Navigation("Farms");
                 });
 #pragma warning restore 612, 618
         }

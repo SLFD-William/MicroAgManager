@@ -16,9 +16,9 @@ namespace BackEnd.BusinessLogic.Authentication
 
         public async Task Handle(UserRegistered notification, CancellationToken cancellationToken)
         {
-            var createdTenant = _context.Tenants.Find(notification.User.TenantId);
+            var createdTenant = _context.Tenants.Find(notification.User.Tenant.Id);
             if (createdTenant is null)
-                throw new Exception($"Tenant {notification.User.TenantId} does not exist");
+                throw new Exception($"Tenant {notification.User.Tenant.GuidId} does not exist");
 
             //if (_context.Farms.Any(p => p.TenantId == createdTenant.Id))
             //    return ;

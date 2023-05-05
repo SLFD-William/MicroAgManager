@@ -7,7 +7,6 @@ namespace Domain.Models
 {
     public class FarmLocationModel:BaseModel
     {
-        [ForeignKey(nameof(TenantModel))]
         [Required] public Guid TenantId { get; set; }
         [Required] public string? Name { get; set; }
         public string? Longitude { get; set; }
@@ -44,7 +43,7 @@ namespace Domain.Models
             farm.Zip = Zip;
             farm.Country = Country;
             farm.Name = Name;
-
+            farm.TenantId = TenantId;
             return farm;
         }
     }

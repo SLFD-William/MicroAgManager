@@ -60,12 +60,11 @@ namespace FrontEnd.Onboarding
            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             while (authentication.TenantId() == Guid.Empty)
                 await Task.Delay(100);
-            //while (!dbContext.Tenants.Any(t => t.Id == authentication.TenantId()))
-            //    await Task.Delay(100);
+            while (!dbContext.Tenants.Any(t => t.GuidId == authentication.TenantId()))
+                await Task.Delay(100);
 
-
-            tenant = await dbContext.Tenants.SingleAsync(t => t.Id == authentication.TenantId());
-            farm = await dbContext.Farms.OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.Id)
+            tenant = await dbContext.Tenants.SingleAsync(t => t.GuidId == authentication.TenantId());
+            farm = await dbContext.Farms.OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.GuidId)
                 ?? new() { Name = tenant.Name };
 
             landPlot = dbContext.LandPlots.OrderBy(p=>p.ModifiedOn).FirstOrDefault(p=>p.FarmLocationId==farm.Id) ?? new();

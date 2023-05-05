@@ -5,8 +5,7 @@ namespace Domain.Entity
 {
     public class ApplicationUser : IdentityUser
     {
-        public Guid TenantId { get; set; }
-        public Tenant? Tenant { get; set; }
+        public Tenant Tenant { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
         public virtual ICollection<IdentityUserClaim<string>>? Claims { get; set; }
