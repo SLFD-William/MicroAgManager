@@ -13,7 +13,7 @@ namespace FrontEnd.Components.LandPlot
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
         LandPlotModel plot { get; set; }
-        protected override async Task FreshenData()
+        public override async Task FreshenData()
         {
             if (_submitting) return;
             if (dbContext is null)
@@ -29,6 +29,7 @@ namespace FrontEnd.Components.LandPlot
                 plot = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LandPlotModel();
             ApplyRelatedIds();
             editContext = new EditContext(plot);
+            StateHasChanged();
         }
         private void ApplyRelatedIds()
         {

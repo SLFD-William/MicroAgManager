@@ -13,7 +13,7 @@ namespace FrontEnd.Components.LivestockBreed
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
         [Parameter] public LivestockBreedModel livestockBreed { get; set; }
-        protected override async Task FreshenData()
+        public override async Task FreshenData()
         {
             if (dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             livestockBreed= new LivestockBreedModel { LivestockTypeId = livestockType.Id };

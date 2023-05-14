@@ -12,7 +12,7 @@ namespace FrontEnd.Components.Farm
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
         FarmLocationModel farm { get; set; }
-        protected override async Task FreshenData()
+        public override async Task FreshenData()
         {
             if(dbContext is null) dbContext= await dbSync.GetPreparedDbContextAsync();
             var query= dbContext.Farms.AsQueryable();

@@ -6,6 +6,7 @@ namespace FrontEnd.Components.Shared
     {
         protected internal List<WizardStep> Steps = new List<WizardStep>();
         [Parameter] public Func<Task<bool>>? CanStepAdvance { get; set; }
+        [Parameter] public Func<Task<bool>>? CanStepRepeat { get; set; }
         [Parameter] public Func<Task<bool>>? CanStepRetreat { get; set; }
         [Parameter] public Func<Task<bool>>? ShowAdvancementButtons { get; set; }
         [Parameter] public Func<Task<bool>>? ShowStepNavigation { get; set; }
@@ -44,7 +45,7 @@ namespace FrontEnd.Components.Shared
         }
         protected async internal Task Repeat()
         {
-            var canStepAdvance = (CanStepAdvance is null) ? true : await CanStepAdvance.Invoke();
+            var canStepAdvance = (CanStepRepeat is null) ? true : await CanStepRepeat.Invoke();
             if (!canStepAdvance) return;
             SetActive(Steps[Steps.IndexOf(ActiveStep)]);
         }

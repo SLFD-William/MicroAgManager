@@ -15,7 +15,7 @@ namespace FrontEnd.Components.Shared
         public EditContext editContext { get; set; }
         [Parameter] public EventCallback<T> Submitted { get; set; }
         protected bool _submitting = false;
-        protected abstract Task FreshenData();
+        public abstract Task FreshenData();
         public abstract Task OnSubmit();
         protected virtual void DbSync_OnUpdate() => Task.Run(FreshenData);
         protected async override Task OnInitializedAsync()

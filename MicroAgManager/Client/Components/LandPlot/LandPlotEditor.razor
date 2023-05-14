@@ -5,13 +5,14 @@
 <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
     <div class="dataSection">
-        <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.Usage)">
+        <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => plot.Usage)">
             <InputSelect @bind-Value="@plot.Usage">
-                <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
-                <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
+                <option value="">Select Use ...</option>
+                @*<option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
+                <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>*@
                 <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
-                <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
-                <option value="@LandPlotUseConstants.Outbuilding">@LandPlotUseConstants.Outbuilding</option>
+@*                <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
+                <option value="@LandPlotUseConstants.Outbuilding">@LandPlotUseConstants.Outbuilding</option>*@
             </InputSelect>
         </ValidatedField>
         <ValidatedField Legend="Name" ValidationMessageFor="@(() => plot.Name)">

@@ -14,7 +14,7 @@ namespace FrontEnd.Onboarding
     {
         private const string Step1 = "Farm Information";
         private const string Step2 = "Farm Plots";
-        private const string Step3 = "Livestock";
+        private const string Step3 = "Production";
         private const string Step4 = "Complete";
 
 
@@ -29,7 +29,11 @@ namespace FrontEnd.Onboarding
         protected FarmLocationModel farm = new();
 
         private LandPlotEditor? landPlotEditor;
-        protected LandPlotModel landPlot = new();
+        private long? landPlotId { get; set; }
+        private bool landPlotLooping { get; set; }=false;
+        private string? landPlotUsage { get; set; }
+
+
         private LivestockTypeModel? livestockType;
 
         private Wizard? wizard;
@@ -53,7 +57,15 @@ namespace FrontEnd.Onboarding
         {
             dbSync.OnUpdate += OnboardingWizard_DatabaseUpdated;
             await FreshenData();
-       
+
+        }
+        private void LandPlotSelected(LandPlotModel? plot)
+        {
+            landPlotLooping = plot is null;
+            landPlotId = plot?.Id;
+            landPlotUsage = plot?.Usage;
+            StateHasChanged();
+            if (landPlotEditor is not null) Task.Run(landPlotEditor.FreshenData);
         }
         private async Task FreshenData()
         {
@@ -67,12 +79,22 @@ namespace FrontEnd.Onboarding
             farm = await dbContext.Farms.OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.GuidId)
                 ?? new() { Name = tenant.Name };
 
-            landPlot = dbContext.LandPlots.OrderBy(p=>p.ModifiedOn).FirstOrDefault(p=>p.FarmLocationId==farm.Id) ?? new();
             livestockType = await dbContext.LivestockTypes.FirstOrDefaultAsync();
 
             StateHasChanged();
         }
         private void OnboardingWizard_DatabaseUpdated()=>Task.Run(FreshenData);
+        private async Task<bool> CanStepRepeat()
+        {
+            if (wizard?.ActiveStep?.Name == Step2)
+                if (landPlotEditor is not null)
+                {
+                    if (landPlotEditor.editContext.IsModified() && !landPlotEditor.editContext.Validate()) return false;
+                    if (landPlotEditor.editContext.IsModified()) await landPlotEditor.OnSubmit();
+                    LandPlotSelected(null);
+                }
+            return true;
+        }
         private async Task<bool> CanStepAdvance()
         {
             if (wizard?.ActiveStep?.Name == Step1)
@@ -86,6 +108,7 @@ namespace FrontEnd.Onboarding
                 {
                     if(landPlotEditor.editContext.IsModified() && !landPlotEditor.editContext.Validate()) return false;
                     if(landPlotEditor.editContext.IsModified()) await landPlotEditor.OnSubmit();
+                    LandPlotSelected((LandPlotModel)landPlotEditor.editContext.Model);
                 }
             return true;
         }
@@ -103,7 +126,7 @@ namespace FrontEnd.Onboarding
             while (!dbContext.LandPlots.Any(t => t.Id == args.Id))
                 await Task.Delay(100);
 
-            await FreshenData();
+            LandPlotSelected(args);
             landPlotList?._listComponent.Update();
         }
 

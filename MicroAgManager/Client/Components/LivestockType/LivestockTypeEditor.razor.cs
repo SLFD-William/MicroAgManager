@@ -27,7 +27,7 @@ namespace FrontEnd.Components.LivestockType
             StateHasChanged();
             return true;
         }
-        protected override async Task FreshenData() 
+        public override async Task FreshenData() 
         {
             if (_submitting) return;
             if (dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();

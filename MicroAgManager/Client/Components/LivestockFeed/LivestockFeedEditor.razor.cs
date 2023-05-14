@@ -14,7 +14,7 @@ namespace FrontEnd.Components.LivestockFeed
         [Parameter] public long? livestockFeedId { get; set; }
         [Parameter] public LivestockFeedModel livestockFeed { get; set; }
 
-        protected override async Task FreshenData()
+        public override async Task FreshenData()
         {
             if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             if (livestockFeed is not null)

@@ -14,5 +14,9 @@
   {
     "outputFile": "Components/Shared/Wizard.razor.css",
     "inputFile": "Components/Shared/Wizard.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/Sortable/TableTemplate.razor.css",
+    "inputFile": "Components/Shared/Sortable/TableTemplate.razor.scss"
   }
 ]

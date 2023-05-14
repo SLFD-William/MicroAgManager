@@ -8,11 +8,14 @@ namespace FrontEnd.Components.LandPlot
 {
     public partial class LandPlotList:ComponentBase, IAsyncDisposable
     {
-        public ListTemplate<LandPlotModel> _listComponent;
+        public TableTemplate<LandPlotModel> _listComponent;
         [CascadingParameter] FarmLocationModel farm { get; set; }
         [CascadingParameter] DataSynchronizer dbSync { get; set; }
         [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [Parameter] public IEnumerable<LandPlotModel>? Items { get; set; }
+        [Parameter] public bool Selectable { get; set; } = false;
+        [Parameter] public bool Multiselect { get; set; } = false;
+        [Parameter] public Action<LandPlotModel>? PlotSelected { get; set; }
         protected async override Task OnInitializedAsync()
         {
             
@@ -20,6 +23,11 @@ namespace FrontEnd.Components.LandPlot
             await FreshenData();
         }
 
+        private void TableItemSelected()
+        { 
+            if(_listComponent.SelectedItems.Count() > 0)
+                PlotSelected?.Invoke(_listComponent.SelectedItems.First());
+        }
         private void DbSync_OnUpdate() => Task.Run(FreshenData);
 
         private async Task FreshenData()

@@ -266,7 +266,7 @@ namespace FrontEnd.Data
                     area.Value = model.Area;
                     areaUnit.Value = model.AreaUnit;
                     usage.Value = model.Usage;
-                    
+                   
                     parentPlotId.Value = model.ParentPlotId.HasValue ? model.ParentPlotId.Value :DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
@@ -415,7 +415,8 @@ namespace FrontEnd.Data
                     livestockTypeId.Value = model.LivestockTypeId;
                     name.Value = model.Name;
                     source.Value = model.Source;
-                    cutting.Value = model.Cutting;
+
+                    cutting.Value = model.Cutting.HasValue ? model.Cutting : DBNull.Value;
                     active.Value = model.Active;
                     quantity.Value = model.Quantity;
                     quantityUnit.Value = model.QuantityUnit;
@@ -485,7 +486,7 @@ namespace FrontEnd.Data
                     PopulateBaseModelParameters(baseParameters, model);
                     feedId.Value = model.FeedId;
                     quantity.Value = model.Quantity;
-                    discarded.Value = model.Discarded;
+                    discarded.Value = model.Discarded.HasValue ? model.Discarded : DBNull.Value;
                     note.Value = model.Note;
                     datePerformed.Value = model.DatePerformed;
                     await command.ExecuteNonQueryAsync();
@@ -558,10 +559,10 @@ namespace FrontEnd.Data
                     feedId.Value = model.FeedId;
                     labNumber.Value = model.LabNumber;
                     testCode.Value = model.TestCode;
-                    dateSampled.Value = model.DateSampled;
-                    dateReceived.Value = model.DateReceived;
-                    dateReported.Value = model.DateReported;
-                    datePrinted.Value = model.DatePrinted;
+                    dateSampled.Value = model.DateSampled.HasValue ? model.DateSampled : DBNull.Value;
+                    dateReceived.Value = model.DateReceived.HasValue ? model.DateReceived : DBNull.Value;
+                    dateReported.Value = model.DateReported.HasValue ? model.DateReported : DBNull.Value;
+                    datePrinted.Value = model.DatePrinted.HasValue ? model.DatePrinted : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -633,9 +634,9 @@ namespace FrontEnd.Data
                     dutyType.Value = model.DutyType;
                     dutyTypeId.Value = model.DutyTypeId;
                     relationship.Value = model.Relationship;
-                    gender.Value = model.Gender;
+                    gender.Value = model.Gender ?? string.Empty;
                     systemRequired.Value = model.SystemRequired;
-                    livestockTypeId.Value = model.LivestockTypeId;
+                    livestockTypeId.Value = model.LivestockTypeId.HasValue ? model.LivestockTypeId : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -671,8 +672,8 @@ namespace FrontEnd.Data
                     dismissed.Value = model.Dismissed;
                     dueOn.Value = model.DueOn;
                     reminderDays.Value = model.ReminderDays;
-                    completedOn.Value = model.CompletedOn;
-                    completedBy.Value = model.CompletedBy;
+                    completedOn.Value = model.CompletedOn.HasValue ? model.CompletedOn : DBNull.Value;
+                    completedBy.Value = model.CompletedBy.HasValue ? model.CompletedBy : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
                
@@ -704,7 +705,7 @@ namespace FrontEnd.Data
                     PopulateBaseModelParameters(baseParameters, model);
                     subcategory.Value = model.Subcategory;
                     systemRequired.Value = model.SystemRequired;
-                    livestockTypeId.Value = model.LivestockTypeId;
+                    livestockTypeId.Value = model.LivestockTypeId.HasValue ? model.LivestockTypeId : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -737,7 +738,7 @@ namespace FrontEnd.Data
                     name.Value = model.Name;
                     color.Value = model.Color;
                     startDate.Value = model.StartDate;
-                    endDate.Value = model.EndDate;
+                    endDate.Value = model.EndDate.HasValue ? model.EndDate : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }

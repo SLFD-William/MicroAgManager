@@ -1,13 +1,17 @@
 ﻿@using Domain.Models;
 @if (dbContext != null)
 {
-<ListTemplate @ref="_listComponent" PageSize="0" TItem="LandPlotModel" Items="@Items" ShowHeader="true" >
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="LandPlotModel" 
+        Items="@Items" 
+        MultiSelect="@Multiselect" 
+        Selectable="@Selectable" 
+        OnSelectionChange="@TableItemSelected">
     <ColumnContent>
+        <Column TableItem="LandPlotModel" Field="@(x => x.Usage)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
         <Column TableItem="LandPlotModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
         <Column TableItem="LandPlotModel" Field="@(x => x.Description)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
         <Column TableItem="LandPlotModel" Field="@(x => x.Area)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        <Column TableItem="LandPlotModel" Field="@(x => x.AreaUnit)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        <Column TableItem="LandPlotModel" Field="@(x => x.Usage)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        <Column TableItem="LandPlotModel" Field="@(x => x.AreaUnit)" Title="Units"  Sortable="true" Filterable="true" UseInSuperSearch="true" />
     </ColumnContent>
-</ListTemplate>
+</TableTemplate>
 }

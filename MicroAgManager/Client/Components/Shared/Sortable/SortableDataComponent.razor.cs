@@ -61,6 +61,33 @@ namespace FrontEnd.Components.Shared.Sortable
 
         public IEnumerable<TItem> FilteredItems { get; private set; }
 
+        public IEnumerable<TItem> SelectedItems { get; set; }=new List<TItem>();
+        public void AddToSelectedItems(TItem item)
+        {
+            if (!Selectable) return;
+            var list = SelectedItems.ToList();
+            list.Add(item);
+            SelectedItems = MultiSelect ? list : new List<TItem> {{item}};
+            OnSelectionChange?.Invoke();
+        }
+        public void RemoveFromSelectedItems(TItem item)
+        {
+            if (!Selectable) return;
+            var list = SelectedItems.ToList();
+            list.Remove(item);
+            SelectedItems = list;
+            OnSelectionChange?.Invoke();
+        }
+        public bool IsItemSelected(TItem item)=> SelectedItems.Contains(item);
+        
+        [Parameter] public Action? OnSelectionChange { get; set; }
+        [Parameter] public bool MultiSelect { get; set; }=false;
+        [Parameter] public bool Selectable { get; set; } = false;
+
+
+
+
+
         [Parameter]
         public int PageSize { get; set; } = DEFAULT_PAGE_SIZE;
 

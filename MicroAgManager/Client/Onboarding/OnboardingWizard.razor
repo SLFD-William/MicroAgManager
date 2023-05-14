@@ -2,7 +2,7 @@
 @using FrontEnd.Components.Shared
 @if (dbContext is not null)
 {
-    <Wizard Id="@this.GetType().Name" @ref=@wizard ShowAdvancementButtons="@ShowButtons" CanStepAdvance="@CanStepAdvance">
+    <Wizard Id="@this.GetType().Name" @ref=@wizard ShowAdvancementButtons="@ShowButtons" CanStepAdvance="@CanStepAdvance" CanStepRepeat="@CanStepRepeat">
         <WizardStep Name="@Step1" >
             <p>Please enter information about your farm</p>
             <FarmEditor @ref="farmEditor" farmId="@farm.Id" farmName="@farm.Name" Submitted="@FarmLocationUpdated"></FarmEditor>
@@ -10,20 +10,16 @@
         <WizardStep Name="@Step2" IsRepeating="true">
             <p>Tell us about your land</p>
             <CascadingValue Value="farm">
-                @if (!dbContext.LandPlots.Any(p=>p.FarmLocationId==farm.Id))
+                <LandPlotList @ref="landPlotList" Items="dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id)" Selectable="true" PlotSelected="@LandPlotSelected"></LandPlotList>
+                @if (dbContext.LandPlots.Any(p=>p.FarmLocationId==farm.Id))
                 {
-                    <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" createOnly="true"></LandPlotEditor>
-                }
-                else
-                {
-                    <LandPlotList @ref="landPlotList" Items="dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id)"></LandPlotList>
-                    <LandPlotEditor @ref="landPlotEditor" parentPlotId="@landPlot.Id" Submitted="@LandPlotUpdated" createOnly="true"></LandPlotEditor>
+                    <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" landPlotId="@landPlotId" createOnly="@landPlotLooping" ></LandPlotEditor>
                 }
             </CascadingValue>
         </WizardStep>
            <WizardStep Name="@Step3">
                <CascadingValue Value="farm">
-                @if (dbContext.LandPlots.Any(p => p.FarmLocationId == farm.Id && new List<string> { LandPlotUseConstants.Livestock, LandPlotUseConstants.GeneralUse }.Contains( p.Usage)))
+                @if (LandPlotUseConstants.Livestock==landPlotUsage)
                 {
                     <CascadingValue Value="livestockType">
                         <AddLivestockTypeWizard Completed="@LivestockTypeWizardCompleted" IsNestedWizard="true"></AddLivestockTypeWizard>
