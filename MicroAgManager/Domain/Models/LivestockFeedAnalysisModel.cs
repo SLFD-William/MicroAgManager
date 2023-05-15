@@ -18,18 +18,18 @@ namespace Domain.Models
         public DateTime? DateReported { get; set; }
         public DateTime? DatePrinted { get; set; }
         public ICollection<LivestockFeedAnalysisResultModel?> Results { get; set; } = new List<LivestockFeedAnalysisResultModel?>();
-        public static LivestockFeedAnalysisModel? Create(LivestockFeedAnalysis livestockBreed)
+        public static LivestockFeedAnalysisModel? Create(LivestockFeedAnalysis feedAnalysis)
         {
-            var model = PopulateBaseModel(livestockBreed, new LivestockFeedAnalysisModel
+            var model = PopulateBaseModel(feedAnalysis, new LivestockFeedAnalysisModel
             {
-                LabNumber = livestockBreed.LabNumber,
-                FeedId = livestockBreed.Feed.Id,
-                DatePrinted = livestockBreed.DatePrinted,
-                DateReceived = livestockBreed.DateReceived,
-                DateReported = livestockBreed.DateReported,
-                DateSampled = livestockBreed.DateSampled,
-                TestCode = livestockBreed.TestCode,
-                Results = livestockBreed.Results.Select(LivestockFeedAnalysisResultModel.Create).ToList() ?? new List<LivestockFeedAnalysisResultModel?>()
+                LabNumber = feedAnalysis.LabNumber,
+                FeedId = feedAnalysis.LivestockFeedId,
+                DatePrinted = feedAnalysis.DatePrinted,
+                DateReceived = feedAnalysis.DateReceived,
+                DateReported = feedAnalysis.DateReported,
+                DateSampled = feedAnalysis.DateSampled,
+                TestCode = feedAnalysis.TestCode,
+                Results = feedAnalysis.Results.Select(LivestockFeedAnalysisResultModel.Create).ToList() ?? new List<LivestockFeedAnalysisResultModel?>()
             }) as LivestockFeedAnalysisModel;
             return model;
         }
@@ -41,7 +41,7 @@ namespace Domain.Models
             entity.DateSampled = DateSampled;
             entity.TestCode = TestCode;
             entity.DatePrinted = DatePrinted;
-            entity.Feed.Id = FeedId;
+            entity.LivestockFeedId=FeedId;
             if (entity.Results?.Any() ?? false)
                 foreach (var breed in entity.Results)
                     Results?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);

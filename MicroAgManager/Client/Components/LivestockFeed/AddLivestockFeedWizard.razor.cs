@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.Shared;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
+using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.LivestockFeed
@@ -11,8 +10,7 @@ namespace FrontEnd.Components.LivestockFeed
         private Wizard? wizard;
         private const string Step1 = "Feed Definition";
         private const string Step2 = "Servings";
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter]  FrontEndDbContext dbContext { get; set; }
+        [CascadingParameter] ApplicationStateProvider app { get; set; }
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
         [Parameter] public EventCallback<bool> Completed { get; set; }
         [Parameter] public bool IsNestedWizard { get; set; } = false;
@@ -28,7 +26,6 @@ namespace FrontEnd.Components.LivestockFeed
 
         private async Task FreshenData()
         {
-            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             if (livestockFeed is null) livestockFeed = new LivestockFeedModel { LivestockTypeId = livestockType.Id };
             StateHasChanged();
         }

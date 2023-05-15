@@ -1,4 +1,4 @@
-﻿@if (dbContext is not null && livestockType is not null)
+﻿@if (app is not null && livestockType is not null)
     {
         <Wizard Id="@this.GetType().Name" @ref=@wizard CanStepAdvance="@CanStepAdvance" CanStepRetreat="@CanStepRetreat" IsNestedWizard="@IsNestedWizard">
             <WizardStep Name="@Step1" >

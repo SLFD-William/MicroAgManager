@@ -16,9 +16,7 @@ namespace FrontEnd.Components.LandPlot
         public override async Task FreshenData()
         {
             if (_submitting) return;
-            if (dbContext is null)
-                dbContext = await dbSync.GetPreparedDbContextAsync();
-            var query = dbContext.LandPlots.AsQueryable();
+            var query = app.dbContext.LandPlots.AsQueryable();
             if (farm is not null) query = query.Where(f => f.FarmLocationId == farm.Id);
             if (parentPlotId.HasValue && parentPlotId > 0)
                 query = query.Where(f => f.ParentPlotId == parentPlotId);
@@ -42,9 +40,9 @@ namespace FrontEnd.Components.LandPlot
             _submitting = true;
             var id = plot.Id;
             if (id <= 0)
-                id = await api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = plot });
+                id = await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = plot });
             else
-                id = await api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = plot });
+                id = await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = plot });
 
             if (id <= 0)
                 throw new Exception("Unable to save plot");

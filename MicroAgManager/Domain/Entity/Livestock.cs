@@ -1,4 +1,7 @@
 ﻿using Domain.Abstracts;
+using Domain.Extensions;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
@@ -7,26 +10,30 @@ namespace Domain.Entity
         public Livestock(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public LivestockBreed Breed { get; set; }
-        public long? MotherId { get; set; }
-        public long? FatherId { get; set; }
-        public Livestock? Mother { get; set; }
-        public Livestock? Father { get; set; }
-        public string Name { get; set; }
-        public DateTime Birthdate { get; set; }
-        public string Gender { get; set; }
-        public string Variety { get; set; }
-        public string Description { get; set; }
-        public bool BeingManaged { get; set; }
-        public bool BornDefective { get; set; }
-        public string BirthDefect { get; set; }
-        public bool Sterile { get; set; }
-        public bool InMilk { get; set; }
-        public bool BottleFed { get; set; }
-        public bool ForSale { get; set; }
-        public ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();
-        public ICollection<LandPlot> Locations { get; set; } = new List<LandPlot>();
-        public ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
 
+        [Required][ForeignKey("Breed")] public long LivestockBreedId { get; set; }
+        [ForeignKey("Mother")] public long? MotherId { get; set; }
+        [ForeignKey("Father")] public long? FatherId { get; set; }
+
+
+        [Required] [MaxLength(40)]public string Name { get; set; }
+        [Required] public DateTime Birthdate { get; set; }
+        [Required][MaxLength(1)] public string Gender { get; set; }
+        [MaxLength(40)] public string Variety { get; set; }
+        [Required][MaxLength(255)] public string Description { get; set; }
+        [RequiredIf("BornDefective",true)] [MaxLength(255)] public string BirthDefect { get; set; }
+        [Required] public bool Sterile { get; set; }
+        [Required] public bool InMilk { get; set; }
+        [Required] public bool BottleFed { get; set; }
+        [Required] public bool ForSale { get; set; }
+        [Required] public bool BeingManaged { get; set; }
+        [Required] public bool BornDefective { get; set; }
+
+         public virtual ICollection<LandPlot> Locations { get; set; } = new List<LandPlot>();
+         public virtual ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();
+        public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
+        public virtual LivestockBreed Breed { get; set; }
+        public virtual Livestock? Mother { get; set; }
+        public virtual Livestock? Father { get; set; }
     }
 }

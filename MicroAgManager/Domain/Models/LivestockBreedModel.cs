@@ -19,7 +19,7 @@ namespace Domain.Models
         {
             var model = PopulateBaseModel(livestockBreed, new LivestockBreedModel
             {
-                LivestockTypeId=livestockBreed.Livestock.Id,
+                LivestockTypeId=livestockBreed.LivestockTypeId,
                 Name = livestockBreed.Name,
                 EmojiChar = livestockBreed.EmojiChar,
                 GestationPeriod = livestockBreed.GestationPeriod,
@@ -30,8 +30,7 @@ namespace Domain.Models
         }
         public LivestockBreed MapToEntity(LivestockBreed entity)
         {
-            if(entity.Livestock is not null)
-                entity.Livestock.Id = LivestockTypeId;
+            entity.LivestockTypeId = LivestockTypeId;
             entity.EmojiChar = EmojiChar;
             entity.GestationPeriod = GestationPeriod;  
             entity.HeatPeriod = HeatPeriod;

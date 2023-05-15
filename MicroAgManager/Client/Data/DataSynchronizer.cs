@@ -18,10 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using System.Data.Common;
 using System.Diagnostics;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FrontEnd.Data
 {

@@ -1,5 +1,5 @@
 ﻿@using Domain.Models;
-@if (dbContext != null)
+@if (app != null)
 {
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="LandPlotModel" 
         Items="@Items" 

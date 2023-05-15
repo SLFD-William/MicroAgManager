@@ -19,7 +19,7 @@ namespace FrontEnd
                 options => options.UseSqlite($"Filename={DataSynchronizer.SqliteDbFilename}")
                 );
             serviceCollection.AddScoped<DataSynchronizer>();
-
+            serviceCollection.AddSingleton<ApplicationStateProvider>();
         }
     }
 }

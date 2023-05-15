@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 var farm = new Domain.Entity.FarmLocation(request.ModifiedBy, request.TenantId);
                 farm = request.Farm.MapToEntity(farm);
 
-                farm.ModifiedOn = farm.Created = DateTime.Now;
+                farm.ModifiedOn = farm.CreatedOn = DateTime.Now;
                 farm.ModifiedBy = farm.CreatedBy = request.ModifiedBy;
                 farm.TenantId = request.TenantId;
 

@@ -12,8 +12,8 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230505002752_MakingGuidIdSeparate")]
-    partial class MakingGuidIdSeparate
+    [Migration("20230514193014_removedFluent")]
+    partial class removedFluent
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,20 +109,20 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("DaysDue")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DutyType")
                         .IsRequired()
@@ -165,12 +165,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockTypeId");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_Duty_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Duty_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Duty_TenantIdAndPrimaryKey");
-
                     b.ToTable("Duties");
                 });
 
@@ -187,17 +181,17 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
@@ -221,12 +215,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_Event_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Event_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Event_TenantIdAndPrimaryKey");
-
                     b.ToTable("Events");
                 });
 
@@ -244,17 +232,17 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Latitude")
                         .HasColumnType("nvarchar(max)");
@@ -287,12 +275,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_FarmLocation_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_FarmLocation_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_FarmLocation_TenantIdAndPrimaryKey");
-
                     b.ToTable("Farms");
                 });
 
@@ -313,17 +295,17 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -352,20 +334,14 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<string>("Usage")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FarmLocationId");
 
                     b.HasIndex("ParentPlotId");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_LandPlot_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LandPlot_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LandPlot_TenantIdAndPrimaryKey");
 
                     b.ToTable("Plots");
                 });
@@ -395,20 +371,17 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<bool>("BottleFed")
                         .HasColumnType("bit");
 
-                    b.Property<long>("BreedId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -428,6 +401,9 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<bool>("InMilk")
                         .HasColumnType("bit");
+
+                    b.Property<long>("LivestockBreedId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -456,27 +432,11 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BreedId");
+                    b.HasIndex("FatherId");
 
-                    b.HasIndex("FatherId")
-                        .IsUnique()
-                        .HasFilter("[FatherId] IS NOT NULL");
+                    b.HasIndex("LivestockBreedId");
 
-                    b.HasIndex("MotherId")
-                        .IsUnique()
-                        .HasFilter("[MotherId] IS NOT NULL");
-
-                    b.HasIndex(new[] { "BeingManaged" }, "Index_Animal_BeingManaged");
-
-                    b.HasIndex(new[] { "Birthdate" }, "Index_Birthday");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_Livestock_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Livestock_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Livestock_TenantIdAndPrimaryKey");
-
-                    b.HasIndex(new[] { "Name" }, "Index_Name");
+                    b.HasIndex("MotherId");
 
                     b.ToTable("Livestocks");
                 });
@@ -489,17 +449,17 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("EmojiChar")
                         .IsRequired()
@@ -512,7 +472,7 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<int>("HeatPeriod")
                         .HasColumnType("int");
 
-                    b.Property<long>("LivestockId")
+                    b.Property<long>("LivestockTypeId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -531,13 +491,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockId");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockBreed_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockBreed_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockBreed_TenantIdAndPrimaryKey");
+                    b.HasIndex("LivestockTypeId");
 
                     b.ToTable("LivestockBreeds");
                 });
@@ -553,20 +507,20 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("Cutting")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Distribution")
                         .IsRequired()
@@ -617,12 +571,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockTypeId");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockFeed_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockFeed_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockFeed_TenantIdAndPrimaryKey");
-
                     b.ToTable("LivestockFeeds");
                 });
 
@@ -634,11 +582,11 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DatePrinted")
                         .HasColumnType("datetime2");
@@ -652,19 +600,19 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime?>("DateSampled")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("FeedId")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LabNumber")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
+
+                    b.Property<long>("LivestockFeedId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -682,13 +630,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeedId");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockFeedAnalysis_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockFeedAnalysis_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockFeedAnalysis_TenantIdAndPrimaryKey");
+                    b.HasIndex("LivestockFeedId");
 
                     b.ToTable("LivestockFeedAnalyses");
                 });
@@ -701,17 +643,17 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Method")
                         .IsRequired()
@@ -747,12 +689,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockFeedAnalysisParameter_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockFeedAnalysisParameter_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockFeedAnalysisParameter_TenantIdAndPrimaryKey");
-
                     b.ToTable("LivestockFeedAnalysisParameters");
                 });
 
@@ -771,17 +707,17 @@ namespace BackEnd.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Dry")
                         .HasPrecision(18, 2)
@@ -805,12 +741,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("ParameterId");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockFeedAnalysisResult_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockFeedAnalysisResult_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockFeedAnalysisResult_TenantIdAndPrimaryKey");
-
                     b.ToTable("LivestockFeedAnalysisResults");
                 });
 
@@ -822,26 +752,25 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DatePerformed")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("DatePerformed")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool?>("Discarded")
-                        .IsRequired()
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Discarded")
                         .HasColumnType("bit");
 
-                    b.Property<long>("FeedId")
+                    b.Property<long>("LivestockFeedId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -864,13 +793,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeedId");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockFeedDistribution_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockFeedDistribution_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockFeedDistribution_TenantIdAndPrimaryKey");
+                    b.HasIndex("LivestockFeedId");
 
                     b.ToTable("LivestockFeedDistributions");
                 });
@@ -883,19 +806,22 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("FeedId")
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("LivestockFeedId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LivestockStatusId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -910,26 +836,16 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<string>("ServingFrequency")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<long>("StatusId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeedId");
+                    b.HasIndex("LivestockFeedId");
 
-                    b.HasIndex("StatusId");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockFeedServing_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockFeedServing_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockFeedServing_TenantIdAndPrimaryKey");
+                    b.HasIndex("LivestockStatusId");
 
                     b.ToTable("LivestockFeedServings");
                 });
@@ -952,20 +868,20 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("DefaultStatus")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ForSale")
                         .IsRequired()
@@ -1003,12 +919,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockTypeId");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockStatus_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockStatus_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockStatus_TenantIdAndPrimaryKey");
-
                     b.ToTable("LivestockStatuses");
                 });
 
@@ -1025,17 +935,17 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("GroupName")
                         .IsRequired()
@@ -1071,12 +981,6 @@ namespace BackEnd.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_LivestockType_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_LivestockType_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_LivestockType_TenantIdAndPrimaryKey");
-
                     b.ToTable("LivestockTypes");
                 });
 
@@ -1088,17 +992,17 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<long?>("LivestockTypeId")
                         .HasColumnType("bigint");
@@ -1124,12 +1028,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockTypeId");
 
-                    b.HasIndex(new[] { "Deleted" }, "Index_Milestone_Deleted");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_Milestone_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_Milestone_TenantIdAndPrimaryKey");
-
                     b.ToTable("Milestones");
                 });
 
@@ -1147,17 +1045,17 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime?>("CompletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("Deleted")
+                    b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Dismissed")
                         .HasColumnType("bit");
@@ -1194,18 +1092,6 @@ namespace BackEnd.Persistence.Migrations
                     b.HasIndex("EventId");
 
                     b.HasIndex("LivestockId");
-
-                    b.HasIndex(new[] { "CompletedOn" }, "Index_ScheduledDuty_CompletedOn");
-
-                    b.HasIndex(new[] { "Deleted" }, "Index_ScheduledDuty_Deleted");
-
-                    b.HasIndex(new[] { "Dismissed" }, "Index_ScheduledDuty_Dismissed");
-
-                    b.HasIndex(new[] { "DueOn" }, "Index_ScheduledDuty_DueOn");
-
-                    b.HasIndex(new[] { "ModifiedOn" }, "Index_ScheduledDuty_ModifiedOn");
-
-                    b.HasIndex(new[] { "Id", "TenantId" }, "Index_ScheduledDuty_TenantIdAndPrimaryKey");
 
                     b.ToTable("ScheduledDuties");
                 });
@@ -1458,21 +1344,6 @@ namespace BackEnd.Persistence.Migrations
                     b.ToTable("LandPlotLivestock");
                 });
 
-            modelBuilder.Entity("LivestockLivestockStatus", b =>
-                {
-                    b.Property<long>("LivestocksId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("StatusesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("LivestocksId", "StatusesId");
-
-                    b.HasIndex("StatusesId");
-
-                    b.ToTable("LivestockLivestockStatus");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1681,19 +1552,19 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.Livestock", b =>
                 {
+                    b.HasOne("Domain.Entity.Livestock", "Father")
+                        .WithMany()
+                        .HasForeignKey("FatherId");
+
                     b.HasOne("Domain.Entity.LivestockBreed", "Breed")
                         .WithMany("Livestocks")
-                        .HasForeignKey("BreedId")
+                        .HasForeignKey("LivestockBreedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entity.Livestock", "Father")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entity.Livestock", "FatherId");
-
                     b.HasOne("Domain.Entity.Livestock", "Mother")
-                        .WithOne()
-                        .HasForeignKey("Domain.Entity.Livestock", "MotherId");
+                        .WithMany()
+                        .HasForeignKey("MotherId");
 
                     b.Navigation("Breed");
 
@@ -1704,13 +1575,13 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.LivestockBreed", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockType", "Livestock")
+                    b.HasOne("Domain.Entity.LivestockType", "LivestockType")
                         .WithMany("Breeds")
-                        .HasForeignKey("LivestockId")
+                        .HasForeignKey("LivestockTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Livestock");
+                    b.Navigation("LivestockType");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeed", b =>
@@ -1726,13 +1597,13 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedAnalysis", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockFeed", "Feed")
+                    b.HasOne("Domain.Entity.LivestockFeed", "LivestockFeed")
                         .WithMany("Analyses")
-                        .HasForeignKey("FeedId")
+                        .HasForeignKey("LivestockFeedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Feed");
+                    b.Navigation("LivestockFeed");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedAnalysisResult", b =>
@@ -1758,7 +1629,7 @@ namespace BackEnd.Persistence.Migrations
                 {
                     b.HasOne("Domain.Entity.LivestockFeed", "Feed")
                         .WithMany("Distributions")
-                        .HasForeignKey("FeedId")
+                        .HasForeignKey("LivestockFeedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1769,14 +1640,14 @@ namespace BackEnd.Persistence.Migrations
                 {
                     b.HasOne("Domain.Entity.LivestockFeed", "Feed")
                         .WithMany("Servings")
-                        .HasForeignKey("FeedId")
+                        .HasForeignKey("LivestockFeedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entity.LivestockStatus", "Status")
                         .WithMany("FeedServings")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("LivestockStatusId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Feed");
@@ -1879,21 +1750,6 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.LandPlot", null)
                         .WithMany()
                         .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LivestockLivestockStatus", b =>
-                {
-                    b.HasOne("Domain.Entity.Livestock", null)
-                        .WithMany()
-                        .HasForeignKey("LivestocksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.LivestockStatus", null)
-                        .WithMany()
-                        .HasForeignKey("StatusesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

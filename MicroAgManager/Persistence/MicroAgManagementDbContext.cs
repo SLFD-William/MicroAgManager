@@ -4,7 +4,6 @@ using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Persistence.Configurations;
 
 namespace Persistence
 {
@@ -39,7 +38,6 @@ namespace Persistence
             modelBuilder.Entity<ApplicationUser>()
                 .Navigation(e => e.Tenant)
                 .AutoInclude();
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantConfiguration).Assembly);
             EntitySeeder.Seed(modelBuilder);
         }
     }

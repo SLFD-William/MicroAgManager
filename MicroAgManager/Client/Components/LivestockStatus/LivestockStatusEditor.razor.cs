@@ -23,7 +23,6 @@ namespace FrontEnd.Components.LivestockStatus
         private LivestockStatusModel livestockStatus;
         public override async Task FreshenData()
         {
-            if (dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             if (livestockStatus is not null)
             {
                 editContext = new EditContext(livestockStatus);
@@ -34,7 +33,7 @@ namespace FrontEnd.Components.LivestockStatus
                 livestockTypeId=livestockType.Id;
 
             livestockStatus= new LivestockStatusModel() { LivestockTypeId = livestockTypeId.Value };
-            var query = dbContext.LivestockStatuses.AsQueryable();
+            var query = app.dbContext.LivestockStatuses.AsQueryable();
             if (livestockStatusId.HasValue && livestockStatusId > 0)
                 query = query.Where(f => f.Id == livestockStatusId);
             if (livestockTypeId.HasValue && livestockTypeId > 0)
@@ -53,9 +52,9 @@ namespace FrontEnd.Components.LivestockStatus
                 var state = livestockStatus.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
                 if (livestockStatus.Id <= 0)
-                    livestockStatus.Id = await api.ProcessCommand<LivestockStatusModel, CreateLivestockStatus>("api/CreateLivestockStatus", new CreateLivestockStatus { LivestockStatus = livestockStatus });
+                    livestockStatus.Id = await app.api.ProcessCommand<LivestockStatusModel, CreateLivestockStatus>("api/CreateLivestockStatus", new CreateLivestockStatus { LivestockStatus = livestockStatus });
                 else
-                    livestockStatus.Id = await api.ProcessCommand<LivestockStatusModel, UpdateLivestockStatus>("api/UpdateLivestockStatus", new UpdateLivestockStatus { LivestockStatus = livestockStatus });
+                    livestockStatus.Id = await app.api.ProcessCommand<LivestockStatusModel, UpdateLivestockStatus>("api/UpdateLivestockStatus", new UpdateLivestockStatus { LivestockStatus = livestockStatus });
 
                 if (livestockStatus.Id <= 0)
                     throw new Exception("Failed to save livestock Status");

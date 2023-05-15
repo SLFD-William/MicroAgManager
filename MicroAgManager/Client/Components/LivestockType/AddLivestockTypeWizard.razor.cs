@@ -1,10 +1,8 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockStatus;
 using FrontEnd.Components.Shared;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
+using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +17,8 @@ namespace FrontEnd.Components.LivestockType
         
 
         private Wizard? wizard;
+        [CascadingParameter] ApplicationStateProvider app { get; set; }
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [Parameter] public EventCallback<bool> Completed { get; set; }
         [Parameter] public bool IsNestedWizard { get; set; } = false;
 
@@ -50,7 +47,6 @@ namespace FrontEnd.Components.LivestockType
         }
         protected async override Task OnInitializedAsync()
         {
-            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             if (livestockType is null) livestockType = new();
             await PopulateRelations();
             
@@ -59,7 +55,7 @@ namespace FrontEnd.Components.LivestockType
         {
             if (livestockType.Id > 0)
             {
-                livestockType.Breeds = await dbContext.LivestockBreeds.Where(b => b.LivestockTypeId == livestockType.Id).ToListAsync();
+                livestockType.Breeds = await app.dbContext.LivestockBreeds.Where(b => b.LivestockTypeId == livestockType.Id).ToListAsync();
             }
             StateHasChanged();
         }
@@ -96,7 +92,7 @@ namespace FrontEnd.Components.LivestockType
         private async Task LivestockBreedUpdated(LivestockBreedModel args)
         {
             if (args.Id > 0)
-                while (!dbContext.LivestockBreeds.Any(t => t.Id == args.Id))
+                while (!app.dbContext.LivestockBreeds.Any(t => t.Id == args.Id))
                     await Task.Delay(100);
 
             await PopulateRelations();

@@ -1,19 +1,24 @@
 ﻿using Domain.Abstracts;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
+
+
+    [Index("Name",IsUnique =true)]
     public class LivestockType : BaseEntity
     {
         public LivestockType(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public string Name { get; set; }
-        public string GroupName { get; set; }
-        public string ParentMaleName { get; set; }
-        public string ParentFemaleName { get; set; }
-        public string Care { get; set; }
-        public ICollection<LivestockBreed> Breeds { get; set; } = new List<LivestockBreed>();
-        public ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();
-        public ICollection<LivestockFeed> Feeds { get; set; } = new List<LivestockFeed>();
+        [Required] [MaxLength(40)]public string Name { get; set; }
+        [Required][MaxLength(40)] public string GroupName { get; set; }
+        [Required][MaxLength(40)] public string ParentMaleName { get; set; }
+        [Required][MaxLength(40)] public string ParentFemaleName { get; set; }
+        [Required][MaxLength(40)] public string Care { get; set; }
+        public virtual ICollection<LivestockBreed> Breeds { get; set; } = new List<LivestockBreed>();
+        public virtual ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();
+        public virtual ICollection<LivestockFeed> Feeds { get; set; } = new List<LivestockFeed>();
     }
 }

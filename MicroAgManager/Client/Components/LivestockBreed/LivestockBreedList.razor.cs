@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.Shared.Sortable;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
+using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.LivestockBreed
@@ -9,14 +8,13 @@ namespace FrontEnd.Components.LivestockBreed
     public partial class LivestockBreedList:ComponentBase, IAsyncDisposable
     {
         public ListTemplate<LivestockBreedModel> _listComponent;
+        [CascadingParameter] ApplicationStateProvider app { get; set; }
         [CascadingParameter] LivestockTypeModel livestockType { get; set; }
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
         [Parameter] public IEnumerable<LivestockBreedModel>? Items { get; set; }
         protected async override Task OnInitializedAsync()
         {
 
-            dbSync.OnUpdate += DbSync_OnUpdate;
+            app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
             await FreshenData();
         }
 
@@ -25,18 +23,16 @@ namespace FrontEnd.Components.LivestockBreed
         private async Task FreshenData()
         {
             if (_listComponent is null) return;
-            if (dbContext is null)
-                dbContext = await dbSync.GetPreparedDbContextAsync();
 
             if (Items is null)
-                Items = dbContext.LivestockBreeds.Where(f => f.LivestockTypeId == livestockType.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
+                Items = app.dbContext.LivestockBreeds.Where(f => f.LivestockTypeId == livestockType.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
 
             StateHasChanged();
             _listComponent.Update();
         }
         public ValueTask DisposeAsync()
         {
-            dbSync.OnUpdate -= DbSync_OnUpdate;
+            app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
             return ValueTask.CompletedTask;
         }
     }

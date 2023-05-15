@@ -11,20 +11,20 @@ namespace Domain.Abstracts
         [Required]
         public Guid TenantId { get; set; }
         [Required]
-        public DateTime Created { get; set; }
-        [Required]
-        public DateTime ModifiedOn { get; set; }
-
-        public DateTime? Deleted { get; set; }
+        public DateTime CreatedOn { get; set; }
         [Required]
         public Guid CreatedBy { get; set; }
         [Required]
+        public DateTime ModifiedOn { get; set; }
+        [Required]
         public Guid ModifiedBy { get; set; }
+        public DateTime? DeletedOn { get; set; }
+
         public Guid? DeletedBy { get; set; }
         protected BaseEntity(Guid createdBy, Guid tenantId)
         {
             var created = DateTime.Now;
-            Created = created;
+            CreatedOn = created;
             ModifiedOn = created;
             CreatedBy = createdBy;
             ModifiedBy = createdBy;

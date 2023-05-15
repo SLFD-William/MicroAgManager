@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
@@ -7,16 +8,17 @@ namespace Domain.Entity
         public Duty(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public LivestockType? LivestockType { get; set; }
-        public string Name { get; set; }
-        public int DaysDue { get; set; }
-        public string DutyType { get; set; }
-        public long DutyTypeId { get; set; }
-        public string? Gender { get; set; }
-        public string Relationship { get; set; }
-        public bool SystemRequired { get; set; }
-        public ICollection<Event> Events { get; set; } = new List<Event>();
-        public ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
-        public ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
+        
+        [MaxLength(1)] public string? Gender { get; set; }
+        [Required] public bool SystemRequired { get; set; }
+        [Required] public int DaysDue { get; set; }
+        [Required] public long DutyTypeId { get; set; }
+        [Required][MaxLength(20)] public string DutyType { get; set; }
+        [Required][MaxLength(20)] public string Relationship { get; set; }
+        [Required][MaxLength(40)]public string Name { get; set; }
+        public virtual LivestockType? LivestockType { get; set; }
+        public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+        public virtual ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
+        public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
     }
 }

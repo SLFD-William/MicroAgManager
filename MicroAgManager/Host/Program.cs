@@ -1,6 +1,6 @@
 using Host;
+using Host.Hubs;
 using Microsoft.AspNetCore.ResponseCompression;
-using BackEnd.Hubs;
 
 const string CorsPolicy = nameof(CorsPolicy);
 var builder = WebApplication.CreateBuilder(args);

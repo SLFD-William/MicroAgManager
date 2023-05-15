@@ -1,18 +1,17 @@
 ﻿using Domain.Entity;
 using BackEnd.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BackEnd.BusinessLogic.Authentication
+namespace Host
 {
-    internal static class AuthenticationHelpers
-    {
-        internal static async Task<TokenModel> CreateModelToken(ApplicationUser user, UserManager<ApplicationUser> userManager, IConfiguration configuration)
+    public static class AuthenticationHelpers
+    { //TODO store secret in a secure location.
+        public static async Task<TokenModel> CreateModelToken(ApplicationUser user, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
             _ = int.TryParse(configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
@@ -32,8 +31,9 @@ namespace BackEnd.BusinessLogic.Authentication
                 expiration = DateTime.Now.AddMinutes(tokenValidityInMinutes)
             };
         }
-        internal static ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token, IConfiguration configuration)
+        public static ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token, IConfiguration configuration)
         {
+           
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false,
@@ -51,7 +51,7 @@ namespace BackEnd.BusinessLogic.Authentication
             return principal;
 
         }
-        private static async Task<List<Claim>> GetClaims(ApplicationUser user, UserManager<ApplicationUser> userManager)
+        public static async Task<List<Claim>> GetClaims(ApplicationUser user, UserManager<ApplicationUser> userManager)
         {
             var userRoles = await userManager.GetRolesAsync(user);
 
@@ -66,7 +66,7 @@ namespace BackEnd.BusinessLogic.Authentication
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             return authClaims;
         }
-        private static string GenerateRefreshToken()
+        public static string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
             using var rng = RandomNumberGenerator.Create();

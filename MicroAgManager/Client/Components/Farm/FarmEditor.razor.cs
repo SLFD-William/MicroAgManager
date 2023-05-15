@@ -14,8 +14,7 @@ namespace FrontEnd.Components.Farm
         FarmLocationModel farm { get; set; }
         public override async Task FreshenData()
         {
-            if(dbContext is null) dbContext= await dbSync.GetPreparedDbContextAsync();
-            var query= dbContext.Farms.AsQueryable();
+            var query= app.dbContext.Farms.AsQueryable();
             if (farmId.HasValue && farmId>0)
                 query = query.Where(f => f.Id == farmId);
             farm = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
@@ -29,9 +28,9 @@ namespace FrontEnd.Components.Farm
             {
                 var id = farm.Id;
                 if (id <= 0)
-                    farm.Id= await api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm });
+                    farm.Id= await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm });
                 else
-                    farm.Id = await api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
+                    farm.Id = await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
 
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");

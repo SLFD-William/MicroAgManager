@@ -22,7 +22,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             {
                 var duty = new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId);
                 duty = request.ScheduledDuty.MapToEntity(duty);
-                duty.ModifiedOn = duty.Created = DateTime.Now;
+                duty.ModifiedOn = duty.CreatedOn = DateTime.Now;
                 duty.ModifiedBy = duty.CreatedBy = request.ModifiedBy;
                 duty.TenantId = request.TenantId;
                 _context.ScheduledDuties.Add(duty);

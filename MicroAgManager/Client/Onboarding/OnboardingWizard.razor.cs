@@ -2,8 +2,6 @@
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.Shared;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -19,8 +17,8 @@ namespace FrontEnd.Onboarding
 
 
         [Inject] FrontEndAuthenticationStateProvider authentication { get; set; }
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
+        [CascadingParameter] ApplicationStateProvider app { get; set; }
+
         protected TenantModel tenant;
 
 
@@ -55,7 +53,7 @@ namespace FrontEnd.Onboarding
         }
         protected async override Task OnInitializedAsync()
         {
-            dbSync.OnUpdate += OnboardingWizard_DatabaseUpdated;
+            app.dbSynchonizer.OnUpdate += OnboardingWizard_DatabaseUpdated;
             await FreshenData();
 
         }
@@ -69,17 +67,16 @@ namespace FrontEnd.Onboarding
         }
         private async Task FreshenData()
         {
-           if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             while (authentication.TenantId() == Guid.Empty)
                 await Task.Delay(100);
-            while (!dbContext.Tenants.Any(t => t.GuidId == authentication.TenantId()))
+            while (!app.dbContext.Tenants.Any(t => t.GuidId == authentication.TenantId()))
                 await Task.Delay(100);
 
-            tenant = await dbContext.Tenants.SingleAsync(t => t.GuidId == authentication.TenantId());
-            farm = await dbContext.Farms.OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.GuidId)
+            tenant = await app.dbContext.Tenants.SingleAsync(t => t.GuidId == authentication.TenantId());
+            farm = await app.dbContext.Farms.OrderBy(f => f.Id).FirstOrDefaultAsync(f => f.TenantId == tenant.GuidId)
                 ?? new() { Name = tenant.Name };
 
-            livestockType = await dbContext.LivestockTypes.FirstOrDefaultAsync();
+            livestockType = await app.dbContext.LivestockTypes.FirstOrDefaultAsync();
 
             StateHasChanged();
         }
@@ -114,7 +111,7 @@ namespace FrontEnd.Onboarding
         }
         private async Task FarmLocationUpdated(FarmLocationModel args)
         {
-            while (!dbContext.Farms.Any(t => t.Id == args.Id))
+            while (!app.dbContext.Farms.Any(t => t.Id == args.Id))
                 await Task.Delay(100);
             
             await FreshenData();
@@ -123,7 +120,7 @@ namespace FrontEnd.Onboarding
 
         private async Task LandPlotUpdated(LandPlotModel args) {
             if(args.Id>0)
-            while (!dbContext.LandPlots.Any(t => t.Id == args.Id))
+            while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
                 await Task.Delay(100);
 
             LandPlotSelected(args);
@@ -132,7 +129,7 @@ namespace FrontEnd.Onboarding
 
         public ValueTask DisposeAsync()
         {
-            dbSync.OnUpdate -= OnboardingWizard_DatabaseUpdated;
+            app.dbSynchonizer.OnUpdate -= OnboardingWizard_DatabaseUpdated;
             return ValueTask.CompletedTask;
         }
     }

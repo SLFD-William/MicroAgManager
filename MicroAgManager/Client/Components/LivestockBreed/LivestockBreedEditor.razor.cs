@@ -1,5 +1,4 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Breeds;
-using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
@@ -15,9 +14,8 @@ namespace FrontEnd.Components.LivestockBreed
         [Parameter] public LivestockBreedModel livestockBreed { get; set; }
         public override async Task FreshenData()
         {
-            if (dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             livestockBreed= new LivestockBreedModel { LivestockTypeId = livestockType.Id };
-            var query = dbContext.LivestockBreeds.AsQueryable();
+            var query = app.dbContext.LivestockBreeds.AsQueryable();
             if (livestockBreedId.HasValue && livestockBreedId > 0)
                 query = query.Where(f => f.Id == livestockBreedId);
             if (!createOnly)
@@ -32,9 +30,9 @@ namespace FrontEnd.Components.LivestockBreed
                 _submitting = true;
                 var id = livestockBreed.Id;
                 if (id <= 0)
-                    id = await api.ProcessCommand<LivestockBreedModel, CreateLivestockBreed>("api/CreateLivestockBreed", new CreateLivestockBreed { LivestockBreed = livestockBreed });
+                    id = await app.api.ProcessCommand<LivestockBreedModel, CreateLivestockBreed>("api/CreateLivestockBreed", new CreateLivestockBreed { LivestockBreed = livestockBreed });
                 else
-                    id = await api.ProcessCommand<LivestockBreedModel, UpdateLivestockBreed>("api/UpdateLivestockBreed", new UpdateLivestockBreed { LivestockBreed = livestockBreed });
+                    id = await app.api.ProcessCommand<LivestockBreedModel, UpdateLivestockBreed>("api/UpdateLivestockBreed", new UpdateLivestockBreed { LivestockBreed = livestockBreed });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Breed");

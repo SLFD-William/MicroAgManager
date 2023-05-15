@@ -1,4 +1,6 @@
 ﻿using Domain.Abstracts;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
@@ -7,15 +9,16 @@ namespace Domain.Entity
         public LivestockStatus(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public string Status { get; set; }
-        public LivestockType LivestockType { get; set; }
-        public bool DefaultStatus { get; set; }
-        public string InMilk { get; set; }
-        public string BeingManaged { get; set; }
-        public string Sterile { get; set; }
-        public string BottleFed { get; set; }
-        public string ForSale { get; set; }
-        public ICollection<Livestock> Livestocks { get; set; } = new List<Livestock>();
-        public ICollection<LivestockFeedServing> FeedServings { get; set; } = new List<LivestockFeedServing>();
+        [Required][ForeignKey("LivestockType")] public long LivestockTypeId { get; set; }
+        [Required][MaxLength(40)] public string Status { get; set; }
+        [Required] public bool DefaultStatus { get; set; }
+        [Required][MaxLength(10)] public string InMilk { get; set; }
+        [Required][MaxLength(10)] public string BeingManaged { get; set; }
+        [Required][MaxLength(10)] public string Sterile { get; set; }
+        [Required][MaxLength(10)] public string BottleFed { get; set; }
+        [Required][MaxLength(10)] public string ForSale { get; set; }
+        public virtual LivestockType LivestockType { get; set; }
+        public virtual ICollection<LivestockFeedServing> FeedServings { get; set; } = new List<LivestockFeedServing>();
+        public virtual ICollection<Livestock> Livestocks { get; set; } = new List<Livestock>();
     }
 }

@@ -22,7 +22,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
             {
                 var livestockStatus = new Domain.Entity.LivestockStatus(request.ModifiedBy, request.TenantId);
                 livestockStatus = request.LivestockStatus.MapToEntity(livestockStatus);
-                livestockStatus.ModifiedOn = livestockStatus.Created = DateTime.Now;
+                livestockStatus.ModifiedOn = livestockStatus.CreatedOn = DateTime.Now;
                 livestockStatus.ModifiedBy = livestockStatus.CreatedBy = request.ModifiedBy;
                 livestockStatus.TenantId = request.TenantId;
                 _context.LivestockStatuses.Add(livestockStatus);

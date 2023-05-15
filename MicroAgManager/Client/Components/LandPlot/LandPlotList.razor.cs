@@ -1,25 +1,23 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.Shared.Sortable;
-using FrontEnd.Data;
-using FrontEnd.Persistence;
+using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.LandPlot
 {
     public partial class LandPlotList:ComponentBase, IAsyncDisposable
     {
-        public TableTemplate<LandPlotModel> _listComponent;
+        [CascadingParameter] ApplicationStateProvider app { get; set; }
         [CascadingParameter] FarmLocationModel farm { get; set; }
-        [CascadingParameter] DataSynchronizer dbSync { get; set; }
-        [CascadingParameter] FrontEndDbContext dbContext { get; set; }
+
+        public TableTemplate<LandPlotModel> _listComponent;
         [Parameter] public IEnumerable<LandPlotModel>? Items { get; set; }
         [Parameter] public bool Selectable { get; set; } = false;
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LandPlotModel>? PlotSelected { get; set; }
         protected async override Task OnInitializedAsync()
         {
-            
-            dbSync.OnUpdate += DbSync_OnUpdate;
+            app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
             await FreshenData();
         }
 
@@ -33,18 +31,16 @@ namespace FrontEnd.Components.LandPlot
         private async Task FreshenData()
         {
             if (_listComponent is null) return;
-            if (dbContext is null)
-                dbContext = await dbSync.GetPreparedDbContextAsync();
 
             if (Items is null)
-                Items = dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
+                Items = app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
            
             StateHasChanged();
             _listComponent.Update();
         }
         public ValueTask DisposeAsync()
         {
-            dbSync.OnUpdate -= DbSync_OnUpdate;
+            app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
             return ValueTask.CompletedTask;
         }
     }

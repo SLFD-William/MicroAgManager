@@ -16,13 +16,12 @@ namespace FrontEnd.Components.LivestockFeed
 
         public override async Task FreshenData()
         {
-            if(dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
             if (livestockFeed is not null)
             {
                 editContext = new EditContext(livestockFeed);
                 return;
             }
-            var query = dbContext.LivestockFeeds.AsQueryable();
+            var query = app.dbContext.LivestockFeeds.AsQueryable();
             if (livestockFeedId.HasValue && livestockFeedId > 0)
                 query = query.Where(f => f.Id == livestockFeedId);
             livestockFeed = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockFeedModel{ LivestockTypeId=livestockType.Id };
@@ -33,9 +32,9 @@ namespace FrontEnd.Components.LivestockFeed
             try
             {
                 if (livestockFeed.Id <= 0)
-                    livestockFeed.Id = await api.ProcessCommand<LivestockFeedModel, CreateLivestockFeed>("api/CreateLivestockFeed", new CreateLivestockFeed { LivestockFeed = livestockFeed });
+                    livestockFeed.Id = await app.api.ProcessCommand<LivestockFeedModel, CreateLivestockFeed>("api/CreateLivestockFeed", new CreateLivestockFeed { LivestockFeed = livestockFeed });
                 else
-                    livestockFeed.Id = await api.ProcessCommand<LivestockFeedModel, UpdateLivestockFeed>("api/UpdateLivestockFeed", new UpdateLivestockFeed { LivestockFeed = livestockFeed });
+                    livestockFeed.Id = await app.api.ProcessCommand<LivestockFeedModel, UpdateLivestockFeed>("api/UpdateLivestockFeed", new UpdateLivestockFeed { LivestockFeed = livestockFeed });
 
                 if (livestockFeed.Id <= 0)
                     throw new Exception("Failed to save livestock feed");

@@ -3,6 +3,7 @@ using Domain.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Domain.Extensions;
 
 namespace Domain.Models
 {
@@ -11,7 +12,7 @@ namespace Domain.Models
         [Required][ForeignKey(nameof(LivestockFeedModel))] public long FeedId { get; set; }
         [Precision(18,3)][Range(0, (double)decimal.MaxValue)] public decimal Quantity { get; set; }
         [Required]public bool? Discarded { get; set; }
-        //[RequiredIf("Discarded", "True")]
+        [RequiredIf("Discarded", "True")]
         [MinLength(5)][MaxLength(50)]public string Note { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
         public static LivestockFeedDistributionModel? Create(LivestockFeedDistribution livestock)
@@ -29,7 +30,7 @@ namespace Domain.Models
         public LivestockFeedDistribution MapToEntity(LivestockFeedDistribution entity)
         {
             entity.Quantity = Quantity;
-            entity.Discarded = Discarded;
+            entity.Discarded = Discarded ?? false;
             entity.Note = Note; 
             entity.DatePerformed = DatePerformed;   
             entity.Feed.Id = FeedId;

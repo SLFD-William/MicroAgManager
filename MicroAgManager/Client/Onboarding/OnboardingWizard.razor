@@ -1,6 +1,6 @@
 ﻿@using Domain.Constants;
 @using FrontEnd.Components.Shared
-@if (dbContext is not null)
+@if (app?.dbContext is not null)
 {
     <Wizard Id="@this.GetType().Name" @ref=@wizard ShowAdvancementButtons="@ShowButtons" CanStepAdvance="@CanStepAdvance" CanStepRepeat="@CanStepRepeat">
         <WizardStep Name="@Step1" >
@@ -10,8 +10,8 @@
         <WizardStep Name="@Step2" IsRepeating="true">
             <p>Tell us about your land</p>
             <CascadingValue Value="farm">
-                <LandPlotList @ref="landPlotList" Items="dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id)" Selectable="true" PlotSelected="@LandPlotSelected"></LandPlotList>
-                @if (dbContext.LandPlots.Any(p=>p.FarmLocationId==farm.Id))
+                <LandPlotList @ref="landPlotList" Items="app.dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id)" Selectable="true" PlotSelected="@LandPlotSelected"></LandPlotList>
+                @if (app.dbContext.LandPlots.Any(p=>p.FarmLocationId==farm.Id))
                 {
                     <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" landPlotId="@landPlotId" createOnly="@landPlotLooping" ></LandPlotEditor>
                 }

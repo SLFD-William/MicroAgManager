@@ -20,9 +20,9 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
             {
                 var livestockBreed = new Domain.Entity.LivestockBreed(request.ModifiedBy, request.TenantId);
                 livestockBreed = request.LivestockBreed.MapToEntity(livestockBreed);
-                if(livestockBreed.Livestock is null)
-                    livestockBreed.Livestock = await _context.LivestockTypes.FindAsync(request.LivestockBreed.LivestockTypeId);
-                livestockBreed.ModifiedOn = livestockBreed.Created = DateTime.Now;
+                if(livestockBreed.LivestockType is null)
+                    livestockBreed.LivestockType = await _context.LivestockTypes.FindAsync(request.LivestockBreed.LivestockTypeId);
+                livestockBreed.ModifiedOn = livestockBreed.CreatedOn = DateTime.Now;
                 livestockBreed.ModifiedBy = livestockBreed.CreatedBy = request.ModifiedBy;
                 livestockBreed.TenantId = request.TenantId;
                 _context.LivestockBreeds.Add(livestockBreed);

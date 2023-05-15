@@ -1,4 +1,6 @@
 ﻿using Domain.Abstracts;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
@@ -7,14 +9,16 @@ namespace Domain.Entity
         public LivestockFeedAnalysis(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public string LabNumber { get; set; }
-        public LivestockFeed Feed { get; set; }
-        public string TestCode { get; set; }
+        [Required][ForeignKey("LivestockFeed")]public long LivestockFeedId { get; set; }
+        [MaxLength(40)]public string LabNumber { get; set; }
+
+        [MaxLength(40)] public string TestCode { get; set; }
         public DateTime? DateSampled { get; set; }
         public DateTime? DateReceived { get; set; }
         public DateTime? DateReported { get; set; }
         public DateTime? DatePrinted { get; set; }
-        public ICollection< LivestockFeedAnalysisResult> Results { get; set; } = new List<LivestockFeedAnalysisResult>();
+        public virtual ICollection< LivestockFeedAnalysisResult> Results { get; set; } = new List<LivestockFeedAnalysisResult>();
+        public virtual LivestockFeed LivestockFeed { get; set; }
 
     }
 }

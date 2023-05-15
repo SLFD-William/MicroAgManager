@@ -21,7 +21,7 @@ namespace BackEnd.BusinessLogic.LivestockFeedAnalysis
                 throw new ArgumentNullException(nameof(query));
 
             if (!string.IsNullOrWhiteSpace(LabNumber)) query = query.Where(x => x.LabNumber.Contains(LabNumber));
-            if (FeedId.HasValue) query = query.Where(x => x.Feed.Id == FeedId);
+            if (FeedId.HasValue) query = query.Where(x => x.LivestockFeedId == FeedId);
             if (!string.IsNullOrWhiteSpace(TestCode)) query = query.Where(x => x.TestCode.Contains(TestCode));
             if (DateSampled.HasValue) query = query.Where(x => x.DateSampled == DateSampled);
             if (DateReceived.HasValue) query = query.Where(x => x.DateReceived == DateReceived);

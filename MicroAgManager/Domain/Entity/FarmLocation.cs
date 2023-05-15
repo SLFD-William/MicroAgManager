@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
@@ -7,7 +8,7 @@ namespace Domain.Entity
         public FarmLocation(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public string? Name { get; set; }
+        [Required][MaxLength(50)] public string Name { get; set; }
         public string? Longitude { get; set; }
         public string? Latitude { get; set; }
         public string? StreetAddress { get; set; }
@@ -15,6 +16,6 @@ namespace Domain.Entity
         public string? State { get; set; }
         public string? Zip { get; set; }
         public string? Country { get; set; }
-        public ICollection<LandPlot> Plots { get; set; }
+        public virtual ICollection<LandPlot> Plots { get; set; }
     }
 }

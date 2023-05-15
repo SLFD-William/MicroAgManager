@@ -20,7 +20,7 @@ namespace Domain.Abstracts
         public static BaseModel PopulateBaseModel(BaseEntity entity, BaseModel model)
         {
             model.Id = entity.Id;
-            model.Deleted = entity.Deleted.HasValue;
+            model.Deleted = entity.DeletedOn.HasValue;
             model.ModifiedOn = entity.ModifiedOn;
             model.EntityModifiedOn = entity.ModifiedOn;
             model.ModifiedBy = entity.ModifiedBy;

@@ -22,7 +22,7 @@ namespace BackEnd.Abstracts
             query = query.Where(t => t.TenantId == TenantId);
 
             if (GetDeleted.HasValue && !GetDeleted.Value)
-                query = query.Where(_ => !_.Deleted.HasValue);
+                query = query.Where(_ => !_.DeletedOn.HasValue);
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);

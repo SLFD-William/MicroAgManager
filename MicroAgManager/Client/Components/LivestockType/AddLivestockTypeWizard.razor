@@ -1,7 +1,7 @@
 ﻿@using FrontEnd.Components.LivestockBreed
 @using FrontEnd.Components.LivestockFeed
 @using FrontEnd.Components.LivestockStatus
-@if (dbContext is not null && livestockType is not null)
+@if (app is not null && livestockType is not null)
 {
     <Wizard Id="@this.GetType().Name" @ref=@wizard CanStepRetreat=@CanStepRetreat CanStepAdvance=@CanStepAdvance IsNestedWizard="@IsNestedWizard" ShowAdvancementButtons="@ShowButtons">
         <WizardStep Name="@Step1" >
@@ -9,9 +9,9 @@
         </WizardStep>
         <WizardStep Name="@Step2" IsRepeating="true">
             <CascadingValue Value="livestockType">
-                @if (dbContext.LivestockBreeds.Any(b=>b.LivestockTypeId==livestockType.Id))
+                @if (app.dbContext.LivestockBreeds.Any(b=>b.LivestockTypeId==livestockType.Id))
                 {
-                    <LivestockBreedList @ref="livestockBreedList" Items="dbContext.LivestockBreeds.Where(b=>b.LivestockTypeId==livestockType.Id)"></LivestockBreedList>
+                    <LivestockBreedList @ref="livestockBreedList" Items="app.dbContext.LivestockBreeds.Where(b=>b.LivestockTypeId==livestockType.Id)"></LivestockBreedList>
                 }
                 <LivestockBreedEditor @ref="livestockBreedEditor" Submitted="@LivestockBreedUpdated" createOnly="true"></LivestockBreedEditor>
             </CascadingValue>

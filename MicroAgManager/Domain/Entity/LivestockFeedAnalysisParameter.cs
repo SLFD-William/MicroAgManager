@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
@@ -7,12 +8,12 @@ namespace Domain.Entity
         public LivestockFeedAnalysisParameter(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public string Parameter { get; set; }
-        public string SubParameter { get; set; }
-        public string Unit { get; set; }
-        public string Method { get; set; }
-        public int ReportOrder { get; set; }
-        public ICollection<LivestockFeedAnalysisResult> Results { get; private set; } = new List<LivestockFeedAnalysisResult>();
+        [Required][MaxLength(50)]public string Parameter { get; set; }
+        [Required][MaxLength(50)] public string SubParameter { get; set; }
+        [Required][MaxLength(50)] public string Unit { get; set; }
+        [Required][MaxLength(50)] public string Method { get; set; }
+        [Required]public int ReportOrder { get; set; }
+        public virtual ICollection<LivestockFeedAnalysisResult> Results { get; private set; } = new List<LivestockFeedAnalysisResult>();
 
     }
 }

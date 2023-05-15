@@ -1,5 +1,4 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Types;
-using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
@@ -18,8 +17,8 @@ namespace FrontEnd.Components.LivestockType
         private async Task<bool> CheckNameExists(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return false;
-            if (!dbContext.LivestockTypes.Any(l => l.Name == livestockType.Name && l.Id != livestockType.Id)) return false;
-            var check= await dbContext.LivestockTypes.FirstOrDefaultAsync(l => l.Name == name);
+            if (!app.dbContext.LivestockTypes.Any(l => l.Name == livestockType.Name && l.Id != livestockType.Id)) return false;
+            var check= await app.dbContext.LivestockTypes.FirstOrDefaultAsync(l => l.Name == name);
             if (check is null) return false;
             livestockType = check;
             await Submitted.InvokeAsync(livestockType);
@@ -30,9 +29,8 @@ namespace FrontEnd.Components.LivestockType
         public override async Task FreshenData() 
         {
             if (_submitting) return;
-            if (dbContext is null) dbContext = await dbSync.GetPreparedDbContextAsync();
-            
-            var query = dbContext.LivestockTypes.AsQueryable();
+           
+            var query = app.dbContext.LivestockTypes.AsQueryable();
             if (livestockTypeId.HasValue && livestockTypeId > 0)
                 query = query.Where(f => f.Id == livestockTypeId);
             livestockType = new LivestockTypeModel();
@@ -48,9 +46,9 @@ namespace FrontEnd.Components.LivestockType
                 _submitting = true;
                 var id = livestockType.Id;
                 if (id <= 0)
-                    id = await api.ProcessCommand<LivestockTypeModel, CreateLivestockType>("api/CreateLivestockType", new CreateLivestockType { LivestockType = livestockType });
+                    id = await app.api.ProcessCommand<LivestockTypeModel, CreateLivestockType>("api/CreateLivestockType", new CreateLivestockType { LivestockType = livestockType });
                 else
-                    id = await api.ProcessCommand<LivestockTypeModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
+                    id = await app.api.ProcessCommand<LivestockTypeModel, UpdateLivestockType>("api/UpdateLivestockType", new UpdateLivestockType { LivestockType = livestockType });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock type");

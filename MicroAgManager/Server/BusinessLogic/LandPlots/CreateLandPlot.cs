@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.LandPlots
                 plot = request.LandPlot.MapToEntity(plot);
                 plot.FarmLocation = _context.Farms.Find(plot.FarmLocationId);
 
-                plot.ModifiedOn = plot.Created = DateTime.Now;
+                plot.ModifiedOn = plot.CreatedOn = DateTime.Now;
                 plot.ModifiedBy = plot.CreatedBy = request.ModifiedBy;
                 plot.TenantId = request.TenantId;
 
