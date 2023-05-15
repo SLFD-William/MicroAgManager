@@ -1,4 +1,4 @@
-﻿using BackEnd.Models;
+﻿using BackEnd.Infrastructure;
 
 namespace BackEnd.Hubs
 {

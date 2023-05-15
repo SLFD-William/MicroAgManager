@@ -1,5 +1,5 @@
 ﻿using BackEnd.Abstracts;
-using BackEnd.Models;
+using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 using MediatR;

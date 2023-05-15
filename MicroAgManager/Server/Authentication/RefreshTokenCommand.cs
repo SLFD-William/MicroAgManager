@@ -1,8 +1,7 @@
-﻿using BackEnd.Models.Authentication;
-using MediatR;
+﻿using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.BusinessLogic.Authentication
+namespace BackEnd.Authentication
 {
     public class RefreshTokenCommand:IRequest<TokenModel>
     {

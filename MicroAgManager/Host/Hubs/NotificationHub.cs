@@ -1,5 +1,5 @@
 ﻿using BackEnd.Hubs;
-using BackEnd.Models;
+using BackEnd.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 

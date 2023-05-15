@@ -1,10 +1,9 @@
 ﻿using MediatR;
-using BackEnd.Models.Authentication;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.Abstracts
+namespace BackEnd.Authentication
 {
-    public class AuthenticationCommand :IRequest<LoginResult>
+    public class AuthenticationCommand : IRequest<LoginResult>
     {
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Email address is not valid.")]

@@ -4,9 +4,9 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
-namespace BackEnd.Abstracts
+namespace BackEnd.Authentication
 {
-    public abstract class AuthenticationCommandHandler 
+    public abstract class AuthenticationCommandHandler
     {
         protected readonly IMicroAgManagementDbContext _context;
         protected readonly IMediator _mediator;

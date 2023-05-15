@@ -1,7 +1,6 @@
-﻿using FrontEnd.Interfaces;
+﻿using BackEnd.Authentication;
+using FrontEnd.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
-using BackEnd.BusinessLogic.Authentication;
-using BackEnd.Models.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;

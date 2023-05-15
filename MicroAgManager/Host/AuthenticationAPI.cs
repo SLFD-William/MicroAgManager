@@ -1,14 +1,12 @@
 ﻿using Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using BackEnd.Abstracts;
-using BackEnd.BusinessLogic.Authentication;
-using BackEnd.Models.Authentication;
 using Domain.Entity;
 using Microsoft.AspNetCore.Identity;
 using Domain.Interfaces;
-using BackEnd.Models;
 using Domain.ValueObjects;
+using BackEnd.Authentication;
+using BackEnd.Infrastructure;
 
 namespace Host
 {

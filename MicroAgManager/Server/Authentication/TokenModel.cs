@@ -1,4 +1,4 @@
-﻿namespace BackEnd.Models.Authentication
+﻿namespace BackEnd.Authentication
 {
     public class TokenModel
     {

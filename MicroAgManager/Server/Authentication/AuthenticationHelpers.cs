@@ -1,13 +1,13 @@
 ﻿using Domain.Entity;
-using BackEnd.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Host
+namespace BackEnd.Authentication
 {
     public static class AuthenticationHelpers
     { //TODO store secret in a secure location.
@@ -33,7 +33,7 @@ namespace Host
         }
         public static ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token, IConfiguration configuration)
         {
-           
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false,

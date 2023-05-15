@@ -1,9 +1,9 @@
 ﻿using Domain.ValueObjects;
 using MediatR;
 
-namespace BackEnd.Models
+namespace BackEnd.Infrastructure
 {
-    public class EntitiesModifiedNotification : ValueObject,INotification
+    public class EntitiesModifiedNotification : ValueObject, INotification
     {
         public EntitiesModifiedNotification()
         {

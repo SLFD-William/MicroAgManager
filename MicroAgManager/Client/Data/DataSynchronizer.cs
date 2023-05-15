@@ -9,7 +9,7 @@ using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
-using BackEnd.Models;
+using BackEnd.Infrastructure;
 using Domain.Abstracts;
 using Domain.Models;
 using FrontEnd.Persistence;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.BusinessLogic.Authentication
+namespace BackEnd.Authentication
 {
     public class RegisterUserCommand : LoginUserCommand
     {
