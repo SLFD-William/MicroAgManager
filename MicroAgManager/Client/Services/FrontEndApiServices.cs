@@ -1,9 +1,11 @@
 ﻿using BackEnd.Abstracts;
 using Domain.Abstracts;
+using Domain.Models;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace FrontEnd.Services
 {
@@ -11,12 +13,38 @@ namespace FrontEnd.Services
     {
         public Task<Tuple<long, ICollection<T?>>> ProcessQuery<T, TQuery>(string address, TQuery query) where T : BaseModel where TQuery : BaseQuery;
         public Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand;
+        public Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude);
+        public Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm);
     }
     internal class FrontEndApiServices: IFrontEndApiServices
     {
         private readonly HttpClient _httpClient;
         private readonly FrontEndAuthenticationStateProvider _auth;
+        private const string BingMapsKey = "AveuKfTkHgt1rHA0CQdugzV00kfhicCACDHBHoSH4ddPK24p8W1_hyPUnBmjUgSG";
+        public async Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude)
+        {
 
+            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?key={BingMapsKey} ";
+            var response = await _httpClient.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            return System.Text.Json.JsonSerializer.Deserialize<BingLocationResponse>(json, options);
+        }
+        public async Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm)
+        {
+            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{farm.Country}/{farm.State}/{farm.Zip}/{farm.City}/{farm.StreetAddress}?&maxResults={1}&key={BingMapsKey}";
+
+            var response = await _httpClient.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            return System.Text.Json.JsonSerializer.Deserialize<BingLocationResponse>(json, options);
+        }
         public FrontEndApiServices(HttpClient httpClient, FrontEndAuthenticationStateProvider auth)
         {
             _httpClient = httpClient;

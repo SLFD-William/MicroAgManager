@@ -18,8 +18,9 @@ namespace FrontEnd
             serviceCollection.AddDbContextFactory<FrontEndDbContext>(
                 options => options.UseSqlite($"Filename={DataSynchronizer.SqliteDbFilename}")
                 );
+            serviceCollection.AddGeolocationServices();
             serviceCollection.AddScoped<DataSynchronizer>();
-            serviceCollection.AddSingleton<ApplicationStateProvider>();
+            serviceCollection.AddScoped<ApplicationStateProvider>();
         }
     }
 }

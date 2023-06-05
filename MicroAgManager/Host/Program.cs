@@ -1,5 +1,7 @@
+using BackEnd.Infrastructure;
 using Host;
 using Host.Hubs;
+using MediatR;
 using Microsoft.AspNetCore.ResponseCompression;
 
 const string CorsPolicy = nameof(CorsPolicy);
@@ -31,6 +33,7 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
                .AddMessagePackProtocol();
+builder.Services.AddScoped<INotificationHandler<EntitiesModifiedNotification>, NotificationHandler>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -62,15 +65,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 AuthenticationAPI.Map(app);
 BusinessLogicAPI.Map(app);
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapHub<NotificationHub>("/notificationhub",
-//        options => { 
-//            options.CloseOnAuthenticationExpiration = true;
-//        }
-//        );
-//}
-//);
+
 
 app.MapHub<NotificationHub>("/notificationhub");
 app.MapFallbackToFile("index.html");

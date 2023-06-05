@@ -17,7 +17,7 @@ namespace FrontEnd.Components.LivestockType
         
 
         private Wizard? wizard;
-        [CascadingParameter] ApplicationStateProvider app { get; set; }
+        [Inject] ApplicationStateProvider app { get; set; }
         [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
         [Parameter] public EventCallback<bool> Completed { get; set; }
         [Parameter] public bool IsNestedWizard { get; set; } = false;

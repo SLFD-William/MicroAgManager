@@ -67,8 +67,7 @@ namespace FrontEnd.Data
         }
         public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
         { 
-            var modified=notifications.EntitiesModified.Where(e=>e.ModifiedBy!=UserId || e.Modification=="Created")
-                .Select(e=>$"{e.EntityName}Model");
+            var modified=notifications.EntitiesModified.Select(e=>$"{e.EntityName}Model");
             await EnsureSynchronizingAsync(modified.ToList());
         }
         static DbParameter AddNamedParameter(DbCommand command, string name)
@@ -213,8 +212,8 @@ namespace FrontEnd.Data
                     baseParameters["ModifiedBy"].Value = model.ModifiedBy;
                     tenantId.Value = model.TenantId;
                     name.Value = model.Name;
-                    longitude.Value = model.Longitude ?? string.Empty;
-                    latitude.Value = model.Latitude ?? string.Empty;
+                    longitude.Value = model.Longitude.HasValue ? model.Longitude.Value : DBNull.Value;
+                    latitude.Value = model.Latitude.HasValue ? model.Latitude.Value : DBNull.Value;
                     streetAddress.Value = model.StreetAddress ?? string.Empty;
                     city.Value = model.City ?? string.Empty;
                     state.Value = model.State ?? string.Empty;

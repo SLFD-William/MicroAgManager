@@ -7,7 +7,7 @@ namespace FrontEnd.Components.LandPlot
 {
     public partial class LandPlotList:ComponentBase, IAsyncDisposable
     {
-        [CascadingParameter] ApplicationStateProvider app { get; set; }
+        [Inject] ApplicationStateProvider app { get; set; }
         [CascadingParameter] FarmLocationModel farm { get; set; }
 
         public TableTemplate<LandPlotModel> _listComponent;

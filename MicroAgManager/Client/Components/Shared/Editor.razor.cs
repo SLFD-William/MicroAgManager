@@ -6,7 +6,7 @@ namespace FrontEnd.Components.Shared
 {
     public abstract class Editor<T>:ComponentBase, IAsyncDisposable where T : class
     {
-        [CascadingParameter]protected ApplicationStateProvider app { get; set; }
+        [Inject]protected ApplicationStateProvider app { get; set; }
         [Parameter] public bool createOnly { get; set; }
         public EditContext editContext { get; set; }
         [Parameter] public EventCallback<T> Submitted { get; set; }

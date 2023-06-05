@@ -8,13 +8,15 @@ namespace Domain.Models
     {
         [Required] public Guid TenantId { get; set; }
         [Required] public string? Name { get; set; }
-        public string? Longitude { get; set; }
-        public string? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
         [Required] public string? StreetAddress { get; set; }
         [Required] public string? City { get; set; }
         [Required] public string? State { get; set; }
         [Required] public string? Zip { get; set; }
         public string? Country { get; set; }
+        [MaxLength(2)]
+        public string? CountryCode { get; set; }
         public static FarmLocationModel? Create(FarmLocation? farm)
         {
             if (farm == null) return null;
@@ -28,7 +30,8 @@ namespace Domain.Models
                 State = farm.State,
                 Zip = farm.Zip,
                 Country = farm.Country,
-                TenantId=farm.TenantId
+                TenantId=farm.TenantId,
+                CountryCode=farm.CountryCode
             }) as FarmLocationModel;
             return model;
         }
@@ -43,6 +46,7 @@ namespace Domain.Models
             farm.Country = Country;
             farm.Name = Name;
             farm.TenantId = TenantId;
+            farm.CountryCode = CountryCode;
             return farm;
         }
     }

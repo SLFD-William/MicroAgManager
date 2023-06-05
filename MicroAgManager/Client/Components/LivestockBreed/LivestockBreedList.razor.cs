@@ -8,7 +8,7 @@ namespace FrontEnd.Components.LivestockBreed
     public partial class LivestockBreedList:ComponentBase, IAsyncDisposable
     {
         public ListTemplate<LivestockBreedModel> _listComponent;
-        [CascadingParameter] ApplicationStateProvider app { get; set; }
+        [Inject] ApplicationStateProvider app { get; set; }
         [CascadingParameter] LivestockTypeModel livestockType { get; set; }
         [Parameter] public IEnumerable<LivestockBreedModel>? Items { get; set; }
         protected async override Task OnInitializedAsync()

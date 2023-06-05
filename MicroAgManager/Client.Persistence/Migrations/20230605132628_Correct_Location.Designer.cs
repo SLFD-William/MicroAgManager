@@ -3,6 +3,7 @@ using System;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    partial class FrontEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230605132628_Correct_Location")]
+    partial class Correct_Location
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -123,21 +126,17 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CountryCode")
-                        .HasMaxLength(2)
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EntityModifiedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("REAL");
+                    b.Property<long?>("Latitude")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("REAL");
+                    b.Property<long?>("Longitude")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");

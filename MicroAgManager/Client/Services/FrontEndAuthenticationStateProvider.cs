@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace FrontEnd.Services
 {
-    internal class FrontEndAuthenticationStateProvider : AuthenticationStateProvider
+    public class FrontEndAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorage _localStorage;
         private readonly HttpClient _httpClient;

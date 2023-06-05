@@ -9,7 +9,7 @@ namespace FrontEnd.Components.LivestockStatus
     public partial class LivestockStatusList:ComponentBase, IAsyncDisposable
     {
         protected ListTemplate<LivestockStatusModel> _listComponent;
-        [CascadingParameter] ApplicationStateProvider app { get; set; }
+        [Inject] ApplicationStateProvider app { get; set; }
         [CascadingParameter] LivestockTypeModel livestockType { get; set; }
         [Parameter] public IEnumerable<LivestockStatusModel>? Items { get; set; }
         protected async override Task OnInitializedAsync()

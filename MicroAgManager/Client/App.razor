@@ -1,9 +1,7 @@
 ﻿@using Microsoft.EntityFrameworkCore;
 @using FrontEnd.Data;
-@inject ApplicationStateProvider applicationState
 <div class="App">
     <CascadingAuthenticationState>
-        <CascadingValue Value="applicationState">
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -27,6 +25,5 @@
                 </LayoutView>
             </NotFound>
         </Router>
-        </CascadingValue>
     </CascadingAuthenticationState>
 </div>

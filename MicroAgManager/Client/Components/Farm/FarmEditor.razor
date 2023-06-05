@@ -6,6 +6,16 @@
         <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
             <InputText placeholder="Name" @bind-Value="@farm.Name" />
         </ValidatedField>
+        @if (locationEnabled)
+        { 
+            <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => farm.Latitude)">
+                <InputNumber placeholder="Latitude" step="0.000001" @bind-Value="@farm.Latitude" />
+            </ValidatedField>
+            <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => farm.Longitude)">
+                <InputNumber placeholder="Longitude" step="0.000001" @bind-Value="@farm.Longitude" />
+            </ValidatedField>
+            <button type="button" @onclick="OnCoordinateChange">Look up address</button>
+        }
         <ValidatedField Legend="Address" ValidationMessageFor="@(() => farm.StreetAddress)">
             <InputText placeholder="Street Address" @bind-Value="@farm.StreetAddress" />
         </ValidatedField>
@@ -21,5 +31,6 @@
         <ValidatedField Legend="Country" ValidationMessageFor="@(() => farm.Country)">
             <InputText placeholder="Country" @bind-Value="@farm.Country" />
         </ValidatedField>
+        <button type="button" @onclick="GetGeoLocation">Look up geo location</button>
       </div>
 </EditForm>

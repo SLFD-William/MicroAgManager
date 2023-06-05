@@ -14,6 +14,7 @@ namespace FrontEnd.Services
     {
         private FrontEndAuthenticationStateProvider _authentication;
         private NavigationManager _navigation;
+        
 
         private static HubConnection? _hubConnection;
         private static FrontEndDbContext _dbContext;
@@ -22,24 +23,29 @@ namespace FrontEnd.Services
         public FrontEndDbContext? dbContext { get => _dbContext;}
         public DataSynchronizer? dbSynchonizer { get => _dbSynchonizer; }
         public IFrontEndApiServices? api { get => _api; }
-        public ApplicationStateProvider(IServiceProvider serviceProvider, IDbContextFactory<FrontEndDbContext> dbContextFactory, IJSRuntime js,NavigationManager navigation)
+        public ApplicationStateProvider(FrontEndAuthenticationStateProvider authentication, IFrontEndApiServices api,  IDbContextFactory<FrontEndDbContext> dbContextFactory, IJSRuntime js, NavigationManager navigation)
         {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                _api = scope.ServiceProvider.GetRequiredService<IFrontEndApiServices>();
-                _authentication = scope.ServiceProvider.GetRequiredService<FrontEndAuthenticationStateProvider>();
-            }   
+            _api = api;
+            _authentication = authentication;
             _navigation = navigation;
+            Task.Run(async() => await ImportScripts(js));
             _dbSynchonizer = new DataSynchronizer(js, dbContextFactory, _api);
             _authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
+
             Task.Run(InitializeAsync);
+            Task.Run(async()=> await _dbSynchonizer.SynchronizeInBackground());
         }
-        private async Task InitializeAsync()
+        private async Task ImportScripts(IJSRuntime js)
+        {
+            await js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/frontEndJsInterop.js");
+            await js.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor.Geolocation.WebAssembly/blazorators.geolocation.g.js");
+        }
+            private async Task InitializeAsync()
         {
             _dbContext = await _dbSynchonizer.GetPreparedDbContextAsync();
             await _authentication.RefreshToken();
         }
-        private async void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task)
+        private async Task HandleAuthenticationChange()
         {
             if (_authentication.User?.Identity?.IsAuthenticated == true)
             {
@@ -49,6 +55,7 @@ namespace FrontEnd.Services
             else
                 await DisposeAsync();
         }
+        private void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task) => Task.Run(HandleAuthenticationChange);
         private async Task InitializeNotificationHub()
         {
             if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected) return;

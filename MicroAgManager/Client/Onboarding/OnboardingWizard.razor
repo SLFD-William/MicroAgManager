@@ -7,7 +7,7 @@
             <p>Please enter information about your farm</p>
             <FarmEditor @ref="farmEditor" farmId="@farm.Id" farmName="@farm.Name" Submitted="@FarmLocationUpdated"></FarmEditor>
         </WizardStep>
-        <WizardStep Name="@Step2" IsRepeating="true">
+@*        <WizardStep Name="@Step2" IsRepeating="true">
             <p>Tell us about your land</p>
             <CascadingValue Value="farm">
                 <LandPlotList @ref="landPlotList" Items="app.dbContext.LandPlots.Where(p=>p.FarmLocationId==farm.Id)" Selectable="true" PlotSelected="@LandPlotSelected"></LandPlotList>
@@ -26,6 +26,6 @@
                     </CascadingValue>
                 }
                 </CascadingValue>
-            </WizardStep>
+            </WizardStep>*@
     </Wizard>
 }

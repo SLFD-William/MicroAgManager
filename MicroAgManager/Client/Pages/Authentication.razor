@@ -45,7 +45,6 @@
 </div>
 @code{
     private EditContext? editContext;
-    [CascadingParameter] FrontEndDbContext dbContext { get; set; }
     public bool IsRegistering { get; private set; }
     public string Email { get => IsRegistering ? registerRequest.Email : loginRequest.Email ; 
         set{registerRequest.Email = loginRequest.Email = value;} }
