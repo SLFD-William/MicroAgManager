@@ -7,6 +7,9 @@
             <p>Please enter information about your farm</p>
             <FarmEditor @ref="farmEditor" farmId="@farm.Id" farmName="@farm.Name" Submitted="@FarmLocationUpdated"></FarmEditor>
         </WizardStep>
+        <WizardStep Name="@Step2">
+            <p>Complete</p>
+        </WizardStep>
 @*        <WizardStep Name="@Step2" IsRepeating="true">
             <p>Tell us about your land</p>
             <CascadingValue Value="farm">

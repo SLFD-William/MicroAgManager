@@ -18,5 +18,17 @@
   {
     "outputFile": "Components/Shared/Sortable/TableTemplate.razor.css",
     "inputFile": "Components/Shared/Sortable/TableTemplate.razor.scss"
+  },
+  {
+    "outputFile": "Components/Farm/FarmViewer.razor.css",
+    "inputFile": "Components/Farm/FarmViewer.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/Weather.razor.css",
+    "inputFile": "Components/Shared/Weather.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/TabControl.razor.css",
+    "inputFile": "Components/Shared/TabControl.razor.scss"
   }
 ]

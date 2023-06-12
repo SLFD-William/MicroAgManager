@@ -1,0 +1,15 @@
+﻿@layout MainLayout
+@inherits DataComponent
+@page "/"
+<PageTitle>Farms</PageTitle>
+@if (multipleFarms())
+{
+    <FrontEnd.Components.Farm.FarmList></FrontEnd.Components.Farm.FarmList>
+}
+@if (selectedFarm is not null)
+{
+    <CascadingValue Value="@selectedFarm">
+        <FrontEnd.Components.Farm.FarmViewer></FrontEnd.Components.Farm.FarmViewer>
+    </CascadingValue>
+}
+

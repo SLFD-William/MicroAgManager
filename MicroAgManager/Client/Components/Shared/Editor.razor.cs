@@ -14,12 +14,14 @@ namespace FrontEnd.Components.Shared
         public abstract Task FreshenData();
         public abstract Task OnSubmit();
         protected virtual void DbSync_OnUpdate() => Task.Run(FreshenData);
-        protected async override Task OnInitializedAsync()
+        protected override void OnInitialized()=>app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
+            
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
-            await FreshenData();
+            if(firstRender) await FreshenData();
         }
-        
+
+
         public virtual ValueTask DisposeAsync()
         {
             app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;

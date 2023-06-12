@@ -1,0 +1,46 @@
+﻿@using Domain.Constants;
+@inherits DataComponent
+<div class="FarmViewer">
+    <section class="address">
+        <p>@farm.Name</p>
+        <p>@farm.StreetAddress</p>
+        <p>@farm.City</p>
+        <p>@farm.State</p>
+        <p>@farm.Zip</p>
+        <p>@farm.Country</p>
+    </section>
+    <Weather Latitude="@farm.Latitude" Longitude="@farm.Longitude"></Weather>
+    <TabControl @ref="_tabControl">
+        <TabPage @ref="_plotTab">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
+                    Plots
+                    @((MarkupString)GetPlotCount(LandPlotUseConstants.GeneralUse))
+                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Pasture))
+                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Garden))
+                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Livestock))
+                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Outbuilding))
+                </button>
+            </ButtonContent>
+            <ChildContent>
+                <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_livestockTab" Text="Livestock">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
+            </ButtonContent>
+            <ChildContent>
+                Livestock Listing
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_dutyTab" Text="Duties">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">Duties</button>
+            </ButtonContent>
+            <ChildContent>
+                Duty Listing
+            </ChildContent>
+        </TabPage>
+     </TabControl>
+</div>

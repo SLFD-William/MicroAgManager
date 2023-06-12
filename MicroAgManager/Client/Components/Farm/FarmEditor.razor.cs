@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
-using System.Runtime.Loader;
 
 namespace FrontEnd.Components.Farm
 {

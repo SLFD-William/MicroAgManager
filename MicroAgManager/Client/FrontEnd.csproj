@@ -35,13 +35,17 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.31.0" />
     <NativeFileReference Include="Data\e_sqlite3.o" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client.Persistence\FrontEnd.Persistence.csproj" />
     <ProjectReference Include="..\Server\BackEnd.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\FontAwesome\" />
   </ItemGroup>
 
 </Project>

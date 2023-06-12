@@ -1,0 +1,20 @@
+﻿<div class="TabControl">
+    <nav role="group">
+      @foreach (TabPage tabPage in Pages)
+      {
+            if (tabPage.ButtonContent is not null)
+            {
+                @tabPage.ButtonContent
+            }
+            else
+            {
+                <button type="button" class="@GetButtonClass(tabPage)" @onclick=@( () => ActivatePage(tabPage) )>
+                    @tabPage.Text
+                </button>
+            }
+        }
+    </nav>
+    <CascadingValue Value="this">
+      @ChildContent
+    </CascadingValue>
+</div>

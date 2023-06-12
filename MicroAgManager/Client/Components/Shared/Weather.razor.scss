@@ -1,0 +1,9 @@
+.Weather {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    & .degreesF::after {
+        content: "\00b0 F";
+    }
+}

@@ -18,7 +18,7 @@ namespace FrontEnd.Onboarding
 
         [Inject] FrontEndAuthenticationStateProvider authentication { get; set; }
         [Inject] ApplicationStateProvider app { get; set; }
-
+        [Inject] NavigationManager navigationManager { get; set; }
         protected TenantModel tenant;
 
 
@@ -100,6 +100,10 @@ namespace FrontEnd.Onboarding
                     if (farmEditor.editContext.IsModified() && !farmEditor.editContext.Validate()) return false;
                     if(farmEditor.editContext.IsModified()) await farmEditor.OnSubmit();
                 }
+            if (wizard?.ActiveStep?.Name == Step2) //Complete
+            {
+                navigationManager.NavigateTo("");
+            }
             //if (wizard?.ActiveStep?.Name == Step2)
             //    if (landPlotEditor is not null )
             //    {

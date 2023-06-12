@@ -1,4 +1,6 @@
-﻿@using Domain.Models;
+﻿@using Domain.Models
+@inherits DataComponent
+
 @if (app != null)
 {
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="LandPlotModel" 

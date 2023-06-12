@@ -15,16 +15,21 @@ namespace FrontEnd.Services
         public Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand;
         public Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude);
         public Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm);
+        public Task<WeatherData> GetWeather(double Latitued, double Longitude,bool force=false);
     }
     internal class FrontEndApiServices: IFrontEndApiServices
     {
         private readonly HttpClient _httpClient;
         private readonly FrontEndAuthenticationStateProvider _auth;
-        private const string BingMapsKey = "AveuKfTkHgt1rHA0CQdugzV00kfhicCACDHBHoSH4ddPK24p8W1_hyPUnBmjUgSG";
+        private const string BingMapsAPIKey = "AveuKfTkHgt1rHA0CQdugzV00kfhicCACDHBHoSH4ddPK24p8W1_hyPUnBmjUgSG";
+        private const string WeatherAPIKey = "UX43BL6B8S3P6KE6PGRA6PUSD";
+        private Dictionary<string,Tuple<WeatherData,DateTime>> weatherTracking=new Dictionary<string, Tuple<WeatherData, DateTime>>();
+        
+        
         public async Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude)
         {
 
-            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?key={BingMapsKey} ";
+            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?key={BingMapsAPIKey} ";
             var response = await _httpClient.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions()
@@ -35,7 +40,7 @@ namespace FrontEnd.Services
         }
         public async Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm)
         {
-            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{farm.Country}/{farm.State}/{farm.Zip}/{farm.City}/{farm.StreetAddress}?&maxResults={1}&key={BingMapsKey}";
+            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{farm.Country}/{farm.State}/{farm.Zip}/{farm.City}/{farm.StreetAddress}?&maxResults={1}&key={BingMapsAPIKey}";
 
             var response = await _httpClient.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
@@ -106,6 +111,28 @@ namespace FrontEnd.Services
                 //await db.SaveChangesAsync();
             //}
             return response;
+        }
+
+        public async Task<WeatherData> GetWeather(double latitude, double longitude, bool force = false)
+        {
+            var weatherKey = $"{latitude},{longitude}";
+            Tuple<WeatherData, DateTime> currentWeatherData = weatherTracking.ContainsKey(weatherKey) ? weatherTracking[weatherKey] : null;
+
+            if (!force && currentWeatherData is not null && DateTime.Now.Subtract(currentWeatherData.Item2).TotalMinutes<60)
+                return currentWeatherData.Item1;
+
+            string url = $"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{latitude}%2C{longitude}?unitGroup=us&maxDistance=16093&key={WeatherAPIKey}&contentType=json";
+
+            var response = await _httpClient.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var currentWeather = new Tuple<WeatherData, DateTime>(System.Text.Json.JsonSerializer.Deserialize<WeatherData>(json, options), DateTime.Now);
+            if (!weatherTracking.ContainsKey(weatherKey)) weatherTracking.Add(weatherKey,currentWeather);
+            weatherTracking[weatherKey] = currentWeather;
+            return currentWeather.Item1;
         }
     }
 }
