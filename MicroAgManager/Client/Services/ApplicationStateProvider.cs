@@ -1,11 +1,15 @@
 ﻿using BackEnd.Infrastructure;
+using Domain.Interfaces;
+using Domain.Logging;
 using FrontEnd.Data;
 using FrontEnd.Persistence;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 
 namespace FrontEnd.Services
@@ -20,10 +24,18 @@ namespace FrontEnd.Services
         private static FrontEndDbContext _dbContext;
         private static DataSynchronizer _dbSynchonizer;
         private static IFrontEndApiServices _api;
+        private static ILogger _log;
+
+        public ILogger? log { get => _log; }
         public FrontEndDbContext? dbContext { get => _dbContext;}
         public DataSynchronizer? dbSynchonizer { get => _dbSynchonizer; }
         public IFrontEndApiServices? api { get => _api; }
-        public ApplicationStateProvider(FrontEndAuthenticationStateProvider authentication, IFrontEndApiServices api,  IDbContextFactory<FrontEndDbContext> dbContextFactory, IJSRuntime js, NavigationManager navigation)
+        public ApplicationStateProvider(FrontEndAuthenticationStateProvider authentication, 
+            IFrontEndApiServices api,  
+            IDbContextFactory<FrontEndDbContext> dbContextFactory, 
+            IJSRuntime js, 
+            NavigationManager navigation,
+            IConfiguration config)
         {
             _api = api;
             _authentication = authentication;
@@ -32,7 +44,8 @@ namespace FrontEnd.Services
             _dbSynchonizer = new DataSynchronizer(js, dbContextFactory, _api);
             _authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
 
-            Task.Run(InitializeAsync);
+            Task.Run(async () => await InitializeAsync(config));
+            
             Task.Run(async()=> await _dbSynchonizer.SynchronizeInBackground());
         }
         private async Task ImportScripts(IJSRuntime js)
@@ -40,9 +53,10 @@ namespace FrontEnd.Services
             await js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/frontEndJsInterop.js");
             await js.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor.Geolocation.WebAssembly/blazorators.geolocation.g.js");
         }
-            private async Task InitializeAsync()
+        private async Task InitializeAsync(IConfiguration config)
         {
             _dbContext = await _dbSynchonizer.GetPreparedDbContextAsync();
+            _log = new DatabaseLoggingProvider(_dbContext, config).CreateLogger("ClientLogging");
             await _authentication.RefreshToken();
         }
         private async Task HandleAuthenticationChange()

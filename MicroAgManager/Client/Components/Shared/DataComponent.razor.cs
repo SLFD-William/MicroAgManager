@@ -1,5 +1,6 @@
 ﻿using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Components.Shared
 {
@@ -22,10 +23,15 @@ namespace FrontEnd.Components.Shared
             return ValueTask.CompletedTask;
         }
         public abstract Task FreshenData();
-
+        public ILogger? Log { get => app.log;}
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && app.dbContext is not null) await FreshenData();
+            if (firstRender && app.dbContext is not null)
+            {
+                //Log.LogWarning("First Render");
+                await FreshenData();
+            }
+               
         }
     }
 }

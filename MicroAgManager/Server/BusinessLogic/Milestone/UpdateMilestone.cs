@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Milestone
 {
@@ -12,9 +13,10 @@ namespace BackEnd.BusinessLogic.Milestone
         public MilestoneModel Milestone { get; set; }
         public class Handler: BaseCommandHandler<UpdateMilestone>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(UpdateMilestone request, CancellationToken cancellationToken)
             {
                 var duty = _context.Milestones.First(d => d.TenantId == request.TenantId && d.Id == request.Milestone.Id);

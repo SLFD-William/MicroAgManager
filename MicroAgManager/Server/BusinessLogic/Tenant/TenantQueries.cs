@@ -12,7 +12,7 @@ namespace BackEnd.BusinessLogic.Tenant
 
         protected IQueryable<Domain.Entity.Tenant> GetQuery(IMicroAgManagementDbContext context)
         { 
-            var query=context.Tenants.Where(t=>t.GuidId == TenantId).AsQueryable();
+            var query=context.Tenants.Where(t=>t.GuidId == TenantId).OrderByDescending(_ => _.ModifiedOn).AsQueryable();
             if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
@@ -27,7 +27,6 @@ namespace BackEnd.BusinessLogic.Tenant
             if (LastModified.HasValue)
                 query = query.Where(_ => _.ModifiedOn >= LastModified);
             
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return query;
         }
 

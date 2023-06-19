@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Event
@@ -15,9 +16,10 @@ namespace BackEnd.BusinessLogic.Event
 
         public class Handler:BaseCommandHandler<CreateEvent>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(CreateEvent request, CancellationToken cancellationToken)
             {
                 var eventEntity = new Domain.Entity.Event(request.ModifiedBy, request.TenantId);
@@ -32,7 +34,7 @@ namespace BackEnd.BusinessLogic.Event
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, 
                         new() { new ModifiedEntity(eventEntity.Id.ToString(),eventEntity.GetType().Name, "Created", eventEntity.ModifiedBy) }), cancellationToken);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                catch (Exception ex) { _log.LogError(ex, "Unable to Create Event"); }
                 return eventEntity.Id;
             }
         }

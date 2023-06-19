@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Livestock.Breeds
 {
@@ -12,9 +13,10 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
         public LivestockBreedModel LivestockBreed { get; set; }
         public class Handler : BaseCommandHandler<UpdateLivestockBreed>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(UpdateLivestockBreed request, CancellationToken cancellationToken)
             {
                 var livestockBreed = _context.LivestockBreeds.First(f => f.TenantId == request.TenantId && f.Id == request.LivestockBreed.Id);

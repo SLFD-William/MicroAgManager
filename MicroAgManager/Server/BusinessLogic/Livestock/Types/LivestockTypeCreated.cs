@@ -3,23 +3,19 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Livestock.Types
 {
     public class LivestockTypeCreated : BaseNotification
     {
-        public class LivestockTypeCreatedHandler : INotificationHandler<LivestockTypeCreated>
+        public class LivestockTypeCreatedHandler : BaseNotificationHandler<LivestockTypeCreated>
         {
-            protected readonly IMediator _mediator;
-            protected readonly IMicroAgManagementDbContext _context;
-
-            public LivestockTypeCreatedHandler(IMediator mediator, IMicroAgManagementDbContext context)
+            public LivestockTypeCreatedHandler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
-                _mediator = mediator;
-                _context = context;
             }
 
-            public async Task Handle(LivestockTypeCreated notification, CancellationToken cancellationToken)
+            public override async Task Handle(LivestockTypeCreated notification, CancellationToken cancellationToken)
             {
                 var modifiedNotice = await LivestockTypeLogic.OnLivestockTypeCreated(_context, notification.Id, cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(notification.TenantId, modifiedNotice), cancellationToken);

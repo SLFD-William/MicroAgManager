@@ -1,8 +1,10 @@
 ﻿using BackEnd.Infrastructure;
 using Domain.Entity;
 using Domain.Interfaces;
+using Domain.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +15,7 @@ namespace Host
 {
     static class ServiceCollectionExtensions
     {
-        internal static IServiceCollection AddBackEndPersistence(
+        internal static IServiceCollection AddBackEndPersistenceAndLogging(
         this IServiceCollection services,
         IConfiguration configuration)
         {
@@ -25,6 +27,15 @@ namespace Host
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<MicroAgManagementDbContext>();
+
+            //add the DatabaseLoggingProvider
+            services.AddLogging(builder =>
+            {
+                builder.AddConfiguration(configuration.GetSection("Logging"));
+                builder.AddProvider(new DatabaseLoggingProvider(services.BuildServiceProvider().GetService<IMicroAgManagementDbContext>(), configuration));
+            });
+            services.AddSingleton(typeof(ILogger), typeof(Logger<Log>));
+
 
             return services;
         }

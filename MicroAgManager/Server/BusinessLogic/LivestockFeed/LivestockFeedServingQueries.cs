@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (StatusId.HasValue) query = query.Where(f => f.Status.Id == StatusId);
             if (Serving.HasValue) query = query.Where(f=>f.Serving==Serving);
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
 

@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
             if (GestationPeriod.HasValue) query = query.Where(_ => _.GestationPeriod == GestationPeriod);
             if (HeatPeriod.HasValue) query = query.Where(_ => _.HeatPeriod == HeatPeriod);
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
     }

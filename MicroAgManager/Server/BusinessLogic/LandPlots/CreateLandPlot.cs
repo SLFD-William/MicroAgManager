@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.LandPlots
@@ -15,7 +16,7 @@ namespace BackEnd.BusinessLogic.LandPlots
         [Required] public LandPlotModel LandPlot { get; set; }
         public class Handler : BaseCommandHandler<CreateLandPlot>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
@@ -35,7 +36,7 @@ namespace BackEnd.BusinessLogic.LandPlots
                     await _context.SaveChangesAsync(cancellationToken);
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(plot.Id.ToString(), plot.GetType().Name, "Created", plot.ModifiedBy) }), cancellationToken);
                 }
-                catch (Exception ex) {Console.WriteLine(ex.ToString());}
+                catch (Exception ex) { _log.LogError(ex, "Unable to Create Land Plot"); }
                 return plot.Id;
             }
 

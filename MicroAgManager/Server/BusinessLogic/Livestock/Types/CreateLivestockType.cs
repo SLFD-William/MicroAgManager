@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock.Types
@@ -12,9 +13,10 @@ namespace BackEnd.BusinessLogic.Livestock.Types
         [Required] public LivestockTypeModel LivestockType { get; set; }
         public class Handler : BaseCommandHandler<CreateLivestockType>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(CreateLivestockType request, CancellationToken cancellationToken)
             {
                 var livestockType = new Domain.Entity.LivestockType(request.ModifiedBy, request.TenantId);

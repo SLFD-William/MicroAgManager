@@ -3,7 +3,7 @@ using Domain.Models;
 
 namespace Domain.Interfaces
 {
-    public interface IFrontEndDbContext
+    public interface IFrontEndDbContext:ILoggingDbContext
     {
         DbSet<FarmLocationModel> Farms { get; set; }
         DbSet<LandPlotModel> LandPlots { get; set; }

@@ -1,18 +1,15 @@
 ﻿using Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.Abstracts
 {
-    public abstract class BaseCommandHandler<T> : IRequestHandler<T, long> where T : BaseCommand
+    public abstract class BaseCommandHandler<T> :Base, IRequestHandler<T, long> where T : BaseCommand
     {
-        protected readonly IMicroAgManagementDbContext _context;
-        protected readonly IMediator _mediator;
-
-        protected BaseCommandHandler(IMicroAgManagementDbContext context, IMediator mediator)
+        protected BaseCommandHandler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
         {
-            _context = context;
-            _mediator = mediator;
         }
+
         public abstract Task<long> Handle(T request, CancellationToken cancellationToken);
     }
 }

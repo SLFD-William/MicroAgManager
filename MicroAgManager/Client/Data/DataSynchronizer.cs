@@ -29,12 +29,14 @@ namespace FrontEnd.Data
         private readonly IDbContextFactory<FrontEndDbContext> _dbContextFactory;
         private bool _isSynchronizing;
         private readonly IFrontEndApiServices _api;
+        private readonly IJSRuntime _js;
 
         public DataSynchronizer(IJSRuntime js, IDbContextFactory<FrontEndDbContext> dbContextFactory, IFrontEndApiServices api)
         {
             _api = api;
             _dbContextFactory = dbContextFactory;
-            _firstTimeSetupTask = FirstTimeSetupAsync(js);
+            _js = js;
+            _firstTimeSetupTask = FirstTimeSetupAsync();
         }
         public bool DatabaseInitialized { get; private set; } = false;
         public int SyncCompleted { get; private set; }
@@ -49,12 +51,26 @@ namespace FrontEnd.Data
             return await _dbContextFactory.CreateDbContextAsync();
         }
         public async Task SynchronizeInBackground(List<string>? entityModel=null) => await EnsureSynchronizingAsync(entityModel);
-        private async Task FirstTimeSetupAsync(IJSRuntime js)
+
+        public async Task<string> GetClientDBLink()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Create("browser"))) return string.Empty;
+            var module = await _js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/dbstorage.js");
+            await module.InvokeVoidAsync("deleteDBFromCache", SqliteDbFilename);
+            await module.InvokeVoidAsync("saveToBrowserCache", SqliteDbFilename);
+            var link= await module.InvokeAsync<string>("generateDownloadLink");
+            return link ?? string.Empty;
+        }
+
+        private async Task FirstTimeSetupAsync()
         {
             try { 
-                var module = await js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/dbstorage.js");
+                var module = await _js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/dbstorage.js");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("browser")))
+                {
+                    await module.InvokeVoidAsync("deleteDBFromCache", SqliteDbFilename);
                     await module.InvokeVoidAsync("synchronizeFileWithIndexedDb", SqliteDbFilename);
+                }
             }
             catch (Exception ex)
             {
@@ -142,6 +158,7 @@ namespace FrontEnd.Data
             }
             finally
             {
+               
                 _isSynchronizing = false;
             }
         }

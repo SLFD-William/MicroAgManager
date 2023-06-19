@@ -1,21 +1,20 @@
-﻿using Domain.Interfaces;
+﻿using BackEnd.Abstracts;
+using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Milestone
 {
     public class GetMilestoneList:MilestoneQueries, IRequest<Tuple<long, ICollection<MilestoneModel?>>>
     {
-        public class Handler : IRequestHandler<GetMilestoneList, Tuple<long, ICollection<MilestoneModel?>>>
+        public class Handler : BaseRequestHandler<GetMilestoneList>, IRequestHandler<GetMilestoneList, Tuple<long, ICollection<MilestoneModel?>>>
         {
-            protected readonly IMicroAgManagementDbContext _context;
-            protected readonly IMediator _mediator;
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
-                _context = context;
-                _mediator = mediator;
             }
+
             public async Task<Tuple<long, ICollection<MilestoneModel?>>> Handle(GetMilestoneList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.Milestone>(_context);

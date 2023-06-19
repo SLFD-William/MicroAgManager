@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Interfaces
 {
-    public interface IMicroAgManagementDbContext
+    public interface IMicroAgManagementDbContext:ILoggingDbContext
     {
         DbSet<Tenant> Tenants { get; set; }
         DbSet<FarmLocation> Farms { get; set; }
@@ -22,9 +22,8 @@ namespace Domain.Interfaces
         DbSet<Event> Events { get; set; }
         DbSet<Milestone> Milestones { get; set; }
         DbSet<ScheduledDuty> ScheduledDuties { get; set; }
+        
 
 
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-        int SaveChanges();
     }
 }

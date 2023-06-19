@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Duty;
@@ -15,9 +16,10 @@ public class CreateDuty : BaseCommand, ICreateCommand
 
     public class Handler:BaseCommandHandler<CreateDuty>
     {
-        public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+        public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
         {
         }
+
         public override async Task<long> Handle(CreateDuty request, CancellationToken cancellationToken)
         {
             var duty = new Domain.Entity.Duty(request.ModifiedBy, request.TenantId);
@@ -32,7 +34,7 @@ public class CreateDuty : BaseCommand, ICreateCommand
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, 
                     new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy) }), cancellationToken);
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+            catch (Exception ex) { _log.LogError(ex, "error creating Duty"); }
             return duty.Id;
         }
     }

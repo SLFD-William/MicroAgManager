@@ -49,7 +49,7 @@ namespace BackEnd.BusinessLogic.Livestock
             if (BottleFed.HasValue) query = query.Where(_ => _.BottleFed == BottleFed);
             if (ForSale.HasValue) query = query.Where(_ => _.ForSale == ForSale);
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
     }

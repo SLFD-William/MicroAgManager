@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock.Status
@@ -14,7 +15,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
         [Required] public LivestockStatusModel LivestockStatus { get; set; }
         public class Handler : BaseCommandHandler<CreateLivestockStatus>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
@@ -31,7 +32,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
                     await _context.SaveChangesAsync(cancellationToken);
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockStatus.Id.ToString(), livestockStatus.GetType().Name, "Created", livestockStatus.ModifiedBy) }), cancellationToken);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                catch (Exception ex) { _log.LogError(ex, "Unable to Create Livestock Status"); }
                 return livestockStatus.Id;
             }
         }

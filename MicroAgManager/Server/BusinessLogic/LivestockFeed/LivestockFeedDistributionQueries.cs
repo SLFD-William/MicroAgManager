@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (!string.IsNullOrWhiteSpace(Note)) query = query.Where(x => x.Note.Contains(Note));
             if (DatePerformed.HasValue) query = query.Where(x => x.DatePerformed == DatePerformed);
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
 

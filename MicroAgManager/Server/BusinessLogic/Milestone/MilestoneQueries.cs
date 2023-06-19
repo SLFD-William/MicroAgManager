@@ -17,7 +17,7 @@ namespace BackEnd.BusinessLogic.Milestone
             if (query is null) throw new ArgumentNullException(nameof(query));
             if (Subcategory != null) query = query.Where(_ => _.Subcategory == Subcategory);
             if (SystemRequired != null) query = query.Where(_ => _.SystemRequired == SystemRequired);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
     }

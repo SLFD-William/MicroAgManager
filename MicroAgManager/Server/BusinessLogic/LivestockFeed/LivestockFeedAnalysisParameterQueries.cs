@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (ReportOrder.HasValue) query = query.Where(x => x.ReportOrder == ReportOrder);
             if (!string.IsNullOrWhiteSpace(SubParameter)) query = query.Where(x => x.SubParameter == SubParameter);
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
 

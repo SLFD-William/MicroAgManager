@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.ScheduledDuty
@@ -15,9 +16,10 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
 
         public class Handler:BaseCommandHandler<CreateScheduledDuty>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(CreateScheduledDuty request, CancellationToken cancellationToken)
             {
                 var duty = new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId);
@@ -31,7 +33,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                     await _context.SaveChangesAsync(cancellationToken);
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy) }), cancellationToken);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                catch (Exception ex) { _log.LogError(ex, "Unable to Create Scheduled Duty"); }
                 return duty.Id;
             }
         }

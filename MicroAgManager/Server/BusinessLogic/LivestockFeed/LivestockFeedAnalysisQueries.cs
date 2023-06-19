@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.LivestockFeedAnalysis
             if (DateReported.HasValue) query = query.Where(x => x.DateReported == DateReported);
             if (DatePrinted.HasValue) query = query.Where(x => x.DatePrinted == DatePrinted);
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
 

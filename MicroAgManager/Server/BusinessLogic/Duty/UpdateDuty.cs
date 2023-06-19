@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Duty
 {
@@ -12,9 +13,10 @@ namespace BackEnd.BusinessLogic.Duty
         public DutyModel Duty { get; set; }
         public class Handler: BaseCommandHandler<UpdateDuty>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(UpdateDuty request, CancellationToken cancellationToken)
             {
                 var duty = _context.Duties.First(d => d.TenantId == request.TenantId && d.Id == request.Duty.Id);
