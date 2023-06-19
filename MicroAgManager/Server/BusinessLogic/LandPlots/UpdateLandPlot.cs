@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.LandPlots
 {
@@ -13,7 +14,7 @@ namespace BackEnd.BusinessLogic.LandPlots
 
         public class Handler : BaseCommandHandler<UpdateLandPlot>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 

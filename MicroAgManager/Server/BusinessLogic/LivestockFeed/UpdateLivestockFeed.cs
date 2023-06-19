@@ -3,6 +3,7 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.LivestockFeed
 {
@@ -18,9 +19,10 @@ namespace BackEnd.BusinessLogic.LivestockFeed
         //create a handler class implementing BaseCommandHandler<UpdateLivestockFeed>
         public class Handler : BaseCommandHandler<UpdateLivestockFeed>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(UpdateLivestockFeed request, CancellationToken cancellationToken)
             {
                 var livestockFeed = _context.LivestockFeeds.Find(request.LivestockFeed.Id);
@@ -34,7 +36,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
                     await _context.SaveChangesAsync(cancellationToken);
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockFeed.Id.ToString(), livestockFeed.GetType().Name, "Modified", livestockFeed.ModifiedBy) }), cancellationToken);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                catch (Exception ex) { _log.LogError(ex, "Unable to Update Livestock Feed"); }
                 return livestockFeed.Id;
 
             }

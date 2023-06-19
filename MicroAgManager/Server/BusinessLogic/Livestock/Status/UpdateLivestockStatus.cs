@@ -3,6 +3,7 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Livestock.Status
 {
@@ -14,9 +15,10 @@ namespace BackEnd.BusinessLogic.Livestock.Status
 
         public class Handler : BaseCommandHandler<UpdateLivestockStatus>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(UpdateLivestockStatus request, CancellationToken cancellationToken)
             {
                 var livestockStatus = _context.LivestockStatuses.Find(request.LivestockStatus.Id);

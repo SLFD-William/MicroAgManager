@@ -1,22 +1,21 @@
-﻿using Domain.Interfaces;
+﻿using BackEnd.Abstracts;
+using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Duty
 {
     public class GetDuty : DutyQueries, IRequest<DutyModel?>
     {
         public long Id { get; set; }
-        public class Handler : IRequestHandler<GetDuty, DutyModel?>
+        public class Handler : BaseRequestHandler<GetDuty>, IRequestHandler<GetDuty, DutyModel?>
         {
-            protected readonly IMicroAgManagementDbContext _context;
-            protected readonly IMediator _mediator;
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
-                _context = context;
-                _mediator = mediator;
             }
+
             public async Task<DutyModel?> Handle(GetDuty request, CancellationToken cancellationToken) =>
                 DutyModel.Create(await request.GetQuery<Domain.Entity.Duty>(_context).FirstOrDefaultAsync(cancellationToken));
         }

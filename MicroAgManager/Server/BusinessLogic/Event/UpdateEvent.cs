@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Event
 {
@@ -12,9 +13,10 @@ namespace BackEnd.BusinessLogic.Event
         public EventModel Event { get; set; }
         public class Handler: BaseCommandHandler<UpdateEvent>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
+
             public override async Task<long> Handle(UpdateEvent request, CancellationToken cancellationToken)
             {
                 var eventEntity = _context.Events.First(d => d.TenantId == request.TenantId && d.Id == request.Event.Id);

@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entity;
+using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,5 +27,6 @@ namespace FrontEnd.Persistence
         public DbSet<EventModel> Events { get; set; }
         public DbSet<MilestoneModel> Milestones { get; set; }
         public DbSet<ScheduledDutyModel> ScheduledDuties { get; set; }
+        public DbSet<Log> Logs { get; set; }
     }
 }

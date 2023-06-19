@@ -24,7 +24,6 @@ namespace BackEnd.BusinessLogic.Duty
             if (!string.IsNullOrWhiteSpace(Relationship)) query = query.Where(_ => _.Relationship != null && _.Relationship.Contains(Relationship));
             if (!string.IsNullOrWhiteSpace(Gender)) query = query.Where(_ => _.Gender != null && _.Gender.Contains(Gender));
             if (SystemRequired.HasValue) query = query.Where(_ => _.SystemRequired == SystemRequired);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
     }

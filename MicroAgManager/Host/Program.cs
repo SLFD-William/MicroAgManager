@@ -12,7 +12,7 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 builder.Services.AddBackEndMediatR();
-builder.Services.AddBackEndPersistence(builder.Configuration);
+builder.Services.AddBackEndPersistenceAndLogging(builder.Configuration);
 builder.Services.AddBackEndAuthentication(builder.Configuration);
 
 

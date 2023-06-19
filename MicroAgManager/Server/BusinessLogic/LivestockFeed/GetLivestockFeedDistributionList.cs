@@ -1,21 +1,20 @@
-﻿using Domain.Interfaces;
+﻿using BackEnd.Abstracts;
+using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.LivestockFeed
 {
     public class GetLivestockFeedDistributionList : LivestockFeedDistributionQueries, IRequest<Tuple<long, ICollection<LivestockFeedDistributionModel?>>>
     {
-        public class Handler : IRequestHandler<GetLivestockFeedDistributionList, Tuple<long, ICollection<LivestockFeedDistributionModel?>>>
+        public class Handler : BaseRequestHandler<GetLivestockFeedDistributionList>, IRequestHandler<GetLivestockFeedDistributionList, Tuple<long, ICollection<LivestockFeedDistributionModel?>>>
         {
-            protected readonly IMicroAgManagementDbContext _context;
-            protected readonly IMediator _mediator;
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
-                _context = context;
-                _mediator = mediator;
             }
+
             public async Task<Tuple<long, ICollection<LivestockFeedDistributionModel?>>> Handle(GetLivestockFeedDistributionList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.LivestockFeedDistribution>(_context);

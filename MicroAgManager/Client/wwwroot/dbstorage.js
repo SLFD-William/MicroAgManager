@@ -27,7 +27,45 @@
         }, 1000);
     });
 }
+export async function saveToBrowserCache(filename) {
+    const cache = await caches.open("BlazorDBCache");
 
+    const binaryData = window.Module.FS.readFile(filename);
+
+    const blob = new Blob([binaryData], {
+        type: 'application/octet-stream',
+        ok: true,
+        status: 200
+    });
+
+    const headers = new Headers({
+        'content-length': blob.size
+    });
+
+    const response = new Response(blob, {
+        headers
+    });
+
+    await cache.put("BlazorDB", response);
+}
+export async function deleteDBFromCache() {
+    const cache = await caches.open("BlazorDBCache");
+    cache.delete("BlazorDB");
+}
+export async function generateDownloadLink() {
+    const cache = await caches.open("BlazorDBCache");
+    const resp = await cache.match("BlazorDB");
+
+    if (resp && resp.ok) {
+
+        const res = await resp.blob();
+        if (res) {
+            return URL.createObjectURL(res);
+        }
+    }
+
+    return "";
+}
 window.bufferToCanvas = function(elem, buffer, width, height) {
     let imageData = new ImageData(new Uint8ClampedArray(buffer.buffer, 0, width * height * 4), width, height);
     elem.width = width;

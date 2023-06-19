@@ -21,7 +21,7 @@ namespace BackEnd.BusinessLogic.Event
             if (!string.IsNullOrWhiteSpace(Name)) query = query.Where(_ => _.Name.Contains(Name));
             if (!string.IsNullOrWhiteSpace(Color)) query = query.Where(_ => _.Color.Contains(Color));
 
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
     }

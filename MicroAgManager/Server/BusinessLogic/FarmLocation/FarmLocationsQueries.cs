@@ -32,7 +32,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
             if (!string.IsNullOrEmpty(Country)) query = query.Where(_ => _.Country != null && _.Country.Contains(Country));
             if (!string.IsNullOrEmpty(CountryCode)) query = query.Where(_ => _.CountryCode != null && _.CountryCode.Contains(CountryCode));
             
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+            
             return (IQueryable<T>)query;
         }
     }

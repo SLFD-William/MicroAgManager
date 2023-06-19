@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.FarmLocation
@@ -15,7 +16,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
         [Required]public FarmLocationModel Farm { get; set; }
         public class Handler : BaseCommandHandler<CreateFarmLocation>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator) : base(context, mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
@@ -35,7 +36,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
                     await _context.SaveChangesAsync(cancellationToken);
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() {new ModifiedEntity(farm.Id.ToString(),farm.GetType().Name,"Created",farm.ModifiedBy) }), cancellationToken);
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                catch (Exception ex) { _log.LogError(ex, "Unable to Create Farm Location"); }
                 return farm.Id;
             }
 

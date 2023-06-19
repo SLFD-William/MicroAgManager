@@ -1,22 +1,21 @@
-﻿using Domain.Interfaces;
+﻿using BackEnd.Abstracts;
+using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.FarmLocation
 {
     public class GetFarm : FarmLocationsQueries, IRequest<FarmLocationModel?>
     {
 
-        public class Handler : IRequestHandler<GetFarm, FarmLocationModel?>
+        public class Handler : BaseRequestHandler<GetFarm>, IRequestHandler<GetFarm, FarmLocationModel?>
         {
-            protected readonly IMicroAgManagementDbContext _context;
-            protected readonly IMediator _mediator;
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator)
+            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
-                _context = context;
-                _mediator = mediator;
             }
+
             public async Task<FarmLocationModel?> Handle(GetFarm request, CancellationToken cancellationToken)=>
                 FarmLocationModel.Create(await request.GetQuery<Domain.Entity.FarmLocation>(_context).FirstOrDefaultAsync(cancellationToken));
         }
