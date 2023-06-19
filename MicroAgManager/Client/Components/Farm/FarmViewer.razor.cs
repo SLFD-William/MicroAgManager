@@ -1,7 +1,5 @@
-﻿using Domain.Constants;
-using Domain.Models;
+﻿using Domain.Models;
 using FrontEnd.Components.Shared;
-using FrontEnd.Components.Shared.Sortable;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +8,7 @@ namespace FrontEnd.Components.Farm
 {
     public partial class FarmViewer :DataComponent
     {
-        [Inject] protected ApplicationStateProvider app { get; set; }
+        [Inject] NavigationManager navigationManager { get; set; }
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
@@ -18,21 +16,10 @@ namespace FrontEnd.Components.Farm
         protected TabPage _plotTab;
         protected TabPage _livestockTab;
         protected TabPage _dutyTab;
-        protected virtual void DbSync_OnUpdate() => Task.Run(FreshenData);
-        protected override void OnInitialized() => app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender) await FreshenData();
-        }
         private string GetPlotCount(string plotUsage)
         { 
             var count = app.dbContext.LandPlots.Count(p => p.FarmLocationId == farm.Id && p.Usage == plotUsage);
             return count>0 ? $"<p>{plotUsage} {count}</p>":string.Empty;
-        }
-        public virtual ValueTask DisposeAsync()
-        {
-            app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
-            return ValueTask.CompletedTask;
         }
         public override async Task FreshenData()
         {

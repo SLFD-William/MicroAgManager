@@ -1,5 +1,22 @@
-﻿<h3>FarmList</h3>
-
-@code {
-
+﻿@inherits DataComponent
+@using Domain.Models
+@if (app != null)
+{
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="FarmLocationModel" 
+        Items="@Items" 
+        MultiSelect="@Multiselect" 
+        Selectable="@Selectable"
+                   OnSelectionChange="@TableItemSelected">
+    <ColumnContent>
+            <Column TableItem="FarmLocationModel" Field="@(x => x.Name)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.StreetAddress)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.City)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.State)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.Zip)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.Country)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.CountryCode)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.Latitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationModel" Field="@(x => x.Longitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+    </ColumnContent>
+</TableTemplate>
 }

@@ -9,10 +9,10 @@
         @if (locationEnabled)
         { 
             <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => farm.Latitude)">
-                <InputNumber placeholder="Latitude" step="0.000001" @bind-Value="@farm.Latitude" />
+                <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@farm.Latitude" />
             </ValidatedField>
             <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => farm.Longitude)">
-                <InputNumber placeholder="Longitude" step="0.000001" @bind-Value="@farm.Longitude" />
+                <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@farm.Longitude" />
             </ValidatedField>
             <button type="button" @onclick="OnCoordinateChange">Look up address</button>
         }
@@ -33,4 +33,9 @@
         </ValidatedField>
         <button type="button" @onclick="GetGeoLocation">Look up geo location</button>
       </div>
+      @if(showUpdateCancelButtons)
+        {
+            <button type="submit">Update</button>
+            <button type="button" @onclick="Cancel">Cancel</button>
+        }
 </EditForm>

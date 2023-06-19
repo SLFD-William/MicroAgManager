@@ -13,12 +13,13 @@ namespace FrontEnd.Components.Farm
     {
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
+        [Parameter] public bool showUpdateCancelButtons { get; set; }
         [Inject] protected IGeolocationService GeoLoc { get; set; }
-        [Inject] protected IJSRuntime JS { get; set; }
         [Inject] private IFrontEndApiServices api { get; set; }
         FarmLocationModel farm { get; set; }
 
         bool locationEnabled { get; set; } = true;
+        protected override async Task OnInitializedAsync() => await FreshenData();
         protected override void OnAfterRender(bool firstRender)
         {
             if (firstRender && !(farm.Longitude.HasValue || farm.Latitude.HasValue)) 
@@ -64,9 +65,6 @@ namespace FrontEnd.Components.Farm
             locationEnabled = false;
             StateHasChanged();
         }
-
-
-
         public override async Task FreshenData()
         {
             var query= app.dbContext.Farms.AsQueryable();
@@ -76,6 +74,12 @@ namespace FrontEnd.Components.Farm
             if (string.IsNullOrEmpty(farm.Name) && !string.IsNullOrEmpty(farmName))
                 farm.Name = farmName;
             editContext=new EditContext(farm);
+        }
+        private async void Cancel()
+        {
+            editContext = new EditContext(farm);
+            await Cancelled.InvokeAsync();
+            StateHasChanged();
         }
         public override async Task OnSubmit()
         {

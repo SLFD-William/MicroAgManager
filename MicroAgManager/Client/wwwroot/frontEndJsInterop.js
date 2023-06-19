@@ -22,3 +22,4 @@ window.getCoords = async () => {
 
     navigator.geolocation.getCurrentPosition(success, error);
 };
+window.goBack = () => { window.history.back(); };

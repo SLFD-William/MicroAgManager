@@ -2,6 +2,7 @@
 @inherits DataComponent
 <div class="FarmViewer">
     <section class="address">
+        <button type="button" @onclick=@(()=> navigationManager.NavigateTo($"Farms/{farm.Id}"))>Edit</button>
         <p>@farm.Name</p>
         <p>@farm.StreetAddress</p>
         <p>@farm.City</p>
@@ -23,7 +24,7 @@
                 </button>
             </ButtonContent>
             <ChildContent>
-                <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
+                <FrontEnd.Components.LandPlot.LandPlotList ></FrontEnd.Components.LandPlot.LandPlotList>
             </ChildContent>
         </TabPage>
         <TabPage @ref="_livestockTab" Text="Livestock">

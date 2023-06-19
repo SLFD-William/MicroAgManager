@@ -1,15 +1,22 @@
 ﻿@layout MainLayout
 @inherits DataComponent
 @page "/"
+@page "/Farms"
+@page "/Farms/{farmId:long}"
 <PageTitle>Farms</PageTitle>
-@if (multipleFarms())
+<div style="max-height:100vh">
+    @if (multipleFarms() && !farmId.HasValue)
 {
     <FrontEnd.Components.Farm.FarmList></FrontEnd.Components.Farm.FarmList>
 }
-@if (selectedFarm is not null)
+    @if (selectedFarm is not null && !farmId.HasValue)
 {
     <CascadingValue Value="@selectedFarm">
         <FrontEnd.Components.Farm.FarmViewer></FrontEnd.Components.Farm.FarmViewer>
     </CascadingValue>
 }
-
+@if (farmId.HasValue)
+{
+        <FrontEnd.Components.Farm.FarmEditor farmId="@farmId" showUpdateCancelButtons="true" Submitted="FarmLocationUpdated" Cancelled="Cancelled"></FrontEnd.Components.Farm.FarmEditor>
+    }
+</div>

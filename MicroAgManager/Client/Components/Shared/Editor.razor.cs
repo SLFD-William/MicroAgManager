@@ -10,6 +10,7 @@ namespace FrontEnd.Components.Shared
         [Parameter] public bool createOnly { get; set; }
         public EditContext editContext { get; set; }
         [Parameter] public EventCallback<T> Submitted { get; set; }
+        [Parameter] public EventCallback<T> Cancelled { get; set; }
         protected bool _submitting = false;
         public abstract Task FreshenData();
         public abstract Task OnSubmit();

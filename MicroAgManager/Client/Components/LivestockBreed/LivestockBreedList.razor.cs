@@ -1,26 +1,17 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.Shared;
 using FrontEnd.Components.Shared.Sortable;
-using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.LivestockBreed
 {
-    public partial class LivestockBreedList:ComponentBase, IAsyncDisposable
+    public partial class LivestockBreedList:DataComponent
     {
         public ListTemplate<LivestockBreedModel> _listComponent;
-        [Inject] ApplicationStateProvider app { get; set; }
         [CascadingParameter] LivestockTypeModel livestockType { get; set; }
         [Parameter] public IEnumerable<LivestockBreedModel>? Items { get; set; }
-        protected async override Task OnInitializedAsync()
-        {
 
-            app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
-            await FreshenData();
-        }
-
-        private void DbSync_OnUpdate() => Task.Run(FreshenData);
-
-        private async Task FreshenData()
+        public override async Task FreshenData()
         {
             if (_listComponent is null) return;
 
@@ -30,10 +21,6 @@ namespace FrontEnd.Components.LivestockBreed
             StateHasChanged();
             _listComponent.Update();
         }
-        public ValueTask DisposeAsync()
-        {
-            app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
-            return ValueTask.CompletedTask;
-        }
+        
     }
 }

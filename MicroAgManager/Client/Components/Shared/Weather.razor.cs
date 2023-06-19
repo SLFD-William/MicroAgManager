@@ -1,7 +1,5 @@
 ﻿using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
 
 namespace FrontEnd.Components.Shared
 {
