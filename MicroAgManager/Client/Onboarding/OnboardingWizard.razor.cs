@@ -102,16 +102,25 @@ namespace FrontEnd.Onboarding
                 var advance= await HandleLandPlotSubmission();
                 if (advance && (landPlotList?.Items?.Any(l => l.Usage == LandPlotUseConstants.Livestock) ?? false))
                 {
-                    var step= wizard.Steps.First(s => s.Name == Step3);
-                    wizard?.SetActive(wizard.Steps[wizard.Steps.IndexOf(step)]);
+                    InsertStepAfterActive();
                     return false;
                 }
             }
-               
             if (wizard?.ActiveStep?.Name == Step4) //Complete
                 navigationManager.NavigateTo("",true);
          
             return true;
+        }
+        private void InsertStepAfterActive()
+        {
+            var currentIndex = wizard?.Steps.IndexOf(wizard.ActiveStep) ?? 0;
+            var step = wizard?.Steps.FirstOrDefault(s => s.Name == Step3);
+            if (step is not null)
+            {
+                wizard?.Steps.Remove(step);
+                wizard?.Steps.Insert(currentIndex + 1, step);
+                wizard?.SetActive(wizard.Steps[currentIndex + 1]);
+            }
         }
         private async Task FarmLocationUpdated(FarmLocationModel args)
         {
