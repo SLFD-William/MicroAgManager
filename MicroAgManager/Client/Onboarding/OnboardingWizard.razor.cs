@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.Constants;
+using Domain.Models;
 using FrontEnd.Components.Farm;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.Shared;
@@ -11,9 +12,9 @@ namespace FrontEnd.Onboarding
     public partial class OnboardingWizard : IAsyncDisposable
     {
         private const string Step1 = "Farm Information";
-        //private const string Step2 = "Farm Plots";
-        //private const string Step3 = "Production";
-        private const string Step2 = "Complete";
+        private const string Step2 = "Farm Plots";
+        private const string Step3 = "Livestock";
+        private const string Step4 = "Complete";
 
 
         [Inject] FrontEndAuthenticationStateProvider authentication { get; set; }
@@ -25,14 +26,9 @@ namespace FrontEnd.Onboarding
         private FarmEditor? farmEditor;
         private LandPlotList? landPlotList;
         protected FarmLocationModel farm = new();
-
         private LandPlotEditor? landPlotEditor;
-        //private long? landPlotId { get; set; }
-        //private bool landPlotLooping { get; set; }=false;
-        //private string? landPlotUsage { get; set; }
 
-
-        //private LivestockTypeModel? livestockType;
+        private long? landPlotId { get; set; }
 
         private Wizard? wizard;
         private bool _buttonsVisible = true;
@@ -44,27 +40,18 @@ namespace FrontEnd.Onboarding
             //    _buttonsVisible = false; 
             return Task.FromResult(_buttonsVisible);
         }
-        //private void LivestockTypeWizardCompleted(bool args)
-        //{
-        //    if (args)
-        //        wizard?.GoNext();
-        //    else
-        //        wizard?.GoBack();
-        //}
         protected async override Task OnInitializedAsync()
         {
             app.dbSynchonizer.OnUpdate += OnboardingWizard_DatabaseUpdated;
             await FreshenData();
 
         }
-        //private void LandPlotSelected(LandPlotModel? plot)
-        //{
-        //    landPlotLooping = plot is null;
-        //    landPlotId = plot?.Id;
-        //    landPlotUsage = plot?.Usage;
-        //    StateHasChanged();
-        //    if (landPlotEditor is not null) Task.Run(landPlotEditor.FreshenData);
-        //}
+        private void LandPlotSelected(LandPlotModel? plot)
+        {
+            landPlotId = plot?.Id;
+            StateHasChanged();
+            if (landPlotEditor is not null) Task.Run(landPlotEditor.FreshenData);
+        }
         private async Task FreshenData()
         {
             while (authentication.TenantId() == Guid.Empty)
@@ -83,14 +70,23 @@ namespace FrontEnd.Onboarding
         private void OnboardingWizard_DatabaseUpdated()=>Task.Run(FreshenData);
         private async Task<bool> CanStepRepeat()
         {
-            //if (wizard?.ActiveStep?.Name == Step2)
-            //    if (landPlotEditor is not null)
-            //    {
-            //        if (landPlotEditor.editContext.IsModified() && !landPlotEditor.editContext.Validate()) return false;
-            //        if (landPlotEditor.editContext.IsModified()) await landPlotEditor.OnSubmit();
-            //        LandPlotSelected(null);
-            //    }
+            if (wizard?.ActiveStep?.Name == Step2)
+                return await HandleLandPlotSubmission();
             return true;
+        }
+        private async Task<bool> HandleLandPlotSubmission()
+        {
+            if (landPlotEditor is not null)
+            {
+                if (landPlotEditor.editContext.IsModified() && !landPlotEditor.editContext.Validate()) return false;
+                if (landPlotEditor.editContext.IsModified())
+                {
+                    await landPlotEditor.OnSubmit();
+                    LandPlotSelected(null);
+                }
+                return true;
+            }
+            return false;
         }
         private async Task<bool> CanStepAdvance()
         {
@@ -99,18 +95,22 @@ namespace FrontEnd.Onboarding
                 {
                     if (farmEditor.editContext.IsModified() && !farmEditor.editContext.Validate()) return false;
                     if(farmEditor.editContext.IsModified()) await farmEditor.OnSubmit();
+                    farm= (FarmLocationModel)farmEditor.editContext.Model;
                 }
-            if (wizard?.ActiveStep?.Name == Step2) //Complete
+            if (wizard?.ActiveStep?.Name == Step2)
             {
-                navigationManager.NavigateTo("");
+                var advance= await HandleLandPlotSubmission();
+                if (advance && (landPlotList?.Items?.Any(l => l.Usage == LandPlotUseConstants.Livestock) ?? false))
+                {
+                    var step= wizard.Steps.First(s => s.Name == Step3);
+                    wizard?.SetActive(wizard.Steps[wizard.Steps.IndexOf(step)]);
+                    return false;
+                }
             }
-            //if (wizard?.ActiveStep?.Name == Step2)
-            //    if (landPlotEditor is not null )
-            //    {
-            //        if(landPlotEditor.editContext.IsModified() && !landPlotEditor.editContext.Validate()) return false;
-            //        if(landPlotEditor.editContext.IsModified()) await landPlotEditor.OnSubmit();
-            //        LandPlotSelected((LandPlotModel)landPlotEditor.editContext.Model);
-            //    }
+               
+            if (wizard?.ActiveStep?.Name == Step4) //Complete
+                navigationManager.NavigateTo("",true);
+         
             return true;
         }
         private async Task FarmLocationUpdated(FarmLocationModel args)
@@ -120,17 +120,15 @@ namespace FrontEnd.Onboarding
             
             await FreshenData();
         }
-        
+        private async Task LandPlotUpdated(LandPlotModel args)
+        {
+            if (args.Id > 0)
+                while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
+                    await Task.Delay(100);
 
-        //private async Task LandPlotUpdated(LandPlotModel args) {
-        //    if(args.Id>0)
-        //    while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
-        //        await Task.Delay(100);
-
-        //    LandPlotSelected(args);
-        //    landPlotList?._listComponent.Update();
-        //}
-
+            LandPlotSelected(args);
+            landPlotList?._listComponent.Update();
+        }
         public ValueTask DisposeAsync()
         {
             app.dbSynchonizer.OnUpdate -= OnboardingWizard_DatabaseUpdated;

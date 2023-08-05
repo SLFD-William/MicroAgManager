@@ -13,6 +13,7 @@ namespace FrontEnd.Components.LandPlot
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
         LandPlotModel plot { get; set; }
+        protected override async Task OnInitializedAsync() => await FreshenData();
         public override async Task FreshenData()
         {
             if (_submitting) return;

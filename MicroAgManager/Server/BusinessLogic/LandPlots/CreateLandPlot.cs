@@ -22,13 +22,8 @@ namespace BackEnd.BusinessLogic.LandPlots
 
             public override async Task<long> Handle(CreateLandPlot request, CancellationToken cancellationToken)
             {
-                var plot = new Domain.Entity.LandPlot(request.ModifiedBy, request.TenantId);
-                plot = request.LandPlot.MapToEntity(plot);
+                var plot = request.LandPlot.MapToEntity(new Domain.Entity.LandPlot(request.ModifiedBy, request.TenantId));
                 plot.FarmLocation = _context.Farms.Find(plot.FarmLocationId);
-
-                plot.ModifiedOn = plot.CreatedOn = DateTime.Now;
-                plot.ModifiedBy = plot.CreatedBy = request.ModifiedBy;
-                plot.TenantId = request.TenantId;
 
                 _context.Plots.Add(plot);
                 try

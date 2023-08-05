@@ -11,7 +11,7 @@ namespace FrontEnd.Components.LandPlot
 
         public TableTemplate<LandPlotModel> _listComponent;
         [Parameter] public IEnumerable<LandPlotModel>? Items { get; set; }
-        [Parameter] public bool Selectable { get; set; } = false;
+        
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LandPlotModel>? PlotSelected { get; set; }
 

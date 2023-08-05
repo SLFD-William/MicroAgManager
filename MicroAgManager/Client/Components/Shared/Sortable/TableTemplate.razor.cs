@@ -16,6 +16,7 @@ namespace FrontEnd.Components.Shared.Sortable
         [Parameter] public string NewItemName { get; set; }
         [Parameter] public string Caption { get; set; }
         [Parameter] public bool OnlyAddInMenuBar { get; set; } = false;
+        [Parameter] public bool CanDelete { get; set; } = false;
         [Parameter] public Action<ListPresentationTypesEnum> ListTypeUpdated { get; set; }
 
         public string FilterText { get; set; }

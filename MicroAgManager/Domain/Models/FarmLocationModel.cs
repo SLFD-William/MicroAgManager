@@ -45,7 +45,6 @@ namespace Domain.Models
             farm.Zip = Zip;
             farm.Country = Country;
             farm.Name = Name;
-            farm.TenantId = TenantId;
             farm.CountryCode = CountryCode;
             return farm;
         }

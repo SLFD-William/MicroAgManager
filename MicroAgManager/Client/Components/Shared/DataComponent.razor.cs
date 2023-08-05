@@ -7,6 +7,8 @@ namespace FrontEnd.Components.Shared
     public abstract class DataComponent : ComponentBase, IAsyncDisposable
     {
         [Inject] protected ApplicationStateProvider app { get; set; }
+        [Parameter] public bool Selectable { get; set; } = false;
+        [Parameter] public bool CanDelete { get; set; } = false;
         protected async override Task OnInitializedAsync()
         {
             while (app.dbSynchonizer is null)

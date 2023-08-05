@@ -23,13 +23,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
             public override async Task<long> Handle(CreateFarmLocation request, CancellationToken cancellationToken)
             {
 
-                var farm = new Domain.Entity.FarmLocation(request.ModifiedBy, request.TenantId);
-                farm = request.Farm.MapToEntity(farm);
-
-                farm.ModifiedOn = farm.CreatedOn = DateTime.Now;
-                farm.ModifiedBy = farm.CreatedBy = request.ModifiedBy;
-                farm.TenantId = request.TenantId;
-
+                var farm = request.Farm.MapToEntity(new Domain.Entity.FarmLocation(request.ModifiedBy, request.TenantId));
                 _context.Farms.Add(farm);
                 try
                 {

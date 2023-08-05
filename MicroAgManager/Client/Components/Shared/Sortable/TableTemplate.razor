@@ -35,7 +35,13 @@
                     <tr>
                         @foreach (Column<TItem> column in Columns)
                         {
-                            <th>
+                        <th>
+                            @if (column.Title == "ControlColumn")
+                            {
+                                <span></span>
+                            }
+                            else
+                            {
                                 <button type="button" @onclick="@((e) => column.SortBy(e))">
                                     <span>@column.Title</span>
                                     @if (column.SortOrder > 0)
@@ -50,7 +56,7 @@
                                         <span style="@(column.Filter == null ? "opacity: 0.2;" : string.Empty)">&#128269;</span>
                                     </button>
                                 }
-
+                            }
 @*                                @if (column.Title == "ControlColumn" )
                                 {
                                     if (!OnlyAddInMenuBar)
@@ -100,27 +106,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in FilteredItems)
-                    {  
-                        <tr class="@SelectedClass(item)" @ondblclick="@((e) => OnRowDoubleClicked(e, item))" >
-                            @if (TableRowTemplate == null)
-                                @foreach (Column<TItem> column in Columns)
-                                {
-                                   <td data-label="@column.Title">
-                                    @if (column.Template == null)
-                                        @column.Render(item)
-                                    else
-                                        @column.Template(item)
-                                   </td>
-                                }
-                            else
+                @foreach (var item in FilteredItems)
+                {
+                    <tr class="@SelectedClass(item)" @ondblclick="@((e) => OnRowDoubleClicked(e, item))" >
+                        @if (TableRowTemplate == null)
+                            @foreach (Column<TItem> column in Columns)
                             {
-                                <td colspan="@Columns.Count()">
-                                    @TableRowTemplate(item)
-                                </td>
+                                @if (column.Title == "ControlColumn")
+                                {
+                                    <td>
+                                        @if (column.Template != null)
+                                            @column.Template(item)
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td data-label="@column.Title">
+                                        @if (column.Template == null)
+                                            @column.Render(item)
+                                        else
+                                            @column.Template(item)
+                                    </td>
+                                }
                             }
-                        </tr>
-                    }
+                        else
+                        {
+                            <td colspan="@Columns.Count()">
+                                @TableRowTemplate(item)
+                            </td>
+                        }
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>

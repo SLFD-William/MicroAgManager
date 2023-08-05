@@ -65,7 +65,8 @@ namespace Domain.Logging
                     Level = logLevel.ToString(),
                     Message = formatter(state, exception).ToString(),
                     CategoryName = _categoryName,
-                    User=string.Empty,
+                    EventId = eventId.Id,
+                    EventName = eventId.Name ?? string.Empty,
                     TimeStamp = DateTime.Now
                 });
                 Task.Run(async () =>await _dbContext.SaveChangesAsync(new()));
