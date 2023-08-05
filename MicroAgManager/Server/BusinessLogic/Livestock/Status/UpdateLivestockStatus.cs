@@ -9,8 +9,6 @@ namespace BackEnd.BusinessLogic.Livestock.Status
 {
     public class UpdateLivestockStatus:BaseCommand,IUpdateCommand
     {
-        public Guid ModifiedBy { get; set; }
-        public Guid TenantId { get; set; }
         public Domain.Models.LivestockStatusModel LivestockStatus { get; set; }
 
         public class Handler : BaseCommandHandler<UpdateLivestockStatus>

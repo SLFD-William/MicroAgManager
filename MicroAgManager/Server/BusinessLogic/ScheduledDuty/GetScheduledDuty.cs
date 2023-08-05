@@ -9,7 +9,6 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
 {
     public class GetScheduledDuty : ScheduledDutyQueries, IRequest<ScheduledDutyModel?>
     {
-        public long Id { get; set; }
         public class Handler : BaseRequestHandler<GetScheduledDuty>, IRequestHandler<GetScheduledDuty, ScheduledDutyModel?>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)

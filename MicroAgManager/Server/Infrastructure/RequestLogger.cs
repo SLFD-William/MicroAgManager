@@ -1,8 +1,10 @@
 ﻿using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BackEnd.Infrastructure
 {
+
     public class RequestLogger<TRequest> : IRequestPreProcessor<TRequest>
     {
         private readonly ILogger _logger;

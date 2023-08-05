@@ -10,10 +10,6 @@ namespace BackEnd.BusinessLogic.LivestockFeed
     //Create a class called UpdateLivestockFeed implementing BaseCommand and IUpdateCommand
     public class UpdateLivestockFeed : BaseCommand, IUpdateCommand
     {
-        //Add a property called ModifiedBy of type Guid
-        public Guid ModifiedBy { get; set; }
-        //Add a property called TenantId of type Guid
-        public Guid TenantId { get; set; }
         //Add a property called LivestockFeed of type LivestockFeedModel
         public Domain.Models.LivestockFeedModel LivestockFeed { get; set; }
         //create a handler class implementing BaseCommandHandler<UpdateLivestockFeed>

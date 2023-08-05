@@ -9,7 +9,6 @@ namespace BackEnd.BusinessLogic.Milestone
 {
     public class GetMilestone : MilestoneQueries, IRequest<MilestoneModel?>
     {
-        public long Id { get; set; }
         public class Handler : BaseRequestHandler<GetMilestone>, IRequestHandler<GetMilestone, MilestoneModel?>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)

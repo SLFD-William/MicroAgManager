@@ -9,7 +9,6 @@ namespace BackEnd.BusinessLogic.Event
 {
     public class GetEvent : EventQueries, IRequest<EventModel?>
     {
-        public long Id { get; set; }
         public class Handler : BaseRequestHandler<GetEvent>, IRequestHandler<GetEvent, EventModel?>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)

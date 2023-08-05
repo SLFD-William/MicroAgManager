@@ -9,7 +9,6 @@ namespace BackEnd.BusinessLogic.Duty
 {
     public class GetDuty : DutyQueries, IRequest<DutyModel?>
     {
-        public long Id { get; set; }
         public class Handler : BaseRequestHandler<GetDuty>, IRequestHandler<GetDuty, DutyModel?>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
