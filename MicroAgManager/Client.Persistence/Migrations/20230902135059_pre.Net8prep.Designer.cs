@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    [Migration("20230619145307_addingLogging")]
-    partial class addingLogging
+    [Migration("20230902135059_pre.Net8prep")]
+    partial class preNet8prep
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
 
             modelBuilder.Entity("Domain.Entity.Log", b =>
                 {
@@ -27,6 +27,13 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EventName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -39,10 +46,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("User")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

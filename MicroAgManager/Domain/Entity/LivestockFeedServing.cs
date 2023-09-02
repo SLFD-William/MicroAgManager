@@ -21,6 +21,7 @@ namespace Domain.Entity
         [Required]public string ServingFrequency { get; set; }
         [Precision(18,3)]public decimal Serving { get; set; }
         public virtual LivestockFeed Feed { get; set; }
+
         public virtual LivestockStatus Status { get; set; }
     }
 

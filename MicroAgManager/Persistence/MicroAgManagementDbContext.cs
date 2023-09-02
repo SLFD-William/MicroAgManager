@@ -36,9 +36,19 @@ namespace Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<ApplicationUser>()
-                .Navigation(e => e.Tenant)
-                .AutoInclude();
+            modelBuilder.Entity<LivestockFeed>()
+                .HasMany(lf => lf.Servings)
+                .WithOne(s => s.Feed)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<LivestockStatus>()
+                .HasMany(lf => lf.FeedServings)
+                .WithOne(s => s.Status)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<LivestockType>()
+                .HasMany(lf => lf.Statuses)
+                .WithOne(s => s.LivestockType)
+                .OnDelete(DeleteBehavior.ClientCascade);
+
             EntitySeeder.Seed(modelBuilder);
         }
     }

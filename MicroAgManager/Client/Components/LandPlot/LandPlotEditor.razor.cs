@@ -12,6 +12,7 @@ namespace FrontEnd.Components.LandPlot
         [CascadingParameter] FarmLocationModel farm { get; set; }
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
+        [Parameter] public bool showUpdateCancelButtons { get; set; }
         LandPlotModel plot { get; set; }
         protected override async Task OnInitializedAsync() => await FreshenData();
         public override async Task FreshenData()
@@ -35,6 +36,12 @@ namespace FrontEnd.Components.LandPlot
             if (farm is not null) plot.FarmLocationId = farm.Id;
             if (parentPlotId.HasValue && parentPlotId > 0) plot.ParentPlotId = parentPlotId;
 
+        }
+        private async void Cancel()
+        {
+            editContext = new EditContext(plot);
+            await Cancelled.InvokeAsync();
+            StateHasChanged();
         }
         public override async Task OnSubmit()
         {

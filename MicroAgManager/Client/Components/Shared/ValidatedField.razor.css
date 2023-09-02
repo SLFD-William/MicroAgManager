@@ -6,6 +6,7 @@
   border-radius: 0.5em;
   position: relative;
   border-color: transparent;
+  flex-basis: fit-content;
 }
 .ValidatedField legend {
   padding: 0.2em;

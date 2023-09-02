@@ -11,5 +11,7 @@ namespace BackEnd.Authentication
         [Display(Description = "Farm Name")]
         [Required(ErrorMessage = "Farm Name is required.")]
         public string? Name { get; set; }
+
+        public Guid? TenantId { get; set; }
     }
 }

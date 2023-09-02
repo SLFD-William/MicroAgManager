@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,8 @@ namespace FrontEnd.Components.Farm
         [Inject] NavigationManager navigationManager { get; set; }
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }
+
+        private LandPlotEditor? landPlotEditor;
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         protected TabControl _tabControl;
         protected TabPage _plotTab;
@@ -33,6 +36,14 @@ namespace FrontEnd.Components.Farm
                 query = query.Where(f => f.Id == farmId);
             farm = await query.OrderBy(f => f.Id).SingleOrDefaultAsync() ?? new FarmLocationModel();
             StateHasChanged();
+        }
+        private async Task LandPlotUpdated(LandPlotModel args)
+        {
+            if (args.Id > 0)
+                while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
+                    await Task.Delay(100);
+
+            await FreshenData();
         }
     }
 }

@@ -12,15 +12,15 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230605164345_Correct_Location2")]
-    partial class Correct_Location2
+    [Migration("20230902141422_pre.Net8prep")]
+    partial class preNet8prep
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -76,8 +76,8 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("TenantId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -95,8 +95,6 @@ namespace BackEnd.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -231,6 +229,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -984,6 +986,41 @@ namespace BackEnd.Persistence.Migrations
                     b.ToTable("LivestockTypes");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Log", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Logs");
+                });
+
             modelBuilder.Entity("Domain.Entity.Milestone", b =>
                 {
                     b.Property<long>("Id")
@@ -1528,17 +1565,6 @@ namespace BackEnd.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entity.ApplicationUser", b =>
-                {
-                    b.HasOne("Domain.Entity.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
-                });
-
             modelBuilder.Entity("Domain.Entity.Duty", b =>
                 {
                     b.HasOne("Domain.Entity.LivestockType", "LivestockType")
@@ -1656,13 +1682,13 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.LivestockFeed", "Feed")
                         .WithMany("Servings")
                         .HasForeignKey("LivestockFeedId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entity.LivestockStatus", "Status")
                         .WithMany("FeedServings")
                         .HasForeignKey("LivestockStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Feed");
@@ -1675,7 +1701,7 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.LivestockType", "LivestockType")
                         .WithMany("Statuses")
                         .HasForeignKey("LivestockTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("LivestockType");

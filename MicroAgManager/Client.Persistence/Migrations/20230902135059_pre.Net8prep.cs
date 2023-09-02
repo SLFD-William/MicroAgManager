@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FrontEnd.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class MakingGuidIdSeparate2 : Migration
+    public partial class preNet8prep : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,13 +63,14 @@ namespace FrontEnd.Persistence.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     TenantId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Longitude = table.Column<string>(type: "TEXT", nullable: true),
-                    Latitude = table.Column<string>(type: "TEXT", nullable: true),
+                    Longitude = table.Column<double>(type: "REAL", nullable: true),
+                    Latitude = table.Column<double>(type: "REAL", nullable: true),
                     StreetAddress = table.Column<string>(type: "TEXT", nullable: false),
                     City = table.Column<string>(type: "TEXT", nullable: false),
                     State = table.Column<string>(type: "TEXT", nullable: false),
                     Zip = table.Column<string>(type: "TEXT", nullable: false),
                     Country = table.Column<string>(type: "TEXT", nullable: true),
+                    CountryCode = table.Column<string>(type: "TEXT", maxLength: 2, nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -171,6 +173,24 @@ namespace FrontEnd.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LivestockTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Level = table.Column<string>(type: "TEXT", nullable: false),
+                    CategoryName = table.Column<string>(type: "TEXT", nullable: false),
+                    Message = table.Column<string>(type: "TEXT", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventName = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -699,6 +719,9 @@ namespace FrontEnd.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "LivestockModelLivestockStatusModel");
+
+            migrationBuilder.DropTable(
+                name: "Logs");
 
             migrationBuilder.DropTable(
                 name: "ScheduledDuties");

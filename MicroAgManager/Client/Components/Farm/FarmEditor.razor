@@ -1,5 +1,7 @@
 ﻿@using Domain.Models;
 @inherits Editor<FarmLocationModel>
+@if (editContext is not null)
+{
 <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
       <div class="dataSection">
@@ -35,7 +37,8 @@
       </div>
       @if(showUpdateCancelButtons)
         {
-            <button type="submit">Update</button>
+            <button type="submit">@(farm.Id <= 0 ? "Create" : "Update")</button>
             <button type="button" @onclick="Cancel">Cancel</button>
         }
 </EditForm>
+}

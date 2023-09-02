@@ -22,6 +22,7 @@ namespace FrontEnd.Components.Farm
         protected override async Task OnInitializedAsync() => await FreshenData();
         protected override void OnAfterRender(bool firstRender)
         {
+            if (farm is null) return;
             if (firstRender && !(farm.Longitude.HasValue || farm.Latitude.HasValue)) 
                 GeoLoc.GetCurrentPosition(this, nameof(OnCoordinatesPermitted), nameof(OnErrorRequestingCoordinates));
         }
@@ -67,6 +68,7 @@ namespace FrontEnd.Components.Farm
         }
         public override async Task FreshenData()
         {
+            if(app?.dbContext == null) return;
             var query= app.dbContext.Farms.AsQueryable();
             if (farmId.HasValue && farmId>0)
                 query = query.Where(f => f.Id == farmId);

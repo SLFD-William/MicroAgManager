@@ -17,7 +17,7 @@ namespace BackEnd.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -73,8 +73,8 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("TenantId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -92,8 +92,6 @@ namespace BackEnd.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -1564,17 +1562,6 @@ namespace BackEnd.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entity.ApplicationUser", b =>
-                {
-                    b.HasOne("Domain.Entity.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
-                });
-
             modelBuilder.Entity("Domain.Entity.Duty", b =>
                 {
                     b.HasOne("Domain.Entity.LivestockType", "LivestockType")
@@ -1692,13 +1679,13 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.LivestockFeed", "Feed")
                         .WithMany("Servings")
                         .HasForeignKey("LivestockFeedId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entity.LivestockStatus", "Status")
                         .WithMany("FeedServings")
                         .HasForeignKey("LivestockStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("Feed");
@@ -1711,7 +1698,7 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.LivestockType", "LivestockType")
                         .WithMany("Statuses")
                         .HasForeignKey("LivestockTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("LivestockType");

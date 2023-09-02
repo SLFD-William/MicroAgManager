@@ -25,25 +25,33 @@ namespace Host
                         if (userExists != null)
                             return Results.Ok(new LoginResult { success = false, message = AuthenticationConstants.RegistrationUserExists });
 
-                        var newTenant = Guid.NewGuid();
-                        var tenant = new Tenant(newTenant) { GuidId = newTenant, Name = command.Name ?? string.Empty, TenantUserAdminId = newTenant };
+                        var newUser = Guid.NewGuid();
+                        var newTenant= command.TenantId.HasValue ? command.TenantId.Value: newUser;
 
                         ApplicationUser user = new()
                         {
-                            Id = newTenant.ToString().ToUpperInvariant(),
+                            Id = newUser.ToString().ToUpperInvariant(),
                             Email = command.Email,
                             SecurityStamp = Guid.NewGuid().ToString(),
                             UserName = command.Email,
-                            Tenant = tenant,
+                            TenantId = newTenant,
                             EmailConfirmed = true //TODO Get Email Confirmation Working.
                         };
 
                         var result = await userManager.CreateAsync(user, command.Password);
                         if (!result.Succeeded)
                             return Results.Unauthorized();
+                        if (!command.TenantId.HasValue)
+                        {
+                            var tenant = new Tenant(newTenant) { GuidId = newTenant, Name = command.Name ?? string.Empty, TenantUserAdminId = newTenant };
+                            context.Tenants.Add(tenant);
+                            await userManager.AddToRoleAsync(user, "TenantAdmin");
+                        }
                         
-                        await userManager.AddToRoleAsync(user, "TenantAdmin");
                         await context.SaveChangesAsync(new());
+                        var tenantState= command.TenantId.HasValue ?"Updated":"Created";
+                        await mediator.Publish(new EntitiesModifiedNotification(user.TenantId, new() 
+                            { new ModifiedEntity(user.TenantId.ToString(), nameof(Tenant),  command.TenantId.HasValue ? "Updated" : "Created", Guid.Parse(user.Id)) }), new());
                         var loginResult = new LoginResult { success = true };
 
                         var token = await AuthenticationHelpers.CreateModelToken(user, userManager, configuration);
@@ -52,12 +60,11 @@ namespace Host
                         user.RefreshToken = token.refreshToken;
                         user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
 
-
                         await userManager.UpdateAsync(user);
                         loginResult.message = string.Empty;
                         loginResult.success = true;
                         loginResult.token = token;
-                        await mediator.Publish(new EntitiesModifiedNotification(tenant.GuidId, new() { new ModifiedEntity(tenant.GuidId.ToString(), tenant.GetType().Name, "Created", tenant.ModifiedBy) }), new());
+
                         if (loginResult.success)
                             return Results.Ok(loginResult);
                         if (loginResult.message == AuthenticationConstants.RegistrationFailed)

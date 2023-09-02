@@ -9,14 +9,18 @@
 {
     <FrontEnd.Components.Farm.FarmList></FrontEnd.Components.Farm.FarmList>
 }
-    @if (selectedFarm is not null && !farmId.HasValue)
+@if (selectedFarm is not null)
 {
-    <CascadingValue Value="@selectedFarm">
-        <FrontEnd.Components.Farm.FarmViewer></FrontEnd.Components.Farm.FarmViewer>
-    </CascadingValue>
-}
-@if (farmId.HasValue)
-{
+    @if (farmId.HasValue || (!app?.dbContext?.Farms.Any() ?? true ) || selectedFarm.Id<1)
+    {
         <FrontEnd.Components.Farm.FarmEditor farmId="@farmId" showUpdateCancelButtons="true" Submitted="FarmLocationUpdated" Cancelled="Cancelled"></FrontEnd.Components.Farm.FarmEditor>
     }
+    else
+    {
+        <CascadingValue Value="@selectedFarm">
+            <FrontEnd.Components.Farm.FarmViewer></FrontEnd.Components.Farm.FarmViewer>
+        </CascadingValue>
+    }
+}
+
 </div>

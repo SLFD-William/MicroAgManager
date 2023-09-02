@@ -6,7 +6,7 @@ namespace BackEnd.BusinessLogic.Livestock
 {
     public class LivestockQueries : BaseQuery
     {
-        public LivestockModel? NewLivestock { get => (LivestockModel?)NewModel; set => NewModel = value; }
+        public LivestockModel NewLivestock { get => (LivestockModel)NewModel; set => NewModel = value; }
 
         public long? MotherId { get; set; }
         public long? FatherId { get; set; }

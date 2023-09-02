@@ -1,4 +1,5 @@
 ﻿@using Domain.Constants;
+@using FrontEnd.Components.LandPlot;
 @inherits DataComponent
 <div class="FarmViewer">
     <section class="address">
@@ -11,37 +12,47 @@
         <p>@farm.Country</p>
     </section>
     <Weather Latitude="@farm.Latitude" Longitude="@farm.Longitude"></Weather>
-    <TabControl @ref="_tabControl">
-        <TabPage @ref="_plotTab">
-            <ButtonContent>
-                <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
-                    Plots
-                    @((MarkupString)GetPlotCount(LandPlotUseConstants.GeneralUse))
-                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Pasture))
-                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Garden))
-                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Livestock))
-                    @((MarkupString)GetPlotCount(LandPlotUseConstants.Outbuilding))
-                </button>
-            </ButtonContent>
-            <ChildContent>
-                <FrontEnd.Components.LandPlot.LandPlotList ></FrontEnd.Components.LandPlot.LandPlotList>
-            </ChildContent>
-        </TabPage>
-        <TabPage @ref="_livestockTab" Text="Livestock">
-            <ButtonContent>
-                <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
-            </ButtonContent>
-            <ChildContent>
-                Livestock Listing
-            </ChildContent>
-        </TabPage>
-        <TabPage @ref="_dutyTab" Text="Duties">
-            <ButtonContent>
-                <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">Duties</button>
-            </ButtonContent>
-            <ChildContent>
-                Duty Listing
-            </ChildContent>
-        </TabPage>
-     </TabControl>
+    @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id) ?? false)
+    {
+        <TabControl @ref="_tabControl">
+            <TabPage @ref="_plotTab">
+                <ButtonContent>
+                    <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
+                        Plots
+                        @((MarkupString)GetPlotCount(LandPlotUseConstants.GeneralUse))
+                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Pasture))
+                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Garden))
+                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Livestock))
+                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Outbuilding))
+                    </button>
+                </ButtonContent>
+                <ChildContent>
+                    <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
+                </ChildContent>
+            </TabPage>
+            @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id && p.Usage == LandPlotUseConstants.Livestock) ?? false)
+            { 
+                <TabPage @ref="_livestockTab" Text="Livestock">
+                    <ButtonContent>
+                        <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
+                    </ButtonContent>
+                    <ChildContent>
+                        Livestock Listing
+                    </ChildContent>
+                </TabPage>
+            }
+            <TabPage @ref="_dutyTab" Text="Duties">
+                <ButtonContent>
+                    <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">Duties</button>
+                </ButtonContent>
+                <ChildContent>
+                    Duty Listing
+                </ChildContent>
+            </TabPage>
+        </TabControl>
+    }
+    else
+    {
+        <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" showUpdateCancelButtons="true" createOnly="true"></LandPlotEditor>
+    }
 </div>

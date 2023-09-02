@@ -33,4 +33,9 @@
             </InputSelect>
         </ValidatedField>
     </div>
+    @if (showUpdateCancelButtons)
+    {
+        <button type="submit">@(plot.Id <= 0 ? "Create" : "Update")</button>
+        <button type="button" @onclick="Cancel">Cancel</button>
+    }
 </EditForm>

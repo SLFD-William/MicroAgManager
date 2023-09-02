@@ -17,7 +17,7 @@ namespace Domain.Models
         [Required][MaxLength(10)] public string InMilk { get; set; }
         [Required][MaxLength(10)] public string BottleFed { get; set; }
         [Required][MaxLength(10)] public string ForSale { get; set; }
-        public virtual ICollection<LivestockModel?> Livestocks { get; set; } = new List<LivestockModel?>();
+        public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
         public static LivestockStatusModel? Create(LivestockStatus livestockType)
         {
             var model = PopulateBaseModel(livestockType, new LivestockStatusModel
@@ -30,7 +30,7 @@ namespace Domain.Models
                 ForSale = livestockType.ForSale,
                 DefaultStatus = livestockType.DefaultStatus,
                 LivestockTypeId=livestockType.LivestockType.Id,
-                Livestocks = livestockType.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel?>()
+                Livestocks = livestockType.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
             }) as LivestockStatusModel;
             return model;
         }

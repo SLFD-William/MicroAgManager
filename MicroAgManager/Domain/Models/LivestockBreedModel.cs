@@ -14,8 +14,8 @@ namespace Domain.Models
         [MaxLength(2)] public string EmojiChar { get; set; }
         [Required] public int GestationPeriod { get; set; }
         [Required] public int HeatPeriod { get; set; }
-        public virtual ICollection<LivestockModel?> Livestocks { get; set; } = new List<LivestockModel?>();
-        public static LivestockBreedModel? Create(LivestockBreed livestockBreed)
+        public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
+        public static LivestockBreedModel Create(LivestockBreed livestockBreed)
         {
             var model = PopulateBaseModel(livestockBreed, new LivestockBreedModel
             {
@@ -24,7 +24,7 @@ namespace Domain.Models
                 EmojiChar = livestockBreed.EmojiChar,
                 GestationPeriod = livestockBreed.GestationPeriod,
                 HeatPeriod = livestockBreed.HeatPeriod,
-                Livestocks=livestockBreed.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel?>()
+                Livestocks=livestockBreed.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
         }) as LivestockBreedModel;
             return model;
         }

@@ -47,10 +47,9 @@ form {
 
     & > .dataSection {
         width: 100%;
-        display: grid;
+        display: flex;
+        flex-wrap: wrap;
         gap: 0.25em;
-        grid-template-columns: repeat( auto-fit, minmax(12em, 1fr) );
-        align-items: stretch;
         justify-items: center;
     }
 }

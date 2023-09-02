@@ -19,8 +19,8 @@ namespace Domain.Models
         public string AreaUnit { get; set; } = UnitEnum.Area_Acres.GetDescription();
         public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;
         [ForeignKey(nameof(LandPlotModel))] public long? ParentPlotId { get; set; }
-        public virtual ICollection<LandPlotModel?> Subplots { get; set; }=new List<LandPlotModel?>();
-        public virtual ICollection<LivestockModel?> Livestocks { get; set; } = new List<LivestockModel?>();
+        public virtual ICollection<LandPlotModel> Subplots { get; set; }=new List<LandPlotModel>();
+        public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
 
         public static LandPlotModel? Create(LandPlot plot)
         {
@@ -33,8 +33,8 @@ namespace Domain.Models
                 ParentPlotId = plot.ParentPlotId,
                 Name= plot.Name,
                 Description= plot.Description,
-                Subplots=plot.Subplots?.Select(Create).ToList() ?? new List<LandPlotModel?>(),
-                Livestocks=plot.Livestocks?.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel?>()
+                Subplots=plot.Subplots?.Select(Create).ToList() ?? new List<LandPlotModel>(),
+                Livestocks=plot.Livestocks?.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
             }) as LandPlotModel;
             return model;
         }
