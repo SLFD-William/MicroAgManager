@@ -2,11 +2,11 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.Livestock.Types
+namespace BackEnd.BusinessLogic.Livestock.Animals
 {
-    public class LivestockTypeQueries : BaseQuery
+    public class LivestockAnimalQueries : BaseQuery
     {
-        public LivestockTypeModel? NewLivestockType { get => (LivestockTypeModel?)NewModel; set => NewModel = value; }
+        public LivestockAnimalModel? NewLivestockAnimal { get => (LivestockAnimalModel?)NewModel; set => NewModel = value; }
 
         public string? Name { get; set; }
         public string? GroupName { get; set; }
@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic.Livestock.Types
 
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
-            var query = PopulateBaseQuery(context.LivestockTypes.AsQueryable());
+            var query = PopulateBaseQuery(context.LivestockAnimals.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
 
             if (!string.IsNullOrEmpty(Name)) query = query.Where(_ => _.Name != null && _.Name.Contains(Name));

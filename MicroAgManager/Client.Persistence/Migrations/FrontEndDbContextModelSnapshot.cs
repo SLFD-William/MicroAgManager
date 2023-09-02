@@ -47,7 +47,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Logs");
+                    b.ToTable("Logs", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.DutyModel", b =>
@@ -77,7 +77,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("LivestockTypeId")
+                    b.Property<long?>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -101,7 +101,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Duties");
+                    b.ToTable("Duties", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.EventModel", b =>
@@ -140,7 +140,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.FarmLocationModel", b =>
@@ -199,7 +199,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Farms");
+                    b.ToTable("Farms", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
@@ -253,7 +253,58 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LandPlotModelId");
 
-                    b.ToTable("LandPlots");
+                    b.ToTable("LandPlots", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockAnimalModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Care")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ParentFemaleName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ParentMaleName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("LivestockAnimals", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
@@ -279,10 +330,10 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<int>("HeatPeriod")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("LivestockTypeId")
+                    b.Property<long>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("LivestockTypeModelId")
+                    b.Property<long?>("LivestockAnimalModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -298,9 +349,9 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeModelId");
+                    b.HasIndex("LivestockAnimalModelId");
 
-                    b.ToTable("LivestockBreeds");
+                    b.ToTable("LivestockBreeds", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisModel", b =>
@@ -348,7 +399,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LivestockFeedAnalyses");
+                    b.ToTable("LivestockFeedAnalyses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisParameterModel", b =>
@@ -394,7 +445,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LivestockFeedAnalysisParameters");
+                    b.ToTable("LivestockFeedAnalysisParameters", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
@@ -436,7 +487,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedAnalysisModelId");
 
-                    b.ToTable("LivestockFeedAnalysisResults");
+                    b.ToTable("LivestockFeedAnalysisResults", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedDistributionModel", b =>
@@ -483,7 +534,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedModelId");
 
-                    b.ToTable("LivestockFeedDistributions");
+                    b.ToTable("LivestockFeedDistributions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
@@ -514,10 +565,10 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("LivestockTypeId")
+                    b.Property<long>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("LivestockTypeModelId")
+                    b.Property<long?>("LivestockAnimalModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -551,9 +602,9 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeModelId");
+                    b.HasIndex("LivestockAnimalModelId");
 
-                    b.ToTable("LivestockFeeds");
+                    b.ToTable("LivestockFeeds", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedServingModel", b =>
@@ -596,7 +647,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedModelId");
 
-                    b.ToTable("LivestockFeedServings");
+                    b.ToTable("LivestockFeedServings", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockModel", b =>
@@ -679,7 +730,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockBreedModelId");
 
-                    b.ToTable("Livestocks");
+                    b.ToTable("Livestocks", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
@@ -717,10 +768,10 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("LivestockTypeId")
+                    b.Property<long>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("LivestockTypeModelId")
+                    b.Property<long?>("LivestockAnimalModelId")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -741,60 +792,9 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeModelId");
+                    b.HasIndex("LivestockAnimalModelId");
 
-                    b.ToTable("LivestockStatuses");
-                });
-
-            modelBuilder.Entity("Domain.Models.LivestockTypeModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Care")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("EntityModifiedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ParentFemaleName")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ParentMaleName")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("LivestockTypes");
+                    b.ToTable("LivestockStatuses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.MilestoneModel", b =>
@@ -809,7 +809,7 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<DateTime>("EntityModifiedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("LivestockTypeId")
+                    b.Property<long?>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -828,7 +828,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Milestones");
+                    b.ToTable("Milestones", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ScheduledDutyModel", b =>
@@ -886,7 +886,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("EventModelId");
 
-                    b.ToTable("ScheduledDuties");
+                    b.ToTable("ScheduledDuties", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.TenantModel", b =>
@@ -920,7 +920,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", (string)null);
                 });
 
             modelBuilder.Entity("DutyModelEventModel", b =>
@@ -935,7 +935,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("EventsId");
 
-                    b.ToTable("DutyModelEventModel");
+                    b.ToTable("DutyModelEventModel", (string)null);
                 });
 
             modelBuilder.Entity("DutyModelMilestoneModel", b =>
@@ -950,7 +950,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("MilestonesId");
 
-                    b.ToTable("DutyModelMilestoneModel");
+                    b.ToTable("DutyModelMilestoneModel", (string)null);
                 });
 
             modelBuilder.Entity("EventModelMilestoneModel", b =>
@@ -965,7 +965,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("MilestonesId");
 
-                    b.ToTable("EventModelMilestoneModel");
+                    b.ToTable("EventModelMilestoneModel", (string)null);
                 });
 
             modelBuilder.Entity("LandPlotModelLivestockModel", b =>
@@ -980,7 +980,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("LocationsId");
 
-                    b.ToTable("LandPlotModelLivestockModel");
+                    b.ToTable("LandPlotModelLivestockModel", (string)null);
                 });
 
             modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
@@ -995,7 +995,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("StatusesId");
 
-                    b.ToTable("LivestockModelLivestockStatusModel");
+                    b.ToTable("LivestockModelLivestockStatusModel", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
@@ -1007,9 +1007,9 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
                 {
-                    b.HasOne("Domain.Models.LivestockTypeModel", null)
+                    b.HasOne("Domain.Models.LivestockAnimalModel", null)
                         .WithMany("Breeds")
-                        .HasForeignKey("LivestockTypeModelId");
+                        .HasForeignKey("LivestockAnimalModelId");
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
@@ -1028,9 +1028,9 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LivestockFeedModel", b =>
                 {
-                    b.HasOne("Domain.Models.LivestockTypeModel", null)
+                    b.HasOne("Domain.Models.LivestockAnimalModel", null)
                         .WithMany("Feeds")
-                        .HasForeignKey("LivestockTypeModelId");
+                        .HasForeignKey("LivestockAnimalModelId");
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedServingModel", b =>
@@ -1049,9 +1049,9 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
                 {
-                    b.HasOne("Domain.Models.LivestockTypeModel", null)
+                    b.HasOne("Domain.Models.LivestockAnimalModel", null)
                         .WithMany("Statuses")
-                        .HasForeignKey("LivestockTypeModelId");
+                        .HasForeignKey("LivestockAnimalModelId");
                 });
 
             modelBuilder.Entity("Domain.Models.ScheduledDutyModel", b =>
@@ -1155,6 +1155,15 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("Subplots");
                 });
 
+            modelBuilder.Entity("Domain.Models.LivestockAnimalModel", b =>
+                {
+                    b.Navigation("Breeds");
+
+                    b.Navigation("Feeds");
+
+                    b.Navigation("Statuses");
+                });
+
             modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
                 {
                     b.Navigation("Livestocks");
@@ -1170,15 +1179,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("Distributions");
 
                     b.Navigation("Servings");
-                });
-
-            modelBuilder.Entity("Domain.Models.LivestockTypeModel", b =>
-                {
-                    b.Navigation("Breeds");
-
-                    b.Navigation("Feeds");
-
-                    b.Navigation("Statuses");
                 });
 #pragma warning restore 612, 618
         }

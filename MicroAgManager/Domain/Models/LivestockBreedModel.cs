@@ -8,8 +8,8 @@ namespace Domain.Models
     public class LivestockBreedModel : BaseModel
     {
         [Required]
-        [ForeignKey(nameof(LivestockTypeModel))]
-        public long LivestockTypeId { get; set; }
+        [ForeignKey(nameof(LivestockAnimalModel))]
+        public long LivestockAnimalId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [MaxLength(2)] public string EmojiChar { get; set; }
         [Required] public int GestationPeriod { get; set; }
@@ -19,7 +19,7 @@ namespace Domain.Models
         {
             var model = PopulateBaseModel(livestockBreed, new LivestockBreedModel
             {
-                LivestockTypeId=livestockBreed.LivestockTypeId,
+                LivestockAnimalId=livestockBreed.LivestockAnimalId,
                 Name = livestockBreed.Name,
                 EmojiChar = livestockBreed.EmojiChar,
                 GestationPeriod = livestockBreed.GestationPeriod,
@@ -30,7 +30,7 @@ namespace Domain.Models
         }
         public LivestockBreed MapToEntity(LivestockBreed entity)
         {
-            entity.LivestockTypeId = LivestockTypeId;
+            entity.LivestockAnimalId = LivestockAnimalId;
             entity.EmojiChar = EmojiChar;
             entity.GestationPeriod = GestationPeriod;  
             entity.HeatPeriod = HeatPeriod;

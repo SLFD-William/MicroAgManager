@@ -9,13 +9,16 @@ using Microsoft.JSInterop;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmEditor : Editor<FarmLocationModel>
+    public partial class FarmEditor:DataComponent 
     {
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
         [Parameter] public bool showUpdateCancelButtons { get; set; }
+        [Parameter] public EditContext editContext { get; set; }
         [Inject] protected IGeolocationService GeoLoc { get; set; }
         [Inject] private IFrontEndApiServices api { get; set; }
+        [Parameter] public EventCallback<FarmLocationModel> Submitted { get; set; }
+        [Parameter] public EventCallback Cancelled { get; set; }
         FarmLocationModel farm { get; set; }
 
         bool locationEnabled { get; set; } = true;
@@ -77,13 +80,13 @@ namespace FrontEnd.Components.Farm
                 farm.Name = farmName;
             editContext=new EditContext(farm);
         }
-        private async void Cancel()
+        private async Task Cancel()
         {
             editContext = new EditContext(farm);
-            await Cancelled.InvokeAsync();
+            await Cancelled.InvokeAsync(farm);
             StateHasChanged();
         }
-        public override async Task OnSubmit()
+        public async Task OnSubmit()
         {
             try
             {

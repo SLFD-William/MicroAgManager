@@ -24,7 +24,7 @@ namespace FrontEnd.Persistence.Migrations
                     Relationship = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     Gender = table.Column<string>(type: "TEXT", maxLength: 1, nullable: true),
                     SystemRequired = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LivestockTypeId = table.Column<long>(type: "INTEGER", nullable: true),
+                    LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -155,7 +155,7 @@ namespace FrontEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LivestockTypes",
+                name: "LivestockAnimals",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
@@ -172,7 +172,7 @@ namespace FrontEnd.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LivestockTypes", x => x.Id);
+                    table.PrimaryKey("PK_LivestockAnimals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,7 +201,7 @@ namespace FrontEnd.Persistence.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Subcategory = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     SystemRequired = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LivestockTypeId = table.Column<long>(type: "INTEGER", nullable: true),
+                    LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -321,12 +321,12 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    LivestockTypeId = table.Column<long>(type: "INTEGER", nullable: false),
+                    LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     EmojiChar = table.Column<string>(type: "TEXT", maxLength: 2, nullable: false),
                     GestationPeriod = table.Column<int>(type: "INTEGER", nullable: false),
                     HeatPeriod = table.Column<int>(type: "INTEGER", nullable: false),
-                    LivestockTypeModelId = table.Column<long>(type: "INTEGER", nullable: true),
+                    LivestockAnimalModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -336,9 +336,9 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_LivestockBreeds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LivestockBreeds_LivestockTypes_LivestockTypeModelId",
-                        column: x => x.LivestockTypeModelId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_LivestockBreeds_LivestockAnimals_LivestockAnimalModelId",
+                        column: x => x.LivestockAnimalModelId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id");
                 });
 
@@ -348,7 +348,7 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    LivestockTypeId = table.Column<long>(type: "INTEGER", nullable: false),
+                    LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Source = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Cutting = table.Column<int>(type: "INTEGER", nullable: true),
@@ -358,7 +358,7 @@ namespace FrontEnd.Persistence.Migrations
                     QuantityWarning = table.Column<decimal>(type: "TEXT", precision: 18, scale: 3, nullable: false),
                     FeedType = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     Distribution = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    LivestockTypeModelId = table.Column<long>(type: "INTEGER", nullable: true),
+                    LivestockAnimalModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -368,9 +368,9 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_LivestockFeeds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LivestockFeeds_LivestockTypes_LivestockTypeModelId",
-                        column: x => x.LivestockTypeModelId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_LivestockFeeds_LivestockAnimals_LivestockAnimalModelId",
+                        column: x => x.LivestockAnimalModelId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id");
                 });
 
@@ -380,7 +380,7 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    LivestockTypeId = table.Column<long>(type: "INTEGER", nullable: false),
+                    LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: false),
                     Status = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     DefaultStatus = table.Column<bool>(type: "INTEGER", nullable: false),
                     BeingManaged = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
@@ -388,7 +388,7 @@ namespace FrontEnd.Persistence.Migrations
                     InMilk = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     BottleFed = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     ForSale = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    LivestockTypeModelId = table.Column<long>(type: "INTEGER", nullable: true),
+                    LivestockAnimalModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -398,9 +398,9 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_LivestockStatuses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LivestockStatuses_LivestockTypes_LivestockTypeModelId",
-                        column: x => x.LivestockTypeModelId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_LivestockStatuses_LivestockAnimals_LivestockAnimalModelId",
+                        column: x => x.LivestockAnimalModelId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id");
                 });
 
@@ -616,9 +616,9 @@ namespace FrontEnd.Persistence.Migrations
                 column: "LandPlotModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockBreeds_LivestockTypeModelId",
+                name: "IX_LivestockBreeds_LivestockAnimalModelId",
                 table: "LivestockBreeds",
-                column: "LivestockTypeModelId");
+                column: "LivestockAnimalModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LivestockFeedAnalysisResults_LivestockFeedAnalysisModelId",
@@ -631,9 +631,9 @@ namespace FrontEnd.Persistence.Migrations
                 column: "LivestockFeedModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockFeeds_LivestockTypeModelId",
+                name: "IX_LivestockFeeds_LivestockAnimalModelId",
                 table: "LivestockFeeds",
-                column: "LivestockTypeModelId");
+                column: "LivestockAnimalModelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LivestockFeedServings_LivestockFeedModelId",
@@ -651,13 +651,13 @@ namespace FrontEnd.Persistence.Migrations
                 column: "LivestockBreedModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockStatuses_LivestockTypeModelId",
+                name: "IX_LivestockStatuses_LivestockAnimalModelId",
                 table: "LivestockStatuses",
-                column: "LivestockTypeModelId");
+                column: "LivestockAnimalModelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockTypes_Name",
-                table: "LivestockTypes",
+                name: "IX_LivestockAnimals_Name",
+                table: "LivestockAnimals",
                 column: "Name",
                 unique: true);
 
@@ -757,7 +757,7 @@ namespace FrontEnd.Persistence.Migrations
                 name: "LivestockBreeds");
 
             migrationBuilder.DropTable(
-                name: "LivestockTypes");
+                name: "LivestockAnimals");
         }
     }
 }

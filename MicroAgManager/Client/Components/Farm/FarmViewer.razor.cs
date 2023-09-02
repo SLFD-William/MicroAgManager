@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.LandPlot;
+using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace FrontEnd.Components.Farm
         [Parameter] public long? farmId { get; set; }
 
         private LandPlotEditor? landPlotEditor;
+        private LivestockAnimalEditor? livestockAnimalEditor;
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         protected TabControl _tabControl;
         protected TabPage _plotTab;

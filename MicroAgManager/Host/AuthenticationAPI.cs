@@ -43,7 +43,7 @@ namespace Host
                             return Results.Unauthorized();
                         if (!command.TenantId.HasValue)
                         {
-                            var tenant = new Tenant(newTenant) { GuidId = newTenant, Name = command.Name ?? string.Empty, TenantUserAdminId = newTenant };
+                            var tenant = new Tenant(newTenant) { GuidId = newTenant, Name=command.Email, TenantUserAdminId = newTenant };
                             context.Tenants.Add(tenant);
                             await userManager.AddToRoleAsync(user, "TenantAdmin");
                         }

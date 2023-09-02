@@ -9,7 +9,7 @@ namespace Domain.Models
     {
         [Required][MaxLength(40)] public string Subcategory { get; set; }
         [Required] public bool SystemRequired { get; set; }
-        [ForeignKey(nameof(LivestockTypeModel))] public long? LivestockTypeId { get; set; }
+        [ForeignKey(nameof(LivestockAnimalModel))] public long? LivestockAnimalId { get; set; }
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
         public static MilestoneModel? Create(Milestone? milestone)
@@ -17,7 +17,7 @@ namespace Domain.Models
             if (milestone == null) return null;
             var model = PopulateBaseModel(milestone, new MilestoneModel
             {
-                LivestockTypeId= milestone.LivestockType?.Id,
+                LivestockAnimalId= milestone.LivestockAnimal?.Id,
                 Subcategory = milestone.Subcategory,
                 SystemRequired = milestone.SystemRequired,
                 Events= milestone.Events?.Select(EventModel.Create).ToList() ?? new List<EventModel?>(),
@@ -29,7 +29,7 @@ namespace Domain.Models
         {
             milestone.Subcategory= Subcategory;
             milestone.SystemRequired= SystemRequired;
-            if(LivestockTypeId.HasValue && milestone.LivestockType is not null) milestone.LivestockType.Id= LivestockTypeId.Value;
+            if(LivestockAnimalId.HasValue && milestone.LivestockAnimal is not null) milestone.LivestockAnimal.Id= LivestockAnimalId.Value;
             if (milestone.Events?.Any() ?? false)
                 foreach (var plot in milestone.Events)
                     Events.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);

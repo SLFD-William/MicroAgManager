@@ -4,7 +4,7 @@ using BackEnd.BusinessLogic.FarmLocation;
 using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
-using BackEnd.BusinessLogic.Livestock.Types;
+using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.ScheduledDuty;
@@ -134,7 +134,7 @@ namespace FrontEnd.Data
                     if (ShouldEntityBeUpdated(entityModels, nameof(TenantModel))) await BulkUpdateTenants(db,connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(FarmLocationModel))) await BulkUpdateFarmLocations(db,connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LandPlotModel))) await BulkUpdateLandPlots(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockTypeModel))) await BulkUpdateLivestockTypes(db, connection, _api);
+                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockAnimalModel))) await BulkUpdateLivestockAnimals(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockBreedModel))) await BulkUpdateLivestockBreeds(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockStatusModel))) await BulkUpdateLivestockStatuses(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);
@@ -287,14 +287,14 @@ namespace FrontEnd.Data
 
             }
         }
-        private async static Task BulkUpdateLivestockTypes(FrontEndDbContext db,DbConnection connection, IFrontEndApiServices api)
+        private async static Task BulkUpdateLivestockAnimals(FrontEndDbContext db,DbConnection connection, IFrontEndApiServices api)
         {
-            var existingAccountIds = new HashSet<long>(db.LivestockTypes.Select(t => t.Id));
-            var mostRecentUpdate = db.LivestockTypes.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var existingAccountIds = new HashSet<long>(db.LivestockAnimals.Select(t => t.Id));
+            var mostRecentUpdate = db.LivestockAnimals.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             while (true)
             {
-                var returned = await api.ProcessQuery<LivestockTypeModel, GetLivestockTypeList>("api/GetLivestockTypes", new GetLivestockTypeList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                var returned = await api.ProcessQuery<LivestockAnimalModel, GetLivestockAnimalList>("api/GetLivestockAnimals", new GetLivestockAnimalList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 if (returned.Item2.Count == 0) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
@@ -305,7 +305,7 @@ namespace FrontEnd.Data
                 var parentFemaleName = AddNamedParameter(command, "$ParentFemaleName");
                 var care= AddNamedParameter(command, "$Care");
 
-                command.CommandText = $"INSERT or REPLACE INTO LivestockTypes (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,Name,GroupName,ParentMaleName,ParentFemaleName,Care) " +
+                command.CommandText = $"INSERT or REPLACE INTO LivestockAnimals (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,Name,GroupName,ParentMaleName,ParentFemaleName,Care) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
                     $"{name.ParameterName},{groupName.ParameterName},{parentMaleName.ParameterName},{parentFemaleName.ParameterName},{care.ParameterName})";
                 foreach (var model in returned.Item2)
@@ -333,20 +333,20 @@ namespace FrontEnd.Data
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
-                var livestockTypeId = AddNamedParameter(command, "$LivestockTypeId");
+                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
                 var name = AddNamedParameter(command, "$Name");
                 var emojiChar = AddNamedParameter(command, "$EmojiChar");
                 var gestationPeriod= AddNamedParameter(command, "$GestationPeriod");
                 var heatPeriod= AddNamedParameter(command, "$HeatPeriod");
 
-                command.CommandText = $"INSERT or REPLACE INTO LivestockBreeds (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,LivestockTypeId,Name,EmojiChar,GestationPeriod,HeatPeriod) " +
+                command.CommandText = $"INSERT or REPLACE INTO LivestockBreeds (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,LivestockAnimalId,Name,EmojiChar,GestationPeriod,HeatPeriod) " +
                     $"Values ({baseParameters["Id"].ParameterName} , {baseParameters["Deleted"].ParameterName} , {baseParameters["EntityModifiedOn"].ParameterName} , {baseParameters["ModifiedOn"].ParameterName} , {baseParameters["ModifiedBy"].ParameterName}," +
-                    $"{livestockTypeId.ParameterName},{name.ParameterName},{emojiChar.ParameterName},{gestationPeriod.ParameterName},{heatPeriod.ParameterName})";
+                    $"{LivestockAnimalId.ParameterName},{name.ParameterName},{emojiChar.ParameterName},{gestationPeriod.ParameterName},{heatPeriod.ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
-                    livestockTypeId.Value = model.LivestockTypeId;
+                    LivestockAnimalId.Value = model.LivestockAnimalId;
                     name.Value = model.Name;
                     emojiChar.Value = model.EmojiChar;
                     gestationPeriod.Value = model.GestationPeriod;
@@ -367,7 +367,7 @@ namespace FrontEnd.Data
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
-                var livestockTypeId = AddNamedParameter(command, "$LivestockTypeId");
+                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
                 var status = AddNamedParameter(command, "$Status");
                 var defaultStatus= AddNamedParameter(command, "$DefaultStatus");
                 var beingManaged= AddNamedParameter(command, "$BeingManaged");
@@ -376,14 +376,14 @@ namespace FrontEnd.Data
                 var bottleFed = AddNamedParameter(command, "$BottleFed");
                 var forSale = AddNamedParameter(command, "$ForSale");
 
-                command.CommandText = $"INSERT or REPLACE INTO LivestockStatuses (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,LivestockTypeId,Status,DefaultStatus,BeingManaged,Sterile,InMilk,BottleFed,ForSale) " +
+                command.CommandText = $"INSERT or REPLACE INTO LivestockStatuses (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,LivestockAnimalId,Status,DefaultStatus,BeingManaged,Sterile,InMilk,BottleFed,ForSale) " +
                     $"Values ({baseParameters["Id"].ParameterName} , {baseParameters["Deleted"].ParameterName} , {baseParameters["EntityModifiedOn"].ParameterName} , {baseParameters["ModifiedOn"].ParameterName} , {baseParameters["ModifiedBy"].ParameterName}," +
-                    $"{livestockTypeId.ParameterName},{status.ParameterName},{defaultStatus.ParameterName},{beingManaged.ParameterName},{sterile.ParameterName},{inMilk.ParameterName},{bottleFed.ParameterName},{forSale.ParameterName})";
+                    $"{LivestockAnimalId.ParameterName},{status.ParameterName},{defaultStatus.ParameterName},{beingManaged.ParameterName},{sterile.ParameterName},{inMilk.ParameterName},{bottleFed.ParameterName},{forSale.ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
-                    livestockTypeId.Value = model.LivestockTypeId;
+                    LivestockAnimalId.Value = model.LivestockAnimalId;
                     status.Value = model.Status;
                     defaultStatus.Value = model.DefaultStatus;
                     beingManaged.Value = model.BeingManaged;
@@ -407,7 +407,7 @@ namespace FrontEnd.Data
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
-                var livestockTypeId = AddNamedParameter(command, "$LivestockTypeId");
+                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
                 var name = AddNamedParameter(command, "$Name");
                 var source = AddNamedParameter(command, "$Source");
                 var cutting = AddNamedParameter(command, "$Cutting");
@@ -418,14 +418,14 @@ namespace FrontEnd.Data
                 var feedType = AddNamedParameter(command, "$FeedType");
                 var distribution = AddNamedParameter(command, "$Distribution");
 
-                command.CommandText = $"INSERT or REPLACE INTO LivestockFeeds (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,LivestockTypeId,Name,Source,Cutting,Active,Quantity,QuantityUnit,QuantityWarning,FeedType,Distribution) " +
+                command.CommandText = $"INSERT or REPLACE INTO LivestockFeeds (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,LivestockAnimalId,Name,Source,Cutting,Active,Quantity,QuantityUnit,QuantityWarning,FeedType,Distribution) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                    $"{livestockTypeId.ParameterName},{name.ParameterName},{source.ParameterName},{cutting.ParameterName},{active.ParameterName},{quantity.ParameterName},{quantityUnit.ParameterName},{quantityWarning.ParameterName},{feedType.ParameterName},{distribution.ParameterName})";
+                    $"{LivestockAnimalId.ParameterName},{name.ParameterName},{source.ParameterName},{cutting.ParameterName},{active.ParameterName},{quantity.ParameterName},{quantityUnit.ParameterName},{quantityWarning.ParameterName},{feedType.ParameterName},{distribution.ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
-                    livestockTypeId.Value = model.LivestockTypeId;
+                    LivestockAnimalId.Value = model.LivestockAnimalId;
                     name.Value = model.Name;
                     source.Value = model.Source;
 
@@ -632,11 +632,11 @@ namespace FrontEnd.Data
                 var relationship = AddNamedParameter(command, "$Relationship");
                 var gender = AddNamedParameter(command, "$Gender");
                 var systemRequired = AddNamedParameter(command, "$SystemRequired");
-                var livestockTypeId = AddNamedParameter(command, "$LivestockTypeId");
+                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
 
-                command.CommandText= $"INSERT or REPLACE INTO LivestockFeedAnalysisResults (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,Name,DaysDue,DutyType,DutyTypeId,Relationship,Gender,SystemRequired,LivestockTypeId) " +
+                command.CommandText= $"INSERT or REPLACE INTO LivestockFeedAnalysisResults (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,Name,DaysDue,DutyType,DutyTypeId,Relationship,Gender,SystemRequired,LivestockAnimalId) " +
                 $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{name.ParameterName},{daysDue.ParameterName},{dutyType.ParameterName},{dutyTypeId.ParameterName},{relationship.ParameterName},{gender.ParameterName},{systemRequired.ParameterName},{livestockTypeId.ParameterName})";
+                $"{name.ParameterName},{daysDue.ParameterName},{dutyType.ParameterName},{dutyTypeId.ParameterName},{relationship.ParameterName},{gender.ParameterName},{systemRequired.ParameterName},{LivestockAnimalId.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -649,7 +649,7 @@ namespace FrontEnd.Data
                     relationship.Value = model.Relationship;
                     gender.Value = model.Gender ?? string.Empty;
                     systemRequired.Value = model.SystemRequired;
-                    livestockTypeId.Value = model.LivestockTypeId.HasValue ? model.LivestockTypeId : DBNull.Value;
+                    LivestockAnimalId.Value = model.LivestockAnimalId.HasValue ? model.LivestockAnimalId : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -706,11 +706,11 @@ namespace FrontEnd.Data
                 var baseParameters = GetBaseModelParameters(command);
                 var subcategory = AddNamedParameter(command, "$Subcategory");
                 var systemRequired = AddNamedParameter(command, "$SystemRequired");
-                var livestockTypeId = AddNamedParameter(command, "$LivestockTypeId");
+                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
 
-                command.CommandText = $"INSERT or REPLACE INTO LivestockFeedAnalysisResults (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,Subcategory,SystemRequired,LivestockTypeId) " +
+                command.CommandText = $"INSERT or REPLACE INTO LivestockFeedAnalysisResults (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,Subcategory,SystemRequired,LivestockAnimalId) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                    $"{subcategory.ParameterName},{systemRequired.ParameterName},{livestockTypeId.ParameterName})";
+                    $"{subcategory.ParameterName},{systemRequired.ParameterName},{LivestockAnimalId.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -718,7 +718,7 @@ namespace FrontEnd.Data
                     PopulateBaseModelParameters(baseParameters, model);
                     subcategory.Value = model.Subcategory;
                     systemRequired.Value = model.SystemRequired;
-                    livestockTypeId.Value = model.LivestockTypeId.HasValue ? model.LivestockTypeId : DBNull.Value;
+                    LivestockAnimalId.Value = model.LivestockAnimalId.HasValue ? model.LivestockAnimalId : DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }

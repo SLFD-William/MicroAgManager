@@ -8,10 +8,6 @@ namespace BackEnd.Authentication
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Confimation does not match.")]
         public string? ConfirmPassword { get; set; }
-        [Display(Description = "Farm Name")]
-        [Required(ErrorMessage = "Farm Name is required.")]
-        public string? Name { get; set; }
-
         public Guid? TenantId { get; set; }
     }
 }

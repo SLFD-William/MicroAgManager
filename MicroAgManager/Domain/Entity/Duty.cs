@@ -16,7 +16,7 @@ namespace Domain.Entity
         [Required][MaxLength(20)] public string DutyType { get; set; }
         [Required][MaxLength(20)] public string Relationship { get; set; }
         [Required][MaxLength(40)]public string Name { get; set; }
-        public virtual LivestockType? LivestockType { get; set; }
+        public virtual LivestockAnimal? LivestockAnimal { get; set; }
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
         public virtual ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
         public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();

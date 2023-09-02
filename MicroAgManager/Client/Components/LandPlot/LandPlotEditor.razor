@@ -1,10 +1,15 @@
 ﻿@using Domain.Constants;
 @using Domain.Enums;
 @using Domain.Models;
-@inherits Editor<LandPlotModel>
-<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
-    <DataAnnotationsValidator />
-    <div class="dataSection">
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <ValidatedForm TValue=LandPlotModel editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(plot.Id<1)">
         <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => plot.Usage)">
             <InputSelect @bind-Value="@plot.Usage">
                 <option value="">Select Use ...</option>
@@ -21,21 +26,16 @@
             <InputText placeholder="Description" @bind-Value="@plot.Description" />
         </ValidatedField>
         <ValidatedField Legend="Area" ValidationMessageFor="@(() => plot.Area)">
-            <InputNumber placeholder ="0" @bind-Value="@plot.Area" />
+            <InputNumber placeholder="0" @bind-Value="@plot.Area" />
         </ValidatedField>
         <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
             <InputSelect @bind-Value="@plot.AreaUnit">
                 <option value="">Select Units ...</option>
-                @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a=>a.Name.StartsWith("Area")))
+                @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a => a.Name.StartsWith("Area")))
                 {
                     <option value="@g.GetDescription()">@g.GetDescription()</option>
                 }
             </InputSelect>
         </ValidatedField>
-    </div>
-    @if (showUpdateCancelButtons)
-    {
-        <button type="submit">@(plot.Id <= 0 ? "Create" : "Update")</button>
-        <button type="button" @onclick="Cancel">Cancel</button>
-    }
-</EditForm>
+    </ValidatedForm>
+}

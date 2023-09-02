@@ -18,7 +18,7 @@ namespace Persistence
         public DbSet<FarmLocation> Farms { get; set; }
         public DbSet<LandPlot> Plots { get; set; }
         public DbSet<Livestock> Livestocks { get; set; }
-        public DbSet<LivestockType> LivestockTypes { get; set; }
+        public DbSet<LivestockAnimal> LivestockAnimals { get; set; }
         public DbSet<LivestockBreed> LivestockBreeds { get; set; }
         public DbSet<LivestockFeed> LivestockFeeds { get; set; }
         public DbSet<LivestockStatus> LivestockStatuses { get; set; }
@@ -44,9 +44,9 @@ namespace Persistence
                 .HasMany(lf => lf.FeedServings)
                 .WithOne(s => s.Status)
                 .OnDelete(DeleteBehavior.ClientCascade);
-            modelBuilder.Entity<LivestockType>()
+            modelBuilder.Entity<LivestockAnimal>()
                 .HasMany(lf => lf.Statuses)
-                .WithOne(s => s.LivestockType)
+                .WithOne(s => s.LivestockAnimal)
                 .OnDelete(DeleteBehavior.ClientCascade);
 
             EntitySeeder.Seed(modelBuilder);

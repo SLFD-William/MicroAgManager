@@ -9,7 +9,7 @@ namespace FrontEnd.Components.LivestockStatus
     public partial class LivestockStatusList:DataComponent
     {
         protected ListTemplate<LivestockStatusModel> _listComponent;
-        [CascadingParameter] LivestockTypeModel livestockType { get; set; }
+        [CascadingParameter] LivestockAnimalModel LivestockAnimal { get; set; }
         [Parameter] public IEnumerable<LivestockStatusModel>? Items { get; set; }
         
         public override async Task FreshenData()
@@ -17,7 +17,7 @@ namespace FrontEnd.Components.LivestockStatus
             if (_listComponent is null) return;
             
             if (Items is null)
-                Items = (await app.dbContext.LivestockStatuses.Where(f => f.LivestockTypeId == livestockType.Id).OrderBy(f => f.ModifiedOn).ToListAsync()).AsEnumerable();
+                Items = (await app.dbContext.LivestockStatuses.Where(f => f.LivestockAnimalId == LivestockAnimal.Id).OrderBy(f => f.ModifiedOn).ToListAsync()).AsEnumerable();
 
             _listComponent.Update();
             StateHasChanged();

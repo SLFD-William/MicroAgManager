@@ -8,7 +8,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
     {
         public LivestockFeedModel? NewLivestockFeed { get => (LivestockFeedModel?)NewModel; set => NewModel = value; }
 
-        public long? LivestockTypeId { get; set; }
+        public long? LivestockAnimalId { get; set; }
         public string? Name { get; set; }
         public string? Source { get; set; }
         public int? Cutting { get; set; }
@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
-            if (LivestockTypeId.HasValue) query = query.Where(x => x.LivestockType.Id == LivestockTypeId);
+            if (LivestockAnimalId.HasValue) query = query.Where(x => x.LivestockAnimal.Id == LivestockAnimalId);
             if (!string.IsNullOrWhiteSpace(Name)) query = query.Where(x => x.Name.Contains(Name));
             if (!string.IsNullOrWhiteSpace(Source)) query = query.Where(x => x.Source.Contains(Source));
             if (Cutting.HasValue) query = query.Where(x => x.Cutting.HasValue && x.Cutting==Cutting);

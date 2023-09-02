@@ -134,7 +134,7 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
-                    b.Property<long?>("LivestockTypeId")
+                    b.Property<long?>("LivestockAnimalId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -161,7 +161,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("Duties");
                 });
@@ -474,7 +474,7 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<int>("HeatPeriod")
                         .HasColumnType("int");
 
-                    b.Property<long>("LivestockTypeId")
+                    b.Property<long>("LivestockAnimalId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -493,7 +493,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("LivestockBreeds");
                 });
@@ -534,7 +534,7 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<long>("LivestockTypeId")
+                    b.Property<long>("LivestockAnimalId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -571,7 +571,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("LivestockFeeds");
                 });
@@ -895,7 +895,7 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<long>("LivestockTypeId")
+                    b.Property<long>("LivestockAnimalId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -919,12 +919,12 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("LivestockStatuses");
                 });
 
-            modelBuilder.Entity("Domain.Entity.LivestockType", b =>
+            modelBuilder.Entity("Domain.Entity.LivestockAnimal", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -983,7 +983,7 @@ namespace BackEnd.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("LivestockTypes");
+                    b.ToTable("LivestockAnimals");
                 });
 
             modelBuilder.Entity("Domain.Entity.Log", b =>
@@ -1041,7 +1041,7 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("LivestockTypeId")
+                    b.Property<long?>("LivestockAnimalId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -1063,7 +1063,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockTypeId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("Milestones");
                 });
@@ -1567,11 +1567,11 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.Duty", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockType", "LivestockType")
+                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
                         .WithMany()
-                        .HasForeignKey("LivestockTypeId");
+                        .HasForeignKey("LivestockAnimalId");
 
-                    b.Navigation("LivestockType");
+                    b.Navigation("LivestockAnimal");
                 });
 
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
@@ -1616,24 +1616,24 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.LivestockBreed", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockType", "LivestockType")
+                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
                         .WithMany("Breeds")
-                        .HasForeignKey("LivestockTypeId")
+                        .HasForeignKey("LivestockAnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LivestockType");
+                    b.Navigation("LivestockAnimal");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeed", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockType", "LivestockType")
+                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
                         .WithMany("Feeds")
-                        .HasForeignKey("LivestockTypeId")
+                        .HasForeignKey("LivestockAnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LivestockType");
+                    b.Navigation("LivestockAnimal");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedAnalysis", b =>
@@ -1698,22 +1698,22 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.LivestockStatus", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockType", "LivestockType")
+                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
                         .WithMany("Statuses")
-                        .HasForeignKey("LivestockTypeId")
+                        .HasForeignKey("LivestockAnimalId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.Navigation("LivestockType");
+                    b.Navigation("LivestockAnimal");
                 });
 
             modelBuilder.Entity("Domain.Entity.Milestone", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockType", "LivestockType")
+                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
                         .WithMany()
-                        .HasForeignKey("LivestockTypeId");
+                        .HasForeignKey("LivestockAnimalId");
 
-                    b.Navigation("LivestockType");
+                    b.Navigation("LivestockAnimal");
                 });
 
             modelBuilder.Entity("Domain.Entity.ScheduledDuty", b =>
@@ -1942,7 +1942,7 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("FeedServings");
                 });
 
-            modelBuilder.Entity("Domain.Entity.LivestockType", b =>
+            modelBuilder.Entity("Domain.Entity.LivestockAnimal", b =>
                 {
                     b.Navigation("Breeds");
 

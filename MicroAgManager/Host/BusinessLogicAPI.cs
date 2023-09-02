@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Livestock;
 using BackEnd.BusinessLogic.LivestockFeed;
-using BackEnd.BusinessLogic.Livestock.Types;
+using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
 using BackEnd.BusinessLogic.Duty;
@@ -73,7 +73,7 @@ namespace Host
             app.MapPost("/api/GetLandPlot", [Authorize] async (GetLandPlot query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetLandPlots", [Authorize] async (GetLandPlotList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetLivestockBreeds", [Authorize] async (GetLivestockBreedList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            app.MapPost("/api/GetLivestockTypes", [Authorize] async (GetLivestockTypeList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetLivestockAnimals", [Authorize] async (GetLivestockAnimalList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetLivestockStatuses", [Authorize] async (GetLivestockStatusList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetLivestocks", [Authorize] async (GetLivestockList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetLivestockFeedAnalyses", [Authorize] async (GetLivestockFeedAnalysisList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
@@ -95,8 +95,8 @@ namespace Host
             app.MapPost("/api/UpdateFarmLocation", [Authorize] async (UpdateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateLandPlot", [Authorize] async (CreateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateLandPlot", [Authorize] async (UpdateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
-            app.MapPost("/api/CreateLivestockType", [Authorize] async (CreateLivestockType command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
-            app.MapPost("/api/UpdateLivestockType", [Authorize] async (UpdateLivestockType command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/CreateLivestockAnimal", [Authorize] async (CreateLivestockAnimal command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateLivestockAnimal", [Authorize] async (UpdateLivestockAnimal command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateDuty", [Authorize] async (CreateDuty command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateDuty", [Authorize] async (UpdateDuty command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateScheduledDuty", [Authorize] async (CreateScheduledDuty command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));

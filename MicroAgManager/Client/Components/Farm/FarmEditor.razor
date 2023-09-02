@@ -1,15 +1,19 @@
 ﻿@using Domain.Models;
-@inherits Editor<FarmLocationModel>
+@inherits DataComponent
 @if (editContext is not null)
 {
-<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
-    <DataAnnotationsValidator />
-      <div class="dataSection">
+    <ValidatedForm TValue=FarmLocationModel editContext="editContext" 
+        FreshenData="FreshenData"
+        OnValidSubmit="OnSubmit" 
+        Cancel="Cancel"
+        showUpdateCancelButtons="true"
+        createOnly="@(farm.Id<1)"
+    >
         <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
             <InputText placeholder="Name" @bind-Value="@farm.Name" />
         </ValidatedField>
         @if (locationEnabled)
-        { 
+        {
             <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => farm.Latitude)">
                 <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@farm.Latitude" />
             </ValidatedField>
@@ -34,11 +38,5 @@
             <InputText placeholder="Country" @bind-Value="@farm.Country" />
         </ValidatedField>
         <button type="button" @onclick="GetGeoLocation">Look up geo location</button>
-      </div>
-      @if(showUpdateCancelButtons)
-        {
-            <button type="submit">@(farm.Id <= 0 ? "Create" : "Update")</button>
-            <button type="button" @onclick="Cancel">Cancel</button>
-        }
-</EditForm>
+    </ValidatedForm>
 }

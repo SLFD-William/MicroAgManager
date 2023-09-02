@@ -10313,6 +10313,7 @@ body {
 form {
   margin: auto;
   padding: 0.5em;
+  width: fit-content;
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
@@ -10321,6 +10322,12 @@ form {
 }
 form > .dataSection {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+  justify-items: center;
+}
+form > .updateCancelButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25em;

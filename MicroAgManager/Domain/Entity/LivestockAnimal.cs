@@ -7,9 +7,9 @@ namespace Domain.Entity
 
 
     [Index("Name",IsUnique =true)]
-    public class LivestockType : BaseEntity
+    public class LivestockAnimal : BaseEntity
     {
-        public LivestockType(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
+        public LivestockAnimal(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
         [Required] [MaxLength(40)]public string Name { get; set; }

@@ -14,7 +14,7 @@ namespace FrontEnd.Persistence
         public DbSet<TenantModel> Tenants { get; set; }
         public DbSet<LandPlotModel> LandPlots { get; set; }
         public DbSet<LivestockModel> Livestocks { get; set; }
-        public DbSet<LivestockTypeModel> LivestockTypes { get; set; }
+        public DbSet<LivestockAnimalModel> LivestockAnimals { get; set; }
         public DbSet<LivestockBreedModel> LivestockBreeds { get; set; }
         public DbSet<LivestockFeedModel> LivestockFeeds { get; set; }
         public DbSet<LivestockStatusModel> LivestockStatuses { get; set; }

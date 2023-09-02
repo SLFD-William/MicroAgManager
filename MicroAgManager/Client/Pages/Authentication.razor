@@ -13,12 +13,6 @@
         <ValidatedField Legend="Email" ValidationMessageFor="@(() => registerRequest.Email)">
             <InputText id="inputUsername" placeholder="Email" autofocus @bind-Value="@Email" />
         </ValidatedField>
-        @if (IsRegistering)
-        {
-            <ValidatedField Legend="Farm" ValidationMessageFor="@(() => registerRequest.Name)">
-                <InputText id="inputFarmName" placeholder="Farm Name" @bind-Value="@registerRequest.Name" />
-            </ValidatedField>
-        }
         <ValidatedField Legend="Password" ValidationMessageFor="@(() => registerRequest.Password)">
             <InputText type="password" id="inputPassword" placeholder="Password" @bind-Value="@Password" />
         </ValidatedField>

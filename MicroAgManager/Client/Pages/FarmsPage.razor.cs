@@ -22,9 +22,9 @@ namespace FrontEnd.Pages
         {
             while (!app.dbContext.Farms.Any(t => t.Id == args.Id))
                 await Task.Delay(100);
-
+            if (selectedFarm.Id > 0)
+                await js.InvokeVoidAsync("goBack");
             farmId = null;
-            await js.InvokeVoidAsync("goBack");
             await FreshenData();
         }
         public override async Task FreshenData()

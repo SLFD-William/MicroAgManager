@@ -8,7 +8,7 @@ namespace FrontEnd.Components.Shared
     {
         [Inject]protected ApplicationStateProvider app { get; set; }
         [Parameter] public bool createOnly { get; set; }
-        public EditContext editContext { get; set; }
+        [Parameter] public EditContext editContext { get; set; }
         [Parameter] public EventCallback<T> Submitted { get; set; }
         [Parameter] public EventCallback<T> Cancelled { get; set; }
         protected bool _submitting = false;

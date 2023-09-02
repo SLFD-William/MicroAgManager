@@ -8,8 +8,8 @@ namespace Domain.Models
     public class LivestockStatusModel : BaseModel
     {
         [Required]
-        [ForeignKey(nameof(LivestockTypeModel))]
-        public long LivestockTypeId { get; set; }
+        [ForeignKey(nameof(LivestockAnimalModel))]
+        public long LivestockAnimalId { get; set; }
         [Required] [MaxLength(40)]public string Status { get; set; }
         [Required] public bool DefaultStatus { get; set; }
         [Required][MaxLength(10)] public string BeingManaged { get; set; }
@@ -18,19 +18,19 @@ namespace Domain.Models
         [Required][MaxLength(10)] public string BottleFed { get; set; }
         [Required][MaxLength(10)] public string ForSale { get; set; }
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
-        public static LivestockStatusModel? Create(LivestockStatus livestockType)
+        public static LivestockStatusModel? Create(LivestockStatus LivestockAnimal)
         {
-            var model = PopulateBaseModel(livestockType, new LivestockStatusModel
+            var model = PopulateBaseModel(LivestockAnimal, new LivestockStatusModel
             {
-                Status = livestockType.Status,
-                BeingManaged = livestockType.BeingManaged,
-                Sterile = livestockType.Sterile, 
-                InMilk = livestockType.InMilk, 
-                BottleFed = livestockType.BottleFed,
-                ForSale = livestockType.ForSale,
-                DefaultStatus = livestockType.DefaultStatus,
-                LivestockTypeId=livestockType.LivestockType.Id,
-                Livestocks = livestockType.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
+                Status = LivestockAnimal.Status,
+                BeingManaged = LivestockAnimal.BeingManaged,
+                Sterile = LivestockAnimal.Sterile, 
+                InMilk = LivestockAnimal.InMilk, 
+                BottleFed = LivestockAnimal.BottleFed,
+                ForSale = LivestockAnimal.ForSale,
+                DefaultStatus = LivestockAnimal.DefaultStatus,
+                LivestockAnimalId=LivestockAnimal.LivestockAnimal.Id,
+                Livestocks = LivestockAnimal.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
             }) as LivestockStatusModel;
             return model;
         }
@@ -43,7 +43,7 @@ namespace Domain.Models
             entity.ForSale = ForSale;
             entity.Sterile = Sterile;
             entity.DefaultStatus = DefaultStatus;
-            entity.LivestockType.Id=LivestockTypeId;
+            entity.LivestockAnimal.Id=LivestockAnimalId;
             if (entity.Livestocks.Any())
                 foreach (var subplot in entity.Livestocks)
                     Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);

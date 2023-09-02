@@ -13,7 +13,7 @@
 {
     @if (farmId.HasValue || (!app?.dbContext?.Farms.Any() ?? true ) || selectedFarm.Id<1)
     {
-        <FrontEnd.Components.Farm.FarmEditor farmId="@farmId" showUpdateCancelButtons="true" Submitted="FarmLocationUpdated" Cancelled="Cancelled"></FrontEnd.Components.Farm.FarmEditor>
+        <FrontEnd.Components.Farm.FarmEditor farmId="@farmId" Submitted="FarmLocationUpdated" Cancelled="Cancelled"></FrontEnd.Components.Farm.FarmEditor>
     }
     else
     {

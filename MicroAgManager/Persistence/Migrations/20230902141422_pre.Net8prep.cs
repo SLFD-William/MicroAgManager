@@ -168,7 +168,7 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LivestockTypes",
+                name: "LivestockAnimals",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -188,7 +188,7 @@ namespace BackEnd.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LivestockTypes", x => x.Id);
+                    table.PrimaryKey("PK_LivestockAnimals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -431,7 +431,7 @@ namespace BackEnd.Persistence.Migrations
                     DutyType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Relationship = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    LivestockTypeId = table.Column<long>(type: "bigint", nullable: true),
+                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: true),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -444,9 +444,9 @@ namespace BackEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Duties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Duties_LivestockTypes_LivestockTypeId",
-                        column: x => x.LivestockTypeId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_Duties_LivestockAnimals_LivestockAnimalId",
+                        column: x => x.LivestockAnimalId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id");
                 });
 
@@ -456,7 +456,7 @@ namespace BackEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LivestockTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     EmojiChar = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false),
                     GestationPeriod = table.Column<int>(type: "int", nullable: false),
@@ -473,9 +473,9 @@ namespace BackEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_LivestockBreeds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LivestockBreeds_LivestockTypes_LivestockTypeId",
-                        column: x => x.LivestockTypeId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_LivestockBreeds_LivestockAnimals_LivestockAnimalId",
+                        column: x => x.LivestockAnimalId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -486,7 +486,7 @@ namespace BackEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LivestockTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Source = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Cutting = table.Column<int>(type: "int", nullable: true),
@@ -508,9 +508,9 @@ namespace BackEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_LivestockFeeds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LivestockFeeds_LivestockTypes_LivestockTypeId",
-                        column: x => x.LivestockTypeId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_LivestockFeeds_LivestockAnimals_LivestockAnimalId",
+                        column: x => x.LivestockAnimalId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -521,7 +521,7 @@ namespace BackEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LivestockTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     DefaultStatus = table.Column<bool>(type: "bit", nullable: false),
                     InMilk = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
@@ -541,9 +541,9 @@ namespace BackEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_LivestockStatuses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LivestockStatuses_LivestockTypes_LivestockTypeId",
-                        column: x => x.LivestockTypeId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_LivestockStatuses_LivestockAnimals_LivestockAnimalId",
+                        column: x => x.LivestockAnimalId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id");
                 });
 
@@ -553,7 +553,7 @@ namespace BackEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LivestockTypeId = table.Column<long>(type: "bigint", nullable: true),
+                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: true),
                     Subcategory = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     SystemRequired = table.Column<bool>(type: "bit", nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -568,9 +568,9 @@ namespace BackEnd.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Milestones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Milestones_LivestockTypes_LivestockTypeId",
-                        column: x => x.LivestockTypeId,
-                        principalTable: "LivestockTypes",
+                        name: "FK_Milestones_LivestockAnimals_LivestockAnimalId",
+                        column: x => x.LivestockAnimalId,
+                        principalTable: "LivestockAnimals",
                         principalColumn: "Id");
                 });
 
@@ -997,9 +997,9 @@ namespace BackEnd.Persistence.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Duties_LivestockTypeId",
+                name: "IX_Duties_LivestockAnimalId",
                 table: "Duties",
-                column: "LivestockTypeId");
+                column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DutyEvent_EventsId",
@@ -1027,9 +1027,9 @@ namespace BackEnd.Persistence.Migrations
                 column: "LocationsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockBreeds_LivestockTypeId",
+                name: "IX_LivestockBreeds_LivestockAnimalId",
                 table: "LivestockBreeds",
-                column: "LivestockTypeId");
+                column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LivestockFeedAnalyses_LivestockFeedId",
@@ -1052,9 +1052,9 @@ namespace BackEnd.Persistence.Migrations
                 column: "LivestockFeedId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockFeeds_LivestockTypeId",
+                name: "IX_LivestockFeeds_LivestockAnimalId",
                 table: "LivestockFeeds",
-                column: "LivestockTypeId");
+                column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LivestockFeedServings_LivestockFeedId",
@@ -1087,20 +1087,20 @@ namespace BackEnd.Persistence.Migrations
                 column: "MotherId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockStatuses_LivestockTypeId",
+                name: "IX_LivestockStatuses_LivestockAnimalId",
                 table: "LivestockStatuses",
-                column: "LivestockTypeId");
+                column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockTypes_Name",
-                table: "LivestockTypes",
+                name: "IX_LivestockAnimals_Name",
+                table: "LivestockAnimals",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Milestones_LivestockTypeId",
+                name: "IX_Milestones_LivestockAnimalId",
                 table: "Milestones",
-                column: "LivestockTypeId");
+                column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_ConsumedTime",
@@ -1248,7 +1248,7 @@ namespace BackEnd.Persistence.Migrations
                 name: "LivestockBreeds");
 
             migrationBuilder.DropTable(
-                name: "LivestockTypes");
+                name: "LivestockAnimals");
         }
     }
 }

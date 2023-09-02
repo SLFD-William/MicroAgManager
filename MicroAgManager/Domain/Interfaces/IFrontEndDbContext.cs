@@ -9,7 +9,7 @@ namespace Domain.Interfaces
         DbSet<LandPlotModel> LandPlots { get; set; }
         DbSet<TenantModel> Tenants { get; set; }
         DbSet<LivestockModel> Livestocks { get; set; }
-        DbSet<LivestockTypeModel> LivestockTypes { get; set; }
+        DbSet<LivestockAnimalModel> LivestockAnimals { get; set; }
         DbSet<LivestockBreedModel> LivestockBreeds { get; set; }
         DbSet<LivestockFeedModel> LivestockFeeds { get; set; }
         DbSet<LivestockStatusModel> LivestockStatuses { get; set; }

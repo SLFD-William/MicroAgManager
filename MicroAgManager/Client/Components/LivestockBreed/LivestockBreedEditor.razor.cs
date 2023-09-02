@@ -9,19 +9,19 @@ namespace FrontEnd.Components.LivestockBreed
 {
     public partial class LivestockBreedEditor : Editor<LivestockBreedModel>
     {
-        [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
+        [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
         [Parameter] public LivestockBreedModel livestockBreed { get; set; }
         public override async Task FreshenData()
         {
-            livestockBreed= new LivestockBreedModel { LivestockTypeId = livestockType.Id };
+            livestockBreed= new LivestockBreedModel { LivestockAnimalId = LivestockAnimal.Id };
             var query = app.dbContext.LivestockBreeds.AsQueryable();
             if (livestockBreedId.HasValue && livestockBreedId > 0)
                 query = query.Where(f => f.Id == livestockBreedId);
             if (!createOnly)
-                livestockBreed = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockBreedModel { LivestockTypeId = livestockType.Id };
+                livestockBreed = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockBreedModel { LivestockAnimalId = LivestockAnimal.Id };
             
-            editContext = new EditContext(livestockType);
+            editContext = new EditContext(LivestockAnimal);
         }
         public async override Task OnSubmit()
         {
@@ -43,7 +43,7 @@ namespace FrontEnd.Components.LivestockBreed
                 _submitting = false;
                 if (createOnly)
                 {
-                    livestockBreed = new LivestockBreedModel { LivestockTypeId = livestockType.Id };
+                    livestockBreed = new LivestockBreedModel { LivestockAnimalId = LivestockAnimal.Id };
                     editContext = new EditContext(livestockBreed);
                     editContext.MarkAsUnmodified();
                     await Submitted.InvokeAsync(livestockBreed);
@@ -55,6 +55,12 @@ namespace FrontEnd.Components.LivestockBreed
 
             }
             finally { _submitting = false; }
+        }
+        private async void Cancel()
+        {
+            editContext = new EditContext(livestockBreed);
+            await Cancelled.InvokeAsync();
+            StateHasChanged();
         }
     }
 }

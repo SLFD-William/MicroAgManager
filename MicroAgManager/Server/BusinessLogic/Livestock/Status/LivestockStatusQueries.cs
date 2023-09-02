@@ -6,7 +6,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
 {
     public class LivestockStatusQueries : BaseQuery
     {
-        public long? LivestockTypeId { get; set; }
+        public long? LivestockAnimalId { get; set; }
         public string? Status { get; set; }
 
         public LivestockStatusModel? NewLivestockStatus { get => (LivestockStatusModel?)NewModel; set => NewModel = value; }
@@ -15,7 +15,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
             var query = PopulateBaseQuery(context.LivestockStatuses.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
 
-            if (LivestockTypeId.HasValue) query = query.Where(l => l.LivestockType.Id == LivestockTypeId);
+            if (LivestockAnimalId.HasValue) query = query.Where(l => l.LivestockAnimal.Id == LivestockAnimalId);
             if (!string.IsNullOrEmpty(Status)) query = query.Where(l => l.Status.Contains(Status));
 
             

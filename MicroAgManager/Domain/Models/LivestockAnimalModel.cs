@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Domain.Models
 {
     [Index(nameof(Name), IsUnique = true)]
-    public class LivestockTypeModel : BaseModel
+    public class LivestockAnimalModel : BaseModel
     {
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][MaxLength(40)] public string GroupName { get; set; }
@@ -18,24 +18,24 @@ namespace Domain.Models
         public virtual ICollection<LivestockStatusModel?> Statuses { get; set; } = new List<LivestockStatusModel?>();
         public virtual ICollection<LivestockFeedModel?> Feeds { get; set; } = new List<LivestockFeedModel?>();
 
-        public static LivestockTypeModel? Create(LivestockType livestockType)
+        public static LivestockAnimalModel? Create(LivestockAnimal LivestockAnimal)
         {
-            var model = PopulateBaseModel(livestockType, new LivestockTypeModel
+            var model = PopulateBaseModel(LivestockAnimal, new LivestockAnimalModel
             {
-                 Care=livestockType.Care,
-                 GroupName=livestockType.GroupName,
-                 Name=livestockType.Name,
-                 ParentFemaleName = livestockType.ParentFemaleName,
-                 ParentMaleName = livestockType.ParentMaleName,
-                 Breeds=livestockType.Breeds.Select(LivestockBreedModel.Create).ToList() ?? new List<LivestockBreedModel?>(),
-                 Statuses = livestockType.Statuses.Select(LivestockStatusModel.Create).ToList() ?? new List<LivestockStatusModel?>(),
-                 Feeds = livestockType.Feeds.Select(LivestockFeedModel.Create).ToList() ?? new List<LivestockFeedModel?>()
+                 Care=LivestockAnimal.Care,
+                 GroupName=LivestockAnimal.GroupName,
+                 Name=LivestockAnimal.Name,
+                 ParentFemaleName = LivestockAnimal.ParentFemaleName,
+                 ParentMaleName = LivestockAnimal.ParentMaleName,
+                 Breeds=LivestockAnimal.Breeds.Select(LivestockBreedModel.Create).ToList() ?? new List<LivestockBreedModel?>(),
+                 Statuses = LivestockAnimal.Statuses.Select(LivestockStatusModel.Create).ToList() ?? new List<LivestockStatusModel?>(),
+                 Feeds = LivestockAnimal.Feeds.Select(LivestockFeedModel.Create).ToList() ?? new List<LivestockFeedModel?>()
 
-            }) as LivestockTypeModel;
+            }) as LivestockAnimalModel;
             return model;
         }
 
-        public LivestockType MapToEntity(LivestockType entity)
+        public LivestockAnimal MapToEntity(LivestockAnimal entity)
         {
             entity.ParentMaleName=ParentMaleName;
             entity.ParentFemaleName=ParentFemaleName;

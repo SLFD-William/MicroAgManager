@@ -16,9 +16,9 @@ namespace FrontEnd.Components.LivestockStatus
             LivestockStatusModeConstants.False,
             LivestockStatusModeConstants.True
         };
-        [CascadingParameter] public LivestockTypeModel livestockType { get; set; }
+        [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
         
-        [Parameter] public long? livestockTypeId { get; set; }
+        [Parameter] public long? LivestockAnimalId { get; set; }
         [Parameter] public long? livestockStatusId { get; set; }
         private LivestockStatusModel livestockStatus;
         public override async Task FreshenData()
@@ -29,18 +29,18 @@ namespace FrontEnd.Components.LivestockStatus
                 StateHasChanged();
                 return;
             }
-            if(livestockType is not null)
-                livestockTypeId=livestockType.Id;
+            if(LivestockAnimal is not null)
+                LivestockAnimalId=LivestockAnimal.Id;
 
-            livestockStatus= new LivestockStatusModel() { LivestockTypeId = livestockTypeId.Value };
+            livestockStatus= new LivestockStatusModel() { LivestockAnimalId = LivestockAnimalId.Value };
             var query = app.dbContext.LivestockStatuses.AsQueryable();
             if (livestockStatusId.HasValue && livestockStatusId > 0)
                 query = query.Where(f => f.Id == livestockStatusId);
-            if (livestockTypeId.HasValue && livestockTypeId > 0)
-                query = query.Where(f => f.LivestockTypeId == livestockTypeId);
+            if (LivestockAnimalId.HasValue && LivestockAnimalId > 0)
+                query = query.Where(f => f.LivestockAnimalId == LivestockAnimalId);
             
             if(!createOnly)
-                livestockStatus = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockStatusModel() { LivestockTypeId=livestockTypeId.Value };
+                livestockStatus = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockStatusModel() { LivestockAnimalId=LivestockAnimalId.Value };
             
             editContext = new EditContext(livestockStatus);
         }
@@ -64,7 +64,7 @@ namespace FrontEnd.Components.LivestockStatus
                 _submitting = false;
                 if (createOnly)
                 {
-                    livestockStatus = new LivestockStatusModel() { LivestockTypeId = livestockTypeId.Value };
+                    livestockStatus = new LivestockStatusModel() { LivestockAnimalId = LivestockAnimalId.Value };
                     editContext = new EditContext(livestockStatus);
                     editContext.MarkAsUnmodified();
                     await Submitted.InvokeAsync(livestockStatus);

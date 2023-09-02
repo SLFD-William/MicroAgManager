@@ -8,7 +8,7 @@ namespace Domain.Models
 {
     public class LivestockFeedModel : BaseModel
     {
-        [Required][ForeignKey(nameof(LivestockTypeModel))] public long LivestockTypeId { get; set; }
+        [Required][ForeignKey(nameof(LivestockAnimalModel))] public long LivestockAnimalId { get; set; }
         [Required][MaxLength(255)]public string Name { get; set; }
         [Required][MaxLength(255)] public string Source { get; set; }
         [Range(1, int.MaxValue)] public int? Cutting { get; set; } //Hay Only
@@ -25,7 +25,7 @@ namespace Domain.Models
         {
             var model = PopulateBaseModel(livestockFeed, new LivestockFeedModel
             {
-                LivestockTypeId=livestockFeed.LivestockType.Id,
+                LivestockAnimalId=livestockFeed.LivestockAnimal.Id,
                 Name=livestockFeed.Name,
                 Source=livestockFeed.Source,
                 Quantity=livestockFeed.Quantity,
@@ -49,7 +49,7 @@ namespace Domain.Models
             entity.FeedType = FeedType;
             entity.Distribution = Distribution;
             entity.Name = Name;
-            entity.LivestockType.Id = LivestockTypeId;
+            entity.LivestockAnimal.Id = LivestockAnimalId;
             if (entity.Servings?.Any() ?? false)
                 foreach (var breed in entity.Servings)
                     Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);

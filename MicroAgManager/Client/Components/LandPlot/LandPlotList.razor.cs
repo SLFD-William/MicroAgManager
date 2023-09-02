@@ -10,7 +10,7 @@ namespace FrontEnd.Components.LandPlot
         [CascadingParameter] FarmLocationModel farm { get; set; }
 
         public TableTemplate<LandPlotModel> _listComponent;
-        [Parameter] public IEnumerable<LandPlotModel>? Items { get; set; }
+        [Parameter] public IEnumerable<LandPlotModel> Items { get; set; }=new List<LandPlotModel>();
         
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LandPlotModel>? PlotSelected { get; set; }
@@ -24,8 +24,8 @@ namespace FrontEnd.Components.LandPlot
         {
             if (_listComponent is null) return;
 
-            if (Items is null)
-                Items = app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.ModifiedOn).AsEnumerable();
+            if (!Items.Any())
+                Items = app?.dbContext?.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.ModifiedOn).AsEnumerable() ?? new List<LandPlotModel>();
 
             StateHasChanged();
             _listComponent.Update();

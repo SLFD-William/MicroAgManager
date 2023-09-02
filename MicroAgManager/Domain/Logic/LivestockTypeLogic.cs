@@ -7,16 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Logic
 {
-    public static class LivestockTypeLogic
+    public static class LivestockAnimalLogic
     {
-        public async static Task<List<ModifiedEntity>> OnLivestockTypeCreated(IMicroAgManagementDbContext context,long id, CancellationToken cancellationToken, bool save = true)
+        public async static Task<List<ModifiedEntity>> OnLivestockAnimalCreated(IMicroAgManagementDbContext context,long id, CancellationToken cancellationToken, bool save = true)
         {
             var entitiesModified= new List<ModifiedEntity>();
-            var livestockType = await context.LivestockTypes.FindAsync(id);
-            if (livestockType == null) throw new Exception("LivestockType not found");
-            entitiesModified.Add(new ModifiedEntity(livestockType.Id.ToString(), livestockType.GetType().Name, "Created",livestockType.ModifiedBy));
+            var LivestockAnimal = await context.LivestockAnimals.FindAsync(id);
+            if (LivestockAnimal == null) throw new Exception("LivestockAnimal not found");
+            entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created",LivestockAnimal.ModifiedBy));
 
-            AddRequiredMilestones(livestockType, context);
+            AddRequiredMilestones(LivestockAnimal, context);
             var changes = ((DbContext)context).ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
             foreach (var change in changes)
             {
@@ -30,18 +30,18 @@ namespace Domain.Logic
             if (save) await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
         }
-        public static void AddRequiredMilestones(LivestockType animalType, IMicroAgManagementDbContext context)
+        public static void AddRequiredMilestones(LivestockAnimal animalType, IMicroAgManagementDbContext context)
         {
             var parturition = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Parturition
                 && e.TenantId == animalType.TenantId
-                && e.LivestockType !=null 
-                && e.LivestockType.Id == animalType.Id);
+                && e.LivestockAnimal !=null 
+                && e.LivestockAnimal.Id == animalType.Id);
             if (parturition == null)
             {
                 var birthDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
-                    LivestockType = animalType,
+                    LivestockAnimal = animalType,
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
@@ -55,7 +55,7 @@ namespace Domain.Logic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockType = animalType,
+                    LivestockAnimal = animalType,
                     Subcategory = MilestoneSubcategorySystemRequiredConstants.Parturition,
                 };
                 parturition.Duties.Add(birthDuty);
@@ -65,8 +65,8 @@ namespace Domain.Logic
 
             var death = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Death &&
                 e.TenantId == animalType.TenantId
-                && e.LivestockType != null
-                && e.LivestockType.Id == animalType.Id);
+                && e.LivestockAnimal != null
+                && e.LivestockAnimal.Id == animalType.Id);
             if (death == null)
             {
                 death = new Milestone(animalType.ModifiedBy, animalType.TenantId)
@@ -75,7 +75,7 @@ namespace Domain.Logic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockType = animalType,
+                    LivestockAnimal = animalType,
                     Subcategory = MilestoneSubcategorySystemRequiredConstants.Death
                 };
                 context.Milestones.Add(death);
@@ -83,8 +83,8 @@ namespace Domain.Logic
 
             var birth = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Birth 
                 && e.TenantId == animalType.TenantId 
-                && e.LivestockType != null 
-                && e.LivestockType.Id == animalType.Id);
+                && e.LivestockAnimal != null 
+                && e.LivestockAnimal.Id == animalType.Id);
             if (birth == null)
             {
                 birth = new Milestone(animalType.ModifiedBy, animalType.TenantId)
@@ -93,21 +93,21 @@ namespace Domain.Logic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockType = animalType,
+                    LivestockAnimal = animalType,
                     Subcategory = MilestoneSubcategorySystemRequiredConstants.Birth.ToString()
                 };
                 context.Milestones.Add(birth);
             }
             var breed = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Breed
                 && e.TenantId == animalType.TenantId
-                && e.LivestockType != null
-                && e.LivestockType.Id == animalType.Id);
+                && e.LivestockAnimal != null
+                && e.LivestockAnimal.Id == animalType.Id);
             if (breed == null)
             {
                 var breedDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
-                    LivestockType = animalType,
+                    LivestockAnimal = animalType,
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
@@ -121,7 +121,7 @@ namespace Domain.Logic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockType = animalType,
+                    LivestockAnimal = animalType,
                     Subcategory = MilestoneSubcategorySystemRequiredConstants.Breed
                 };
                 breed.Duties.Add(breedDuty);

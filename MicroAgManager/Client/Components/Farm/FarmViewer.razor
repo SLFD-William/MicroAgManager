@@ -12,8 +12,6 @@
         <p>@farm.Country</p>
     </section>
     <Weather Latitude="@farm.Latitude" Longitude="@farm.Longitude"></Weather>
-    @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id) ?? false)
-    {
         <TabControl @ref="_tabControl">
             <TabPage @ref="_plotTab">
                 <ButtonContent>
@@ -27,7 +25,14 @@
                     </button>
                 </ButtonContent>
                 <ChildContent>
+                @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id) ?? false)
+                {
                     <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
+                }
+                else
+                {
+                    <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" showUpdateCancelButtons="true" ></LandPlotEditor>
+                }
                 </ChildContent>
             </TabPage>
             @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id && p.Usage == LandPlotUseConstants.Livestock) ?? false)
@@ -37,7 +42,18 @@
                         <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
                     </ButtonContent>
                     <ChildContent>
-                        Livestock Listing
+                    @if (app?.dbContext?.LivestockAnimals.Any() ?? false)
+                    {
+                        <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
+                    }
+                    else
+                    {
+@*                         <FrontEnd.Components.LivestockAnimal.LivestockAnimalEditor 
+                        @ref="landPlotEditor" 
+                        Submitted="@LandPlotUpdated" 
+                        showUpdateCancelButtons="true" 
+                        createOnly="true"></FrontEnd.Components.LivestockAnimal.LivestockAnimalEditor> *@
+                    }
                     </ChildContent>
                 </TabPage>
             }
@@ -50,9 +66,5 @@
                 </ChildContent>
             </TabPage>
         </TabControl>
-    }
-    else
-    {
-        <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" showUpdateCancelButtons="true" createOnly="true"></LandPlotEditor>
-    }
+    
 </div>

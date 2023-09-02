@@ -15,7 +15,7 @@ namespace Domain.Models
         [MaxLength(1)] public string? Gender { get; set; }
         [Required] public bool SystemRequired { get; set; }
 
-        [ForeignKey(nameof(LivestockTypeModel))] public long? LivestockTypeId { get; set; }
+        [ForeignKey(nameof(LivestockAnimalModel))] public long? LivestockAnimalId { get; set; }
 
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<MilestoneModel?> Milestones { get; set; } = new List<MilestoneModel?>();
@@ -33,7 +33,7 @@ namespace Domain.Models
                 Relationship = duty.Relationship,
                 Gender = duty.Gender,
                 SystemRequired = duty.SystemRequired,
-                LivestockTypeId = duty.LivestockType?.Id,
+                LivestockAnimalId = duty.LivestockAnimal?.Id,
                 Milestones=duty.Milestones.Select(MilestoneModel.Create).ToList() ?? new List<MilestoneModel?>(),
                 ScheduledDuties=duty.ScheduledDuties.Select(ScheduledDutyModel.Create).ToList() ?? new List<ScheduledDutyModel?>(),
                 Events =duty.Events.Select(EventModel.Create).ToList() ?? new List<EventModel?>()
@@ -49,8 +49,8 @@ namespace Domain.Models
             duty.Relationship= Relationship;
             duty.Gender= Gender;
             duty.SystemRequired= SystemRequired;
-            if(duty.LivestockType is not null && LivestockTypeId.HasValue)
-                duty.LivestockType.Id= LivestockTypeId.Value;
+            if(duty.LivestockAnimal is not null && LivestockAnimalId.HasValue)
+                duty.LivestockAnimal.Id= LivestockAnimalId.Value;
             if (duty.Events?.Any() ?? false)
                 foreach (var plot in duty.Events)
                     Events.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
