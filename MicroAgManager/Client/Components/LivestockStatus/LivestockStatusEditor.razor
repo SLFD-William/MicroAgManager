@@ -1,12 +1,14 @@
-﻿@inherits Editor<LivestockStatusModel>
-@using Domain.Constants;
-@using Domain.Enums;
-@using Domain.Models;
-@if (livestockStatus is not null)
+﻿@using Domain.Models;
+@inherits DataComponent
+@if (editContext is not null)
 {
-    <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
-        <DataAnnotationsValidator />
-        <div class="dataSection">
+    <ValidatedForm TValue=LivestockStatusModel editContext="editContext" 
+        FreshenData="FreshenData"
+        OnValidSubmit="OnSubmit" 
+        Cancel="Cancel"
+        showUpdateCancelButtons="true"
+                   createOnly="@(livestockStatus.Id<1)">
+        <DataContent>
             <ValidatedField Legend="Status" ValidationMessageFor="@(() => livestockStatus.Status)">
                 <InputText placeholder="Status" @bind-Value="@livestockStatus.Status" />
             </ValidatedField>
@@ -29,7 +31,7 @@
                     }
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => livestockStatus.InMilk)">
+            <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => livestockStatus.InMilk)">
                 <InputSelect @bind-Value="@livestockStatus.InMilk">
                     @foreach (var state in StatusModes)
                     {
@@ -53,6 +55,6 @@
                     }
                 </InputSelect>
             </ValidatedField>
-        </div>
-    </EditForm>
+        </DataContent>
+</ValidatedForm>
 }

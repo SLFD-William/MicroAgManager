@@ -1,6 +1,4 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.LandPlot;
-using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -9,21 +7,24 @@ namespace FrontEnd.Components.Farm
 {
     public partial class FarmViewer :DataComponent
     {
-        [Inject] NavigationManager navigationManager { get; set; }
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }
 
-        private LandPlotEditor? landPlotEditor;
-        private LivestockAnimalEditor? livestockAnimalEditor;
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
-        protected TabControl _tabControl;
-        protected TabPage _plotTab;
-        protected TabPage _livestockTab;
-        protected TabPage _dutyTab;
-        private string GetPlotCount(string plotUsage)
-        { 
-            var count = app.dbContext.LandPlots.Count(p => p.FarmLocationId == farm.Id && p.Usage == plotUsage);
-            return count>0 ? $"<p>{plotUsage} {count}</p>":string.Empty;
+
+
+        [Parameter] public EventCallback<FarmLocationModel> Submitted { get; set; }
+        [Parameter] public EventCallback Cancelled { get; set; }
+        private bool _editting=false;
+        private void ShowEditor()=>_editting = true;
+        
+        private async Task EditComplete(bool submit=false)
+        {
+            _editting = false;
+            await FreshenData();
+            if(submit) await Submitted.InvokeAsync(farm);
+            else await Cancelled.InvokeAsync();
+
         }
         public override async Task FreshenData()
         {
@@ -38,14 +39,6 @@ namespace FrontEnd.Components.Farm
                 query = query.Where(f => f.Id == farmId);
             farm = await query.OrderBy(f => f.Id).SingleOrDefaultAsync() ?? new FarmLocationModel();
             StateHasChanged();
-        }
-        private async Task LandPlotUpdated(LandPlotModel args)
-        {
-            if (args.Id > 0)
-                while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
-                    await Task.Delay(100);
-
-            await FreshenData();
         }
     }
 }

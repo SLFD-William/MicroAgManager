@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockStatus
 {
-    public partial class LivestockStatusEditor:Editor<LivestockStatusModel>
+    public partial class LivestockStatusEditor : DataComponent
     {
         private readonly static List<string> StatusModes = new List<string> {
             string.Empty,
@@ -17,38 +17,44 @@ namespace FrontEnd.Components.LivestockStatus
             LivestockStatusModeConstants.True
         };
         [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
-        
-        [Parameter] public long? LivestockAnimalId { get; set; }
+        [CascadingParameter] public LivestockStatusModel LivestockStatus { get; set; }
+        [Parameter] public bool showUpdateCancelButtons { get; set; }
+        [Parameter] public EditContext editContext { get; set; }
+        [Parameter] public EventCallback<LivestockStatusModel> Submitted { get; set; }
+        [Parameter] public EventCallback Cancelled { get; set; }
+        [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? livestockStatusId { get; set; }
+
+        protected override async Task OnInitializedAsync() => await FreshenData();
+
         private LivestockStatusModel livestockStatus;
         public override async Task FreshenData()
         {
-            if (livestockStatus is not null)
+            if (LivestockStatus is not null)
             {
+                livestockStatus = LivestockStatus;
                 editContext = new EditContext(livestockStatus);
                 StateHasChanged();
                 return;
             }
             if(LivestockAnimal is not null)
-                LivestockAnimalId=LivestockAnimal.Id;
+                livestockAnimalId=LivestockAnimal.Id;
 
-            livestockStatus= new LivestockStatusModel() { LivestockAnimalId = LivestockAnimalId.Value };
+            livestockStatus= new LivestockStatusModel() { LivestockAnimalId = livestockAnimalId.Value };
             var query = app.dbContext.LivestockStatuses.AsQueryable();
             if (livestockStatusId.HasValue && livestockStatusId > 0)
                 query = query.Where(f => f.Id == livestockStatusId);
-            if (LivestockAnimalId.HasValue && LivestockAnimalId > 0)
-                query = query.Where(f => f.LivestockAnimalId == LivestockAnimalId);
+            if (livestockAnimalId.HasValue && livestockAnimalId > 0)
+                query = query.Where(f => f.LivestockAnimalId == livestockAnimalId);
             
-            if(!createOnly)
-                livestockStatus = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockStatusModel() { LivestockAnimalId=LivestockAnimalId.Value };
             
             editContext = new EditContext(livestockStatus);
         }
-        public override async Task OnSubmit()
+        public async Task OnSubmit()
         {
             try
             {
-                _submitting = true;
+               
                 var state = livestockStatus.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
                 if (livestockStatus.Id <= 0)
@@ -61,21 +67,18 @@ namespace FrontEnd.Components.LivestockStatus
 
                 editContext = new EditContext(livestockStatus);
                 await Submitted.InvokeAsync(livestockStatus);
-                _submitting = false;
-                if (createOnly)
-                {
-                    livestockStatus = new LivestockStatusModel() { LivestockAnimalId = LivestockAnimalId.Value };
-                    editContext = new EditContext(livestockStatus);
-                    editContext.MarkAsUnmodified();
-                    await Submitted.InvokeAsync(livestockStatus);
-                }
                 StateHasChanged();
             }
             catch (Exception ex)
             {
 
             }
-            finally { _submitting = false; }
+        }
+        private async Task Cancel()
+        {
+            editContext = new EditContext(livestockStatus);
+            await Cancelled.InvokeAsync(livestockStatus);
+            StateHasChanged();
         }
     }
 }

@@ -3,27 +3,37 @@
 
 @if (app != null)
 {
-    <TableTemplate @ref="_listComponent" PageSize="0" TItem="LandPlotModel" 
-        Items="@Items" 
-        MultiSelect="@Multiselect" 
-        Selectable="@Selectable" 
-        OnSelectionChange="@TableItemSelected"
-        CanDelete="@CanDelete"
-    >
-    <ColumnContent>
-        <Column TableItem="LandPlotModel" Field="@(x => x.Id)" Title="ControlColumn">
-            <Template Context="e">
-                @if (CanDelete)
-                {
-                    <button type="button">Delete</button>    
-                }
-            </Template>
-        </Column>
-        <Column TableItem="LandPlotModel" Field="@(x => x.Usage)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        <Column TableItem="LandPlotModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        <Column TableItem="LandPlotModel" Field="@(x => x.Description)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        <Column TableItem="LandPlotModel" Field="@(x => x.Area)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        <Column TableItem="LandPlotModel" Field="@(x => x.AreaUnit)" Title="Units"  Sortable="true" Filterable="true" UseInSuperSearch="true" />
-    </ColumnContent>
-</TableTemplate>
+    @if (_editPlot is not null || !Items.Any())
+    {
+        <CascadingValue Value="_editPlot">
+            <LandPlotEditor @ref="_landPlotEditor" Submitted="@LandPlotUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LandPlotEditor>
+         </CascadingValue>
+    }
+    else
+    {
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LandPlotModel" 
+            Items="@Items" 
+            MultiSelect="@Multiselect" 
+            Selectable="@Selectable" 
+            OnSelectionChange="@TableItemSelected"
+            CanDelete="@CanDelete"
+        >
+            <ColumnContent>
+                <Column TableItem="LandPlotModel" Field="@(x => x.Id)" Title="ControlColumn">
+                    <Template Context="e">
+                        <button type="button" onclick="@(()=> EditPlot(e.Id))">Edit</button>
+                        @if (CanDelete)
+                        {
+                            <button type="button">Delete</button>    
+                        }
+                    </Template>
+                </Column>
+                <Column TableItem="LandPlotModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LandPlotModel" Field="@(x => x.Usage)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LandPlotModel" Field="@(x => x.Description)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LandPlotModel" Field="@(x => x.Area)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LandPlotModel" Field="@(x => x.AreaUnit)" Title="Units"  Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            </ColumnContent>
+        </TableTemplate>
+    }
 }

@@ -5,11 +5,23 @@
 @page "/Farms/{farmId:long}"
 <PageTitle>Farms</PageTitle>
 <div style="max-height:100vh">
-    @if (multipleFarms() && !farmId.HasValue)
-{
-    <FrontEnd.Components.Farm.FarmList></FrontEnd.Components.Farm.FarmList>
-}
-@if (selectedFarm is not null)
+
+    @if (app?.dbContext is not null)
+    {
+        @if (@app.dbContext.Farms.Count() == 1)
+        {
+            <CascadingValue Value="@app.dbContext.Farms.First()">
+                <FrontEnd.Components.Farm.FarmViewer  ></FrontEnd.Components.Farm.FarmViewer>
+            </CascadingValue>
+        }
+        else
+        {
+            <FrontEnd.Components.Farm.FarmList Items="@app.dbContext.Farms.ToList()"></FrontEnd.Components.Farm.FarmList>
+        }
+    }
+    
+
+@* @if (selectedFarm is not null)
 {
     @if (farmId.HasValue || (!app?.dbContext?.Farms.Any() ?? true ) || selectedFarm.Id<1)
     {
@@ -21,6 +33,6 @@
             <FrontEnd.Components.Farm.FarmViewer></FrontEnd.Components.Farm.FarmViewer>
         </CascadingValue>
     }
-}
+} *@
 
 </div>

@@ -5,13 +5,13 @@
 .TabControl > nav ::deep button {
   background-color: transparent;
   min-width: 2.4em;
-  border-bottom: none;
   border-radius: 1em 1em 0 0;
   border-color: black;
 }
 .TabControl > nav ::deep button.active {
   color: var(--color-tab-selected-text);
   background-color: var(--color-tab-background);
+  border-bottom: none;
 }
 .TabControl > nav ::deep button.active:hover {
   color: var(--color-action-primary);

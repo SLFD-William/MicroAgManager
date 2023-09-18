@@ -2,12 +2,54 @@
 @inherits DataComponent
 @if (app != null)
 {
-    <ListTemplate @ref="_listComponent" PageSize="0" TItem="LivestockBreedModel" Items="@Items" ShowHeader="true">
-        <ColumnContent>
-            <Column TableItem="LivestockBreedModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="LivestockBreedModel" Field="@(x => x.EmojiChar)" Title="Emoji" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="LivestockBreedModel" Field="@(x => x.GestationPeriod)" Title="Gestation Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="LivestockBreedModel" Field="@(x => x.HeatPeriod)" Title="Heat Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        </ColumnContent>
-    </ListTemplate>
+    @if (_editBreed is not null || !Items.Any())
+    {
+        <CascadingValue Value="_editBreed">
+            <LivestockBreedEditor @ref="_breedEditor" Submitted="@BreedUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockBreedEditor>
+        </CascadingValue>
+    }
+    else
+    {
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockBreedModel"
+                       Items="@Items"
+                       MultiSelect="@Multiselect"
+                       Selectable="@Selectable"
+                       OnSelectionChange="@TableItemSelected"
+                       CanDelete="@CanDelete"
+                       RowDetailsShowing="@app.RowDetailsShowing["LivestockBreedList"]" 
+                       NewItemName="Breed"
+                       AddItemClicked="@(()=> EditBreed(0))">
+            <ColumnContent>
+                <Column TableItem="LivestockBreedModel" Field="@(x => x.Id)" Title="ControlColumn">
+                    <Template Context="e">
+                        <button type="button" onclick="@(()=> _listComponent.ToggleRowDetailsShowing(e))">Show Details</button>
+                        @if (CanDelete)
+                        {
+                            <button type="button">Delete</button>
+                        }
+                    </Template>
+                </Column>
+                <Column TableItem="LivestockBreedModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" >
+                    <Template Context="e">
+                        <button type="button" onclick="@(()=> EditBreed(e.Id))">@e.Name</button>
+                    </Template>
+                </Column>
+@*                 <Column TableItem="LivestockBreedModel"  Field="@(x => app.dbContext.Livestocks.Where(s => s.LivestockBreedId == x.Id).Count())" Title="Count">
+                     <Template Context="e">
+                        <label>
+                            @app.dbContext.Livestocks.Where(s => s.LivestockBreedId == e.Id).Count()
+                        </label>
+                    </Template> 
+                </Column> *@
+                <Column TableItem="LivestockBreedModel" Field="@(x => x.EmojiChar)" Title="Emoji" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockBreedModel" Field="@(x => x.GestationPeriod)" Title="Gestation Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockBreedModel" Field="@(x => x.HeatPeriod)" Title="Heat Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            </ColumnContent>
+            <TableRowDetailTemplate>
+                <CascadingValue Value="@(context as LivestockBreedModel)">
+                    <LivestockList Items="@app.dbContext.Livestocks.Where(s => s.LivestockBreedId == context.Id)"></LivestockList>
+                </CascadingValue>
+            </TableRowDetailTemplate>
+        </TableTemplate>
+    }
 }

@@ -17,6 +17,7 @@ namespace Domain.Entity
 
 
         [Required] [MaxLength(40)]public string Name { get; set; }
+        [Required][MaxLength(40)] public string BatchNumber { get; set; }
         [Required] public DateTime Birthdate { get; set; }
         [Required][MaxLength(1)] public string Gender { get; set; }
         [MaxLength(40)] public string Variety { get; set; }

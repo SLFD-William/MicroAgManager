@@ -12,18 +12,19 @@ namespace Domain.Models
 
         [Required][ForeignKey(nameof(LivestockBreedModel))]  public long LivestockBreedId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
+        [Required][MaxLength(40)] public string BatchNumber { get; set; }
         [Required] public DateTime Birthdate { get; set; }
         [Required][MaxLength(40)] public string Gender { get; set; }
         [MaxLength(40)] public string Variety { get; set; }
         [MaxLength(255)] public string Description { get; set; }
-        [Required] public bool BeingManaged { get; set; }
-        [Required] public bool BornDefective { get; set; }
+        [Required] public bool BeingManaged { get; set; } = true;
+        [Required] public bool BornDefective { get; set; } = false;
         //[RequiredIf("BornDefective", "True")]
-        [MaxLength(255)] public string BirthDefect { get; set; }
-        [Required] public bool Sterile { get; set; }
-        [Required] public bool InMilk { get; set; }
-        [Required] public bool BottleFed { get; set; }
-        [Required] public bool ForSale { get; set; }
+        [MaxLength(255)] public string BirthDefect { get; set; }=string.Empty;
+        [Required] public bool Sterile { get; set; } = false;
+        [Required] public bool InMilk { get; set; } = false;
+        [Required] public bool BottleFed { get; set; } = false;
+        [Required] public bool ForSale { get; set; } = true;
         public virtual ICollection<LivestockStatusModel> Statuses { get; set; } = new List<LivestockStatusModel>();
         public virtual ICollection<LandPlotModel> Locations { get; set; } = new List<LandPlotModel>();
         public static LivestockModel Create(Livestock livestock)
@@ -32,7 +33,7 @@ namespace Domain.Models
             {
                 MotherId = livestock.MotherId,
                 FatherId = livestock.FatherId,
-                LivestockBreedId = livestock.Breed.Id,
+                LivestockBreedId = livestock.LivestockBreedId,
                 BeingManaged = livestock.BeingManaged,
                 Birthdate = livestock.Birthdate,
                 BirthDefect = livestock.BirthDefect,
@@ -45,6 +46,7 @@ namespace Domain.Models
                 Variety = livestock.Variety,
                 Sterile = livestock.Sterile,
                 Name = livestock.Name,
+                BatchNumber=livestock.BatchNumber,
                 Statuses = livestock.Statuses.Select(LivestockStatusModel.Create).ToList() ?? new List<LivestockStatusModel>(),
                 Locations = livestock.Locations.Select(LandPlotModel.Create).ToList() ?? new List<LandPlotModel>()
             }) as LivestockModel;
@@ -54,7 +56,7 @@ namespace Domain.Models
         {
             entity.MotherId = MotherId;
             entity.FatherId = FatherId;
-            entity.Breed.Id = LivestockBreedId;
+            entity.LivestockBreedId = LivestockBreedId;
             entity.BeingManaged = BeingManaged;
             entity.Birthdate = Birthdate;
             entity.BirthDefect = BirthDefect;
@@ -67,13 +69,13 @@ namespace Domain.Models
             entity.Variety = Variety;   
             entity.Sterile = Sterile;
             entity.Name = Name;
+            entity.BatchNumber = BatchNumber;
             if (entity.Statuses?.Any() ?? false)
-                foreach (var breed in entity.Statuses)
-                    Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
+                foreach (var status in entity.Statuses)
+                    Statuses?.FirstOrDefault(p => p?.Id == status.Id)?.MapToEntity(status);
             if(entity.Locations?.Any() ?? false)
-                foreach (var breed in entity.Locations)
-                    Locations?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
-
+                foreach (var loc in entity.Locations)
+                    Locations?.FirstOrDefault(p => p?.Id == loc.Id)?.MapToEntity(loc);
 
             return entity;
         }

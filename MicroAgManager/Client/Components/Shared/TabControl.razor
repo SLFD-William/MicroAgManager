@@ -2,6 +2,7 @@
     <nav role="group">
       @foreach (TabPage tabPage in Pages)
       {
+            if (!tabPage.Visible) continue;
             if (tabPage.ButtonContent is not null)
             {
                 @tabPage.ButtonContent

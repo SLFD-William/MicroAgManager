@@ -160,7 +160,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockAnimalId");
 
-                    b.ToTable("Duties", (string)null);
+                    b.ToTable("Duties");
                 });
 
             modelBuilder.Entity("Domain.Entity.Event", b =>
@@ -210,7 +210,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Domain.Entity.FarmLocation", b =>
@@ -274,7 +274,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Farms", (string)null);
+                    b.ToTable("Farms");
                 });
 
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
@@ -342,7 +342,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("ParentPlotId");
 
-                    b.ToTable("Plots", (string)null);
+                    b.ToTable("Plots");
                 });
 
             modelBuilder.Entity("Domain.Entity.Livestock", b =>
@@ -352,6 +352,11 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BatchNumber")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<bool>("BeingManaged")
                         .HasColumnType("bit");
@@ -437,7 +442,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("MotherId");
 
-                    b.ToTable("Livestocks", (string)null);
+                    b.ToTable("Livestocks");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockAnimal", b =>
@@ -499,7 +504,7 @@ namespace BackEnd.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("LivestockAnimals", (string)null);
+                    b.ToTable("LivestockAnimals");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockBreed", b =>
@@ -554,7 +559,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockAnimalId");
 
-                    b.ToTable("LivestockBreeds", (string)null);
+                    b.ToTable("LivestockBreeds");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeed", b =>
@@ -632,7 +637,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockAnimalId");
 
-                    b.ToTable("LivestockFeeds", (string)null);
+                    b.ToTable("LivestockFeeds");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedAnalysis", b =>
@@ -693,7 +698,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedId");
 
-                    b.ToTable("LivestockFeedAnalyses", (string)null);
+                    b.ToTable("LivestockFeedAnalyses");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedAnalysisParameter", b =>
@@ -750,7 +755,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LivestockFeedAnalysisParameters", (string)null);
+                    b.ToTable("LivestockFeedAnalysisParameters");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedAnalysisResult", b =>
@@ -802,7 +807,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("ParameterId");
 
-                    b.ToTable("LivestockFeedAnalysisResults", (string)null);
+                    b.ToTable("LivestockFeedAnalysisResults");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedDistribution", b =>
@@ -856,7 +861,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedId");
 
-                    b.ToTable("LivestockFeedDistributions", (string)null);
+                    b.ToTable("LivestockFeedDistributions");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockFeedServing", b =>
@@ -908,7 +913,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockStatusId");
 
-                    b.ToTable("LivestockFeedServings", (string)null);
+                    b.ToTable("LivestockFeedServings");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockStatus", b =>
@@ -980,7 +985,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockAnimalId");
 
-                    b.ToTable("LivestockStatuses", (string)null);
+                    b.ToTable("LivestockStatuses");
                 });
 
             modelBuilder.Entity("Domain.Entity.Log", b =>
@@ -1015,7 +1020,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Logs", (string)null);
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("Domain.Entity.Milestone", b =>
@@ -1062,7 +1067,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockAnimalId");
 
-                    b.ToTable("Milestones", (string)null);
+                    b.ToTable("Milestones");
                 });
 
             modelBuilder.Entity("Domain.Entity.ScheduledDuty", b =>
@@ -1127,7 +1132,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockId");
 
-                    b.ToTable("ScheduledDuties", (string)null);
+                    b.ToTable("ScheduledDuties");
                 });
 
             modelBuilder.Entity("Domain.Entity.Tenant", b =>
@@ -1174,7 +1179,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants", (string)null);
+                    b.ToTable("Tenants");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -1330,7 +1335,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("EventsId");
 
-                    b.ToTable("DutyEvent", (string)null);
+                    b.ToTable("DutyEvent");
                 });
 
             modelBuilder.Entity("DutyMilestone", b =>
@@ -1345,7 +1350,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("MilestonesId");
 
-                    b.ToTable("DutyMilestone", (string)null);
+                    b.ToTable("DutyMilestone");
                 });
 
             modelBuilder.Entity("EventMilestone", b =>
@@ -1360,7 +1365,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("MilestonesId");
 
-                    b.ToTable("EventMilestone", (string)null);
+                    b.ToTable("EventMilestone");
                 });
 
             modelBuilder.Entity("LandPlotLivestock", b =>
@@ -1375,7 +1380,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LocationsId");
 
-                    b.ToTable("LandPlotLivestock", (string)null);
+                    b.ToTable("LandPlotLivestock");
                 });
 
             modelBuilder.Entity("LivestockLivestockStatus", b =>
@@ -1390,7 +1395,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("StatusesId");
 
-                    b.ToTable("LivestockLivestockStatus", (string)null);
+                    b.ToTable("LivestockLivestockStatus");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

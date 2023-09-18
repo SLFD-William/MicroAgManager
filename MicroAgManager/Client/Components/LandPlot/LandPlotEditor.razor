@@ -10,32 +10,34 @@
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
                    createOnly="@(plot.Id<1)">
-        <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => plot.Usage)">
-            <InputSelect @bind-Value="@plot.Usage">
-                <option value="">Select Use ...</option>
-                <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
-                <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
-                <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
-                <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
-            </InputSelect>
-        </ValidatedField>
-        <ValidatedField Legend="Name" ValidationMessageFor="@(() => plot.Name)">
-            <InputText placeholder="Name" @bind-Value="@plot.Name" />
-        </ValidatedField>
-        <ValidatedField Legend="Description" ValidationMessageFor="@(() => plot.Description)">
-            <InputText placeholder="Description" @bind-Value="@plot.Description" />
-        </ValidatedField>
-        <ValidatedField Legend="Area" ValidationMessageFor="@(() => plot.Area)">
-            <InputNumber placeholder="0" @bind-Value="@plot.Area" />
-        </ValidatedField>
-        <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
-            <InputSelect @bind-Value="@plot.AreaUnit">
-                <option value="">Select Units ...</option>
-                @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a => a.Name.StartsWith("Area")))
-                {
-                    <option value="@g.GetDescription()">@g.GetDescription()</option>
-                }
-            </InputSelect>
-        </ValidatedField>
+        <DataContent>
+            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => plot.Usage)">
+                <InputSelect @bind-Value="@plot.Usage">
+                    <option value="">Select Use ...</option>
+                    <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
+                    <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
+                    <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
+                    <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => plot.Name)">
+                <InputText placeholder="Name" @bind-Value="@plot.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => plot.Description)">
+                <InputText placeholder="Description" @bind-Value="@plot.Description" />
+            </ValidatedField>
+            <ValidatedField Legend="Area" ValidationMessageFor="@(() => plot.Area)">
+                <InputNumber placeholder="0" @bind-Value="@plot.Area" />
+            </ValidatedField>
+            <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
+                <InputSelect @bind-Value="@plot.AreaUnit">
+                    <option value="">Select Units ...</option>
+                    @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a => a.Name.StartsWith("Area")))
+                    {
+                        <option value="@g.GetDescription()">@g.GetDescription()</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+        </DataContent>
     </ValidatedForm>
 }

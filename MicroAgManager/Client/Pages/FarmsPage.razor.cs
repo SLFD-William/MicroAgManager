@@ -29,11 +29,10 @@ namespace FrontEnd.Pages
         }
         public override async Task FreshenData()
         {
-            var query = app.dbContext.Farms.AsQueryable();
             if (selectedFarm is null || selectedFarm.Id<1)
-                selectedFarm=await query.FirstOrDefaultAsync() ?? new FarmLocationModel();
+                selectedFarm=await app.dbContext.Farms.FirstOrDefaultAsync() ?? new FarmLocationModel();
             else
-                selectedFarm = await query.SingleAsync(x=>x.Id==selectedFarm.Id);
+                selectedFarm = await app.dbContext.Farms.FindAsync(selectedFarm.Id) ?? new FarmLocationModel();
         }
     }
 }

@@ -4,8 +4,14 @@
     <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit" >
         <DataAnnotationsValidator />
         <section class="dataSection">
-            @ChildContent
+            @DataContent
         </section>
+        @if (SecondaryContent is not null)
+        {
+            <section class="secondaryContent">
+            @SecondaryContent
+            </section>
+        }
         @if (showUpdateCancelButtons)
         {
             <section class="updateCancelButtons">

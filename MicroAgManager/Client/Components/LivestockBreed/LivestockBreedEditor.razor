@@ -1,19 +1,34 @@
 ﻿@using Domain.Models;
-@inherits Editor<LivestockBreedModel>
-<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
-    <DataAnnotationsValidator />
-    <div class="dataSection">
-        <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockBreed.Name)">
-            <InputText placeholder="Name" @bind-Value="@livestockBreed.Name" />
-        </ValidatedField>
-        <ValidatedField Legend="Emoji" ValidationMessageFor="@(() => livestockBreed.EmojiChar)">
-            <InputText placeholder="Emoji" @bind-Value="@livestockBreed.EmojiChar" />
-        </ValidatedField>
-        <ValidatedField Legend="Gestation Period (days)" ValidationMessageFor="@(() => livestockBreed.GestationPeriod)">
-            <InputNumber placeholder="150" @bind-Value="@livestockBreed.GestationPeriod" />
-        </ValidatedField>
-        <ValidatedField Legend="Heat Period (days)" ValidationMessageFor="@(() => livestockBreed.HeatPeriod)">
-            <InputNumber placeholder="30" @bind-Value="@livestockBreed.HeatPeriod" />
-        </ValidatedField>
-    </div>
-</EditForm>
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <ValidatedForm TValue=LivestockBreedModel editContext="editContext"
+                   FreshenData="FreshenData"
+        OnValidSubmit="OnSubmit" 
+        Cancel="Cancel"
+        showUpdateCancelButtons="true"
+                   createOnly="@(livestockBreed.Id<1)">
+        <DataContent>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockBreed.Name)">
+                <InputText placeholder="Name" @bind-Value="@livestockBreed.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Emoji" ValidationMessageFor="@(() => livestockBreed.EmojiChar)">
+                <InputText placeholder="Emoji" @bind-Value="@livestockBreed.EmojiChar" />
+            </ValidatedField>
+            <ValidatedField Legend="Gestation Period (days)" ValidationMessageFor="@(() => livestockBreed.GestationPeriod)">
+                <InputNumber placeholder="150" @bind-Value="@livestockBreed.GestationPeriod" />
+            </ValidatedField>
+            <ValidatedField Legend="Heat Period (days)" ValidationMessageFor="@(() => livestockBreed.HeatPeriod)">
+                <InputNumber placeholder="30" @bind-Value="@livestockBreed.HeatPeriod" />
+            </ValidatedField>
+        </DataContent>
+         <SecondaryContent>
+            @if (livestockBreed.Id > 0)
+            {
+                <CascadingValue Value="livestockBreed">
+                    <LivestockBreedSubTabs></LivestockBreedSubTabs>
+                </CascadingValue>
+            }
+        </SecondaryContent>
+</ValidatedForm>
+}

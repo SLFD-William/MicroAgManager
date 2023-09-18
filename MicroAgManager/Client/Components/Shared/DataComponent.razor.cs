@@ -16,9 +16,17 @@ namespace FrontEnd.Components.Shared
             while (app.dbContext is null)
                 await Task.Delay(100);
             app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
+
+            await FreshenData();
         }
 
-        protected virtual void DbSync_OnUpdate() => StateHasChanged();
+        protected virtual async void DbSync_OnUpdate()
+        {
+            if(app.dbContext is not null)
+                await FreshenData();
+            StateHasChanged();
+        }
+      
         public virtual ValueTask DisposeAsync()
         {
             app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
@@ -29,11 +37,7 @@ namespace FrontEnd.Components.Shared
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && app.dbContext is not null)
-            {
-                //Log.LogWarning("First Render");
                 await FreshenData();
-            }
-               
         }
     }
 }

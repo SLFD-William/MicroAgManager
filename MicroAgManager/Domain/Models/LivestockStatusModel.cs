@@ -18,19 +18,19 @@ namespace Domain.Models
         [Required][MaxLength(10)] public string BottleFed { get; set; }
         [Required][MaxLength(10)] public string ForSale { get; set; }
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
-        public static LivestockStatusModel? Create(LivestockStatus LivestockAnimal)
+        public static LivestockStatusModel? Create(LivestockStatus LivestockStatus)
         {
-            var model = PopulateBaseModel(LivestockAnimal, new LivestockStatusModel
+            var model = PopulateBaseModel(LivestockStatus, new LivestockStatusModel
             {
-                Status = LivestockAnimal.Status,
-                BeingManaged = LivestockAnimal.BeingManaged,
-                Sterile = LivestockAnimal.Sterile, 
-                InMilk = LivestockAnimal.InMilk, 
-                BottleFed = LivestockAnimal.BottleFed,
-                ForSale = LivestockAnimal.ForSale,
-                DefaultStatus = LivestockAnimal.DefaultStatus,
-                LivestockAnimalId=LivestockAnimal.LivestockAnimal.Id,
-                Livestocks = LivestockAnimal.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
+                Status = LivestockStatus.Status,
+                BeingManaged = LivestockStatus.BeingManaged,
+                Sterile = LivestockStatus.Sterile, 
+                InMilk = LivestockStatus.InMilk, 
+                BottleFed = LivestockStatus.BottleFed,
+                ForSale = LivestockStatus.ForSale,
+                DefaultStatus = LivestockStatus.DefaultStatus,
+                LivestockAnimalId=LivestockStatus.LivestockAnimalId,
+                Livestocks = LivestockStatus.Livestocks.Select(LivestockModel.Create).ToList() ?? new List<LivestockModel>()
             }) as LivestockStatusModel;
             return model;
         }
@@ -43,7 +43,7 @@ namespace Domain.Models
             entity.ForSale = ForSale;
             entity.Sterile = Sterile;
             entity.DefaultStatus = DefaultStatus;
-            entity.LivestockAnimal.Id=LivestockAnimalId;
+            entity.LivestockAnimalId=LivestockAnimalId;
             if (entity.Livestocks.Any())
                 foreach (var subplot in entity.Livestocks)
                     Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);

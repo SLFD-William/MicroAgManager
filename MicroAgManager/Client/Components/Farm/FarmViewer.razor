@@ -1,70 +1,25 @@
 ﻿@using Domain.Constants;
 @using FrontEnd.Components.LandPlot;
+@using FrontEnd.Components.LivestockAnimal;
 @inherits DataComponent
 <div class="FarmViewer">
-    <section class="address">
-        <button type="button" @onclick=@(()=> navigationManager.NavigateTo($"Farms/{farm.Id}"))>Edit</button>
-        <p>@farm.Name</p>
-        <p>@farm.StreetAddress</p>
-        <p>@farm.City</p>
-        <p>@farm.State</p>
-        <p>@farm.Zip</p>
-        <p>@farm.Country</p>
-    </section>
-    <Weather Latitude="@farm.Latitude" Longitude="@farm.Longitude"></Weather>
-        <TabControl @ref="_tabControl">
-            <TabPage @ref="_plotTab">
-                <ButtonContent>
-                    <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
-                        Plots
-                        @((MarkupString)GetPlotCount(LandPlotUseConstants.GeneralUse))
-                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Pasture))
-                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Garden))
-                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Livestock))
-                        @((MarkupString)GetPlotCount(LandPlotUseConstants.Outbuilding))
-                    </button>
-                </ButtonContent>
-                <ChildContent>
-                @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id) ?? false)
-                {
-                    <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
-                }
-                else
-                {
-                    <LandPlotEditor @ref="landPlotEditor" Submitted="@LandPlotUpdated" showUpdateCancelButtons="true" ></LandPlotEditor>
-                }
-                </ChildContent>
-            </TabPage>
-            @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id && p.Usage == LandPlotUseConstants.Livestock) ?? false)
-            { 
-                <TabPage @ref="_livestockTab" Text="Livestock">
-                    <ButtonContent>
-                        <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
-                    </ButtonContent>
-                    <ChildContent>
-                    @if (app?.dbContext?.LivestockAnimals.Any() ?? false)
-                    {
-                        <FrontEnd.Components.LandPlot.LandPlotList></FrontEnd.Components.LandPlot.LandPlotList>
-                    }
-                    else
-                    {
-@*                         <FrontEnd.Components.LivestockAnimal.LivestockAnimalEditor 
-                        @ref="landPlotEditor" 
-                        Submitted="@LandPlotUpdated" 
-                        showUpdateCancelButtons="true" 
-                        createOnly="true"></FrontEnd.Components.LivestockAnimal.LivestockAnimalEditor> *@
-                    }
-                    </ChildContent>
-                </TabPage>
-            }
-            <TabPage @ref="_dutyTab" Text="Duties">
-                <ButtonContent>
-                    <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">Duties</button>
-                </ButtonContent>
-                <ChildContent>
-                    Duty Listing
-                </ChildContent>
-            </TabPage>
-        </TabControl>
+    @if (_editting)
+    {
+        <CascadingValue Value="farm">
+            <FarmEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></FarmEditor>
+        </CascadingValue>
+    }
+    else{
+        <section class="address">
+            <button type="button" onclick="@(()=> ShowEditor())"><p>@farm.Name</p></button>
     
+            <p>@farm.StreetAddress</p>
+            <p>@farm.City</p>
+            <p>@farm.State</p>
+            <p>@farm.Zip</p>
+            <p>@farm.Country</p>
+        </section>
+        <Weather Latitude="@farm.Latitude" Longitude="@farm.Longitude"></Weather>
+        <FarmSubTabs ></FarmSubTabs>
+    }
 </div>

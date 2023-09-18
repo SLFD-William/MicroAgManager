@@ -1,35 +1,43 @@
-﻿@inherits Editor<LivestockAnimalModel>    
-@using Domain.Constants;
+﻿@using Domain.Constants;
 @using Domain.Enums;
 @using Domain.Models;
-@* @if (livestockAnimal is not null)
-{ 
-<EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
-    <DataAnnotationsValidator />
-    <div class="dataSection">
-        <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockAnimal.Name)">
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <ValidatedForm TValue=LivestockAnimalModel editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(livestockAnimal.Id<1)">
+         <DataContent>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockAnimal.Name)">
                 <InputText placeholder="Name" @bind-Value="@Name" />
-        </ValidatedField>
-        <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => livestockAnimal.GroupName)">
-            <InputText placeholder="Collective Name" @bind-Value="@livestockAnimal.GroupName" />
-        </ValidatedField>
-        <ValidatedField Legend="Male Parent Name" ValidationMessageFor="@(() => livestockAnimal.ParentMaleName)">
-            <InputText placeholder="Male Parent Name" @bind-Value="@livestockAnimal.ParentMaleName" />
-        </ValidatedField>
-        <ValidatedField Legend="Female Parent Name" ValidationMessageFor="@(() => livestockAnimal.ParentFemaleName)">
-            <InputText placeholder="Female Parent Name" @bind-Value="@livestockAnimal.ParentFemaleName" />
-        </ValidatedField>
-        <ValidatedField Legend="Care" ValidationMessageFor="@(() => livestockAnimal.Care)">
-            <InputSelect @bind-Value="@livestockAnimal.Care">
-                <option value="@LivestockCareConstants.Individual">@LivestockCareConstants.Individual</option>
-                <option value="@LivestockCareConstants.Collective">@LivestockCareConstants.Collective</option>
-            </InputSelect>
-        </ValidatedField>
-    </div>
-        @if (showUpdateCancelButtons)
-        {
-            <button type="submit">@SubmitButtonText(livestockAnimal.Id)</button>
-            <button type="button" @onclick="Cancel">Cancel</button>
-        }
-</EditForm>
-} *@
+            </ValidatedField>
+            <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => livestockAnimal.GroupName)">
+                <InputText placeholder="Collective Name" @bind-Value="@livestockAnimal.GroupName" />
+            </ValidatedField>
+            <ValidatedField Legend="Male Parent Name" ValidationMessageFor="@(() => livestockAnimal.ParentMaleName)">
+                <InputText placeholder="Male Parent Name" @bind-Value="@livestockAnimal.ParentMaleName" />
+            </ValidatedField>
+            <ValidatedField Legend="Female Parent Name" ValidationMessageFor="@(() => livestockAnimal.ParentFemaleName)">
+                <InputText placeholder="Female Parent Name" @bind-Value="@livestockAnimal.ParentFemaleName" />
+            </ValidatedField>
+            <ValidatedField Legend="Care" ValidationMessageFor="@(() => livestockAnimal.Care)">
+                <InputSelect @bind-Value="@livestockAnimal.Care">
+                    <option value="@LivestockCareConstants.Individual">@LivestockCareConstants.Individual</option>
+                    <option value="@LivestockCareConstants.Collective">@LivestockCareConstants.Collective</option>
+                </InputSelect>
+            </ValidatedField>
+        </DataContent>
+@*         <SecondaryContent>
+            @if (livestockAnimal.Id > 0)
+            {
+             <CascadingValue Value="@livestockAnimal">
+                <LivestockAnimalSubTabs @ref="_tabControl"></LivestockAnimalSubTabs>
+             </CascadingValue>
+            }
+        </SecondaryContent> *@
+    </ValidatedForm>
+    
+}

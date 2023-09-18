@@ -7,13 +7,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockAnimal
 {
-    public partial class LivestockAnimalEditor : Editor<LivestockAnimalModel>
+    public partial class LivestockAnimalEditor : DataComponent
     {
-        [CascadingParameter] public LivestockAnimalModel livestockAnimal { get; set; }
+        [Parameter] public bool showUpdateCancelButtons { get; set; }
+        [Parameter] public EditContext editContext { get; set; }
+        [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
+        [Parameter] public EventCallback<LivestockAnimalModel> Submitted { get; set; }
+        [Parameter] public EventCallback Cancelled { get; set; }
+
+        protected LivestockAnimalSubTabs _tabControl;
+        private LivestockAnimalModel livestockAnimal;
+
         public string Name { get => livestockAnimal.Name;
              set
                 { if(!CheckNameExists(value).Result) livestockAnimal.Name = value; } }
+        protected override async Task OnInitializedAsync() => await FreshenData();
         private async Task<bool> CheckNameExists(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return false;
@@ -28,48 +37,46 @@ namespace FrontEnd.Components.LivestockAnimal
         }
         public override async Task FreshenData() 
         {
-            if (_submitting) return;
-           
+            if (LivestockAnimal is not null)
+            {
+                livestockAnimal = LivestockAnimal;
+                editContext = new EditContext(livestockAnimal);
+                StateHasChanged();
+                return;
+            }
+            if (LivestockAnimal is not null)
+                livestockAnimalId = LivestockAnimal.Id;
+
+            livestockAnimal = new LivestockAnimalModel();
+
             var query = app.dbContext.LivestockAnimals.AsQueryable();
             if (livestockAnimalId.HasValue && livestockAnimalId > 0)
                 query = query.Where(f => f.Id == livestockAnimalId);
-            livestockAnimal = new LivestockAnimalModel();
-            if (!createOnly) 
-                livestockAnimal = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockAnimalModel();
+
+            livestockAnimal = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockAnimalModel();
 
             editContext = new EditContext(livestockAnimal);
         }
-        public override async Task OnSubmit()
+        public  async Task OnSubmit()
         {
             try
             {
-                _submitting = true;
                 var id = livestockAnimal.Id;
-                if (id <= 0)
-                    id = await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = livestockAnimal });
+                if (livestockAnimal.Id <= 0)
+                    livestockAnimal.Id = await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = livestockAnimal });
                 else
-                    id = await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = livestockAnimal });
+                    livestockAnimal.Id = await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = livestockAnimal });
 
-                if (id <= 0)
+                if (livestockAnimal.Id <= 0)
                     throw new Exception("Failed to save livestock type");
 
                 livestockAnimal.Id = id;
                 editContext = new EditContext(livestockAnimal);
                 await Submitted.InvokeAsync(livestockAnimal);
-                _submitting = false;
-                if (createOnly)
-                {
-                    livestockAnimal = new LivestockAnimalModel();
-                    editContext = new EditContext(livestockAnimal);
-                    editContext.MarkAsUnmodified();
-                    await Submitted.InvokeAsync(livestockAnimal);
-                }
                 StateHasChanged();
             }
             catch (Exception ex)
             { }
-            finally { _submitting = false; }
-                            
         }
         private async void Cancel()
         {

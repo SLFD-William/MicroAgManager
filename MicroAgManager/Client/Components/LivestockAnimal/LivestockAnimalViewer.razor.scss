@@ -1,0 +1,14 @@
+﻿.LivestockAnimalViewer {
+    display: grid;
+    gap: 0.25rem;
+
+    & .dataSection {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+
+        & p:first-of-type {
+            font-weight: bold;
+        }
+    }
+}

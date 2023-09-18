@@ -1,0 +1,22 @@
+﻿@using Domain.Constants;
+@using FrontEnd.Components.LandPlot;
+@using FrontEnd.Components.LivestockAnimal;
+@inherits DataComponent
+<div class="LivestockAnimalViewer">
+    @if (_editting)
+    {
+        <CascadingValue Value="livestockAnimal">
+            <LivestockAnimalEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></LivestockAnimalEditor>
+        </CascadingValue>
+    }
+    else{
+        <section class="dataSection">
+            <button type="button" onclick="@(()=> ShowEditor())"><p>@livestockAnimal.Name</p></button>
+            <p>@livestockAnimal.GroupName</p>
+            <p>@livestockAnimal.Care</p>
+            <p>@livestockAnimal.ParentFemaleName</p>
+            <p>@livestockAnimal.ParentMaleName</p>
+        </section>
+        <LivestockAnimalSubTabs></LivestockAnimalSubTabs>
+    }
+</div>

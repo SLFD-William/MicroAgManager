@@ -9,34 +9,50 @@
         showUpdateCancelButtons="true"
         createOnly="@(farm.Id<1)"
     >
-        <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
-            <InputText placeholder="Name" @bind-Value="@farm.Name" />
-        </ValidatedField>
-        @if (locationEnabled)
-        {
-            <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => farm.Latitude)">
-                <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@farm.Latitude" />
+        <DataContent>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
+                <InputText placeholder="Name" @bind-Value="@farm.Name" />
             </ValidatedField>
-            <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => farm.Longitude)">
-                <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@farm.Longitude" />
+            <ValidatedField Legend="Address" ValidationMessageFor="@(() => farm.StreetAddress)">
+                <InputText placeholder="Street Address" @bind-Value="@farm.StreetAddress" />
             </ValidatedField>
-            <button type="button" @onclick="OnCoordinateChange">Look up address</button>
-        }
-        <ValidatedField Legend="Address" ValidationMessageFor="@(() => farm.StreetAddress)">
-            <InputText placeholder="Street Address" @bind-Value="@farm.StreetAddress" />
-        </ValidatedField>
-        <ValidatedField Legend="City" ValidationMessageFor="@(() => farm.City)">
-            <InputText placeholder="City" @bind-Value="@farm.City" />
-        </ValidatedField>
-        <ValidatedField Legend="State" ValidationMessageFor="@(() => farm.State)">
-            <InputText placeholder="State" @bind-Value="@farm.State" />
-        </ValidatedField>
-        <ValidatedField Legend="Zip" ValidationMessageFor="@(() => farm.Zip)">
-            <InputText placeholder="Zip" @bind-Value="@farm.Zip" />
-        </ValidatedField>
-        <ValidatedField Legend="Country" ValidationMessageFor="@(() => farm.Country)">
-            <InputText placeholder="Country" @bind-Value="@farm.Country" />
-        </ValidatedField>
-        <button type="button" @onclick="GetGeoLocation">Look up geo location</button>
+            <ValidatedField Legend="City" ValidationMessageFor="@(() => farm.City)">
+                <InputText placeholder="City" @bind-Value="@farm.City" />
+            </ValidatedField>
+            <ValidatedField Legend="State" ValidationMessageFor="@(() => farm.State)">
+                <InputText placeholder="State" @bind-Value="@farm.State" />
+            </ValidatedField>
+            <ValidatedField Legend="Zip" ValidationMessageFor="@(() => farm.Zip)">
+                <InputText placeholder="Zip" @bind-Value="@farm.Zip" />
+            </ValidatedField>
+            <ValidatedField Legend="Country" ValidationMessageFor="@(() => farm.Country)">
+                <InputText placeholder="Country" @bind-Value="@farm.Country" />
+            </ValidatedField>
+            @if (locationEnabled)
+            {
+                <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => farm.Latitude)">
+                    <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@farm.Latitude" />
+                </ValidatedField>
+                <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => farm.Longitude)">
+                    <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@farm.Longitude" />
+                </ValidatedField>
+
+            }
+        </DataContent>
+        <SecondaryContent>
+            <section class="updateCancelButtons">
+                <button type="button" @onclick="GetGeoLocation">Look up geo location</button>
+                @if (locationEnabled)
+                {
+                    <button type="button" @onclick="OnCoordinateChange">Look up address</button>
+                }
+            </section>
+            @if(farm.Id>0)
+            {
+                <CascadingValue Value="farm">
+                    <FarmSubTabs></FarmSubTabs>
+                </CascadingValue>
+            }
+        </SecondaryContent>
     </ValidatedForm>
 }

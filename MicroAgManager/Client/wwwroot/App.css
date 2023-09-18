@@ -10320,14 +10320,23 @@ form {
   align-items: center;
   justify-content: center;
 }
-form > .dataSection {
+form .TabControl {
+  width: 100%;
+}
+form .dataSection {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 0.25em;
   justify-items: center;
 }
-form > .updateCancelButtons {
+form .secondaryContent {
+  width: 100%;
+  display: grid;
+  gap: 0.25em;
+  justify-items: center;
+}
+form .updateCancelButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25em;

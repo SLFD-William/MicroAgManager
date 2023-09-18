@@ -13,7 +13,8 @@ namespace BackEnd.BusinessLogic.Livestock
         public long? LivestockBreedId { get; set; }
         public DateTime? Birthdate { get; set; }
         public string? Name { get; set; }
-        
+        public string? BatchNumber { get; set; }
+
         public string? Gender { get; set; }
         public string? Variety { get; set; }
         public string? Description { get; set; }
@@ -35,6 +36,7 @@ namespace BackEnd.BusinessLogic.Livestock
             if (FatherId.HasValue) query = query.Where(_ => _.FatherId == FatherId);
             if (LivestockBreedId.HasValue) query = query.Where(_ => _.Breed.Id == LivestockBreedId);
             if (!string.IsNullOrEmpty(Name)) query = query.Where(_ => _.Name != null && _.Name.Contains(Name));
+            if (!string.IsNullOrEmpty(BatchNumber)) query = query.Where(_ => _.BatchNumber != null && _.BatchNumber.Contains(BatchNumber));
             if (Birthdate.HasValue) query = query.Where(_ => _.Birthdate == Birthdate);
             if (!string.IsNullOrEmpty(Gender)) query = query.Where(_ => _.Gender != null && _.Gender.Contains(Gender));
             if (!string.IsNullOrEmpty(Variety)) query = query.Where(_ => _.Variety != null && _.Variety.Contains(Variety));

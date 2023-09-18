@@ -1,5 +1,4 @@
 ﻿using BackEnd.Infrastructure;
-using Domain.Interfaces;
 using Domain.Logging;
 using FrontEnd.Data;
 using FrontEnd.Persistence;
@@ -26,6 +25,8 @@ namespace FrontEnd.Services
         private static IFrontEndApiServices _api;
         private static ILogger _log;
 
+        public Dictionary<string,List<object>> RowDetailsShowing { get; set; } = new Dictionary<string, List<object>>();
+
         public ILogger? log { get => _log; }
         public FrontEndDbContext? dbContext { get => _dbContext;}
         public DataSynchronizer? dbSynchonizer { get => _dbSynchonizer; }
@@ -48,6 +49,7 @@ namespace FrontEnd.Services
             
             Task.Run(async()=> await _dbSynchonizer.SynchronizeInBackground());
         }
+
         private async Task ImportScripts(IJSRuntime js)
         {
             await js.InvokeAsync<IJSObjectReference>("import", "./_content/FrontEnd/frontEndJsInterop.js");
@@ -121,7 +123,7 @@ namespace FrontEnd.Services
         }
         public async ValueTask DisposeAsync()
         {
-            await DisposeNotificationHub();
+             await DisposeNotificationHub();
         }
     }
 }

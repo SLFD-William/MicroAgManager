@@ -18,5 +18,11 @@
             <Column TableItem="FarmLocationModel" Field="@(x => x.Latitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="FarmLocationModel" Field="@(x => x.Longitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
     </ColumnContent>
+    <TableRowTemplate>
+        <CascadingValue Value="@(context as FarmLocationModel)">
+            <FarmViewer ></FarmViewer>
+        </CascadingValue>
+    </TableRowTemplate>
+     
 </TableTemplate>
 }

@@ -19,19 +19,19 @@ namespace BackEnd.BusinessLogic.Livestock.Animals
 
             public override async Task<long> Handle(CreateLivestockAnimal request, CancellationToken cancellationToken)
             {
-                var LivestockAnimal = new Domain.Entity.LivestockAnimal(request.ModifiedBy, request.TenantId);
-                LivestockAnimal = request.LivestockAnimal.MapToEntity(LivestockAnimal);
-                LivestockAnimal.ModifiedOn = LivestockAnimal.CreatedOn = DateTime.Now;
-                LivestockAnimal.ModifiedBy = LivestockAnimal.CreatedBy = request.ModifiedBy;
-                LivestockAnimal.TenantId = request.TenantId;
-                _context.LivestockAnimals.Add(LivestockAnimal);
+                var livestockAnimal = new Domain.Entity.LivestockAnimal(request.ModifiedBy, request.TenantId);
+                livestockAnimal = request.LivestockAnimal.MapToEntity(livestockAnimal);
+                livestockAnimal.ModifiedOn = livestockAnimal.CreatedOn = DateTime.Now;
+                livestockAnimal.ModifiedBy = livestockAnimal.CreatedBy = request.ModifiedBy;
+                livestockAnimal.TenantId = request.TenantId;
+                _context.LivestockAnimals.Add(livestockAnimal);
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new LivestockAnimalCreated { EntityName=LivestockAnimal.GetType().Name, Id= LivestockAnimal.Id, ModifiedBy= LivestockAnimal.ModifiedBy,TenantId= LivestockAnimal.TenantId }, cancellationToken);
+                    await _mediator.Publish(new LivestockAnimalCreated { EntityName=livestockAnimal.GetType().Name, Id= livestockAnimal.Id, ModifiedBy= livestockAnimal.ModifiedBy,TenantId= livestockAnimal.TenantId }, cancellationToken);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                return LivestockAnimal.Id;
+                return livestockAnimal.Id;
             }
         }
     }

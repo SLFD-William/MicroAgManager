@@ -19,6 +19,7 @@ using Microsoft.JSInterop;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using BackEnd.BusinessLogic.Livestock;
 
 namespace FrontEnd.Data
 {
@@ -128,6 +129,7 @@ namespace FrontEnd.Data
                 db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
                 var connection = db.Database.GetDbConnection();
                 connection.Open();
+                
                 using (var transaction = connection.BeginTransaction())
                 {
                     // Begin fetching any updates to the dataset from the backend server
@@ -143,10 +145,11 @@ namespace FrontEnd.Data
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisParameterModel))) await BulkUpdateLivestockFeedAnalysisParameters(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisModel))) await BulkUpdateLivestockFeedAnalyses(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisResultModel))) await BulkUpdateLivestockFeedAnalysisResults(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) await BulkUpdateDuties(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) await BulkUpdateScheduledDuties(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel))) await BulkUpdateMilestones(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, connection, _api);
+                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) await BulkUpdateLivestocks(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) await BulkUpdateDuties(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) await BulkUpdateScheduledDuties(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel))) await BulkUpdateMilestones(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, connection, _api);
                     transaction.Commit();
                 }
                 OnUpdate?.Invoke();
@@ -158,8 +161,7 @@ namespace FrontEnd.Data
             }
             finally
             {
-               
-                _isSynchronizing = false;
+                   _isSynchronizing = false;
             }
         }
         private static bool ShouldEntityBeUpdated(List<string>? entityModels, string modelName)
@@ -290,7 +292,7 @@ namespace FrontEnd.Data
         private async static Task BulkUpdateLivestockAnimals(FrontEndDbContext db,DbConnection connection, IFrontEndApiServices api)
         {
             var existingAccountIds = new HashSet<long>(db.LivestockAnimals.Select(t => t.Id));
-            var mostRecentUpdate = db.LivestockAnimals.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var mostRecentUpdate = db.LivestockAnimals.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.ModifiedOn;
             long totalCount = 0;
             while (true)
             {
@@ -317,6 +319,67 @@ namespace FrontEnd.Data
                     parentMaleName.Value = model.ParentMaleName;
                     parentFemaleName.Value = model.ParentFemaleName;
                     care.Value = model.Care;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+        private async static Task BulkUpdateLivestocks(FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            var existingAccountIds = new HashSet<long>(db.Livestocks.Select(t => t.Id));
+            var mostRecentUpdate = db.Livestocks.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.ModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<LivestockModel, GetLivestockList>("api/GetLivestocks", new GetLivestockList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var motherId = AddNamedParameter(command, "$MotherId");
+                var fatherId = AddNamedParameter(command, "$FatherId");
+                var livestockBreedId = AddNamedParameter(command, "$LivestockBreedId");
+                var name = AddNamedParameter(command, "$Name");
+                var batchNumber = AddNamedParameter(command, "$BatchNumber");
+                var gender = AddNamedParameter(command, "$Gender");
+                var variety = AddNamedParameter(command, "$Variety");
+                var description = AddNamedParameter(command, "$Description");
+                var beingManaged = AddNamedParameter(command, "$BeingManaged");
+                var bornDefective = AddNamedParameter(command, "$BornDefective");
+                var birthDefect = AddNamedParameter(command, "$BirthDefect");
+                var sterile = AddNamedParameter(command, "$Sterile");
+                var inMilk = AddNamedParameter(command, "$InMilk");
+                var bottleFed = AddNamedParameter(command, "$BottleFed");
+                var forSale = AddNamedParameter(command, "$ForSale");
+                var birthDate = AddNamedParameter(command, "$Birthdate");
+
+
+
+                command.CommandText = $"INSERT or REPLACE INTO Livestocks (Id,Deleted,EntityModifiedOn,ModifiedOn,ModifiedBy,MotherId,FatherId,LivestockBreedId,Name,BatchNumber,Gender,Variety,Description," +
+                    $"BeingManaged,BornDefective,BirthDefect,Sterile,InMilk,BottleFed,ForSale,Birthdate) " +
+                    $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                    $"{motherId.ParameterName},{fatherId.ParameterName},{livestockBreedId.ParameterName},{name.ParameterName},{batchNumber.ParameterName},{gender.ParameterName}," +
+                    $"{variety.ParameterName},{description.ParameterName},{beingManaged.ParameterName},{bornDefective.ParameterName},{birthDefect.ParameterName},{sterile.ParameterName}," +
+                    $"{inMilk.ParameterName},{bottleFed.ParameterName},{forSale.ParameterName},{birthDate.ParameterName})";
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    motherId.Value = model.MotherId.HasValue ? model.MotherId.Value : DBNull.Value;
+                    fatherId.Value = model.FatherId.HasValue ? model.FatherId.Value : DBNull.Value;
+                    livestockBreedId.Value = model.LivestockBreedId;
+                    name.Value = model.Name;
+                    batchNumber.Value = model.BatchNumber;
+                    gender.Value= model.Gender;
+                    variety.Value = model.Variety;
+                    description.Value = model.Description;
+                    beingManaged.Value = model.BeingManaged;
+                    bornDefective.Value = model.BornDefective;
+                    birthDefect.Value = model.BirthDefect;
+                    sterile.Value = model.Sterile;
+                    inMilk.Value = model.InMilk;
+                    bottleFed.Value = model.BottleFed;
+                    forSale.Value = model.ForSale;
+                    birthDate.Value = model.Birthdate;
                     await command.ExecuteNonQueryAsync();
                 }
             }

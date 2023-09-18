@@ -18,7 +18,17 @@ namespace FrontEnd.Components.Shared.Sortable
         [Parameter] public bool OnlyAddInMenuBar { get; set; } = false;
         [Parameter] public bool CanDelete { get; set; } = false;
         [Parameter] public Action<ListPresentationTypesEnum> ListTypeUpdated { get; set; }
+        [Parameter] public List<object> RowDetailsShowing { get; set; } = new List<object>();
+        public bool IsRowDetailsShowing(object id) => RowDetailsShowing.Contains(id);
+        public void ToggleRowDetailsShowing(object id)
+        {
+            if (IsRowDetailsShowing(id))
+                RowDetailsShowing.Remove(id);
+            else
+                RowDetailsShowing.Add(id);
 
+            StateHasChanged();
+        }
         public string FilterText { get; set; }
         private ListPresentationTypesEnum _ListType = ListPresentationTypesEnum.Table;
         private void SearchKeyUp(KeyboardEventArgs e) => UpdateSearchTerm();

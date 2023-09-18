@@ -1,0 +1,51 @@
+﻿@using Domain.Constants;
+@using FrontEnd.Components.LandPlot;
+@using FrontEnd.Components.LivestockAnimal;
+@inherits DataComponent
+<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())">
+    <TabPage @ref="_plotTab">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
+                Plots
+                @((MarkupString)GetPlotCount(LandPlotUseConstants.GeneralUse))
+                @((MarkupString)GetPlotCount(LandPlotUseConstants.Pasture))
+                @((MarkupString)GetPlotCount(LandPlotUseConstants.Garden))
+                @((MarkupString)GetPlotCount(LandPlotUseConstants.Livestock))
+                @((MarkupString)GetPlotCount(LandPlotUseConstants.Outbuilding))
+            </button>
+        </ButtonContent>
+        <ChildContent>
+        @if (app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id) ?? false)
+        {
+                <LandPlotList @ref="_landPlotList" Items="app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name)"></LandPlotList>
+        }
+        else
+        {
+            <LandPlotEditor @ref="_landPlotEditor" Submitted="@LandPlotUpdated" showUpdateCancelButtons="true" ></LandPlotEditor>
+        }
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_livestockTab" Text="Livestock" Visible="@(app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id && p.Usage == LandPlotUseConstants.Livestock) ?? false)">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
+        </ButtonContent>
+        <ChildContent>
+        @if (app?.dbContext?.LivestockAnimals.Any() ?? false)
+        {
+            <LivestockAnimalList @ref="_livestockAnimalList" Items="app.dbContext.LivestockAnimals.ToList().Select(a=>LivestockAnimalRow.Create(app,a)).OrderBy(a=>a.Name).AsEnumerable()"></LivestockAnimalList>
+        }
+        else
+        {
+            <LivestockAnimalEditor @ref="_livestockAnimalEditor" Submitted="@LivestockAnimalUpdated" showUpdateCancelButtons="true"></LivestockAnimalEditor>
+        }
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_dutyTab" Text="Duties">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">Duties</button>
+        </ButtonContent>
+        <ChildContent>
+            Duty Listing
+        </ChildContent>
+    </TabPage>
+</TabControl>

@@ -5,6 +5,12 @@
   width: 100%;
 }
 .TableTemplate__Menu {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+}
+.TableTemplate__Form {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
 }
@@ -53,7 +59,7 @@
     grid-template-columns: max-content auto;
     padding: 0.5rem 1rem;
   }
-  .TableTemplate__Table td::before {
+  .TableTemplate__Table [data-label]::before {
     content: attr(data-label) ": ";
     font-weight: 700;
   }
