@@ -50,6 +50,7 @@ namespace Domain.Models
             entity.Distribution = Distribution;
             entity.Name = Name;
             entity.LivestockAnimal.Id = LivestockAnimalId;
+            entity.ModifiedOn = DateTime.UtcNow;
             if (entity.Servings?.Any() ?? false)
                 foreach (var breed in entity.Servings)
                     Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);

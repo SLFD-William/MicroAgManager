@@ -2,7 +2,7 @@
 @using FrontEnd.Components.LandPlot;
 @using FrontEnd.Components.LivestockAnimal;
 @inherits DataComponent
-<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())">
+<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTabPage="@app.SelectedTabs" SelectedTabPageKey="@nameof(FarmSubTabs)" >
     <TabPage @ref="_plotTab">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
@@ -32,7 +32,7 @@
         <ChildContent>
         @if (app?.dbContext?.LivestockAnimals.Any() ?? false)
         {
-            <LivestockAnimalList @ref="_livestockAnimalList" Items="app.dbContext.LivestockAnimals.ToList().Select(a=>LivestockAnimalRow.Create(app,a)).OrderBy(a=>a.Name).AsEnumerable()"></LivestockAnimalList>
+                <LivestockAnimalList @ref="_livestockAnimalList" Items="app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).ToList().Select(a=>new LivestockAnimalSummary(a,app.dbContext)).AsEnumerable()"></LivestockAnimalList>
         }
         else
         {

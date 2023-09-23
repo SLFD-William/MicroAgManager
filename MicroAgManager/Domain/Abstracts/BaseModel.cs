@@ -7,12 +7,8 @@ namespace Domain.Abstracts
         [Required]
         public long Id { get; set; }
         public bool Deleted { get; set; }
-        [Required]
-        public DateTime ModifiedOn { get; set; }
-        [Required]
-        public DateTime EntityModifiedOn { get; set; } = DateTime.MinValue;
-        [Required]
-        public Guid ModifiedBy { get; set; }
+        [Required] public DateTime EntityModifiedOn { get; private set; } = DateTime.MinValue;
+        [Required] public Guid ModifiedBy { get; set; }
 
         
 
@@ -21,7 +17,6 @@ namespace Domain.Abstracts
         {
             model.Id = entity.Id;
             model.Deleted = entity.DeletedOn.HasValue;
-            model.ModifiedOn = entity.ModifiedOn;
             model.EntityModifiedOn = entity.ModifiedOn;
             model.ModifiedBy = entity.ModifiedBy;
             return model;

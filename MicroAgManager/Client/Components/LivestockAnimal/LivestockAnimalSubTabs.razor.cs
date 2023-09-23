@@ -9,7 +9,7 @@ namespace FrontEnd.Components.LivestockAnimal
 {
     public partial class LivestockAnimalSubTabs : DataComponent
     {
-        [CascadingParameter] public LivestockAnimalModel? LivestockAnimal { get; set; }
+        [CascadingParameter] public LivestockAnimalSummary? LivestockAnimal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         private LivestockAnimalModel livestockAnimal { get; set; } = new LivestockAnimalModel();
         protected TabControl _tabControl;
@@ -21,10 +21,12 @@ namespace FrontEnd.Components.LivestockAnimal
 
         private LivestockBreedEditor? _livestockBreedEditor;
         protected LivestockBreedList _livestockBreedList;
-
+        protected override void OnInitialized()
+        {
+            _tabControl?.ActivatePage(app.SelectedTabs["LivestockAnimalSubTabs"] ?? _tabControl?.ActivePage ?? _breedsTab);
+        }
         public override async Task FreshenData()
         {
-
             if (LivestockAnimal is not null)
                 livestockAnimal = await app.dbContext.LivestockAnimals.FindAsync(LivestockAnimal.Id) ?? new LivestockAnimalModel();
             else

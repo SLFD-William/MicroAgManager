@@ -21,8 +21,10 @@ namespace FrontEnd.Components.Farm
         protected TabPage _plotTab;
         protected TabPage _livestockTab;
         protected TabPage _dutyTab;
-
-        
+        protected override void OnInitialized()
+        {
+            _tabControl?.ActivatePage(app.SelectedTabs[nameof(FarmSubTabs)] ?? _tabControl?.ActivePage ?? _plotTab);
+        }
         private string GetPlotCount(string plotUsage)
         {
             var count = app.dbContext.LandPlots.Count(p => p.FarmLocationId == farm.Id && p.Usage == plotUsage);
@@ -30,7 +32,6 @@ namespace FrontEnd.Components.Farm
         }
         public override async Task FreshenData()
         {
-
             if (FarmLocation is not null)
                 farm = await app.dbContext.Farms.FindAsync(FarmLocation.Id) ?? new FarmLocationModel();
             else
@@ -42,6 +43,8 @@ namespace FrontEnd.Components.Farm
             //await _landPlotList.FreshenData();
             if(_livestockAnimalList is not null)
                 await _livestockAnimalList.FreshenData();
+
+            
         }
         private async Task LandPlotUpdated(LandPlotModel args)
         {

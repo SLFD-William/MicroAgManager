@@ -28,6 +28,7 @@ namespace Domain.Models
             entity.SubParameter = SubParameter;
             entity.Unit = Unit;
             entity.Method = Method;
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

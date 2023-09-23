@@ -10,14 +10,17 @@
     }
     else
     {
-        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockStatusModel"
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockStatusSummary"
                        Items="@Items"
                        MultiSelect="@Multiselect"
                        Selectable="@Selectable"
                        OnSelectionChange="@TableItemSelected"
-                       CanDelete="@CanDelete">
+                       CanDelete="@CanDelete"
+                       RowDetailsShowing="@app.RowDetailsShowing["LivestockStatusList"]"
+                       NewItemName="Status"
+                       AddItemClicked="@(async ()=>await EditStatus(0))">
             <ColumnContent>
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.Id)" Title="ControlColumn">
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.Id)" Title="ControlColumn">
                     <Template Context="e">
                         <button type="button" onclick="@(()=> EditStatus(e.Id))">Edit</button>
                         @if (CanDelete)
@@ -26,13 +29,13 @@
                         }
                     </Template>
                 </Column>
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.Status)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.DefaultStatus)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.BeingManaged)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.Sterile)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.InMilk)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.BottleFed)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusModel" Field="@(x => x.ForSale)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.StatusName)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.DefaultStatus)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.BeingManaged)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.Sterile)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.InMilk)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.BottleFed)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockStatusSummary" Field="@(x => x.ForSale)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             </ColumnContent>
         </TableTemplate>
     }

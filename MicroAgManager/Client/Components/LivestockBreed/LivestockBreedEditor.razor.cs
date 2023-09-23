@@ -1,5 +1,6 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Breeds;
 using Domain.Models;
+using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -8,7 +9,7 @@ namespace FrontEnd.Components.LivestockBreed
 {
     public partial class LivestockBreedEditor : DataComponent
     {
-        [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
+        [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedModel LivestockBreed { get; set; }
         [Parameter] public bool showUpdateCancelButtons { get; set; }
         [Parameter] public EditContext editContext { get; set; }

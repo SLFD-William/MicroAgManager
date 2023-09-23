@@ -42,6 +42,7 @@ namespace Domain.Models
             entity.TestCode = TestCode;
             entity.DatePrinted = DatePrinted;
             entity.LivestockFeedId=FeedId;
+            entity.ModifiedOn = DateTime.UtcNow;
             if (entity.Results?.Any() ?? false)
                 foreach (var breed in entity.Results)
                     Results?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);

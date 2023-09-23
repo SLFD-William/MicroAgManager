@@ -8,9 +8,9 @@ namespace FrontEnd.Components.LivestockBreed
 {
     public partial class LivestockBreedList:DataComponent
     {
-        public TableTemplate<LivestockBreedModel> _listComponent;
+        public TableTemplate<LivestockBreedSummary> _listComponent;
         [CascadingParameter] LivestockAnimalModel LivestockAnimal { get; set; }
-        [Parameter] public IEnumerable<LivestockBreedModel>? Items { get; set; }
+        [Parameter] public IEnumerable<LivestockBreedSummary>? Items { get; set; }
 
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LivestockBreedModel>? BreedSelected { get; set; }
@@ -27,18 +27,20 @@ namespace FrontEnd.Components.LivestockBreed
             if (_listComponent is null) return;
 
             if (Items is null)
-                Items = (await app.dbContext.LivestockBreeds.Where(f => f.LivestockAnimalId == LivestockAnimal.Id).OrderBy(f => f.ModifiedOn).ToListAsync()).AsEnumerable();
+                Items = (await app.dbContext.LivestockBreeds.Where(f => f.LivestockAnimalId == LivestockAnimal.Id)
+                    .OrderBy(f => f.EntityModifiedOn).ToListAsync()).Select(b=>new LivestockBreedSummary(b,app.dbContext)).AsEnumerable();
 
             _listComponent.Update();
         }
+        private async Task<LivestockBreedModel?> FindBreed(long Id) => await app.dbContext.LivestockBreeds.FindAsync(Id);
         private void TableItemSelected()
         {
             if (_listComponent.SelectedItems.Count() > 0)
-                BreedSelected?.Invoke(_listComponent.SelectedItems.First());
+                BreedSelected?.Invoke(Task.Run(async()=> await FindBreed(_listComponent.SelectedItems.First().Id)).Result);
         }
-        private void EditBreed(long id)
+        private async Task EditBreed(long id)
         {
-            _editBreed = id > 0 ? Items.First(p => p.Id == id) : new LivestockBreedModel {LivestockAnimalId=LivestockAnimal.Id }; 
+            _editBreed = id > 0 ? await FindBreed(id) : new LivestockBreedModel {LivestockAnimalId=LivestockAnimal.Id }; 
             StateHasChanged();
         }
         private async Task EditCancelled()

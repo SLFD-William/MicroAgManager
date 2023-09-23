@@ -23,7 +23,6 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             {
                 var livestockFeed = _context.LivestockFeeds.Find(request.LivestockFeed.Id);
                 livestockFeed = request.LivestockFeed.MapToEntity(livestockFeed);
-                livestockFeed.ModifiedOn = DateTime.Now;
                 livestockFeed.ModifiedBy = request.ModifiedBy;
                 livestockFeed.TenantId = request.TenantId;
                 _context.LivestockFeeds.Update(livestockFeed);

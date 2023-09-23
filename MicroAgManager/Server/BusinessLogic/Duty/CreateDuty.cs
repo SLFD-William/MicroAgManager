@@ -24,7 +24,7 @@ public class CreateDuty : BaseCommand, ICreateCommand
         {
             var duty = new Domain.Entity.Duty(request.ModifiedBy, request.TenantId);
             duty = request.Duty.MapToEntity(duty);
-            duty.ModifiedOn = duty.CreatedOn = DateTime.Now;
+            duty.CreatedOn = DateTime.Now;
             duty.ModifiedBy = duty.CreatedBy = request.ModifiedBy;
             duty.TenantId = request.TenantId;
             _context.Duties.Add(duty);

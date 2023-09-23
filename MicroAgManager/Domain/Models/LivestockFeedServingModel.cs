@@ -30,6 +30,7 @@ namespace Domain.Models
             entity.Status.Id = StatusId;
             entity.ServingFrequency = ServingFrequency;
             entity.Serving = Serving;
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

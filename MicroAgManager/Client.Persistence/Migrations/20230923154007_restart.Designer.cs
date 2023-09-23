@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    [Migration("20230903160911_BatchNumberOnAnimal")]
-    partial class BatchNumberOnAnimal
+    [Migration("20230923154007_restart")]
+    partial class restart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
 
             modelBuilder.Entity("Domain.Entity.Log", b =>
                 {
@@ -86,9 +86,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -128,9 +125,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -176,9 +170,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -238,9 +229,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -282,9 +270,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -342,9 +327,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -392,9 +374,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("TestCode")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -423,9 +402,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Parameter")
@@ -480,9 +456,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<long>("ParameterId")
                         .HasColumnType("INTEGER");
 
@@ -519,9 +492,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Note")
@@ -577,9 +547,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -629,9 +596,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Serving")
@@ -715,9 +679,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<long?>("MotherId")
                         .HasColumnType("INTEGER");
 
@@ -785,9 +746,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -821,9 +779,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Subcategory")
@@ -875,9 +830,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("ModifiedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("ReminderDays")
                         .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
@@ -913,9 +865,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")

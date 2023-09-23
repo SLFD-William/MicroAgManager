@@ -21,7 +21,6 @@ namespace BackEnd.BusinessLogic.Milestone
             {
                 var duty = _context.Milestones.First(d => d.TenantId == request.TenantId && d.Id == request.Milestone.Id);
                 duty = request.Milestone.MapToEntity(duty);
-                duty.ModifiedOn = DateTime.Now;
                 duty.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);

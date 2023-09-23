@@ -10,7 +10,7 @@
     }
     else
     {
-        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockBreedModel"
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockBreedSummary"
                        Items="@Items"
                        MultiSelect="@Multiselect"
                        Selectable="@Selectable"
@@ -20,34 +20,28 @@
                        NewItemName="Breed"
                        AddItemClicked="@(()=> EditBreed(0))">
             <ColumnContent>
-                <Column TableItem="LivestockBreedModel" Field="@(x => x.Id)" Title="ControlColumn">
+                <Column TableItem="LivestockBreedSummary" Field="@(x => x.Id)" Title="ControlColumn">
                     <Template Context="e">
-                        <button type="button" onclick="@(()=> _listComponent.ToggleRowDetailsShowing(e))">Show Details</button>
+                        <button type="button" onclick="@(()=> _listComponent.ToggleRowDetailsShowing(e))">@(_listComponent.IsRowDetailsShowing(e) ? "Hide" : "Show") Details</button>
                         @if (CanDelete)
                         {
                             <button type="button">Delete</button>
                         }
                     </Template>
                 </Column>
-                <Column TableItem="LivestockBreedModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" >
+                <Column TableItem="LivestockBreedSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" >
                     <Template Context="e">
                         <button type="button" onclick="@(()=> EditBreed(e.Id))">@e.Name</button>
                     </Template>
                 </Column>
-@*                 <Column TableItem="LivestockBreedModel"  Field="@(x => app.dbContext.Livestocks.Where(s => s.LivestockBreedId == x.Id).Count())" Title="Count">
-                     <Template Context="e">
-                        <label>
-                            @app.dbContext.Livestocks.Where(s => s.LivestockBreedId == e.Id).Count()
-                        </label>
-                    </Template> 
-                </Column> *@
-                <Column TableItem="LivestockBreedModel" Field="@(x => x.EmojiChar)" Title="Emoji" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockBreedModel" Field="@(x => x.GestationPeriod)" Title="Gestation Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockBreedModel" Field="@(x => x.HeatPeriod)" Title="Heat Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockBreedSummary" Field="@(x => x.Emoji)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockBreedSummary" Field="@(x => x.GestationPeriod)" Title="Gestation Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockBreedSummary" Field="@(x => x.HeatPeriod)" Title="Heat Period" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockBreedSummary" Field="@(x => x.LivestockCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Livestock" />
             </ColumnContent>
             <TableRowDetailTemplate>
-                <CascadingValue Value="@(context as LivestockBreedModel)">
-                    <LivestockList Items="@app.dbContext.Livestocks.Where(s => s.LivestockBreedId == context.Id)"></LivestockList>
+                <CascadingValue Value="@(context as LivestockBreedSummary)">
+                    <LivestockList Items="@app.dbContext.Livestocks.Where(s => s.LivestockBreedId == context.Id).Select(l=>new Livestock.LivestockSummary(l,app.dbContext))"></LivestockList>
                 </CascadingValue>
             </TableRowDetailTemplate>
         </TableTemplate>

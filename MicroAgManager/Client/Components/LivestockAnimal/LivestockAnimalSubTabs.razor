@@ -3,20 +3,13 @@
 @using FrontEnd.Components.LivestockStatus;
 @using FrontEnd.Components.LivestockBreed;
 @inherits DataComponent
-<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())">
+<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTabPage="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockAnimalSubTabs)">
     <TabPage @ref="_breedsTab" Text="Breeds">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_breedsTab)" @onclick="@(() =>_tabControl.ActivatePage(_breedsTab))">Breeds</button>
         </ButtonContent>
         <ChildContent>
-            @if (app?.dbContext?.LivestockBreeds.Any(s => s.LivestockAnimalId == livestockAnimal.Id) ?? false)
-            {
-                <LivestockBreedList @ref="_livestockBreedList" Items="app.dbContext.LivestockBreeds.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Name)"></LivestockBreedList>
-            }
-            else
-            {
-                <LivestockBreedEditor @ref="_livestockBreedEditor" Submitted="@LivestockBreedUpdated" showUpdateCancelButtons="true"></LivestockBreedEditor>
-            }
+            <LivestockBreedList  @ref="_livestockBreedList" Items="app.dbContext.LivestockBreeds.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Name).Select(b=>new LivestockBreedSummary(b,app.dbContext))"></LivestockBreedList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_statusTab" Text="Statuses">
@@ -24,14 +17,7 @@
             <button type="button" class="@_tabControl.GetButtonClass(_statusTab)" @onclick="@(() =>_tabControl.ActivatePage(_statusTab))">Statuses</button>
         </ButtonContent>
         <ChildContent>
-            @if (app?.dbContext?.LivestockStatuses.Any(s=>s.LivestockAnimalId==livestockAnimal.Id) ?? false)
-            {
-                <LivestockStatusList @ref="_livestockStatusList" Items="app.dbContext.LivestockStatuses.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Status)"></LivestockStatusList>
-            }
-            else
-            {
-                <LivestockStatusEditor @ref="_livestockStatusEditor" Submitted="@LivestockStatusUpdated" showUpdateCancelButtons="true"></LivestockStatusEditor>
-            }
+            <LivestockStatusList @ref="_livestockStatusList" Items="app.dbContext.LivestockStatuses.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Status).Select(s=>new LivestockStatusSummary(s,app.dbContext))"></LivestockStatusList>
         </ChildContent>
     </TabPage>
 </TabControl>

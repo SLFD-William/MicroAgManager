@@ -24,9 +24,6 @@ namespace BackEnd.BusinessLogic.Milestone
             {
                 var duty = new Domain.Entity.Milestone(request.ModifiedBy, request.TenantId);
                 duty = request.Milestone.MapToEntity(duty);
-                duty.ModifiedOn = duty.CreatedOn = DateTime.Now;
-                duty.ModifiedBy = duty.CreatedBy = request.ModifiedBy;
-                duty.TenantId = request.TenantId;
                 _context.Milestones.Add(duty);
                 try
                 {

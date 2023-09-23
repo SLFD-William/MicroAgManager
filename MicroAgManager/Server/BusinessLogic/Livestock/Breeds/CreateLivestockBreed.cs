@@ -24,9 +24,7 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
                 livestockBreed = request.LivestockBreed.MapToEntity(livestockBreed);
                 if(livestockBreed.LivestockAnimal is null)
                     livestockBreed.LivestockAnimal = await _context.LivestockAnimals.FindAsync(request.LivestockBreed.LivestockAnimalId);
-                livestockBreed.ModifiedOn = livestockBreed.CreatedOn = DateTime.Now;
-                livestockBreed.ModifiedBy = livestockBreed.CreatedBy = request.ModifiedBy;
-                livestockBreed.TenantId = request.TenantId;
+
                 _context.LivestockBreeds.Add(livestockBreed);
                 try
                 {

@@ -24,7 +24,6 @@ namespace BackEnd.BusinessLogic.Event
             {
                 var eventEntity = new Domain.Entity.Event(request.ModifiedBy, request.TenantId);
                 eventEntity = request.Event.MapToEntity(eventEntity);
-                eventEntity.ModifiedOn = eventEntity.CreatedOn = DateTime.Now;
                 eventEntity.ModifiedBy = eventEntity.CreatedBy = request.ModifiedBy;
                 eventEntity.TenantId = request.TenantId;
                 _context.Events.Add(eventEntity);

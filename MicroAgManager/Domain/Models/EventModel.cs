@@ -44,6 +44,7 @@ namespace Domain.Models
             if (duty.ScheduledDuties?.Any() ?? false)
                 foreach (var plot in duty.ScheduledDuties)
                     ScheduledDuties.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
+            duty.ModifiedOn = DateTime.UtcNow;
             return duty;
         }
     }

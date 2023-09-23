@@ -16,10 +16,12 @@ namespace FrontEnd.Components.LivestockBreed
 
         private LivestockEditor? _livestockEditor;
         protected LivestockList _livestockList;
-
+        protected override void OnInitialized()
+        {
+            _tabControl?.ActivatePage(app.SelectedTabs[nameof(LivestockBreedSubTabs)] ?? _tabControl?.ActivePage ?? _livestockTab);
+        }
         public override async Task FreshenData()
         {
-
             if (LivestockBreed is not null)
                 livestockBreed = await app.dbContext.LivestockBreeds.FindAsync(LivestockBreed.Id) ?? new LivestockBreedModel();
             else

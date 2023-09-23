@@ -22,7 +22,6 @@ namespace BackEnd.BusinessLogic.LandPlots
             {
                 var farm = _context.Plots.First(f => f.TenantId == request.TenantId && f.Id == request.LandPlot.Id);
                 farm = request.LandPlot.MapToEntity(farm);
-                farm.ModifiedOn = DateTime.Now;
                 farm.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);

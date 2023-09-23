@@ -18,19 +18,18 @@ namespace BackEnd.BusinessLogic.Livestock.Animals
 
             public override async Task<long> Handle(UpdateLivestockAnimal request, CancellationToken cancellationToken)
             {
-                var LivestockAnimal = _context.LivestockAnimals.Find(request.LivestockAnimal.Id);
-                LivestockAnimal = request.LivestockAnimal.MapToEntity(LivestockAnimal);
-                LivestockAnimal.ModifiedOn = DateTime.Now;
-                LivestockAnimal.ModifiedBy = request.ModifiedBy;
-                LivestockAnimal.TenantId = request.TenantId;
-                _context.LivestockAnimals.Update(LivestockAnimal);
+                var livestockAnimal = _context.LivestockAnimals.Find(request.LivestockAnimal.Id);
+                livestockAnimal = request.LivestockAnimal.MapToEntity(livestockAnimal);
+                livestockAnimal.ModifiedBy = request.ModifiedBy;
+                livestockAnimal.TenantId = request.TenantId;
+                _context.LivestockAnimals.Update(livestockAnimal);
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Modified", LivestockAnimal.ModifiedBy) }), cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockAnimal.Id.ToString(), livestockAnimal.GetType().Name, "Modified", livestockAnimal.ModifiedBy) }), cancellationToken);
                 }
                 catch (Exception ex) { _log.LogError(ex, "Unable to Update Livestock Type"); }
-                return LivestockAnimal.Id;
+                return livestockAnimal.Id;
             }
         }
     }

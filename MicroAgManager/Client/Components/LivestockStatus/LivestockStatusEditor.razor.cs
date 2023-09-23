@@ -1,6 +1,7 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Status;
 using Domain.Constants;
 using Domain.Models;
+using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -16,7 +17,7 @@ namespace FrontEnd.Components.LivestockStatus
             LivestockStatusModeConstants.False,
             LivestockStatusModeConstants.True
         };
-        [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
+        [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockStatusModel LivestockStatus { get; set; }
         [Parameter] public bool showUpdateCancelButtons { get; set; }
         [Parameter] public EditContext editContext { get; set; }

@@ -4,13 +4,15 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using BackEnd.BusinessLogic.Livestock;
+using FrontEnd.Components.LivestockBreed;
+using FrontEnd.Components.LivestockAnimal;
 
 namespace FrontEnd.Components.Livestock
 {
     public partial class LivestockEditor : DataComponent
     {
-        [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
-        [CascadingParameter] public LivestockBreedModel LivestockBreed { get; set; }
+        [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
+        [CascadingParameter] public LivestockBreedSummary LivestockBreed { get; set; }
         [CascadingParameter] public LivestockModel Livestock { get; set; }
         
         [Parameter] public bool showUpdateCancelButtons { get; set; }
@@ -22,7 +24,7 @@ namespace FrontEnd.Components.Livestock
 
         private LivestockModel livestock;
 
-        protected LivestockSubTabs _tabControl;
+        //protected LivestockSubTabs _tabControl;
 
         protected override async Task OnInitializedAsync() => await FreshenData();
         public override async Task FreshenData()
@@ -38,10 +40,10 @@ namespace FrontEnd.Components.Livestock
                 livestockBreedId = LivestockBreed.Id;
 
             if (LivestockBreed is null && livestockBreedId.HasValue)
-                LivestockBreed =await app.dbContext.LivestockBreeds.FindAsync(livestockBreedId.Value);
+                LivestockBreed = new LivestockBreedSummary(await app.dbContext.LivestockBreeds.FindAsync(livestockBreedId.Value),app.dbContext);
 
             if (LivestockAnimal is null)
-                LivestockAnimal = await app.dbContext.LivestockAnimals.FindAsync(LivestockBreed.LivestockAnimalId);
+                LivestockAnimal = new LivestockAnimalSummary( await app.dbContext.LivestockAnimals.FindAsync(LivestockBreed.LivestockAnimalId),app.dbContext);
 
 
             livestock = new LivestockModel() { LivestockBreedId = livestockBreedId.Value };

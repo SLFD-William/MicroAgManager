@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Shared.Sortable;
 using Microsoft.AspNetCore.Components;
@@ -7,9 +8,9 @@ namespace FrontEnd.Components.Livestock
 {
     public partial class LivestockList : DataComponent
     {
-        [CascadingParameter] LivestockBreedModel LivestockBreed { get; set; }
-        public TableTemplate<LivestockModel> _listComponent;
-        [Parameter] public IEnumerable<LivestockModel> Items { get; set; } = new List<LivestockModel>();
+        [CascadingParameter] LivestockBreedSummary LivestockBreed { get; set; }
+        public TableTemplate<LivestockSummary> _listComponent;
+        [Parameter] public IEnumerable<LivestockSummary> Items { get; set; } = new List<LivestockSummary>();
 
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LivestockModel>? LivestockSelected { get; set; }
@@ -20,21 +21,23 @@ namespace FrontEnd.Components.Livestock
             if (!app.RowDetailsShowing.ContainsKey("LivestockList"))
                 app.RowDetailsShowing.Add("LivestockList", new List<object>());
         }
-        private void EditLivestock(long id)
+        private async Task<LivestockModel?> FindLivestock(long id)=> await app.dbContext.Livestocks.FindAsync(id);
+        
+        private async Task EditLivestock(long id)
         {
-            _editLivestock = id > 0 ? Items.First(p => p.Id == id) : new LivestockModel { LivestockBreedId=LivestockBreed.Id};
+            _editLivestock = id > 0 ? await FindLivestock(id) : new LivestockModel { LivestockBreedId=LivestockBreed.Id};
             StateHasChanged();
         }
         private void TableItemSelected()
         {
             if (_listComponent.SelectedItems.Count() > 0)
-                LivestockSelected?.Invoke(_listComponent.SelectedItems.First());
+                LivestockSelected?.Invoke(Task.Run(async()=> await  FindLivestock(_listComponent.SelectedItems.First().Id)).Result);
         }
         public override async Task FreshenData()
         {
             if (_listComponent is null) return;
             if (Items is null)
-                Items = app.dbContext.Livestocks.Where(f => f.LivestockBreedId == LivestockBreed.Id).OrderBy(f => f.Name).AsEnumerable() ?? new List<LivestockModel>();
+                Items = app.dbContext.Livestocks.Where(f => f.LivestockBreedId == LivestockBreed.Id).OrderBy(f => f.Name).Select(s=>new LivestockSummary(s,app.dbContext)).AsEnumerable() ?? new List<LivestockSummary>();
             
             _listComponent.Update();
         }

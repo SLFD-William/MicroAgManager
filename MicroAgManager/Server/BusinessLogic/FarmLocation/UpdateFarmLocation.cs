@@ -22,7 +22,6 @@ namespace BackEnd.BusinessLogic.FarmLocation
             {
                 var farm = _context.Farms.First(f=> f.TenantId==request.TenantId && f.Id==request.Farm.Id);
                 farm = request.Farm.MapToEntity(farm);
-                farm.ModifiedOn = DateTime.Now;
                 farm.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);

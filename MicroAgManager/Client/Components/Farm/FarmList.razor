@@ -2,27 +2,37 @@
 @using Domain.Models
 @if (app != null)
 {
-    <TableTemplate @ref="_listComponent" PageSize="0" TItem="FarmLocationModel" 
+    @if (_editFarm is not null || !Items.Any())
+    {
+        <CascadingValue Value="_editFarm">
+            <FarmEditor @ref="_farmEditor" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
+        </CascadingValue>
+    }
+    else
+    {
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="FarmLocationSummary" 
         Items="@Items" 
         MultiSelect="@Multiselect" 
         Selectable="@Selectable"
-                   OnSelectionChange="@TableItemSelected">
-    <ColumnContent>
-            <Column TableItem="FarmLocationModel" Field="@(x => x.Name)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.StreetAddress)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.City)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.State)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.Zip)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.Country)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.CountryCode)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.Latitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="FarmLocationModel" Field="@(x => x.Longitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-    </ColumnContent>
-    <TableRowTemplate>
-        <CascadingValue Value="@(context as FarmLocationModel)">
-            <FarmViewer ></FarmViewer>
-        </CascadingValue>
-    </TableRowTemplate>
-     
-</TableTemplate>
+        OnSelectionChange="@TableItemSelected"
+        RowDetailsShowing="@app.RowDetailsShowing["FarmList"]">
+            <ColumnContent>
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.Name)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.StreetAddress)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.City)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.State)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.Zip)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.Country)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.CountryCode)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.Latitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="FarmLocationSummary" Field="@(x => x.Longitude)" Title="Units" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            </ColumnContent>
+            <TableRowTemplate>
+                <CascadingValue Value="@(app.dbContext.Farms.Find(context.Id))">
+                    <FarmViewer ></FarmViewer>
+                </CascadingValue>
+            </TableRowTemplate>
+
+        </TableTemplate>
+    }
 }

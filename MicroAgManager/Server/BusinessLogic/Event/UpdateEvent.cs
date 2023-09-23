@@ -21,8 +21,6 @@ namespace BackEnd.BusinessLogic.Event
             {
                 var eventEntity = _context.Events.First(d => d.TenantId == request.TenantId && d.Id == request.Event.Id);
                 eventEntity = request.Event.MapToEntity(eventEntity);
-                eventEntity.ModifiedOn = DateTime.Now;
-                eventEntity.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(eventEntity.Id.ToString(), eventEntity.GetType().Name, "Modified", eventEntity.ModifiedBy) }), cancellationToken);
                 return eventEntity.Id;

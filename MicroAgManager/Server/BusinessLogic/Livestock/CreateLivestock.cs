@@ -23,9 +23,6 @@ namespace BackEnd.BusinessLogic.Livestock
             {
                 var livestock = new Domain.Entity.Livestock(request.ModifiedBy, request.TenantId);
                 livestock = request.Livestock.MapToEntity(livestock);
-                livestock.ModifiedOn = livestock.CreatedOn = DateTime.Now;
-                livestock.ModifiedBy = livestock.CreatedBy = request.ModifiedBy;
-                livestock.TenantId = request.TenantId;
                 _context.Livestocks.Add(livestock);
                 try
                 {

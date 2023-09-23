@@ -12,41 +12,42 @@
     }
     else
     {
-        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockAnimalRow"
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockAnimalSummary"
             Items="@Items"
             MultiSelect="@Multiselect"
             Selectable="@Selectable"
             OnSelectionChange="@TableItemSelected"
             CanDelete="@CanDelete"
             RowDetailsShowing="@app.RowDetailsShowing["LivestockAnimalList"]"
-            NewItemName="Animal"
+            NewItemName="Livestock"
             AddItemClicked="@(()=> EditAnimal(0))">
             <ColumnContent>
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.Id)" Title="ControlColumn">
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.Id)" Title="ControlColumn">
                     <Template Context="e">
-                        <button type="button" onclick="@(()=> _listComponent.ToggleRowDetailsShowing(e))">Show Details</button>
+                        <button type="button" onclick="@(()=> _listComponent.ToggleRowDetailsShowing(e))">@(_listComponent.IsRowDetailsShowing(e) ? "Hide" : "Show") Details</button>
                         @if (CanDelete)
                         {
                             <button type="button">Delete</button>
                         }
                     </Template>
-                </Column>
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" >
+                    </Column>
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true">
                     <Template Context="e">
                         <button type="button" onclick="@(()=> EditAnimal(e.Id))">@e.Name</button>
-                    </Template>
+                    </Template> 
                 </Column>
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.GroupName)" Title="Group Name" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.ParentFemaleName)" Title="Female Ancestor Title" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.ParentMaleName)" Title="Male Ancestor Title" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.Care)" Title="Management Style" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.BreedsCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Breeds" />
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.StatusesCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Statuses" />
-                <Column TableItem="LivestockAnimalRow" Field="@(x => x.FeedsCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Feeds" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.GroupName)" Title="Group Name" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.ParentFemaleName)" Title="Female Ancestor Title" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.ParentMaleName)" Title="Male Ancestor Title" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.Care)" Title="Management Style" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.BreedsCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Breeds" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.StatusesCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Statuses" />
+                <Column TableItem="LivestockAnimalSummary" Field="@(x => x.FeedsCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Feeds" />
             </ColumnContent>
             <TableRowDetailTemplate>
-                <CascadingValue Value="@(context as LivestockAnimalRow)">
-                    <LivestockBreedList Items="@app.dbContext.LivestockBreeds.Where(s=> s.LivestockAnimalId == context.Id)"></LivestockBreedList>"
+                <CascadingValue Value="@(context as LivestockAnimalSummary)">
+                    <LivestockAnimalSubTabs></LivestockAnimalSubTabs>
+                    @* <LivestockBreedList Items="@app.dbContext.LivestockBreeds.Where(s=> s.LivestockAnimalId == context.Animal.Id).ToList().Select(b=>new LivestockBreedSummary(b,app.dbContext))"></LivestockBreedList> *@
                 </CascadingValue>
             </TableRowDetailTemplate>
 

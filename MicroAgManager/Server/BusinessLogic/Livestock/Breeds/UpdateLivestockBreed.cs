@@ -21,7 +21,6 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
             {
                 var livestockBreed = _context.LivestockBreeds.First(f => f.TenantId == request.TenantId && f.Id == request.LivestockBreed.Id);
                 livestockBreed = request.LivestockBreed.MapToEntity(livestockBreed);
-                livestockBreed.ModifiedOn = DateTime.Now;
                 livestockBreed.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockBreed.Id.ToString(), livestockBreed.GetType().Name, "Modified", livestockBreed.ModifiedBy) }), cancellationToken);

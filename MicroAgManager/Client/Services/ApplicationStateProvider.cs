@@ -1,5 +1,6 @@
 ﻿using BackEnd.Infrastructure;
 using Domain.Logging;
+using FrontEnd.Components.Shared;
 using FrontEnd.Data;
 using FrontEnd.Persistence;
 using Microsoft.AspNetCore.Components;
@@ -26,6 +27,7 @@ namespace FrontEnd.Services
         private static ILogger _log;
 
         public Dictionary<string,List<object>> RowDetailsShowing { get; set; } = new Dictionary<string, List<object>>();
+        public Dictionary<string, TabPage?> SelectedTabs { get; set; } = new Dictionary<string, TabPage?>();
 
         public ILogger? log { get => _log; }
         public FrontEndDbContext? dbContext { get => _dbContext;}

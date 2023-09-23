@@ -144,7 +144,7 @@
                         </td>
                     }
                 </tr>
-                    @if (TableRowDetailTemplate is not null && IsRowDetailsShowing(item))
+                    @if (TableRowDetailTemplate is not null && @IsRowDetailsShowing(item))
                 {
                     <tr class="rowdetail @SelectedClass(item)" @ondblclick="@((e) => OnRowDoubleClicked(e, item))">
                         <td colspan="@Columns.Count()">

@@ -5,7 +5,7 @@
 namespace FrontEnd.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class preNet8prep : Migration
+    public partial class restart : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,6 @@ namespace FrontEnd.Persistence.Migrations
                     SystemRequired = table.Column<bool>(type: "INTEGER", nullable: false),
                     LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -45,7 +44,6 @@ namespace FrontEnd.Persistence.Migrations
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -71,7 +69,6 @@ namespace FrontEnd.Persistence.Migrations
                     Country = table.Column<string>(type: "TEXT", nullable: true),
                     CountryCode = table.Column<string>(type: "TEXT", maxLength: 2, nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -95,7 +92,6 @@ namespace FrontEnd.Persistence.Migrations
                     ParentPlotId = table.Column<long>(type: "INTEGER", nullable: true),
                     LandPlotModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -107,6 +103,26 @@ namespace FrontEnd.Persistence.Migrations
                         column: x => x.LandPlotModelId,
                         principalTable: "LandPlots",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LivestockAnimals",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    GroupName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    ParentMaleName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    ParentFemaleName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    Care = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LivestockAnimals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -123,7 +139,6 @@ namespace FrontEnd.Persistence.Migrations
                     DateReported = table.Column<DateTime>(type: "TEXT", nullable: true),
                     DatePrinted = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -144,34 +159,12 @@ namespace FrontEnd.Persistence.Migrations
                     Method = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     ReportOrder = table.Column<int>(type: "INTEGER", nullable: false),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LivestockFeedAnalysisParameters", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LivestockAnimals",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    GroupName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    ParentMaleName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    ParentFemaleName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    Care = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LivestockAnimals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,7 +195,6 @@ namespace FrontEnd.Persistence.Migrations
                     SystemRequired = table.Column<bool>(type: "INTEGER", nullable: false),
                     LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -220,9 +212,8 @@ namespace FrontEnd.Persistence.Migrations
                     GuidId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     TenantUserAdminId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -269,7 +260,6 @@ namespace FrontEnd.Persistence.Migrations
                     DutyModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     EventModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -289,32 +279,6 @@ namespace FrontEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LivestockFeedAnalysisResults",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    AnalysisId = table.Column<long>(type: "INTEGER", nullable: false),
-                    ParameterId = table.Column<long>(type: "INTEGER", nullable: false),
-                    AsFed = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    Dry = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
-                    LivestockFeedAnalysisModelId = table.Column<long>(type: "INTEGER", nullable: true),
-                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LivestockFeedAnalysisResults", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LivestockFeedAnalysisResults_LivestockFeedAnalyses_LivestockFeedAnalysisModelId",
-                        column: x => x.LivestockFeedAnalysisModelId,
-                        principalTable: "LivestockFeedAnalyses",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LivestockBreeds",
                 columns: table => new
                 {
@@ -327,7 +291,6 @@ namespace FrontEnd.Persistence.Migrations
                     HeatPeriod = table.Column<int>(type: "INTEGER", nullable: false),
                     LivestockAnimalModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -359,7 +322,6 @@ namespace FrontEnd.Persistence.Migrations
                     Distribution = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     LivestockAnimalModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -389,7 +351,6 @@ namespace FrontEnd.Persistence.Migrations
                     ForSale = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     LivestockAnimalModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -400,6 +361,31 @@ namespace FrontEnd.Persistence.Migrations
                         name: "FK_LivestockStatuses_LivestockAnimals_LivestockAnimalModelId",
                         column: x => x.LivestockAnimalModelId,
                         principalTable: "LivestockAnimals",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LivestockFeedAnalysisResults",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AnalysisId = table.Column<long>(type: "INTEGER", nullable: false),
+                    ParameterId = table.Column<long>(type: "INTEGER", nullable: false),
+                    AsFed = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    Dry = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    LivestockFeedAnalysisModelId = table.Column<long>(type: "INTEGER", nullable: true),
+                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LivestockFeedAnalysisResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LivestockFeedAnalysisResults_LivestockFeedAnalyses_LivestockFeedAnalysisModelId",
+                        column: x => x.LivestockFeedAnalysisModelId,
+                        principalTable: "LivestockFeedAnalyses",
                         principalColumn: "Id");
                 });
 
@@ -461,6 +447,7 @@ namespace FrontEnd.Persistence.Migrations
                     FatherId = table.Column<long>(type: "INTEGER", nullable: true),
                     LivestockBreedId = table.Column<long>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    BatchNumber = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Birthdate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Gender = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Variety = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
@@ -474,7 +461,6 @@ namespace FrontEnd.Persistence.Migrations
                     ForSale = table.Column<bool>(type: "INTEGER", nullable: false),
                     LivestockBreedModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -501,7 +487,6 @@ namespace FrontEnd.Persistence.Migrations
                     DatePerformed = table.Column<DateTime>(type: "TEXT", nullable: false),
                     LivestockFeedModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -527,7 +512,6 @@ namespace FrontEnd.Persistence.Migrations
                     Serving = table.Column<decimal>(type: "TEXT", precision: 18, scale: 3, nullable: false),
                     LivestockFeedModelId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EntityModifiedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
@@ -615,6 +599,12 @@ namespace FrontEnd.Persistence.Migrations
                 column: "LandPlotModelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LivestockAnimals_Name",
+                table: "LivestockAnimals",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LivestockBreeds_LivestockAnimalModelId",
                 table: "LivestockBreeds",
                 column: "LivestockAnimalModelId");
@@ -653,12 +643,6 @@ namespace FrontEnd.Persistence.Migrations
                 name: "IX_LivestockStatuses_LivestockAnimalModelId",
                 table: "LivestockStatuses",
                 column: "LivestockAnimalModelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LivestockAnimals_Name",
-                table: "LivestockAnimals",
-                column: "Name",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduledDuties_CompletedOn",

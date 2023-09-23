@@ -39,6 +39,7 @@ namespace Domain.Models
             duty.DueOn = DueOn;
             duty.ReminderDays = ReminderDays;
             duty.Duty.Id=DutyId;
+            duty.ModifiedOn = DateTime.UtcNow;
 
             return duty;
         }

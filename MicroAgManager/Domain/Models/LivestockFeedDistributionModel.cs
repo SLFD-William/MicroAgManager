@@ -34,6 +34,7 @@ namespace Domain.Models
             entity.Note = Note; 
             entity.DatePerformed = DatePerformed;   
             entity.Feed.Id = FeedId;
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

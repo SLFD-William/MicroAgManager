@@ -36,6 +36,7 @@ namespace Domain.Models
             if (milestone.Duties?.Any() ?? false)
                 foreach (var plot in milestone.Duties)
                     Duties.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
+            milestone.ModifiedOn = DateTime.UtcNow;
             return milestone;
         }
     }

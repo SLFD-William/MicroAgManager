@@ -32,6 +32,7 @@ namespace Domain.Models
             entity.AsFed = AsFed;
             entity.Dry = Dry;
             entity.Analysis.Id = AnalysisId;
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

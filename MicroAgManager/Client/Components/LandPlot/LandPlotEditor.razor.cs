@@ -1,5 +1,6 @@
 ﻿using BackEnd.BusinessLogic.LandPlots;
 using Domain.Models;
+using FrontEnd.Components.Farm;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -10,7 +11,7 @@ namespace FrontEnd.Components.LandPlot
 {
     public partial class LandPlotEditor : DataComponent
     {
-        [CascadingParameter] FarmLocationModel farm { get; set; }
+        [CascadingParameter] FarmLocationSummary farm { get; set; }
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
         [Parameter] public bool showUpdateCancelButtons { get; set; }

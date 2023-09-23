@@ -51,6 +51,7 @@ namespace Domain.Models
             if (entity.Feeds?.Any() ?? false)
                 foreach (var breed in entity.Feeds)
                     Feeds?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

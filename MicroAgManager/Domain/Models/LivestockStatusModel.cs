@@ -47,6 +47,7 @@ namespace Domain.Models
             if (entity.Livestocks.Any())
                 foreach (var subplot in entity.Livestocks)
                     Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

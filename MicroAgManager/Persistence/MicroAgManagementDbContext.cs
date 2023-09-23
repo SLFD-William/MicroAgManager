@@ -1,4 +1,5 @@
-﻿using Domain.Entity;
+﻿using Domain.Abstracts;
+using Domain.Entity;
 using Domain.Interfaces;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
@@ -36,6 +37,7 @@ namespace Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<LivestockFeed>()
                 .HasMany(lf => lf.Servings)
                 .WithOne(s => s.Feed)

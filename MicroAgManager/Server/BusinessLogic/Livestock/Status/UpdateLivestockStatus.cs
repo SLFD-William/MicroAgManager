@@ -21,7 +21,6 @@ namespace BackEnd.BusinessLogic.Livestock.Status
             {
                 var livestockStatus = _context.LivestockStatuses.Find(request.LivestockStatus.Id);
                 livestockStatus = request.LivestockStatus.MapToEntity(livestockStatus);
-                livestockStatus.ModifiedOn = DateTime.Now;
                 livestockStatus.ModifiedBy = request.ModifiedBy;
                 livestockStatus.TenantId = request.TenantId;
                 _context.LivestockStatuses.Update(livestockStatus);

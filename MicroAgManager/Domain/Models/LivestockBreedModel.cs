@@ -35,7 +35,8 @@ namespace Domain.Models
             entity.GestationPeriod = GestationPeriod;  
             entity.HeatPeriod = HeatPeriod;
             entity.Name = Name;
-            if(entity.Livestocks.Any())
+            entity.ModifiedOn = DateTime.UtcNow;
+            if (entity.Livestocks.Any())
                 foreach (var livestock in entity.Livestocks)
                     Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.MapToEntity(livestock);
             return entity;

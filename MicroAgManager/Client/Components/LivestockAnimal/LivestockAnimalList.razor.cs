@@ -9,8 +9,8 @@ namespace FrontEnd.Components.LivestockAnimal
     {
         [CascadingParameter] FarmLocationModel farm { get; set; }
 
-        public TableTemplate<LivestockAnimalRow> _listComponent;
-        [Parameter] public IEnumerable<LivestockAnimalRow> Items { get; set; } = new List<LivestockAnimalRow>();
+        public TableTemplate<LivestockAnimalSummary> _listComponent;
+        [Parameter] public IEnumerable<LivestockAnimalSummary> Items { get; set; } = new List<LivestockAnimalSummary>();
 
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LivestockAnimalModel>? AnimalSelected { get; set; }
@@ -21,23 +21,24 @@ namespace FrontEnd.Components.LivestockAnimal
         }
         private LivestockAnimalModel? _editAnimal;
         private LivestockAnimalEditor? _animalEditor;
-        private void EditAnimal(long id)
+        private async Task<LivestockAnimalModel?> FindAnimal(long Id) => await app.dbContext.LivestockAnimals.FindAsync(Id);
+        private async Task EditAnimal(long id)
         {
-            _editAnimal = id>0 ? app.dbContext.LivestockAnimals.Find(id): new LivestockAnimalModel();
+            _editAnimal = id>0 ? await FindAnimal(id): new LivestockAnimalModel();
             StateHasChanged();
         }
 
         private void TableItemSelected()
         {
             if (_listComponent.SelectedItems.Count() > 0)
-                AnimalSelected?.Invoke(app.dbContext.LivestockAnimals.Find(_listComponent.SelectedItems.First().Id));
+                AnimalSelected?.Invoke(Task.Run(async()=> await FindAnimal(_listComponent.SelectedItems.First().Id)).Result);
         }
         public override async Task FreshenData()
         {
             if (_listComponent is null) return;
             
             if (Items is null)
-                Items = app.dbContext.LivestockAnimals.OrderBy(f => f.Name).Select(f=> LivestockAnimalRow.Create(app,f)).AsEnumerable() ?? new List<LivestockAnimalRow>();
+                Items = app.dbContext.LivestockAnimals.OrderBy(f => f.Name).Select(f=> new LivestockAnimalSummary(f,app.dbContext)).AsEnumerable() ?? new List<LivestockAnimalSummary>();
             
             _listComponent.Update();
         }

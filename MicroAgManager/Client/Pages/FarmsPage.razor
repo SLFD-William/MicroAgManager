@@ -3,6 +3,7 @@
 @page "/"
 @page "/Farms"
 @page "/Farms/{farmId:long}"
+@using FrontEnd.Components.Farm;
 <PageTitle>Farms</PageTitle>
 <div style="max-height:100vh">
 
@@ -16,7 +17,7 @@
         }
         else
         {
-            <FrontEnd.Components.Farm.FarmList Items="@app.dbContext.Farms.ToList()"></FrontEnd.Components.Farm.FarmList>
+            <FrontEnd.Components.Farm.FarmList Items="@app.dbContext.Farms.Select(f=>new FarmLocationSummary(f,app.dbContext)).ToList()"></FrontEnd.Components.Farm.FarmList>
         }
     }
     

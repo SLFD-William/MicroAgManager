@@ -54,7 +54,7 @@ namespace Domain.Models
             if(entity.Livestocks?.Any() ?? false)
                 foreach(var livestock in entity.Livestocks)
                     Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.MapToEntity(livestock);
-
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

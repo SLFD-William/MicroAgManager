@@ -46,6 +46,7 @@ namespace Domain.Models
             farm.Country = Country;
             farm.Name = Name;
             farm.CountryCode = CountryCode;
+            farm.ModifiedOn = DateTime.UtcNow;
             return farm;
         }
     }
