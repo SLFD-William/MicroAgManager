@@ -1,0 +1,17 @@
+﻿@using Domain.Models;
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <ValidatedForm TValue=MilestoneModel editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(milestone.Id<1)">
+        <DataContent>
+            <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => milestone.Subcategory)">
+                <InputText placeholder="Milestone" @bind-Value="@milestone.Subcategory" />
+            </ValidatedField>
+        </DataContent>
+    </ValidatedForm>
+}

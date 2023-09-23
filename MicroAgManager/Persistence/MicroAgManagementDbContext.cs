@@ -1,5 +1,4 @@
-﻿using Domain.Abstracts;
-using Domain.Entity;
+﻿using Domain.Entity;
 using Domain.Interfaces;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;

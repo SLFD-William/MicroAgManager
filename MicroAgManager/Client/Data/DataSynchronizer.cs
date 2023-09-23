@@ -137,17 +137,20 @@ namespace FrontEnd.Data
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockAnimalModel))) await BulkUpdateLivestockAnimals(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockBreedModel))) await BulkUpdateLivestockBreeds(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockStatusModel))) await BulkUpdateLivestockStatuses(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedServingModel))) await BulkUpdateLivestockFeedServings(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedDistributionModel))) await BulkUpdateLivestockFeedDistributions(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisParameterModel))) await BulkUpdateLivestockFeedAnalysisParameters(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisModel))) await BulkUpdateLivestockFeedAnalyses(db, connection, _api);
-                    if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisResultModel))) await BulkUpdateLivestockFeedAnalysisResults(db, connection, _api);
                     if (ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) await BulkUpdateLivestocks(db, connection, _api);
+                    if (ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel))) await BulkUpdateMilestones(db, connection, _api);
+
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedServingModel))) await BulkUpdateLivestockFeedServings(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedDistributionModel))) await BulkUpdateLivestockFeedDistributions(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisParameterModel))) await BulkUpdateLivestockFeedAnalysisParameters(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisModel))) await BulkUpdateLivestockFeedAnalyses(db, connection, _api);
+                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisResultModel))) await BulkUpdateLivestockFeedAnalysisResults(db, connection, _api);
+
+
                     //if (ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) await BulkUpdateDuties(db, connection, _api);
                     //if (ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) await BulkUpdateScheduledDuties(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel))) await BulkUpdateMilestones(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, connection, _api);
+                    //                    //if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, connection, _api);
                     transaction.Commit();
                 }
                 OnUpdate?.Invoke();
@@ -754,7 +757,7 @@ namespace FrontEnd.Data
         }
         private async static Task BulkUpdateMilestones(FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
-            var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
+            var existingAccountIds = new HashSet<long>(db.Milestones.Select(t => t.Id));
             var mostRecentUpdate = db.Milestones.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             while (true)
@@ -768,7 +771,7 @@ namespace FrontEnd.Data
                 var systemRequired = AddNamedParameter(command, "$SystemRequired");
                 var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
 
-                command.CommandText = $"INSERT or REPLACE INTO LivestockFeedAnalysisResults (Id,Deleted,EntityModifiedOn,ModifiedBy,Subcategory,SystemRequired,LivestockAnimalId) " +
+                command.CommandText = $"INSERT or REPLACE INTO Milestones (Id,Deleted,EntityModifiedOn,ModifiedBy,Subcategory,SystemRequired,LivestockAnimalId) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
                     $"{subcategory.ParameterName},{systemRequired.ParameterName},{LivestockAnimalId.ParameterName})";
 

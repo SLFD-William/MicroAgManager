@@ -38,17 +38,6 @@ namespace Domain.Logic
                 && e.LivestockAnimal.Id == animalType.Id);
             if (parturition == null)
             {
-                var birthDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
-                {
-                    Gender = GenderConstants.Female,
-                    LivestockAnimal = animalType,
-                    DaysDue = 0,
-                    Relationship = DutyRelationshipConstants.Self,
-                    SystemRequired = true,
-                    Name = "Birth",
-                    DutyTypeId = 0,
-                    DutyType = DutyTypeConstants.Birth
-                };
                 parturition = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
@@ -58,8 +47,7 @@ namespace Domain.Logic
                     LivestockAnimal = animalType,
                     Subcategory = MilestoneSubcategorySystemRequiredConstants.Parturition,
                 };
-                parturition.Duties.Add(birthDuty);
-                
+              
                 context.Milestones.Add(parturition);
             }
 
@@ -104,17 +92,6 @@ namespace Domain.Logic
                 && e.LivestockAnimal.Id == animalType.Id);
             if (breed == null)
             {
-                var breedDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
-                {
-                    Gender = GenderConstants.Female,
-                    LivestockAnimal = animalType,
-                    DaysDue = 0,
-                    Relationship = DutyRelationshipConstants.Self,
-                    SystemRequired = true,
-                    Name = MilestoneSubcategorySystemRequiredConstants.Breed,
-                    DutyTypeId = 0,
-                    DutyType = DutyTypeConstants.Breed,
-                };
                 breed = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
@@ -124,7 +101,6 @@ namespace Domain.Logic
                     LivestockAnimal = animalType,
                     Subcategory = MilestoneSubcategorySystemRequiredConstants.Breed
                 };
-                breed.Duties.Add(breedDuty);
                 context.Milestones.Add(breed);
             }
         }

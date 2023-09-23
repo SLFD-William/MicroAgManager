@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockStatus;
+using FrontEnd.Components.Milestone;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +15,16 @@ namespace FrontEnd.Components.LivestockAnimal
         private LivestockAnimalModel livestockAnimal { get; set; } = new LivestockAnimalModel();
         protected TabControl _tabControl;
         protected TabPage _breedsTab;
-        protected TabPage _statusTab;
-
-        private LivestockStatusEditor? _livestockStatusEditor;
-        protected LivestockStatusList _livestockStatusList;
-
-        private LivestockBreedEditor? _livestockBreedEditor;
         protected LivestockBreedList _livestockBreedList;
-        protected override void OnInitialized()
+        protected TabPage _statusTab;
+        protected LivestockStatusList _livestockStatusList;
+        protected TabPage _milestoneTab;
+        protected MilestoneList _milestoneList;
+
+        protected async override Task OnInitializedAsync()
         {
             _tabControl?.ActivatePage(app.SelectedTabs["LivestockAnimalSubTabs"] ?? _tabControl?.ActivePage ?? _breedsTab);
+            await FreshenData();
         }
         public override async Task FreshenData()
         {
@@ -42,6 +43,9 @@ namespace FrontEnd.Components.LivestockAnimal
             if (_livestockBreedList is not null)
                 await _livestockBreedList.FreshenData();
 
+            if (_milestoneList is not null)
+                await _milestoneList.FreshenData();
+
         }
         private async Task LivestockStatusUpdated(LivestockStatusModel args)
         {
@@ -55,6 +59,14 @@ namespace FrontEnd.Components.LivestockAnimal
         {
             if (args.Id > 0)
                 while (!app.dbContext.LivestockBreeds.Any(t => t.Id == args.Id))
+                    await Task.Delay(100);
+
+            await FreshenData();
+        }
+        private async Task MilestoneUpdated(MilestoneModel args)
+        {
+            if (args.Id > 0)
+                while (!app.dbContext.Milestones.Any(t => t.Id == args.Id))
                     await Task.Delay(100);
 
             await FreshenData();

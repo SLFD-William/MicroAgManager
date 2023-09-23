@@ -6,7 +6,7 @@ namespace FrontEnd.Components.Shared
     {
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public Action? TabSelected { get; set; }
-        [Parameter] public Dictionary<string, TabPage?> SelectedTabPage { get; set; }
+        [Parameter] public Dictionary<string, TabPage?> SelectedTab { get; set; }
         [Parameter] public string SelectedTabPageKey { get; set; }
         public TabPage? ActivePage { get; set; }
         List<TabPage> Pages = new List<TabPage>();
@@ -24,7 +24,7 @@ namespace FrontEnd.Components.Shared
         {
             ActivePage = ActivePage == page ? null : page;
             TabSelected?.Invoke();
-            SelectedTabPage[SelectedTabPageKey]=ActivePage;
+            SelectedTab[SelectedTabPageKey]=ActivePage;
             StateHasChanged();
         }
     }

@@ -40,8 +40,9 @@ namespace FrontEnd.Components.Farm
                     query = query.Where(f => f.Id == farmId);
                 farm = await query.OrderBy(f => f.Id).SingleOrDefaultAsync() ?? new FarmLocationModel();
             }
-            //await _landPlotList.FreshenData();
-            if(_livestockAnimalList is not null)
+            if (_landPlotList is not null)
+                await _landPlotList.FreshenData();
+            if (_livestockAnimalList is not null)
                 await _livestockAnimalList.FreshenData();
 
             

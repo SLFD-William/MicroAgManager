@@ -7,7 +7,7 @@ namespace FrontEnd.Components.LandPlot
 {
     public partial class LandPlotList : DataComponent
     {
-        [CascadingParameter] FarmLocationModel farm { get; set; }
+        [CascadingParameter] FarmLocationModel Farm { get; set; }
 
         public TableTemplate<LandPlotModel> _listComponent;
         [Parameter] public IEnumerable<LandPlotModel> Items { get; set; }=new List<LandPlotModel>();
@@ -17,14 +17,16 @@ namespace FrontEnd.Components.LandPlot
 
         private LandPlotModel? _editPlot;
         private LandPlotEditor? _landPlotEditor;
+
+        private async Task<LandPlotModel?> FindPlot(long Id) => await app.dbContext.LandPlots.FindAsync(Id);
         private void TableItemSelected()
         { 
             if(_listComponent.SelectedItems.Count() > 0)
                 PlotSelected?.Invoke(_listComponent.SelectedItems.First());
         }
-        private void EditPlot(long id)
+        private async Task EditPlot(long id)
         {
-            _editPlot = Items.First(p => p.Id == id);
+            _editPlot = id > 0 ? await FindPlot(id) : new LandPlotModel {FarmLocationId=Farm.Id };
             StateHasChanged();
         }
         private async Task EditCancelled()
@@ -37,7 +39,6 @@ namespace FrontEnd.Components.LandPlot
             if (args.Id > 0)
                 while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
                     await Task.Delay(100);
-            
             _editPlot = null;
             await FreshenData();
         }
@@ -48,7 +49,7 @@ namespace FrontEnd.Components.LandPlot
                 await Task.Delay(100);
 
             if (Items is null)
-                Items = app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).AsEnumerable() ?? new List<LandPlotModel>();
+                Items = app.dbContext.LandPlots.Where(f => f.FarmLocationId == Farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).AsEnumerable() ?? new List<LandPlotModel>();
             
             _listComponent.Update();
         }

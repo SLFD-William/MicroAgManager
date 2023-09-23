@@ -1,7 +1,7 @@
 ﻿@using Domain.Constants;
 
 @inherits DataComponent
-<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTabPage="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockBreedSubTabs)">
+<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockBreedSubTabs)">
     <TabPage @ref="_livestockTab" Text="Livestock">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>

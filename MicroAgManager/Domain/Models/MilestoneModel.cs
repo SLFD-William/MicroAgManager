@@ -17,7 +17,7 @@ namespace Domain.Models
             if (milestone == null) return null;
             var model = PopulateBaseModel(milestone, new MilestoneModel
             {
-                LivestockAnimalId= milestone.LivestockAnimal?.Id,
+                LivestockAnimalId= milestone.LivestockAnimalId,
                 Subcategory = milestone.Subcategory,
                 SystemRequired = milestone.SystemRequired,
                 Events= milestone.Events?.Select(EventModel.Create).ToList() ?? new List<EventModel?>(),
@@ -29,7 +29,7 @@ namespace Domain.Models
         {
             milestone.Subcategory= Subcategory;
             milestone.SystemRequired= SystemRequired;
-            if(LivestockAnimalId.HasValue && milestone.LivestockAnimal is not null) milestone.LivestockAnimal.Id= LivestockAnimalId.Value;
+            if(LivestockAnimalId.HasValue && milestone.LivestockAnimal is not null) milestone.LivestockAnimalId= LivestockAnimalId.Value;
             if (milestone.Events?.Any() ?? false)
                 foreach (var plot in milestone.Events)
                     Events.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);

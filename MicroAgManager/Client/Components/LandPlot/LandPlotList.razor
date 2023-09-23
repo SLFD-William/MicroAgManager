@@ -17,7 +17,8 @@
             Selectable="@Selectable" 
             OnSelectionChange="@TableItemSelected"
             CanDelete="@CanDelete"
-        >
+            NewItemName="Plot"
+            AddItemClicked="@(()=> EditPlot(0))">
             <ColumnContent>
                 <Column TableItem="LandPlotModel" Field="@(x => x.Id)" Title="ControlColumn">
                     <Template Context="e">

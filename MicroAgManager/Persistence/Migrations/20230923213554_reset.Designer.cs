@@ -12,8 +12,8 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230923163705_restart")]
-    partial class restart
+    [Migration("20230923213554_reset")]
+    partial class reset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,7 +141,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -205,7 +204,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -270,7 +268,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -342,7 +339,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -444,7 +440,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<long?>("MotherId")
@@ -517,7 +512,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -590,7 +584,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -657,7 +650,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -743,7 +735,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("TenantId")
@@ -796,7 +787,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Parameter")
@@ -866,7 +856,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<long>("ParameterId")
@@ -923,7 +912,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
@@ -981,7 +969,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Serving")
@@ -1060,7 +1047,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
@@ -1151,7 +1137,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Subcategory")
@@ -1223,7 +1208,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("ModifiedOn")
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("ReminderDays")

@@ -1,9 +1,10 @@
 ﻿@using Domain.Constants;
 @using FrontEnd.Components.LivestockAnimal;
 @using FrontEnd.Components.LivestockStatus;
+@using FrontEnd.Components.Milestone;
 @using FrontEnd.Components.LivestockBreed;
 @inherits DataComponent
-<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTabPage="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockAnimalSubTabs)">
+<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockAnimalSubTabs)">
     <TabPage @ref="_breedsTab" Text="Breeds">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_breedsTab)" @onclick="@(() =>_tabControl.ActivatePage(_breedsTab))">Breeds</button>
@@ -18,6 +19,14 @@
         </ButtonContent>
         <ChildContent>
             <LivestockStatusList @ref="_livestockStatusList" Items="app.dbContext.LivestockStatuses.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Status).Select(s=>new LivestockStatusSummary(s,app.dbContext))"></LivestockStatusList>
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_milestoneTab" Text="Milestones">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_milestoneTab)" @onclick="@(() =>_tabControl.ActivatePage(_milestoneTab))">Milestones</button>
+        </ButtonContent>
+        <ChildContent>
+            <MilestoneList @ref="_milestoneList" Items="app.dbContext.Milestones.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Subcategory).Select(s=>new MilestoneSummary(s,app.dbContext))"></MilestoneList>
         </ChildContent>
     </TabPage>
 </TabControl>

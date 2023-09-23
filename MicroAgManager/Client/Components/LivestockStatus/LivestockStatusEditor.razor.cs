@@ -41,23 +41,20 @@ namespace FrontEnd.Components.LivestockStatus
             if(LivestockAnimal is not null)
                 livestockAnimalId=LivestockAnimal.Id;
 
-            livestockStatus= new LivestockStatusModel() { LivestockAnimalId = livestockAnimalId.Value };
             var query = app.dbContext.LivestockStatuses.AsQueryable();
             if (livestockStatusId.HasValue && livestockStatusId > 0)
                 query = query.Where(f => f.Id == livestockStatusId);
             if (livestockAnimalId.HasValue && livestockAnimalId > 0)
                 query = query.Where(f => f.LivestockAnimalId == livestockAnimalId);
             
-            
+            livestockStatus=await query.FirstOrDefaultAsync() ?? new LivestockStatusModel() { LivestockAnimalId = livestockAnimalId.Value };
+
             editContext = new EditContext(livestockStatus);
         }
         public async Task OnSubmit()
         {
             try
             {
-               
-                var state = livestockStatus.Id <= 0 ? EntityState.Added : EntityState.Modified;
-
                 if (livestockStatus.Id <= 0)
                     livestockStatus.Id = await app.api.ProcessCommand<LivestockStatusModel, CreateLivestockStatus>("api/CreateLivestockStatus", new CreateLivestockStatus { LivestockStatus = livestockStatus });
                 else
