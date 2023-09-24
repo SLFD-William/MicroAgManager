@@ -12,8 +12,8 @@ namespace Domain.Entity
         [MaxLength(1)] public string? Gender { get; set; }
         [Required] public bool SystemRequired { get; set; }
         [Required] public int DaysDue { get; set; }
-        [Required] public long DutyTypeId { get; set; }
-        [Required][MaxLength(20)] public string DutyType { get; set; }
+        [Required] public long CommandId { get; set; }
+        [Required][MaxLength(20)] public string Command { get; set; }
         [Required][MaxLength(20)] public string Relationship { get; set; }
         [Required][MaxLength(40)]public string Name { get; set; }
         public virtual LivestockAnimal? LivestockAnimal { get; set; }

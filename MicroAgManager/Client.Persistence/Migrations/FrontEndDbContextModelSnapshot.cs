@@ -56,18 +56,18 @@ namespace FrontEnd.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DaysDue")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("DutyType")
+                    b.Property<string>("Command")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("DutyTypeId")
+                    b.Property<long>("CommandId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DaysDue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EntityModifiedOn")
@@ -769,6 +769,11 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("EntityModifiedOn")
                         .HasColumnType("TEXT");
 
@@ -778,7 +783,7 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Subcategory")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");

@@ -26,7 +26,7 @@
             <button type="button" class="@_tabControl.GetButtonClass(_milestoneTab)" @onclick="@(() =>_tabControl.ActivatePage(_milestoneTab))">Milestones</button>
         </ButtonContent>
         <ChildContent>
-            <MilestoneList @ref="_milestoneList" Items="app.dbContext.Milestones.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Subcategory).Select(s=>new MilestoneSummary(s,app.dbContext))"></MilestoneList>
+            <MilestoneList @ref="_milestoneList" Items="app.dbContext.Milestones.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Name).Select(s=>new MilestoneSummary(s,app.dbContext))"></MilestoneList>
         </ChildContent>
     </TabPage>
 </TabControl>

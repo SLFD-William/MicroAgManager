@@ -12,7 +12,7 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230923213554_reset")]
+    [Migration("20230924160854_reset")]
     partial class reset
     {
         /// <inheritdoc />
@@ -107,6 +107,14 @@ namespace BackEnd.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Command")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<long>("CommandId")
+                        .HasColumnType("bigint");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -121,14 +129,6 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("DutyType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<long>("DutyTypeId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Gender")
                         .HasMaxLength(1)
@@ -1130,6 +1130,11 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<long?>("LivestockAnimalId")
                         .HasColumnType("bigint");
 
@@ -1139,7 +1144,7 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Subcategory")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");

@@ -32,12 +32,23 @@ namespace Domain.Logic
         }
         public static void AddRequiredMilestones(LivestockAnimal animalType, IMicroAgManagementDbContext context)
         {
-            var parturition = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Parturition
+            var parturition = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Parturition
                 && e.TenantId == animalType.TenantId
                 && e.LivestockAnimal !=null 
                 && e.LivestockAnimal.Id == animalType.Id);
             if (parturition == null)
             {
+                var birthDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
+                {
+                    Gender = GenderConstants.Female,
+                    LivestockAnimal = animalType,
+                    DaysDue = 0,
+                    Relationship = DutyRelationshipConstants.Self,
+                    SystemRequired = true,
+                    Name = "Birth",
+                    CommandId = 0,
+                    Command = DutyCommands.Birth
+                };
                 parturition = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
@@ -45,13 +56,14 @@ namespace Domain.Logic
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
                     LivestockAnimal = animalType,
-                    Subcategory = MilestoneSubcategorySystemRequiredConstants.Parturition,
+                    Name = MilestoneSystemRequiredConstants.Parturition,
+                    Description= "The act of giving birth",
                 };
-              
+                parturition.Duties.Add(birthDuty);
                 context.Milestones.Add(parturition);
             }
 
-            var death = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Death &&
+            var death = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Death &&
                 e.TenantId == animalType.TenantId
                 && e.LivestockAnimal != null
                 && e.LivestockAnimal.Id == animalType.Id);
@@ -64,12 +76,13 @@ namespace Domain.Logic
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
                     LivestockAnimal = animalType,
-                    Subcategory = MilestoneSubcategorySystemRequiredConstants.Death
+                    Name = MilestoneSystemRequiredConstants.Death,
+                    Description = "The act of dying",
                 };
                 context.Milestones.Add(death);
             }
 
-            var birth = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Birth 
+            var birth = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Birth 
                 && e.TenantId == animalType.TenantId 
                 && e.LivestockAnimal != null 
                 && e.LivestockAnimal.Id == animalType.Id);
@@ -82,16 +95,28 @@ namespace Domain.Logic
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
                     LivestockAnimal = animalType,
-                    Subcategory = MilestoneSubcategorySystemRequiredConstants.Birth.ToString()
+                    Name = MilestoneSystemRequiredConstants.Birth.ToString(),
+                    Description = "The act of being born",
                 };
                 context.Milestones.Add(birth);
             }
-            var breed = context.Milestones.FirstOrDefault(e => e.Subcategory == MilestoneSubcategorySystemRequiredConstants.Breed
+            var breed = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Breed
                 && e.TenantId == animalType.TenantId
                 && e.LivestockAnimal != null
                 && e.LivestockAnimal.Id == animalType.Id);
             if (breed == null)
             {
+                var breedDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
+                {
+                    Gender = GenderConstants.Female,
+                    LivestockAnimal = animalType,
+                    DaysDue = 0,
+                    Relationship = DutyRelationshipConstants.Self,
+                    SystemRequired = true,
+                    Name = MilestoneSystemRequiredConstants.Breed,
+                    CommandId = 0,
+                    Command = DutyCommands.Breed,
+                };
                 breed = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
@@ -99,8 +124,10 @@ namespace Domain.Logic
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
                     LivestockAnimal = animalType,
-                    Subcategory = MilestoneSubcategorySystemRequiredConstants.Breed
+                    Name = MilestoneSystemRequiredConstants.Breed,
+                    Description= "The act of breeding",
                 };
+                breed.Duties.Add(breedDuty);
                 context.Milestones.Add(breed);
             }
         }

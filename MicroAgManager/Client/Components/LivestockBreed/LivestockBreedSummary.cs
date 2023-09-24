@@ -11,7 +11,7 @@ namespace FrontEnd.Components.LivestockBreed
         public LivestockBreedSummary(LivestockBreedModel livestockBreedModel, FrontEndDbContext context)
         {
             _livestockBreedModel = livestockBreedModel;
-            LivestockCount = context.Livestocks.Count(f => f.LivestockBreedId == livestockBreedModel.Id);
+            LivestockCount = context.LivestockBreeds.Find(livestockBreedModel.Id)?.Livestocks?.Count() ?? 0;
         }
         public int LivestockCount { get;private set; }
         public long LivestockAnimalId=>_livestockBreedModel.LivestockAnimalId;

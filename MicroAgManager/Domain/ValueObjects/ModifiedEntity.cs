@@ -2,10 +2,6 @@
 {
     public class ModifiedEntity : ValueObject
     {
-        public ModifiedEntity()
-        {
-        }
-
         public ModifiedEntity(string id, string entityName, string modification, Guid modifiedBy)
         {
             Id = id;

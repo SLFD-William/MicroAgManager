@@ -9,8 +9,8 @@ namespace Domain.Models
     {
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required] public int DaysDue { get; set; }
-        [Required][MaxLength(20)] public string DutyType { get; set; }
-        [Required][Range(1,long.MaxValue)] public long DutyTypeId { get; set; }
+        [Required][MaxLength(20)] public string Command { get; set; }
+        [Required][Range(1,long.MaxValue)] public long CommandId { get; set; }
         [Required][MaxLength(20)] public string Relationship { get; set; }
         [MaxLength(1)] public string? Gender { get; set; }
         [Required] public bool SystemRequired { get; set; }
@@ -28,8 +28,8 @@ namespace Domain.Models
             {
                 Name = duty.Name,
                 DaysDue = duty.DaysDue,
-                DutyType = duty.DutyType,
-                DutyTypeId = duty.DutyTypeId,
+                Command = duty.Command,
+                CommandId = duty.CommandId,
                 Relationship = duty.Relationship,
                 Gender = duty.Gender,
                 SystemRequired = duty.SystemRequired,
@@ -42,8 +42,8 @@ namespace Domain.Models
         }
         public Duty MapToEntity(Duty duty)
         { 
-            duty.DutyType= DutyType;
-            duty.DutyTypeId= DutyTypeId;
+            duty.Command= Command;
+            duty.CommandId= CommandId;
             duty.Name= Name;
             duty.DaysDue= DaysDue;
             duty.Relationship= Relationship;

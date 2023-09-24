@@ -15,6 +15,7 @@ using BackEnd.BusinessLogic.Duty;
 using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.Event;
+using BackEnd.BusinessLogic.ManyToMany;
 
 namespace Host
 {
@@ -91,6 +92,13 @@ namespace Host
             app.MapPost("/api/GetEvents", [Authorize] async (GetEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetEvent", [Authorize] async (GetEvent query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
 
+            app.MapPost("/api/GetDutyMilestoneList", [Authorize] async (GetDutyMilestoneList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetDutyEventList", [Authorize] async (GetDutyEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetLandPlotLivestockList", [Authorize] async (GetLandPlotLivestockList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetLivestockLivestockStatusList", [Authorize] async (GetLivestockLivestockStatusList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            
+            
+            
             app.MapPost("/api/CreateFarmLocation", [Authorize] async (CreateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateFarmLocation", [Authorize] async (UpdateFarmLocation command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateLandPlot", [Authorize] async (CreateLandPlot command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));

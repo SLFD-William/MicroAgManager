@@ -5,7 +5,7 @@
 namespace FrontEnd.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class restart : Migration
+    public partial class reset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,8 +18,8 @@ namespace FrontEnd.Persistence.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     DaysDue = table.Column<int>(type: "INTEGER", nullable: false),
-                    DutyType = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    DutyTypeId = table.Column<long>(type: "INTEGER", nullable: false),
+                    Command = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    CommandId = table.Column<long>(type: "INTEGER", nullable: false),
                     Relationship = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     Gender = table.Column<string>(type: "TEXT", maxLength: 1, nullable: true),
                     SystemRequired = table.Column<bool>(type: "INTEGER", nullable: false),
@@ -191,7 +191,8 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Subcategory = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     SystemRequired = table.Column<bool>(type: "INTEGER", nullable: false),
                     LivestockAnimalId = table.Column<long>(type: "INTEGER", nullable: true),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),

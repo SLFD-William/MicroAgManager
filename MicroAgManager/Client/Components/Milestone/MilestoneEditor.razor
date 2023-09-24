@@ -9,8 +9,8 @@
                    showUpdateCancelButtons="true"
                    createOnly="@(milestone.Id<1)">
         <DataContent>
-            <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => milestone.Subcategory)">
-                <InputText placeholder="Milestone" @bind-Value="@milestone.Subcategory" />
+            <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => milestone.Name)">
+                <InputText placeholder="Milestone" @bind-Value="@milestone.Name" />
             </ValidatedField>
         </DataContent>
     </ValidatedForm>

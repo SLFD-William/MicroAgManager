@@ -11,7 +11,7 @@ namespace FrontEnd.Services
 {
     public interface IFrontEndApiServices 
     {
-        public Task<Tuple<long, ICollection<T?>>> ProcessQuery<T, TQuery>(string address, TQuery query) where T : BaseModel where TQuery : BaseQuery;
+        public Task<Tuple<long, ICollection<T?>>> ProcessQuery<T, TQuery>(string address, TQuery query) where T : class where TQuery : BaseQuery;
         public Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand;
         public Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude);
         public Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm);
@@ -70,7 +70,7 @@ namespace FrontEnd.Services
         }
 
 
-        public async Task<Tuple<long, ICollection<T?>>> ProcessQuery<T,TQuery>(string address, TQuery query) where  T : BaseModel where TQuery : BaseQuery
+        public async Task<Tuple<long, ICollection<T?>>> ProcessQuery<T,TQuery>(string address, TQuery query) where  T : class where TQuery : BaseQuery
         {
             var queryString = new StringContent(JsonConvert.SerializeObject(query), Encoding.UTF8, "application/json");
             var result = await SendTheRequest(HttpMethod.Post, address, queryString);
