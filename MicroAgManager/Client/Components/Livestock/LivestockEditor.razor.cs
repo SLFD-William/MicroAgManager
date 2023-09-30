@@ -96,6 +96,12 @@ namespace FrontEnd.Components.Livestock
 
             }
         }
+
+        private void StatusCreated(long e)
+        {
+            livestock.StatusId = e;
+            StateHasChanged();
+        }
         private async void Cancel()
         {
             editContext = new EditContext(livestock);

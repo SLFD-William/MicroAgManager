@@ -1,0 +1,46 @@
+﻿@using BackEnd.BusinessLogic.Livestock;
+@using Domain.Constants;
+@using Domain.Models;
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <CommandButton editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   Command="Service"
+                   showUpdateButton="@serviceLivestock.DamIds.Any()" @ref=_commandButton>
+        <DataContent>
+            <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => serviceLivestock.ServiceDate)">
+                <InputDate @bind-Value="@serviceLivestock.ServiceDate" />
+            </ValidatedField>
+            <ValidatedField Legend="Male" ValidationMessageFor="@(() => serviceLivestock.StudId)">
+                <InputSelect @bind-Value="@serviceLivestock.StudId">
+                    <option value="">Select Male ...</option>
+                    @foreach (var g in app.dbContext.Livestocks.Where(l => l.LivestockBreedId == LivestockBreed.Id && !l.Sterile && l.Gender == GenderConstants.Male))
+                    {
+                        <option value="@g.Id">@g.Name</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Females" ValidationMessageFor="@(() => serviceLivestock.DamIds)">
+                <ul>
+                    @foreach(var g in app.dbContext.Livestocks.Where(l => serviceLivestock.DamIds.Contains(l.Id)))
+                    {
+                        <li>@g.Name</li>
+                    }
+                </ul>
+                <select @onchange="FemaleSelected">
+                    <option value="">Select Female ...</option>
+                    @foreach (var g in app.dbContext.Livestocks.Where(l => l.LivestockBreedId == LivestockBreed.Id && !l.Sterile && l.Gender == GenderConstants.Female && !serviceLivestock.DamIds.Contains(l.Id)))
+                    {
+                        <option value="@g.Id">@g.Name</option>
+                    }
+                </select>
+            </ValidatedField>
+            <ValidatedField Legend="Notes" ValidationMessageFor="@(() => serviceLivestock.Notes)">
+                <InputTextArea @bind-Value="@serviceLivestock.Notes" />
+            </ValidatedField>
+        </DataContent>
+    </CommandButton>
+}

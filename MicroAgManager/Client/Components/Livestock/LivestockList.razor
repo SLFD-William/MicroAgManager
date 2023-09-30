@@ -38,7 +38,8 @@
                 <Column TableItem="LivestockSummary" Field="@(x => x.Status)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
                 <Column TableItem="LivestockSummary" Field="@(x => x.Gender)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
                 <Column TableItem="LivestockSummary" Field="@(x => x.BatchNumber)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockSummary" Field="@(x => x.Birthdate)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockSummary" Field="@(x => x.Birthdate)" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="LivestockSummary" Field="@(x => x.OpenScheduledDutyCount)" Title="Open Duties" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             </ColumnContent>
             @* <TableRowDetailTemplate>
                 <CascadingValue Value="@(context as LivestockAnimalModel)">

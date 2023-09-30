@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace FrontEnd.Components.Shared
 {
-    public partial class ValidatedForm<TValue>
+    public partial class ValidatedForm
     {
         [Inject] protected ApplicationStateProvider app { get; set; }
         [Parameter] public RenderFragment DataContent { get; set; }

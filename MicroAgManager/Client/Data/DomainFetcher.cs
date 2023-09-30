@@ -8,6 +8,7 @@ using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
 using BackEnd.BusinessLogic.ManyToMany;
 using BackEnd.BusinessLogic.Milestone;
+using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
 using Domain.Abstracts;
 using Domain.Models;
@@ -436,14 +437,15 @@ namespace FrontEnd.Data
                 var baseParameters = GetBaseModelParameters(command);
                 var femaleId = AddNamedParameter(command, "$FemaleId");
                 var maleId = AddNamedParameter(command, "$MaleId");
+                var notes = AddNamedParameter(command, "$Notes");
                 var serviceDate = AddNamedParameter(command, "$ServiceDate");
                 var resolutionDate = AddNamedParameter(command, "$ResolutionDate");
                 var stillBornMales = AddNamedParameter(command, "$StillBornMales");
                 var stillBornFemales = AddNamedParameter(command, "$StillBornFemales");
 
-                command.CommandText = $"INSERT or REPLACE INTO BreedingRecords (Id,Deleted,EntityModifiedOn,ModifiedBy,FemaleId,MaleId,ServiceDate,ResolutionDate,StillBornMales,StillBornFemales) " +
+                command.CommandText = $"INSERT or REPLACE INTO BreedingRecords (Id,Deleted,EntityModifiedOn,ModifiedBy,FemaleId,MaleId,ServiceDate,ResolutionDate,StillBornMales,StillBornFemales,Notes) " +
                 $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{femaleId.ParameterName},{maleId.ParameterName},{serviceDate.ParameterName},{resolutionDate.ParameterName},{stillBornMales.ParameterName},{stillBornFemales.ParameterName})";
+                $"{femaleId.ParameterName},{maleId.ParameterName},{serviceDate.ParameterName},{resolutionDate.ParameterName},{stillBornMales.ParameterName},{stillBornFemales.ParameterName},{notes.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -455,9 +457,57 @@ namespace FrontEnd.Data
                     maleId.Value = model.MaleId.HasValue ? model.MaleId : DBNull.Value;
                     stillBornMales.Value= model.StillbornMales.HasValue ? model.StillbornMales : DBNull.Value;
                     stillBornFemales.Value = model.StillbornFemales.HasValue ? model.StillbornFemales : DBNull.Value;
-
+                    notes.Value = model.Notes ?? string.Empty;
                     await command.ExecuteNonQueryAsync();
                 }
+            }
+        }
+
+        public async static Task BulkUpdateScheduledDuties(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) return;
+            var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
+            var mostRecentUpdate = db.ScheduledDuties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<ScheduledDutyModel, GetScheduledDutyList>("api/GetScheduledDuties", new GetScheduledDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var dutyId = AddNamedParameter(command, "$DutyId");
+                var dismissed = AddNamedParameter(command, "$Dismissed");
+                var dueOn = AddNamedParameter(command, "$DueOn");
+                var reminderDays = AddNamedParameter(command, "$ReminderDays");
+                var completedOn = AddNamedParameter(command, "$CompletedOn");
+                var completedBy = AddNamedParameter(command, "$CompletedBy");
+                var recordId = AddNamedParameter(command, "$RecordId");
+                var record = AddNamedParameter(command, "$Record");
+                var recipientId = AddNamedParameter(command, "$RecipientId");
+                var recipient = AddNamedParameter(command, "$Recipient");
+
+                command.CommandText = $"INSERT or REPLACE INTO ScheduledDuties (Id,Deleted,EntityModifiedOn,ModifiedBy,DutyId,Dismissed,DueOn,ReminderDays,CompletedOn,CompletedBy,RecordId,Record,RecipientId,Recipient) " +
+                    $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                    $"{dutyId.ParameterName},{dismissed.ParameterName},{dueOn.ParameterName},{reminderDays.ParameterName},{completedOn.ParameterName},{completedBy.ParameterName},{recordId.ParameterName},{record.ParameterName},{recipientId.ParameterName},{recipient.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    dutyId.Value = model.DutyId;
+                    dismissed.Value = model.Dismissed;
+                    dueOn.Value = model.DueOn;
+                    reminderDays.Value = model.ReminderDays;
+                    completedOn.Value = model.CompletedOn.HasValue ? model.CompletedOn : DBNull.Value;
+                    completedBy.Value = model.CompletedBy.HasValue ? model.CompletedBy : DBNull.Value;
+                    recordId.Value=model.RecordId;
+                    record.Value = model.Record;
+                    recipientId.Value = model.RecipientId;
+                    recipient.Value = model.Recipient;
+                    await command.ExecuteNonQueryAsync();
+                }
+
             }
         }
 
@@ -686,45 +736,7 @@ namespace FrontEnd.Data
         //        }
         //    }
         //}
-        //public async static Task BulkUpdateScheduledDuties(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
-        //{
-        //    if (!ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) return;
-        //    var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
-        //    var mostRecentUpdate = db.ScheduledDuties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
-        //    long totalCount = 0;
-        //    while (true)
-        //    {
-        //        var returned = await api.ProcessQuery<ScheduledDutyModel, GetScheduledDutyList>("api/GetScheduledDuties", new GetScheduledDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
-        //        totalCount += returned.Item2.Count;
-        //        var command = connection.CreateCommand();
-        //        var baseParameters = GetBaseModelParameters(command);
-        //        var dutyId = AddNamedParameter(command, "$DutyId");
-        //        var dismissed = AddNamedParameter(command, "$Dismissed");
-        //        var dueOn = AddNamedParameter(command, "$DueOn");
-        //        var reminderDays = AddNamedParameter(command, "$ReminderDays");
-        //        var completedOn = AddNamedParameter(command, "$CompletedOn");
-        //        var completedBy = AddNamedParameter(command, "$CompletedBy");
 
-        //        command.CommandText = $"INSERT or REPLACE INTO LivestockFeedAnalysisResults (Id,Deleted,EntityModifiedOn,ModifiedBy,DutyId,Dismissed,DueOn,ReminderDays,CompletedOn,CompletedBy) " +
-        //            $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-        //            $"{dutyId.ParameterName},{dismissed.ParameterName},{dueOn.ParameterName},{reminderDays.ParameterName},{completedOn.ParameterName},{completedBy.ParameterName})";
-
-        //        foreach (var model in returned.Item2)
-        //        {
-        //            if (model is null) continue;
-        //            PopulateBaseModelParameters(baseParameters, model);
-        //            dutyId.Value = model.DutyId;
-        //            dismissed.Value = model.Dismissed;
-        //            dueOn.Value = model.DueOn;
-        //            reminderDays.Value = model.ReminderDays;
-        //            completedOn.Value = model.CompletedOn.HasValue ? model.CompletedOn : DBNull.Value;
-        //            completedBy.Value = model.CompletedBy.HasValue ? model.CompletedBy : DBNull.Value;
-        //            await command.ExecuteNonQueryAsync();
-        //        }
-
-        //    }
-        //}
         //public async static Task BulkUpdateEvents(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         //{
         //    if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel))) return;

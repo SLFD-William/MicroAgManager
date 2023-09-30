@@ -11,8 +11,11 @@ namespace FrontEnd.Components.Livestock
         {
             _livestockModel = livestockModel;
             Status = context.LivestockStatuses.Find(livestockModel.StatusId).Status;
+            OpenScheduledDutyCount = context.ScheduledDuties.Where(d => d.Recipient == "Livestock" && d.RecipientId == _livestockModel.Id && !d.CompletedOn.HasValue).Count();
         }
         public int LivestockCount { get; private set; }
+
+        public int OpenScheduledDutyCount { get; private set; }
         public string Status { get; private set; }
         public long Id => _livestockModel.Id;
         public string Name => _livestockModel.Name;

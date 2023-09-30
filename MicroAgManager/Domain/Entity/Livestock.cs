@@ -15,7 +15,7 @@ namespace Domain.Entity
         [ForeignKey("Mother")] public long? MotherId { get; set; }
         [ForeignKey("Father")] public long? FatherId { get; set; }
         [Required][ForeignKey("Status")] public long? StatusId { get; set; }
-        [ForeignKey("Location")] public long? LocationId { get; set; }
+        [Required][ForeignKey("Location")] public long? LocationId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }
         [Required] public DateTime Birthdate { get; set; }

@@ -1,5 +1,4 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Status;
-using Domain.Constants;
 using Domain.Models;
 using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
@@ -11,12 +10,7 @@ namespace FrontEnd.Components.LivestockStatus
 {
     public partial class LivestockStatusEditor : DataComponent
     {
-        private readonly static List<string> StatusModes = new List<string> {
-            string.Empty,
-            LivestockStatusModeConstants.Unchanged,
-            LivestockStatusModeConstants.False,
-            LivestockStatusModeConstants.True
-        };
+
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockStatusModel LivestockStatus { get; set; }
         [Parameter] public bool showUpdateCancelButtons { get; set; }

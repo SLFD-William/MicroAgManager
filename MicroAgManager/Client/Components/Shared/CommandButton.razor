@@ -1,12 +1,37 @@
-﻿@typeparam TValue
-<div>
-    <button type="button" onclick="@(async ()=>await Clicked())">@Command</button>
+﻿<div>
+    <button type="button" @onclick=ShowModal>@Command</button>
     @if (_modalOpen)
     { 
         <div class="modalContainer">
             <dialog open="true">
-                @ChildContent
-                <button type="button" onclick="@(async ()=>await Clicked())">Close</button>
+                @if (editContext is not null)
+                {
+                    <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit">
+                        <DataAnnotationsValidator />
+                        <section class="dataSection">
+                            @DataContent
+                        </section>
+                        @if (SecondaryContent is not null)
+                        {
+                            <section class="secondaryContent">
+                                @SecondaryContent
+                            </section>
+                        }
+                        @if (showUpdateButton || showCancelButton)
+                        {
+                            <section class="updateCancelButtons">
+                                @if (showUpdateButton)
+                                {
+                                    <button type="submit">Execute</button>
+                                }
+                                @if (showCancelButton)
+                                {
+                                    <button type="button" @onclick="Cancel">Cancel</button>
+                                }
+                            </section>
+                        }
+                    </EditForm>
+                }
             </dialog>
         </div>
     }

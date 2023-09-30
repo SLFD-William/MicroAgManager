@@ -92,7 +92,7 @@ namespace Host
             app.MapPost("/api/GetMilestone", [Authorize] async (GetMilestone query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetEvents", [Authorize] async (GetEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetEvent", [Authorize] async (GetEvent query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            app.MapPost("/api/GetBreedingRecordList", [Authorize] async (GetBreedingRecordList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetBreedingRecords", [Authorize] async (GetBreedingRecordList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetBreedingRecord", [Authorize] async (GetBreedingRecord query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
 
             app.MapPost("/api/GetDutyMilestoneList", [Authorize] async (GetDutyMilestoneList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));

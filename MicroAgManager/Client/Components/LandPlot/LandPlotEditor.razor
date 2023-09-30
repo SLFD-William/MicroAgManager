@@ -4,7 +4,7 @@
 @inherits DataComponent
 @if (editContext is not null)
 {
-    <ValidatedForm TValue=LandPlotModel editContext="editContext"
+    <ValidatedForm editContext="editContext"
                    FreshenData="FreshenData"
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"

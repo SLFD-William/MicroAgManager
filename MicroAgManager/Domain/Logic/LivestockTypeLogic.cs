@@ -1,9 +1,7 @@
-﻿using Domain.Abstracts;
-using Domain.Constants;
+﻿using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
 using Domain.ValueObjects;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Logic
 {
@@ -17,16 +15,7 @@ namespace Domain.Logic
             entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created",LivestockAnimal.ModifiedBy));
 
             AddRequiredMilestones(LivestockAnimal, context);
-            var changes = ((DbContext)context).ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
-            foreach (var change in changes)
-            {
-                if(change.Entity as BaseEntity is null) continue;
-                var modification=change.State == EntityState.Added ? "Created" : "Modified";
-                var entityName = change.Entity.GetType().Name;
-                var entityId = change.Entity.GetType().GetProperty("Id").GetValue(change.Entity);
-                var modifiedBy = change.Entity.GetType().GetProperty("ModifiedBy").GetValue(change.Entity);
-                entitiesModified.Add(new ModifiedEntity(entityId.ToString(), entityName,modification, (Guid)modifiedBy));
-            }
+            entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));
             if (save) await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
         }

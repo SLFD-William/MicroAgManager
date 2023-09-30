@@ -103,6 +103,7 @@ namespace FrontEnd.Data
                     await DomainFetcher.BulkUpdateMilestones(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);
 
 
                     //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);

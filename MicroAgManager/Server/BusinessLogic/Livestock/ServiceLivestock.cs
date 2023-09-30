@@ -1,20 +1,20 @@
 ﻿using BackEnd.Abstracts;
-using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.Infrastructure;
-using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock
 {
     public class ServiceLivestock : BaseCommand
     {
-        public long StudId { get; set; }
+        [Required]public long StudId { get; set; }
         public required DateTime ServiceDate { get; set; }
-        public List<long> DamIds { get; set; } = new();
+        [Required] public required List<long> DamIds { get; set; }
+        public string Notes { get; set; }
         public bool GenerateScheduledDuties { get; set; } = true;
         public class Handler : BaseCommandHandler<ServiceLivestock>
         {
@@ -29,18 +29,18 @@ namespace BackEnd.BusinessLogic.Livestock
                 var stud = _context.Livestocks.Find(request.StudId);
                 var dams = _context.Livestocks.Where(f => request.DamIds.Contains(f.Id)).ToList();
                 await LivestockLogic.VerifyNoOpenBreedingRecord(dams.Select(d=>d.Id).ToList(),request.TenantId,_context,cancellationToken);
-                var modified = new List<ModifiedEntity>();
+                var modified = new List<Domain.Entity.BreedingRecord>();
                 foreach (var dam in dams)
                 {
                     var service = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId)
                     { 
                         FemaleId=dam.Id,
                         MaleId=stud?.Id,
-                        ServiceDate=request.ServiceDate
+                        ServiceDate=request.ServiceDate,
+                        Notes=request.Notes ?? string.Empty
                     };
                     _context.BreedingRecords.Add(service);
-                    modified.Add(new ModifiedEntity(dam.Id.ToString(), dam.GetType().Name, "Modified", service.ModifiedBy));
-                    modified.Add(new ModifiedEntity(service.Id.ToString(), service.GetType().Name, "Created", service.ModifiedBy));
+                    modified.Add(service);
                 }
 
                 try
@@ -48,11 +48,11 @@ namespace BackEnd.BusinessLogic.Livestock
                     await _context.SaveChangesAsync(cancellationToken);
                     if (!request.GenerateScheduledDuties)
                     {
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b=> new ModifiedEntity(b.Id.ToString(), b.GetType().Name,"Created",b.ModifiedBy)).ToList()), cancellationToken);
                         return 0;
                     }
-                    foreach (var dam in dams)
-                        await _mediator.Publish(new LivestockBred { EntityName =dam.GetType().Name, Id = dam.Id, ModifiedBy = request.ModifiedBy, TenantId =request.TenantId }, cancellationToken);
+                    foreach (var dam in modified)
+                        await _mediator.Publish(new LivestockBred { EntityName =dam.GetType().Name, Id =dam.Id, ModifiedBy = request.ModifiedBy, TenantId =request.TenantId }, cancellationToken);
                 }
                 catch (Exception ex) { _log.LogError(ex, "Unable to Service Livestock"); }
                 return 0;

@@ -2,11 +2,11 @@
 @inherits DataComponent
 @if (editContext is not null)
 {
-    <ValidatedForm TValue=LivestockBreedModel editContext="editContext"
+    <ValidatedForm editContext="editContext"
                    FreshenData="FreshenData"
-        OnValidSubmit="OnSubmit" 
-        Cancel="Cancel"
-        showUpdateCancelButtons="true"
+                   OnValidSubmit="OnSubmit" 
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="true"
                    createOnly="@(livestockBreed.Id<1)">
         <DataContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockBreed.Name)">

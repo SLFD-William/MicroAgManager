@@ -10,7 +10,7 @@ namespace Domain.Models
         [ForeignKey(nameof(LivestockModel))] public long? MotherId { get; set; }
         [ForeignKey(nameof(LivestockModel))] public long? FatherId { get; set; }
         [Required][ForeignKey(nameof(LivestockStatusModel))] public long? StatusId { get; set; }
-        [ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
+        [Required][ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
         [Required][ForeignKey(nameof(LivestockBreedModel))]  public long LivestockBreedId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }
@@ -18,14 +18,14 @@ namespace Domain.Models
         [Required][MaxLength(40)] public string Gender { get; set; }
         [MaxLength(40)] public string Variety { get; set; }
         [MaxLength(255)] public string Description { get; set; }
-        [Required] public bool BeingManaged { get; set; } = true;
-        [Required] public bool BornDefective { get; set; } = false;
+        public bool BeingManaged { get; set; } = true;
+        public bool BornDefective { get; set; } = false;
         //[RequiredIf("BornDefective", "True")]
         [MaxLength(255)] public string BirthDefect { get; set; }=string.Empty;
-        [Required] public bool Sterile { get; set; } = false;
-        [Required] public bool InMilk { get; set; } = false;
-        [Required] public bool BottleFed { get; set; } = false;
-        [Required] public bool ForSale { get; set; } = true;
+        public bool Sterile { get; set; } = false;
+        public bool InMilk { get; set; } = false;
+        public bool BottleFed { get; set; } = false;
+        public bool ForSale { get; set; } = true;
         public static LivestockModel Create(Livestock livestock)
         {
             var model = PopulateBaseModel(livestock, new LivestockModel

@@ -1,10 +1,11 @@
 ﻿@using Domain.Constants;
 @using Domain.Enums;
 @using Domain.Models;
+@using FrontEnd.Components.LivestockStatus;
 @inherits DataComponent
 @if (editContext is not null)
 {
-    <ValidatedForm TValue=LivestockAnimalModel editContext="editContext"
+    <ValidatedForm editContext="editContext"
                    FreshenData="FreshenData"
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
@@ -35,12 +36,29 @@
             <ValidatedField Legend="Birth Date" ValidationMessageFor="@(() => livestock.Birthdate)">
                 <InputDate @bind-Value="@livestock.Birthdate"/>
             </ValidatedField>
-            <ValidatedField Legend="Status" ValidationMessageFor="@(() => livestock.StatusId)">
-                <InputSelect @bind-Value="@StatusId">
-                    <option value="0">Select Status ...</option>
-                    @foreach (var g in app.dbContext.LivestockStatuses.Where(s => s.LivestockAnimalId == LivestockBreed.LivestockAnimalId).OrderBy(a => a.Status))
+            <ValidatedField ValidationMessageFor="@(() => livestock.StatusId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Status</span> <AddLivestockStatusCommand Command="+" Submitted="StatusCreated"></AddLivestockStatusCommand>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@StatusId">
+                        <option value="0">Select Status ...</option>
+                        @foreach (var g in app.dbContext.LivestockStatuses.Where(s => s.LivestockAnimalId == LivestockBreed.LivestockAnimalId).OrderBy(a => a.Status))
+                        {
+                            <option value="@g.Id" >@g.Status</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+                
+            </ValidatedField>
+            <ValidatedField Legend="Location" ValidationMessageFor="@(() => livestock.LocationId)">
+                <InputSelect @bind-Value="@livestock.LocationId">
+                    <option value="0">Select Location ...</option>
+                    @foreach (var g in app.dbContext.LandPlots.Where(p => p.Usage == LandPlotUseConstants.Livestock).OrderBy(a=>a.Name).ToList())
                     {
-                        <option value="@g.Id" >@g.Status</option>
+                        <option value="@g.Id">@g.Name</option>
                     }
                 </InputSelect>
             </ValidatedField>
