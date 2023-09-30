@@ -16,6 +16,7 @@ using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.Event;
 using BackEnd.BusinessLogic.ManyToMany;
+using BackEnd.BusinessLogic.BreedingRecord;
 
 namespace Host
 {
@@ -91,6 +92,8 @@ namespace Host
             app.MapPost("/api/GetMilestone", [Authorize] async (GetMilestone query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetEvents", [Authorize] async (GetEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetEvent", [Authorize] async (GetEvent query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetBreedingRecordList", [Authorize] async (GetBreedingRecordList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetBreedingRecord", [Authorize] async (GetBreedingRecord query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
 
             app.MapPost("/api/GetDutyMilestoneList", [Authorize] async (GetDutyMilestoneList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetDutyEventList", [Authorize] async (GetDutyEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
@@ -121,6 +124,7 @@ namespace Host
             app.MapPost("/api/UpdateLivestockBreed", [Authorize] async (UpdateLivestockBreed command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateLivestock", [Authorize] async (CreateLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateLivestock", [Authorize] async (UpdateLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/ServiceLivestock", [Authorize] async (ServiceLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
         }
     }
 }

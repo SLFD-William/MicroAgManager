@@ -1,4 +1,5 @@
-﻿@using Domain.Models;
+﻿@using Domain.Constants;
+@using Domain.Models;
 @inherits DataComponent
 @if (app != null)
 {
@@ -23,6 +24,9 @@
                 <Column TableItem="LivestockBreedSummary" Field="@(x => x.Id)" Title="ControlColumn">
                     <Template Context="e">
                         <button type="button" onclick="@(()=> _listComponent.ToggleRowDetailsShowing(e))">@(_listComponent.IsRowDetailsShowing(e) ? "Hide" : "Show") Details</button>
+                        <CommandButton TValue=LivestockBreedSummary Command="@DutyCommands.Service" Model="@e">
+                            Hello There
+                        </CommandButton>
                         @if (CanDelete)
                         {
                             <button type="button">Delete</button>
@@ -32,6 +36,7 @@
                 <Column TableItem="LivestockBreedSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" >
                     <Template Context="e">
                         <button type="button" onclick="@(()=> EditBreed(e.Id))">@e.Name</button>
+                        
                     </Template>
                 </Column>
                 <Column TableItem="LivestockBreedSummary" Field="@(x => x.Emoji)" Sortable="true" Filterable="true" UseInSuperSearch="true" />

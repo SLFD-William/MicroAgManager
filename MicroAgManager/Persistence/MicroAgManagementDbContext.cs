@@ -32,6 +32,7 @@ namespace Persistence
         public DbSet<Milestone> Milestones { get; set; }
         public DbSet<ScheduledDuty> ScheduledDuties { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<BreedingRecord> BreedingRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

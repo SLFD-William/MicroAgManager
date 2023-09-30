@@ -12,8 +12,8 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20230924160854_reset")]
-    partial class reset
+    [Migration("20230924222449_newer")]
+    partial class newer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -436,6 +436,9 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<long>("LivestockBreedId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("LocationId")
+                        .HasColumnType("bigint");
+
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -449,6 +452,10 @@ namespace BackEnd.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
+
+                    b.Property<long?>("StatusId")
+                        .IsRequired()
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("Sterile")
                         .HasColumnType("bit");
@@ -473,7 +480,11 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockBreedId");
 
+                    b.HasIndex("LocationId");
+
                     b.HasIndex("MotherId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Livestocks");
                 });
@@ -1472,36 +1483,6 @@ namespace BackEnd.Persistence.Migrations
                     b.ToTable("EventMilestone");
                 });
 
-            modelBuilder.Entity("LandPlotLivestock", b =>
-                {
-                    b.Property<long>("LivestocksId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("LocationsId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("LivestocksId", "LocationsId");
-
-                    b.HasIndex("LocationsId");
-
-                    b.ToTable("LandPlotLivestock");
-                });
-
-            modelBuilder.Entity("LivestockLivestockStatus", b =>
-                {
-                    b.Property<long>("LivestocksId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("StatusesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("LivestocksId", "StatusesId");
-
-                    b.HasIndex("StatusesId");
-
-                    b.ToTable("LivestockLivestockStatus");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -1709,15 +1690,29 @@ namespace BackEnd.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entity.LandPlot", "Location")
+                        .WithMany("Livestocks")
+                        .HasForeignKey("LocationId");
+
                     b.HasOne("Domain.Entity.Livestock", "Mother")
                         .WithMany()
                         .HasForeignKey("MotherId");
+
+                    b.HasOne("Domain.Entity.LivestockStatus", "Status")
+                        .WithMany("Livestocks")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Breed");
 
                     b.Navigation("Father");
 
+                    b.Navigation("Location");
+
                     b.Navigation("Mother");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Domain.Entity.LivestockBreed", b =>
@@ -1886,36 +1881,6 @@ namespace BackEnd.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LandPlotLivestock", b =>
-                {
-                    b.HasOne("Domain.Entity.Livestock", null)
-                        .WithMany()
-                        .HasForeignKey("LivestocksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.LandPlot", null)
-                        .WithMany()
-                        .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LivestockLivestockStatus", b =>
-                {
-                    b.HasOne("Domain.Entity.Livestock", null)
-                        .WithMany()
-                        .HasForeignKey("LivestocksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entity.LivestockStatus", null)
-                        .WithMany()
-                        .HasForeignKey("StatusesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -2011,6 +1976,8 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
                 {
+                    b.Navigation("Livestocks");
+
                     b.Navigation("Subplots");
                 });
 
@@ -2055,6 +2022,8 @@ namespace BackEnd.Persistence.Migrations
             modelBuilder.Entity("Domain.Entity.LivestockStatus", b =>
                 {
                     b.Navigation("FeedServings");
+
+                    b.Navigation("Livestocks");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using Domain.ValueObjects;
 using FrontEnd.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockBreed
 {
@@ -10,8 +11,8 @@ namespace FrontEnd.Components.LivestockBreed
 
         public LivestockBreedSummary(LivestockBreedModel livestockBreedModel, FrontEndDbContext context)
         {
-            _livestockBreedModel = livestockBreedModel;
-            LivestockCount = context.LivestockBreeds.Find(livestockBreedModel.Id)?.Livestocks?.Count() ?? 0;
+            _livestockBreedModel = context.LivestockBreeds.Include(l=>l.Livestocks).First(l=>l.Id==livestockBreedModel.Id);
+            LivestockCount = _livestockBreedModel.Livestocks.Count();
         }
         public int LivestockCount { get;private set; }
         public long LivestockAnimalId=>_livestockBreedModel.LivestockAnimalId;

@@ -1,15 +1,13 @@
-﻿using BackEnd.BusinessLogic.Duty;
-using BackEnd.BusinessLogic.Event;
+﻿using BackEnd.BusinessLogic.BreedingRecord;
+using BackEnd.BusinessLogic.Duty;
 using BackEnd.BusinessLogic.FarmLocation;
 using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Livestock;
 using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
-using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.ManyToMany;
 using BackEnd.BusinessLogic.Milestone;
-using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
 using Domain.Abstracts;
 using Domain.Models;
@@ -255,6 +253,8 @@ namespace FrontEnd.Data
                 var baseParameters = GetBaseModelParameters(command);
                 var motherId = AddNamedParameter(command, "$MotherId");
                 var fatherId = AddNamedParameter(command, "$FatherId");
+                var statusId = AddNamedParameter(command, "$StatusId");
+                var locationId = AddNamedParameter(command, "$LocationId");
                 var livestockBreedId = AddNamedParameter(command, "$LivestockBreedId");
                 var name = AddNamedParameter(command, "$Name");
                 var batchNumber = AddNamedParameter(command, "$BatchNumber");
@@ -273,17 +273,19 @@ namespace FrontEnd.Data
 
 
                 command.CommandText = $"INSERT or REPLACE INTO Livestocks (Id,Deleted,EntityModifiedOn,ModifiedBy,MotherId,FatherId,LivestockBreedId,Name,BatchNumber,Gender,Variety,Description," +
-                    $"BeingManaged,BornDefective,BirthDefect,Sterile,InMilk,BottleFed,ForSale,Birthdate) " +
+                    $"BeingManaged,BornDefective,BirthDefect,Sterile,InMilk,BottleFed,ForSale,Birthdate,StatusId,LocationId) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
                     $"{motherId.ParameterName},{fatherId.ParameterName},{livestockBreedId.ParameterName},{name.ParameterName},{batchNumber.ParameterName},{gender.ParameterName}," +
                     $"{variety.ParameterName},{description.ParameterName},{beingManaged.ParameterName},{bornDefective.ParameterName},{birthDefect.ParameterName},{sterile.ParameterName}," +
-                    $"{inMilk.ParameterName},{bottleFed.ParameterName},{forSale.ParameterName},{birthDate.ParameterName})";
+                    $"{inMilk.ParameterName},{bottleFed.ParameterName},{forSale.ParameterName},{birthDate.ParameterName},{statusId.ParameterName},{locationId.ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
                     motherId.Value = model.MotherId.HasValue ? model.MotherId.Value : DBNull.Value;
                     fatherId.Value = model.FatherId.HasValue ? model.FatherId.Value : DBNull.Value;
+                    locationId.Value = model.LocationId.HasValue ? model.LocationId.Value : DBNull.Value;
+                    statusId.Value = model.StatusId;
                     livestockBreedId.Value = model.LivestockBreedId;
                     name.Value = model.Name;
                     batchNumber.Value = model.BatchNumber;
@@ -419,7 +421,46 @@ namespace FrontEnd.Data
                 }
             }
         }
-        
+        public async static Task BulkUpdateBreedingRecords(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(BreedingRecordModel))) return;
+            var existingAccountIds = new HashSet<long>(db.BreedingRecords.Select(t => t.Id));
+            var mostRecentUpdate = db.BreedingRecords.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<BreedingRecordModel, GetBreedingRecordList>("api/GetBreedingRecords", new GetBreedingRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var femaleId = AddNamedParameter(command, "$FemaleId");
+                var maleId = AddNamedParameter(command, "$MaleId");
+                var serviceDate = AddNamedParameter(command, "$ServiceDate");
+                var resolutionDate = AddNamedParameter(command, "$ResolutionDate");
+                var stillBornMales = AddNamedParameter(command, "$StillBornMales");
+                var stillBornFemales = AddNamedParameter(command, "$StillBornFemales");
+
+                command.CommandText = $"INSERT or REPLACE INTO BreedingRecords (Id,Deleted,EntityModifiedOn,ModifiedBy,FemaleId,MaleId,ServiceDate,ResolutionDate,StillBornMales,StillBornFemales) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{femaleId.ParameterName},{maleId.ParameterName},{serviceDate.ParameterName},{resolutionDate.ParameterName},{stillBornMales.ParameterName},{stillBornFemales.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    serviceDate.Value = model.ServiceDate;
+                    resolutionDate.Value = model.ResolutionDate.HasValue ? model.ResolutionDate : DBNull.Value;
+                    femaleId.Value = model.FemaleId;
+                    maleId.Value = model.MaleId.HasValue ? model.MaleId : DBNull.Value;
+                    stillBornMales.Value= model.StillbornMales.HasValue ? model.StillbornMales : DBNull.Value;
+                    stillBornFemales.Value = model.StillbornFemales.HasValue ? model.StillbornFemales : DBNull.Value;
+
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
         //public async static Task BulkUpdateLivestockFeeds(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         //{
         //    if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) return;
@@ -778,66 +819,66 @@ namespace FrontEnd.Data
             }
         }
         
-        public async static Task BulkUpdatePlotLivestock(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
-        {
-            if (!ShouldEntityBeUpdated(entityModels, nameof(LandPlotModel)) && !ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
-            long totalCount = 0;
-            var dataReceived = new List<LandPlotLivestock>();
-            while (true)
-            {
-                var returned = await api.ProcessQuery<LandPlotLivestock, GetLandPlotLivestockList>("api/GetLandPlotLivestockList", new GetLandPlotLivestockList { Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
-                totalCount += returned.Item2.Count;
-                dataReceived.AddRange(returned.Item2);
-            }
-            var command = connection.CreateCommand();
-            var location = AddNamedParameter(command, "$LocationsId");
-            var livestock = AddNamedParameter(command, "$LivestocksId");
+        //public async static Task BulkUpdatePlotLivestock(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        //{
+        //    if (!ShouldEntityBeUpdated(entityModels, nameof(LandPlotModel)) && !ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
+        //    long totalCount = 0;
+        //    var dataReceived = new List<LandPlotLivestock>();
+        //    while (true)
+        //    {
+        //        var returned = await api.ProcessQuery<LandPlotLivestock, GetLandPlotLivestockList>("api/GetLandPlotLivestockList", new GetLandPlotLivestockList { Skip = (int)totalCount });
+        //        if (returned.Item2.Count == 0) break;
+        //        totalCount += returned.Item2.Count;
+        //        dataReceived.AddRange(returned.Item2);
+        //    }
+        //    var command = connection.CreateCommand();
+        //    var location = AddNamedParameter(command, "$LocationsId");
+        //    var livestock = AddNamedParameter(command, "$LivestocksId");
 
-            command.CommandText = $"Delete FROM LandPlotModelLivestockModel; ";
-            await command.ExecuteNonQueryAsync();
-            command.CommandText = $"INSERT or REPLACE INTO LandPlotModelLivestockModel (LocationsId,LivestocksId) " +
-                $"Values ({location.ParameterName},{livestock.ParameterName})";
+        //    command.CommandText = $"Delete FROM LandPlotModelLivestockModel; ";
+        //    await command.ExecuteNonQueryAsync();
+        //    command.CommandText = $"INSERT or REPLACE INTO LandPlotModelLivestockModel (LocationsId,LivestocksId) " +
+        //        $"Values ({location.ParameterName},{livestock.ParameterName})";
 
-            foreach (var model in dataReceived)
-            {
-                if (model is null) continue;
-                location.Value = model.LocationsId;
-                livestock.Value = model.LivestocksId;
-                await command.ExecuteNonQueryAsync();
-            }
+        //    foreach (var model in dataReceived)
+        //    {
+        //        if (model is null) continue;
+        //        location.Value = model.LocationsId;
+        //        livestock.Value = model.LivestocksId;
+        //        await command.ExecuteNonQueryAsync();
+        //    }
 
 
-        }
-        public async static Task BulkUpdateLivestockStatusLivestock(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
-        {
-            if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockStatusModel)) && !ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
-            long totalCount = 0;
-            var dataReceived = new List<LivestockLivestockStatus>();
-            while (true)
-            {
-                var returned = await api.ProcessQuery<LivestockLivestockStatus, GetLivestockLivestockStatusList>("api/GetLivestockLivestockStatusList", new GetLivestockLivestockStatusList { Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
-                totalCount += returned.Item2.Count;
-                dataReceived.AddRange(returned.Item2);
-            }
-            var command = connection.CreateCommand();
-            var status = AddNamedParameter(command, "$StatusesId");
-            var livestock = AddNamedParameter(command, "$LivestocksId");
+        //}
+        //public async static Task BulkUpdateLivestockStatusLivestock(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        //{
+        //    if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockStatusModel)) && !ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
+        //    long totalCount = 0;
+        //    var dataReceived = new List<LivestockLivestockStatus>();
+        //    while (true)
+        //    {
+        //        var returned = await api.ProcessQuery<LivestockLivestockStatus, GetLivestockLivestockStatusList>("api/GetLivestockLivestockStatusList", new GetLivestockLivestockStatusList { Skip = (int)totalCount });
+        //        if (returned.Item2.Count == 0) break;
+        //        totalCount += returned.Item2.Count;
+        //        dataReceived.AddRange(returned.Item2);
+        //    }
+        //    var command = connection.CreateCommand();
+        //    var status = AddNamedParameter(command, "$StatusesId");
+        //    var livestock = AddNamedParameter(command, "$LivestocksId");
 
-            command.CommandText = $"Delete FROM LivestockModelLivestockStatusModel; ";
-            await command.ExecuteNonQueryAsync();
-            command.CommandText = $"INSERT or REPLACE INTO LivestockModelLivestockStatusModel (StatusesId,LivestocksId) " +
-                $"Values ({status.ParameterName},{livestock.ParameterName})";
+        //    command.CommandText = $"Delete FROM LivestockModelLivestockStatusModel; ";
+        //    await command.ExecuteNonQueryAsync();
+        //    command.CommandText = $"INSERT or REPLACE INTO LivestockModelLivestockStatusModel (StatusesId,LivestocksId) " +
+        //        $"Values ({status.ParameterName},{livestock.ParameterName})";
 
-            foreach (var model in dataReceived)
-            {
-                if (model is null) continue;
-                status.Value = model.StatusesId;
-                livestock.Value = model.LivestocksId;
-                await command.ExecuteNonQueryAsync();
-            }
-        }
+        //    foreach (var model in dataReceived)
+        //    {
+        //        if (model is null) continue;
+        //        status.Value = model.StatusesId;
+        //        livestock.Value = model.LivestocksId;
+        //        await command.ExecuteNonQueryAsync();
+        //    }
+        //}
 
 
 

@@ -35,6 +35,15 @@
             <ValidatedField Legend="Birth Date" ValidationMessageFor="@(() => livestock.Birthdate)">
                 <InputDate @bind-Value="@livestock.Birthdate"/>
             </ValidatedField>
+            <ValidatedField Legend="Status" ValidationMessageFor="@(() => livestock.StatusId)">
+                <InputSelect @bind-Value="@StatusId">
+                    <option value="0">Select Status ...</option>
+                    @foreach (var g in app.dbContext.LivestockStatuses.Where(s => s.LivestockAnimalId == LivestockBreed.LivestockAnimalId).OrderBy(a => a.Status))
+                    {
+                        <option value="@g.Id" >@g.Status</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
             <ValidatedField Legend="Gender" ValidationMessageFor="@(() => livestock.Gender)">
                 <InputSelect @bind-Value="@livestock.Gender">
                     <option value="0">Select Gender ...</option>

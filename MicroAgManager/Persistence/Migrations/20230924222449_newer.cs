@@ -7,7 +7,7 @@
 namespace BackEnd.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class reset : Migration
+    public partial class newer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -609,58 +609,6 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Livestocks",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LivestockBreedId = table.Column<long>(type: "bigint", nullable: false),
-                    MotherId = table.Column<long>(type: "bigint", nullable: true),
-                    FatherId = table.Column<long>(type: "bigint", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    BatchNumber = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
-                    Variety = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    BirthDefect = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Sterile = table.Column<bool>(type: "bit", nullable: false),
-                    InMilk = table.Column<bool>(type: "bit", nullable: false),
-                    BottleFed = table.Column<bool>(type: "bit", nullable: false),
-                    ForSale = table.Column<bool>(type: "bit", nullable: false),
-                    BeingManaged = table.Column<bool>(type: "bit", nullable: false),
-                    BornDefective = table.Column<bool>(type: "bit", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Livestocks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Livestocks_LivestockBreeds_LivestockBreedId",
-                        column: x => x.LivestockBreedId,
-                        principalTable: "LivestockBreeds",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Livestocks_Livestocks_FatherId",
-                        column: x => x.FatherId,
-                        principalTable: "Livestocks",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Livestocks_Livestocks_MotherId",
-                        column: x => x.MotherId,
-                        principalTable: "Livestocks",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LivestockFeedAnalyses",
                 columns: table => new
                 {
@@ -759,6 +707,71 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Livestocks",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LivestockBreedId = table.Column<long>(type: "bigint", nullable: false),
+                    MotherId = table.Column<long>(type: "bigint", nullable: true),
+                    FatherId = table.Column<long>(type: "bigint", nullable: true),
+                    StatusId = table.Column<long>(type: "bigint", nullable: false),
+                    LocationId = table.Column<long>(type: "bigint", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    BatchNumber = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: false),
+                    Variety = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    BirthDefect = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Sterile = table.Column<bool>(type: "bit", nullable: false),
+                    InMilk = table.Column<bool>(type: "bit", nullable: false),
+                    BottleFed = table.Column<bool>(type: "bit", nullable: false),
+                    ForSale = table.Column<bool>(type: "bit", nullable: false),
+                    BeingManaged = table.Column<bool>(type: "bit", nullable: false),
+                    BornDefective = table.Column<bool>(type: "bit", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Livestocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Livestocks_LivestockBreeds_LivestockBreedId",
+                        column: x => x.LivestockBreedId,
+                        principalTable: "LivestockBreeds",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Livestocks_LivestockStatuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "LivestockStatuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Livestocks_Livestocks_FatherId",
+                        column: x => x.FatherId,
+                        principalTable: "Livestocks",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Livestocks_Livestocks_MotherId",
+                        column: x => x.MotherId,
+                        principalTable: "Livestocks",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Livestocks_Plots_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Plots",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DutyMilestone",
                 columns: table => new
                 {
@@ -807,49 +820,37 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LandPlotLivestock",
+                name: "LivestockFeedAnalysisResults",
                 columns: table => new
                 {
-                    LivestocksId = table.Column<long>(type: "bigint", nullable: false),
-                    LocationsId = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AnalysisId = table.Column<long>(type: "bigint", nullable: false),
+                    ParameterId = table.Column<long>(type: "bigint", nullable: false),
+                    AsFed = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Dry = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LandPlotLivestock", x => new { x.LivestocksId, x.LocationsId });
+                    table.PrimaryKey("PK_LivestockFeedAnalysisResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LandPlotLivestock_Livestocks_LivestocksId",
-                        column: x => x.LivestocksId,
-                        principalTable: "Livestocks",
+                        name: "FK_LivestockFeedAnalysisResults_LivestockFeedAnalyses_AnalysisId",
+                        column: x => x.AnalysisId,
+                        principalTable: "LivestockFeedAnalyses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LandPlotLivestock_Plots_LocationsId",
-                        column: x => x.LocationsId,
-                        principalTable: "Plots",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LivestockLivestockStatus",
-                columns: table => new
-                {
-                    LivestocksId = table.Column<long>(type: "bigint", nullable: false),
-                    StatusesId = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LivestockLivestockStatus", x => new { x.LivestocksId, x.StatusesId });
-                    table.ForeignKey(
-                        name: "FK_LivestockLivestockStatus_LivestockStatuses_StatusesId",
-                        column: x => x.StatusesId,
-                        principalTable: "LivestockStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LivestockLivestockStatus_Livestocks_LivestocksId",
-                        column: x => x.LivestocksId,
-                        principalTable: "Livestocks",
+                        name: "FK_LivestockFeedAnalysisResults_LivestockFeedAnalysisParameters_ParameterId",
+                        column: x => x.ParameterId,
+                        principalTable: "LivestockFeedAnalysisParameters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -896,42 +897,6 @@ namespace BackEnd.Persistence.Migrations
                         column: x => x.LivestockId,
                         principalTable: "Livestocks",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LivestockFeedAnalysisResults",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AnalysisId = table.Column<long>(type: "bigint", nullable: false),
-                    ParameterId = table.Column<long>(type: "bigint", nullable: false),
-                    AsFed = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Dry = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LivestockFeedAnalysisResults", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LivestockFeedAnalysisResults_LivestockFeedAnalyses_AnalysisId",
-                        column: x => x.AnalysisId,
-                        principalTable: "LivestockFeedAnalyses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LivestockFeedAnalysisResults_LivestockFeedAnalysisParameters_ParameterId",
-                        column: x => x.ParameterId,
-                        principalTable: "LivestockFeedAnalysisParameters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -1039,11 +1004,6 @@ namespace BackEnd.Persistence.Migrations
                 column: "Use");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LandPlotLivestock_LocationsId",
-                table: "LandPlotLivestock",
-                column: "LocationsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_LivestockAnimals_Name",
                 table: "LivestockAnimals",
                 column: "Name",
@@ -1090,11 +1050,6 @@ namespace BackEnd.Persistence.Migrations
                 column: "LivestockStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LivestockLivestockStatus_StatusesId",
-                table: "LivestockLivestockStatus",
-                column: "StatusesId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Livestocks_FatherId",
                 table: "Livestocks",
                 column: "FatherId");
@@ -1105,9 +1060,19 @@ namespace BackEnd.Persistence.Migrations
                 column: "LivestockBreedId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Livestocks_LocationId",
+                table: "Livestocks",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Livestocks_MotherId",
                 table: "Livestocks",
                 column: "MotherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Livestocks_StatusId",
+                table: "Livestocks",
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LivestockStatuses_LivestockAnimalId",
@@ -1199,9 +1164,6 @@ namespace BackEnd.Persistence.Migrations
                 name: "Keys");
 
             migrationBuilder.DropTable(
-                name: "LandPlotLivestock");
-
-            migrationBuilder.DropTable(
                 name: "LivestockFeedAnalysisResults");
 
             migrationBuilder.DropTable(
@@ -1209,9 +1171,6 @@ namespace BackEnd.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "LivestockFeedServings");
-
-            migrationBuilder.DropTable(
-                name: "LivestockLivestockStatus");
 
             migrationBuilder.DropTable(
                 name: "Logs");
@@ -1235,16 +1194,10 @@ namespace BackEnd.Persistence.Migrations
                 name: "Milestones");
 
             migrationBuilder.DropTable(
-                name: "Plots");
-
-            migrationBuilder.DropTable(
                 name: "LivestockFeedAnalyses");
 
             migrationBuilder.DropTable(
                 name: "LivestockFeedAnalysisParameters");
-
-            migrationBuilder.DropTable(
-                name: "LivestockStatuses");
 
             migrationBuilder.DropTable(
                 name: "Duties");
@@ -1256,16 +1209,22 @@ namespace BackEnd.Persistence.Migrations
                 name: "Livestocks");
 
             migrationBuilder.DropTable(
-                name: "Farms");
-
-            migrationBuilder.DropTable(
                 name: "LivestockFeeds");
 
             migrationBuilder.DropTable(
                 name: "LivestockBreeds");
 
             migrationBuilder.DropTable(
+                name: "LivestockStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Plots");
+
+            migrationBuilder.DropTable(
                 name: "LivestockAnimals");
+
+            migrationBuilder.DropTable(
+                name: "Farms");
         }
     }
 }

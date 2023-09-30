@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    [Migration("20230924161008_reset")]
-    partial class reset
+    [Migration("20230930154226_ServiceAnimal")]
+    partial class ServiceAnimal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,48 @@ namespace FrontEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Logs");
+                });
+
+            modelBuilder.Entity("Domain.Models.BreedingRecordModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FemaleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("MaleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ResolutionDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ServiceDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("StillbornFemales")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("StillbornMales")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BreedingRecords");
                 });
 
             modelBuilder.Entity("Domain.Models.DutyModel", b =>
@@ -670,10 +712,19 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<bool>("InMilk")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("LandPlotModelId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("LivestockBreedId")
                         .HasColumnType("INTEGER");
 
                     b.Property<long?>("LivestockBreedModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LivestockStatusModelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("LocationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -687,6 +738,10 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
+                    b.Property<long?>("StatusId")
+                        .IsRequired()
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("Sterile")
                         .HasColumnType("INTEGER");
 
@@ -697,7 +752,11 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LandPlotModelId");
+
                     b.HasIndex("LivestockBreedModelId");
+
+                    b.HasIndex("LivestockStatusModelId");
 
                     b.ToTable("Livestocks");
                 });
@@ -930,36 +989,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.ToTable("EventModelMilestoneModel");
                 });
 
-            modelBuilder.Entity("LandPlotModelLivestockModel", b =>
-                {
-                    b.Property<long>("LivestocksId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("LocationsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("LivestocksId", "LocationsId");
-
-                    b.HasIndex("LocationsId");
-
-                    b.ToTable("LandPlotModelLivestockModel");
-                });
-
-            modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
-                {
-                    b.Property<long>("LivestocksId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("StatusesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("LivestocksId", "StatusesId");
-
-                    b.HasIndex("StatusesId");
-
-                    b.ToTable("LivestockModelLivestockStatusModel");
-                });
-
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
                     b.HasOne("Domain.Models.LandPlotModel", null)
@@ -1004,9 +1033,17 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LivestockModel", b =>
                 {
+                    b.HasOne("Domain.Models.LandPlotModel", null)
+                        .WithMany("Livestocks")
+                        .HasForeignKey("LandPlotModelId");
+
                     b.HasOne("Domain.Models.LivestockBreedModel", null)
                         .WithMany("Livestocks")
                         .HasForeignKey("LivestockBreedModelId");
+
+                    b.HasOne("Domain.Models.LivestockStatusModel", null)
+                        .WithMany("Livestocks")
+                        .HasForeignKey("LivestockStatusModelId");
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
@@ -1072,36 +1109,6 @@ namespace FrontEnd.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LandPlotModelLivestockModel", b =>
-                {
-                    b.HasOne("Domain.Models.LivestockModel", null)
-                        .WithMany()
-                        .HasForeignKey("LivestocksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.LandPlotModel", null)
-                        .WithMany()
-                        .HasForeignKey("LocationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LivestockModelLivestockStatusModel", b =>
-                {
-                    b.HasOne("Domain.Models.LivestockModel", null)
-                        .WithMany()
-                        .HasForeignKey("LivestocksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.LivestockStatusModel", null)
-                        .WithMany()
-                        .HasForeignKey("StatusesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Models.DutyModel", b =>
                 {
                     b.Navigation("ScheduledDuties");
@@ -1114,6 +1121,8 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
+                    b.Navigation("Livestocks");
+
                     b.Navigation("Subplots");
                 });
 
@@ -1141,6 +1150,11 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("Distributions");
 
                     b.Navigation("Servings");
+                });
+
+            modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
+                {
+                    b.Navigation("Livestocks");
                 });
 #pragma warning restore 612, 618
         }

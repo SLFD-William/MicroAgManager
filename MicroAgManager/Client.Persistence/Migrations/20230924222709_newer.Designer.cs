@@ -3,6 +3,7 @@ using System;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    partial class FrontEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230924222709_newer")]
+    partial class newer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
@@ -48,48 +51,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Logs");
-                });
-
-            modelBuilder.Entity("Domain.Models.BreedingRecordModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("EntityModifiedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("FemaleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("MaleId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ResolutionDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ServiceDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("StillbornFemales")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("StillbornMales")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BreedingRecords");
                 });
 
             modelBuilder.Entity("Domain.Models.DutyModel", b =>

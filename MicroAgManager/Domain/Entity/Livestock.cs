@@ -14,8 +14,8 @@ namespace Domain.Entity
         [Required][ForeignKey("Breed")] public long LivestockBreedId { get; set; }
         [ForeignKey("Mother")] public long? MotherId { get; set; }
         [ForeignKey("Father")] public long? FatherId { get; set; }
-
-
+        [Required][ForeignKey("Status")] public long? StatusId { get; set; }
+        [ForeignKey("Location")] public long? LocationId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }
         [Required] public DateTime Birthdate { get; set; }
@@ -29,12 +29,10 @@ namespace Domain.Entity
         [Required] public bool ForSale { get; set; }
         [Required] public bool BeingManaged { get; set; }
         [Required] public bool BornDefective { get; set; }
-
-         public virtual ICollection<LandPlot> Locations { get; set; } = new List<LandPlot>();
-         public virtual ICollection<LivestockStatus> Statuses { get; set; } = new List<LivestockStatus>();
-        public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
         public virtual LivestockBreed Breed { get; set; }
         public virtual Livestock? Mother { get; set; }
         public virtual Livestock? Father { get; set; }
+        public virtual LivestockStatus? Status { get; set; }
+        public virtual LandPlot? Location { get; set; }
     }
 }

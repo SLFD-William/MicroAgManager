@@ -43,6 +43,11 @@ namespace FrontEnd.Components.LivestockBreed
             _editBreed = id > 0 ? await FindBreed(id) : new LivestockBreedModel {LivestockAnimalId=LivestockAnimal.Id }; 
             StateHasChanged();
         }
+        private async Task ServiceLivestock(long breedId)
+        {
+            //_editBreed = id > 0 ? await FindBreed(id) : new LivestockBreedModel { LivestockAnimalId = LivestockAnimal.Id };
+            StateHasChanged();
+        }
         private async Task EditCancelled()
         {
             _editBreed = null;

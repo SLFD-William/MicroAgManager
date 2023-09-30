@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using BackEnd.BusinessLogic.Livestock;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockAnimal;
+using Domain.Constants;
 
 namespace FrontEnd.Components.Livestock
 {
@@ -25,7 +26,22 @@ namespace FrontEnd.Components.Livestock
         private LivestockModel livestock;
 
         //protected LivestockSubTabs _tabControl;
-
+        public long StatusId
+        { get => livestock.StatusId ?? 0;
+            set {
+                if (value != livestock.StatusId)
+                { 
+                    livestock.StatusId = value;
+                    var stat= app.dbContext.LivestockStatuses.Find(value);
+                    if (stat.InMilk!= LivestockStatusModeConstants.Unchanged) livestock.InMilk = bool.Parse(stat.InMilk);
+                    if (stat.BeingManaged != LivestockStatusModeConstants.Unchanged) livestock.BeingManaged = bool.Parse(stat.BeingManaged);
+                    if (stat.BottleFed != LivestockStatusModeConstants.Unchanged) livestock.BottleFed = bool.Parse(stat.BottleFed);
+                    if (stat.ForSale != LivestockStatusModeConstants.Unchanged) livestock.ForSale = bool.Parse(stat.ForSale);
+                    if (stat.Sterile != LivestockStatusModeConstants.Unchanged) livestock.Sterile = bool.Parse(stat.Sterile);
+                    StateHasChanged();
+                }
+            }
+        }
         protected override async Task OnInitializedAsync() => await FreshenData();
         public override async Task FreshenData()
         {

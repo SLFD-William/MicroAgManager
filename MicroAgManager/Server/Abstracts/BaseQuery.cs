@@ -21,6 +21,8 @@ namespace BackEnd.Abstracts
                 throw new ArgumentNullException(nameof(query));
             query = query.Where(t => t.TenantId == TenantId).OrderByDescending(_ => _.ModifiedOn);
 
+            if (Id.HasValue ) query = query.Where(_ => _.Id==Id);
+
             if (GetDeleted.HasValue && !GetDeleted.Value)
                 query = query.Where(_ => !_.DeletedOn.HasValue);
 

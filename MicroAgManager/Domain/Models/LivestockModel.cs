@@ -9,7 +9,8 @@ namespace Domain.Models
     {
         [ForeignKey(nameof(LivestockModel))] public long? MotherId { get; set; }
         [ForeignKey(nameof(LivestockModel))] public long? FatherId { get; set; }
-
+        [Required][ForeignKey(nameof(LivestockStatusModel))] public long? StatusId { get; set; }
+        [ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
         [Required][ForeignKey(nameof(LivestockBreedModel))]  public long LivestockBreedId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }
@@ -25,8 +26,6 @@ namespace Domain.Models
         [Required] public bool InMilk { get; set; } = false;
         [Required] public bool BottleFed { get; set; } = false;
         [Required] public bool ForSale { get; set; } = true;
-        public virtual ICollection<LivestockStatusModel> Statuses { get; set; } = new List<LivestockStatusModel>();
-        public virtual ICollection<LandPlotModel> Locations { get; set; } = new List<LandPlotModel>();
         public static LivestockModel Create(Livestock livestock)
         {
             var model = PopulateBaseModel(livestock, new LivestockModel
@@ -47,8 +46,8 @@ namespace Domain.Models
                 Sterile = livestock.Sterile,
                 Name = livestock.Name,
                 BatchNumber=livestock.BatchNumber,
-                Statuses = livestock.Statuses.Select(LivestockStatusModel.Create).ToList() ?? new List<LivestockStatusModel>(),
-                Locations = livestock.Locations.Select(LandPlotModel.Create).ToList() ?? new List<LandPlotModel>()
+                StatusId = livestock.StatusId,
+                LocationId = livestock.LocationId
             }) as LivestockModel;
             return model;
         }
@@ -70,13 +69,8 @@ namespace Domain.Models
             entity.Sterile = Sterile;
             entity.Name = Name;
             entity.BatchNumber = BatchNumber;
-            if (entity.Statuses?.Any() ?? false)
-                foreach (var status in entity.Statuses)
-                    Statuses?.FirstOrDefault(p => p?.Id == status.Id)?.MapToEntity(status);
-            if(entity.Locations?.Any() ?? false)
-                foreach (var loc in entity.Locations)
-                    Locations?.FirstOrDefault(p => p?.Id == loc.Id)?.MapToEntity(loc);
-
+            entity.StatusId = StatusId;
+            entity.LocationId = LocationId;
             return entity;
         }
     }

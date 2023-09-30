@@ -7,7 +7,7 @@ namespace FrontEnd.Persistence
 {
     public class FrontEndDbContext : DbContext, IFrontEndDbContext
     {
-        
+
         public FrontEndDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<FarmLocationModel> Farms { get; set; }
@@ -28,5 +28,6 @@ namespace FrontEnd.Persistence
         public DbSet<MilestoneModel> Milestones { get; set; }
         public DbSet<ScheduledDutyModel> ScheduledDuties { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<BreedingRecordModel> BreedingRecords { get; set; }
     }
 }

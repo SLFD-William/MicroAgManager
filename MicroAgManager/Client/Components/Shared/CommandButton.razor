@@ -1,0 +1,13 @@
+﻿@typeparam TValue
+<div>
+    <button type="button" onclick="@(async ()=>await Clicked())">@Command</button>
+    @if (_modalOpen)
+    { 
+        <div class="modalContainer">
+            <dialog open="true">
+                @ChildContent
+                <button type="button" onclick="@(async ()=>await Clicked())">Close</button>
+            </dialog>
+        </div>
+    }
+</div>

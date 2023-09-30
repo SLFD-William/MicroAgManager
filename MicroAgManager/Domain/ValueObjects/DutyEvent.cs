@@ -1,6 +1,4 @@
-﻿using Domain.Entity;
-
-namespace Domain.ValueObjects
+﻿namespace Domain.ValueObjects
 {
     public class DutyEvent : ValueObject
     {

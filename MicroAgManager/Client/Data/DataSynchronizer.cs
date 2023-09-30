@@ -102,6 +102,7 @@ namespace FrontEnd.Data
                     await DomainFetcher.BulkUpdateLivestocks(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateMilestones(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
 
 
                     //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);
@@ -115,8 +116,7 @@ namespace FrontEnd.Data
                     //if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, connection, _api);
                     await DomainFetcher.BulkUpdateDutyMilestone(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateDutyEvent(entityModels, db, connection, _api);
-                    await DomainFetcher.BulkUpdatePlotLivestock(entityModels, db, connection, _api);
-                    await DomainFetcher.BulkUpdateLivestockStatusLivestock(entityModels, db, connection, _api);
+
                     transaction.Commit();
                 }
                 OnUpdate?.Invoke();

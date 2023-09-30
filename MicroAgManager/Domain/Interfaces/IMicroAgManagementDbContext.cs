@@ -22,7 +22,8 @@ namespace Domain.Interfaces
         DbSet<Event> Events { get; set; }
         DbSet<Milestone> Milestones { get; set; }
         DbSet<ScheduledDuty> ScheduledDuties { get; set; }
-        
+        DbSet<BreedingRecord> BreedingRecords { get; set; }
+
 
 
     }

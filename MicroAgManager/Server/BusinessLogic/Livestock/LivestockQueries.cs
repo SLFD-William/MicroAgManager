@@ -42,7 +42,7 @@ namespace BackEnd.BusinessLogic.Livestock
             if (!string.IsNullOrEmpty(Variety)) query = query.Where(_ => _.Variety != null && _.Variety.Contains(Variety));
             if (!string.IsNullOrEmpty(Description)) query = query.Where(_ => _.Description != null && _.Description.Contains(Description));
             if (!string.IsNullOrEmpty(BirthDefect)) query = query.Where(_ => _.BirthDefect != null && _.BirthDefect.Contains(BirthDefect));
-            if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Statuses.Any() && _.Statuses.OrderByDescending(s => s.ModifiedOn).First().Status.Contains(Status));
+            if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Status != null && _.Status.Status.Contains(Status));
 
             if (BeingManaged.HasValue) query = query.Where(_ => _.BeingManaged == BeingManaged);
             if (BornDefective.HasValue) query = query.Where(_ => _.BornDefective == BornDefective);

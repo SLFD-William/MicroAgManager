@@ -8,6 +8,7 @@
         public static string Photograph { get; private set; } = "Photograph";
         public static string Registration { get; private set; } = "Registration";
         public static string Breed { get; private set; } = "Breed";
+        public static string Service { get; private set; } = "Service";
         public static string Birth { get; private set; } = "Birth";
         public static string Feed { get; private set; } = "Feed";
         public static string Death { get; private set; } = "Death";
