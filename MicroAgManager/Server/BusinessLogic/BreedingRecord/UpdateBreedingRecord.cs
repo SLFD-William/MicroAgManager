@@ -22,6 +22,7 @@ public class Handler: BaseCommandHandler<UpdateBreedingRecord>
                 var breedingRecord = _context.BreedingRecords.First(d => d.TenantId == request.TenantId && d.Id == request.BreedingRecord.Id);
                 var resolutionNewleyChanged = breedingRecord.Resolution != request.BreedingRecord.Resolution && !breedingRecord.ResolutionDate.HasValue;
                 
+
                 breedingRecord = request.BreedingRecord.MapToEntity(breedingRecord);
                 breedingRecord.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);

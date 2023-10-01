@@ -21,6 +21,38 @@ namespace BackEnd.BusinessLogic
                 throw new IncompleteBreedingRecordException(nameList, existing.First().Id, "Open Breeding Record exists. Please Resolve");
             }
         }
+        public async static Task<List<CreateLivestock>> OnBreedingRecordResolved(IMicroAgManagementDbContext context, long breedingRecordId, CancellationToken cancellationToken, bool save = true)
+        {
+            var entitiesModified = new List<CreateLivestock>();
+            var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
+            if (breedingRecord == null) throw new Exception("Breeding Record not found");
+            if (breedingRecord.Resolution != BreedingResolutionConstants.Success || !breedingRecord.ResolutionDate.HasValue) return entitiesModified;
+            var female = await context.Livestocks.Include(b => b.Breed).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
+            var status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == female.Breed.LivestockAnimalId && l.DefaultStatus);
+            if (status is null)
+                status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == female.Breed.LivestockAnimalId);
+            for (int i = 0; i < breedingRecord.BornFemales; i++)
+            {
+                entitiesModified.Add(new CreateLivestock
+                {
+                    CreatedBy = breedingRecord.ModifiedBy,
+                    TenantId = breedingRecord.TenantId,
+                    CreationMode = "Birth",
+                    Livestock = CreateBirthModel(i, breedingRecord, female, status, GenderConstants.Female)
+                });
+            }
+            for (int i = 0; i < breedingRecord.BornMales; i++)
+            {
+                entitiesModified.Add(new CreateLivestock
+                {
+                    CreatedBy = breedingRecord.ModifiedBy,
+                    TenantId = breedingRecord.TenantId,
+                    CreationMode = "Birth",
+                    Livestock = CreateBirthModel(i, breedingRecord, female, status, GenderConstants.Male)
+                });
+            }
+            return entitiesModified;
+        }
         public async static Task<List<ModifiedEntity>> OnLivestockBred(IMicroAgManagementDbContext context, long breedingRecordId, CancellationToken cancellationToken, bool save = true)
         {
             var entitiesModified = new List<ModifiedEntity>();
@@ -50,6 +82,11 @@ namespace BackEnd.BusinessLogic
             entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
             return entitiesModified;
         }
+        public async static Task<List<ModifiedEntity>> OnLivestockBorn(IMicroAgManagementDbContext context, long breedingRecordId, CancellationToken cancellationToken, bool save = true)
+        {
+            var entitiesModified = new List<ModifiedEntity>();
+            return entitiesModified;
+        }
         private static LivestockModel CreateBirthModel(int count, Domain.Entity.BreedingRecord breedingRecord, Domain.Entity.Livestock female, Domain.Entity.LivestockStatus status, string gender)
                 => new LivestockModel
                 {
@@ -67,44 +104,9 @@ namespace BackEnd.BusinessLogic
                     BottleFed = status.BottleFed == LivestockStatusModeConstants.True,
                     ForSale = status.ForSale == LivestockStatusModeConstants.True,
                     Sterile = status.Sterile == LivestockStatusModeConstants.True,
-                    Variety = female.Variety
+                    Variety = female.Variety,
+                    Description = string.Empty
                 };
-
-        public async static Task<List<CreateLivestock>> OnBreedingRecordResolved(IMicroAgManagementDbContext context, long breedingRecordId, CancellationToken cancellationToken, bool save = true)
-        {
-            var entitiesModified = new List<CreateLivestock>();
-            var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
-            if (breedingRecord == null) throw new Exception("Breeding Record not found");
-            if (breedingRecord.Resolution != BreedingResolutionConstants.Success || !breedingRecord.ResolutionDate.HasValue) return entitiesModified;
-            var female = await context.Livestocks.Include(b => b.Breed).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
-            var status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == female.Breed.LivestockAnimalId && l.DefaultStatus);
-            for (int i = 0; i < breedingRecord.BornFemales; i++)
-            {
-                entitiesModified.Add(new CreateLivestock
-                {
-                    CreatedBy = breedingRecord.ModifiedBy,
-                    TenantId = breedingRecord.TenantId,
-                    CreationMode = "Birth",
-                    Livestock = CreateBirthModel(i, breedingRecord, female, status, GenderConstants.Female)
-                });
-            }
-            for (int i = 0; i < breedingRecord.BornMales; i++)
-            {
-                entitiesModified.Add(new CreateLivestock
-                {
-                    CreatedBy = breedingRecord.ModifiedBy,
-                    TenantId = breedingRecord.TenantId,
-                    CreationMode = "Birth",
-                    Livestock = CreateBirthModel(i, breedingRecord, female, status, GenderConstants.Male)
-                });
-            }
-            return entitiesModified;
-        }
-        public async static Task<List<ModifiedEntity>> OnLivestockBorn(IMicroAgManagementDbContext context, long breedingRecordId, CancellationToken cancellationToken, bool save = true)
-        {
-            var entitiesModified = new List<ModifiedEntity>();
-            return entitiesModified;
-        }
     }
 }
 
