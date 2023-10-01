@@ -9,7 +9,9 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(livestockAnimal.Id<1)">
+                   createOnly="@(livestockAnimal.Id<1)"
+                   Modal="Modal"
+    @ref=_validatedForm>
          <DataContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockAnimal.Name)">
                 <InputText placeholder="Name" @bind-Value="@Name" />

@@ -19,6 +19,8 @@ namespace FrontEnd.Components.Farm
         [Inject] private IFrontEndApiServices api { get; set; }
         [Parameter] public EventCallback<FarmLocationModel> Submitted { get; set; }
         [Parameter] public EventCallback Cancelled { get; set; }
+        private ValidatedForm _validatedForm;
+        [Parameter] public bool Modal { get; set; }
         FarmLocationModel farm { get; set; }
 
         bool locationEnabled { get; set; } = true;
@@ -83,6 +85,7 @@ namespace FrontEnd.Components.Farm
         private async Task Cancel()
         {
             editContext = new EditContext(farm);
+            _validatedForm.HideModal();
             await Cancelled.InvokeAsync(farm);
             StateHasChanged();
         }
@@ -103,6 +106,7 @@ namespace FrontEnd.Components.Farm
                 farm.Id = id;
                 editContext = new EditContext(farm);
                 await Submitted.InvokeAsync(farm);
+                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)

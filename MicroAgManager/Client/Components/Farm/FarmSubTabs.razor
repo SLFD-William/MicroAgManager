@@ -1,6 +1,7 @@
 ﻿@using Domain.Constants;
 @using FrontEnd.Components.LandPlot;
 @using FrontEnd.Components.LivestockAnimal;
+@using FrontEnd.Components.ScheduledDuty;
 @inherits DataComponent
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(FarmSubTabs)" >
     <TabPage @ref="_plotTab">
@@ -26,13 +27,20 @@
         <ChildContent>
             <LivestockAnimalList @ref="_livestockAnimalList" Items="app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(a=>new LivestockAnimalSummary(a,app.dbContext))" ></LivestockAnimalList>
         </ChildContent>
+
     </TabPage>
     <TabPage @ref="_dutyTab" Text="Duties" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
         <ButtonContent>
-            <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">Duties</button>
+            <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">
+                Duties
+                @((MarkupString)GetOpenDutyCount())
+            </button>
         </ButtonContent>
         <ChildContent>
-            Duty Listing
+            <ScheduledDutyList @ref="_scheduledDutyList" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext))"></ScheduledDutyList>
         </ChildContent>
     </TabPage>
+    
+
 </TabControl>
+

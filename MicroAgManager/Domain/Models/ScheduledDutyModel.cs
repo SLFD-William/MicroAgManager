@@ -14,7 +14,7 @@ namespace Domain.Models
         [Required][ForeignKey(nameof(DutyModel))] public long DutyId { get; set; }
         public bool Dismissed { get; set; }
         public DateTime DueOn { get; set; }
-        [Required] public long RecordId { get; set; }
+        public long? RecordId { get; set; }
         [Required] public string Record { get; set; }
         [Required] public long RecipientId { get; set; }
         [Required] public string Recipient { get; set; }

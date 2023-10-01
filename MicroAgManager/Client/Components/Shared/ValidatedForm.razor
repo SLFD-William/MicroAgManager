@@ -1,5 +1,37 @@
 ﻿@if (editContext is not null)
 {
+    @if (Modal)
+    {
+        @if (showModal)
+        {
+            <div class="modalContainer">
+                <dialog open="true">
+                    <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit">
+                        <DataAnnotationsValidator />
+                        <section class="dataSection">
+                            @DataContent
+                        </section>
+                        @if (SecondaryContent is not null)
+                        {
+                            <section class="secondaryContent">
+                                @SecondaryContent
+                            </section>
+                        }
+                        @if (showUpdateCancelButtons)
+                        {
+                            <section class="updateCancelButtons">
+                                <button type="submit">@(createOnly ? "Create" : "Update")</button>
+                                <button type="button" @onclick="Cancel">Cancel</button>
+                            </section>
+                        }
+                    </EditForm>
+                </dialog>
+            </div>
+        }
+    }
+    else
+    { 
+
     <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit" >
         <DataAnnotationsValidator />
         <section class="dataSection">
@@ -19,4 +51,6 @@
             </section>
         }
     </EditForm>
+    }
+    
 }

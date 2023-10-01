@@ -8,7 +8,8 @@
         Cancel="Cancel"
         showUpdateCancelButtons="true"
         createOnly="@(farm.Id<1)"
-    >
+        Modal="Modal"
+        @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
                 <InputText placeholder="Name" @bind-Value="@farm.Name" />

@@ -15,6 +15,8 @@ namespace FrontEnd.Components.LivestockAnimal
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public EventCallback<LivestockAnimalModel> Submitted { get; set; }
         [Parameter] public EventCallback Cancelled { get; set; }
+        private ValidatedForm _validatedForm;
+        [Parameter] public bool Modal { get; set; }
 
         protected LivestockAnimalSubTabs _tabControl;
         private LivestockAnimalModel livestockAnimal;
@@ -73,6 +75,7 @@ namespace FrontEnd.Components.LivestockAnimal
                 livestockAnimal.Id = id;
                 editContext = new EditContext(livestockAnimal);
                 await Submitted.InvokeAsync(livestockAnimal);
+                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -82,6 +85,7 @@ namespace FrontEnd.Components.LivestockAnimal
         {
             editContext = new EditContext(livestockAnimal);
             await Cancelled.InvokeAsync();
+            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

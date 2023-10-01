@@ -6,7 +6,7 @@
     @if (_editLivestock is not null || !Items.Any())
     {
         <CascadingValue Value="_editLivestock">
-            <LivestockEditor @ref="_livestockEditor" Submitted="@LivestockUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockEditor>
+            <LivestockEditor @ref="_livestockEditor" Modal="true" Submitted="@LivestockUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockEditor>
         </CascadingValue>
     }
     else

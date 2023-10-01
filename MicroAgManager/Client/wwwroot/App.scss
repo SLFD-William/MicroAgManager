@@ -81,9 +81,9 @@ form {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index:99;
- 
-    &:before{
+    z-index: 99;
+
+    &:before {
         content: "";
         position: fixed;
         top: 0;
@@ -98,6 +98,7 @@ form {
         margin: auto;
         border-radius: 1em;
         box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        max-width: calc(100% - 1em);
     }
 }
 

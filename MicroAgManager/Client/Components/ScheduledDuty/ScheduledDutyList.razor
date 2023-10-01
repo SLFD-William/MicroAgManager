@@ -1,0 +1,20 @@
+﻿@inherits DataComponent
+@using Domain.Models
+@if (app != null)
+{
+        <TableTemplate @ref="_listComponent" PageSize="0" TItem="ScheduledDutySummary"
+                       Items="@Items" 
+            MultiSelect="@Multiselect" 
+            Selectable="@Selectable"
+            OnSelectionChange="@TableItemSelected"
+            RowDetailsShowing="@app.RowDetailsShowing["ScheduledDutyList"]">
+            <ColumnContent>
+                <Column TableItem="ScheduledDutySummary" Field="@(x => x.Duty)" Title="Duty" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="ScheduledDutySummary" Field="@(x => x.DueOn)" Title="Due On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="ScheduledDutySummary" Field="@(x => x.Recipient)" Title="Recipient" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="ScheduledDutySummary" Field="@(x => x.Record)" Title="Record" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="ScheduledDutySummary" Field="@(x => x.Dismissed)" Title="Dismissed" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+                <Column TableItem="ScheduledDutySummary" Field="@(x => x.Completed)" Title="Completed On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            </ColumnContent>
+        </TableTemplate>
+}

@@ -20,9 +20,12 @@ namespace FrontEnd.Components.LandPlot
         protected override async Task OnInitializedAsync() => await FreshenData();
         [Parameter] public EventCallback<LandPlotModel> Submitted { get; set; }
         [Parameter] public EventCallback Cancelled { get; set; }
+        private ValidatedForm _validatedForm;
+        [Parameter] public bool Modal { get; set; }
         private async void Cancel()
         {
             editContext = new EditContext(plot);
+            _validatedForm.HideModal();
             await Cancelled.InvokeAsync();
             StateHasChanged();
         }
@@ -38,6 +41,7 @@ namespace FrontEnd.Components.LandPlot
             
             editContext = new EditContext(plot);
             await Submitted.InvokeAsync(plot);
+            _validatedForm.HideModal();
             StateHasChanged();
         }
         public override async Task FreshenData()

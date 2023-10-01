@@ -501,7 +501,7 @@ namespace FrontEnd.Data
                     reminderDays.Value = model.ReminderDays;
                     completedOn.Value = model.CompletedOn.HasValue ? model.CompletedOn : DBNull.Value;
                     completedBy.Value = model.CompletedBy.HasValue ? model.CompletedBy : DBNull.Value;
-                    recordId.Value=model.RecordId;
+                    recordId.Value = model.RecordId.HasValue ? model.RecordId : DBNull.Value;
                     record.Value = model.Record;
                     recipientId.Value = model.RecipientId;
                     recipient.Value = model.Recipient;

@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockAnimal;
+using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +13,16 @@ namespace FrontEnd.Components.Farm
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }
 
-        private LandPlotEditor? _landPlotEditor;
         protected LandPlotList _landPlotList;
-        private LivestockAnimalEditor? _livestockAnimalEditor;
         protected LivestockAnimalList _livestockAnimalList;
+        protected ScheduledDutyList _scheduledDutyList;
+
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         protected TabControl _tabControl;
         protected TabPage _plotTab;
         protected TabPage _livestockTab;
         protected TabPage _dutyTab;
+        
         protected override void OnInitialized()
         {
             _tabControl?.ActivatePage(app.SelectedTabs[nameof(FarmSubTabs)] ?? _tabControl?.ActivePage ?? _plotTab);
@@ -29,6 +31,11 @@ namespace FrontEnd.Components.Farm
         {
             var count = app.dbContext.LandPlots.Count(p => p.FarmLocationId == farm.Id && p.Usage == plotUsage);
             return count > 0 ? $"<p>{plotUsage} {count}</p>" : string.Empty;
+        }
+        private string GetOpenDutyCount()
+        {
+            var count = app.dbContext.ScheduledDuties.Count(p => !p.CompletedOn.HasValue);
+            return count > 0 ? $"<p>Open {count}</p>" : string.Empty;
         }
         public override async Task FreshenData()
         {

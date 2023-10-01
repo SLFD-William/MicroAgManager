@@ -5,7 +5,7 @@
     @if (_editFarm is not null || !Items.Any())
     {
         <CascadingValue Value="_editFarm">
-            <FarmEditor @ref="_farmEditor" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
+            <FarmEditor @ref="_farmEditor" Modal="true" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
         </CascadingValue>
     }
     else

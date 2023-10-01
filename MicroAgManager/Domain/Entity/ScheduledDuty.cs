@@ -12,7 +12,7 @@ namespace Domain.Entity
         }
         [Required][ForeignKey("Duty")]public long DutyId { get; set; }
 
-        [Required]public long RecordId { get; set; }
+        public long? RecordId { get; set; }
         [Required] public string Record { get; set; }
         [Required] public long RecipientId { get; set; }
         [Required] public string Recipient { get; set; }

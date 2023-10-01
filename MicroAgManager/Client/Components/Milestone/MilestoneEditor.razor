@@ -7,7 +7,9 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(milestone.Id<1)">
+                   createOnly="@(milestone.Id<1)"
+                   Modal="Modal"
+    @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => milestone.Name)">
                 <InputText placeholder="Milestone" @bind-Value="@milestone.Name" />

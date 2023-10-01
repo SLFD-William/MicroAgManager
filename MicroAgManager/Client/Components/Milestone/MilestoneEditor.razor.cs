@@ -19,6 +19,8 @@ namespace FrontEnd.Components.Milestone
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? milestoneId { get; set; }
         private MilestoneModel milestone { get; set; }
+        private ValidatedForm _validatedForm;
+        [Parameter] public bool Modal { get; set; }
         protected override async Task OnInitializedAsync() => await FreshenData();
 
         public override async Task FreshenData()
@@ -60,6 +62,7 @@ namespace FrontEnd.Components.Milestone
 
                 editContext = new EditContext(milestone);
                 await Submitted.InvokeAsync(milestone);
+                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -71,6 +74,7 @@ namespace FrontEnd.Components.Milestone
         {
             editContext = new EditContext(milestone);
             await Cancelled.InvokeAsync(milestone);
+            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

@@ -10,7 +10,9 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(livestock.Id<1)">
+                   createOnly="@(livestock.Id<1)" 
+                   Modal="Modal"
+                   @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Breed" ValidationMessageFor="@(() => livestock.LivestockBreedId)">
                 @LivestockBreed.Name
@@ -39,7 +41,11 @@
             <ValidatedField ValidationMessageFor="@(() => livestock.StatusId)">
                 <LegendContent>
                     <div style="display:inline-flex">
-                        <span>Status</span> <AddLivestockStatusCommand Command="+" Submitted="StatusCreated"></AddLivestockStatusCommand>
+                        <span>Status</span><button type="button" @onclick=ShowStatusEditor>+</button>
+                        @if (showStatusModal)
+                        {
+                            <LivestockStatusEditor livestockAnimalId="LivestockBreed.LivestockAnimalId" @ref=_livestockStatusEditor Modal="true" Submitted="StatusCreated" Cancelled="StatusCanceled"></LivestockStatusEditor>
+                        }
                     </div>
                 </LegendContent>
                 <ChildContent>
@@ -73,7 +79,7 @@
                 <InputCheckbox @bind-Value="@livestock.BornDefective" />
             </ValidatedField>
             @if (livestock.BornDefective)
-{
+            {
                 <ValidatedField Legend="Defect Description" ValidationMessageFor="@(() => livestock.BirthDefect)">
                     <InputText placeholder="Defect Description" @bind-Value="@livestock.BirthDefect" />
                 </ValidatedField>

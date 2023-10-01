@@ -7,6 +7,7 @@ using BackEnd.BusinessLogic.Livestock;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockAnimal;
 using Domain.Constants;
+using FrontEnd.Components.LivestockStatus;
 
 namespace FrontEnd.Components.Livestock
 {
@@ -22,6 +23,9 @@ namespace FrontEnd.Components.Livestock
         [Parameter] public EventCallback Cancelled { get; set; }
         [Parameter] public long? livestockId { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
+        private ValidatedForm _validatedForm;
+        private LivestockStatusEditor _livestockStatusEditor;
+        [Parameter] public bool Modal { get; set; }
 
         private LivestockModel livestock;
 
@@ -87,8 +91,11 @@ namespace FrontEnd.Components.Livestock
                 if (livestock.Id <= 0)
                     throw new Exception("Failed to save livestock Breed");
 
+
+
                 editContext = new EditContext(livestock);
                 await Submitted.InvokeAsync(livestock);
+                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -96,16 +103,36 @@ namespace FrontEnd.Components.Livestock
 
             }
         }
-
-        private void StatusCreated(long e)
+        private long? originalStatusId;
+        private bool showStatusModal = false;
+        private void ShowStatusEditor()
         {
-            livestock.StatusId = e;
+            originalStatusId = livestock.StatusId;
+            showStatusModal = true;
+            StateHasChanged();
+        }
+        private void StatusCanceled()
+        {
+            livestock.StatusId = originalStatusId;
+            _livestockStatusEditor.HideModal();
+            showStatusModal = false;
+            originalStatusId = null;
+            StateHasChanged();
+        }
+        private void StatusCreated(LivestockStatusModel e)
+        {
+            _livestockStatusEditor.HideModal();
+            showStatusModal = false;
+            livestock.StatusId = e.Id;
             StateHasChanged();
         }
         private async void Cancel()
         {
+            if(originalStatusId.HasValue) livestock.StatusId = originalStatusId.Value;
+
             editContext = new EditContext(livestock);
             await Cancelled.InvokeAsync();
+            _validatedForm.HideModal();
             StateHasChanged();
         }
     }
