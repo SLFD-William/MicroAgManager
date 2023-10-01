@@ -13,6 +13,7 @@ namespace BackEnd.BusinessLogic.Livestock
     {
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
         [Required] public LivestockModel Livestock { get; set; }
+        public string CreationMode { get; set; } = "Create";
         public class Handler : BaseCommandHandler<CreateLivestock>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
@@ -27,7 +28,10 @@ namespace BackEnd.BusinessLogic.Livestock
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy) }), cancellationToken);
+                    if(request.CreationMode=="Birth")
+                        await _mediator.Publish(new LivestockBorn { EntityName = livestock.GetType().Name, Id = livestock.Id, ModifiedBy = request.ModifiedBy, TenantId = request.TenantId }, cancellationToken);
+                    else
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy) }), cancellationToken);
                 }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 return livestock.Id;

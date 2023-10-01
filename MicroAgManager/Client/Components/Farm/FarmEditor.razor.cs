@@ -93,13 +93,12 @@ namespace FrontEnd.Components.Farm
         {
             try
             {
-                var id = farm.Id;
                 if (!(farm.Latitude.HasValue || farm.Longitude.HasValue))
                     await GetGeoLocation();
-                if (id <= 0)
-                    farm.Id= await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm });
-                else
-                    farm.Id = await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
+
+                var id=(farm.Id <= 0)?
+                    await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm }):
+                    await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
 
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");

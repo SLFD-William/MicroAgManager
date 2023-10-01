@@ -52,4 +52,9 @@
         public static string Death = "Death";
         public static string Breed = "Breed";
     }
+    public static class BreedingResolutionConstants
+    {
+        public static string Success = "Success";
+        public static string NotImpregnated = "Not Impregnated";
+    }
 }

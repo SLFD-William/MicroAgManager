@@ -13,6 +13,10 @@ namespace Domain.Models
         public DateTime? ResolutionDate { get; set; }
         public int? StillbornMales { get; set; }
         public int? StillbornFemales { get; set; }
+        public int? BornMales { get; set; }
+        public int? BornFemales { get; set; }
+        [MaxLength(40)]public string? Resolution { get; set; }
+
         public string Notes { get; set; }
 
         public static BreedingRecordModel? Create(BreedingRecord breedingRecord)
@@ -26,7 +30,10 @@ namespace Domain.Models
                 ResolutionDate = breedingRecord.ResolutionDate,
                 StillbornMales = breedingRecord.StillbornMales,
                 StillbornFemales = breedingRecord.StillbornFemales,
-                Notes = breedingRecord.Notes
+                Notes = breedingRecord.Notes,
+                BornFemales= breedingRecord.BornFemales,
+                BornMales= breedingRecord.BornMales,
+                Resolution= breedingRecord.Resolution
             }) as BreedingRecordModel;
             return model;
         }
@@ -40,6 +47,9 @@ namespace Domain.Models
             breedingRecord.StillbornMales = StillbornMales; 
             breedingRecord.StillbornFemales = StillbornFemales; 
             breedingRecord.Notes = Notes;   
+            breedingRecord.BornMales = BornMales;
+            breedingRecord.BornFemales = BornFemales;
+            breedingRecord.Resolution = Resolution;
             return breedingRecord;
         }
 

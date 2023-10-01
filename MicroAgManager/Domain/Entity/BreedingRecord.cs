@@ -13,8 +13,13 @@ namespace Domain.Entity
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
+        
         public int? StillbornMales { get; set; }
         public int? StillbornFemales { get; set; }
+        public int? BornMales { get; set; }
+        public int? BornFemales { get; set; }
+        [MaxLength(40)]public string? Resolution { get; set; }
+
         public string Notes { get; set; }
         public virtual Livestock? Male { get; set; }
         public virtual Livestock? Female { get; set; }

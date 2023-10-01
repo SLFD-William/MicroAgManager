@@ -125,6 +125,8 @@ namespace Host
             app.MapPost("/api/CreateLivestock", [Authorize] async (CreateLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateLivestock", [Authorize] async (UpdateLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/ServiceLivestock", [Authorize] async (ServiceLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/CreateBreedingRecord", [Authorize] async (CreateBreedingRecord command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateBreedingRecord", [Authorize] async (UpdateBreedingRecord command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
         }
     }
 }

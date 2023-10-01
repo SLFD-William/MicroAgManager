@@ -1,9 +1,10 @@
 ﻿using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
+using Domain.Logic;
 using Domain.ValueObjects;
 
-namespace Domain.Logic
+namespace BackEnd.BusinessLogic
 {
     public static class LivestockAnimalLogic
     {
@@ -27,7 +28,7 @@ namespace Domain.Logic
                 && e.LivestockAnimal.Id == animalType.Id);
             if (parturition == null)
             {
-                var birthDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
+                var birthDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
                     LivestockAnimal = animalType,
@@ -38,7 +39,7 @@ namespace Domain.Logic
                     CommandId = 0,
                     Command = DutyCommands.Birth
                 };
-                parturition = new Milestone(animalType.ModifiedBy, animalType.TenantId)
+                parturition = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,
@@ -58,7 +59,7 @@ namespace Domain.Logic
                 && e.LivestockAnimal.Id == animalType.Id);
             if (death == null)
             {
-                death = new Milestone(animalType.ModifiedBy, animalType.TenantId)
+                death = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,
@@ -77,7 +78,7 @@ namespace Domain.Logic
                 && e.LivestockAnimal.Id == animalType.Id);
             if (birth == null)
             {
-                birth = new Milestone(animalType.ModifiedBy, animalType.TenantId)
+                birth = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,
@@ -95,7 +96,7 @@ namespace Domain.Logic
                 && e.LivestockAnimal.Id == animalType.Id);
             if (breed == null)
             {
-                var breedDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
+                var breedDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
                     LivestockAnimal = animalType,
@@ -106,7 +107,7 @@ namespace Domain.Logic
                     CommandId = 0,
                     Command = DutyCommands.Breed,
                 };
-                breed = new Milestone(animalType.ModifiedBy, animalType.TenantId)
+                breed = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,

@@ -1,0 +1,29 @@
+﻿@using Domain.Models;
+@using FrontEnd.Components.BreedingRecord;
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="false"
+                   Modal="Modal"
+    @ref=_validatedForm>
+        <DataContent>
+            @if (scheduledDuty.Record == "BreedingRecord")
+            {
+                <BreedingRecordEditor showUpdateCancelButtons="true" breedingRecordId="@scheduledDuty.RecordId" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
+            }
+        </DataContent>
+        <SecondaryContent>
+            <section class="updateCancelButtons">
+                <button type="button" @onclick="Snooze">Snooze</button>
+                @if (showSnooze)
+                {
+                    <Snooze Cancelled="Cancel" Submitted="SnoozeSubmitted"></Snooze>
+                }
+            </section>
+        </SecondaryContent>
+    </ValidatedForm>
+}

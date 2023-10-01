@@ -12,6 +12,9 @@ namespace FrontEnd.Components.ScheduledDuty
         [Parameter] public IEnumerable<ScheduledDutySummary>? Items { get; set; }
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<ScheduledDutyModel>? ScheduledDutySelected { get; set; }
+
+        private ScheduledDutyModel? _editScheduledDuty;
+        private ScheduledDutyEditor? _scheduledDutyEditor;
         protected override void OnInitialized()
         {
             if (!app.RowDetailsShowing.ContainsKey("ScheduledDutyList"))
@@ -33,6 +36,25 @@ namespace FrontEnd.Components.ScheduledDuty
 
             StateHasChanged();
             _listComponent.Update();
+        }
+        private async Task EditCancelled()
+        {
+            _editScheduledDuty = null;
+            await FreshenData();
+        }
+        private async Task ScheduledDutyUpdated(ScheduledDutyModel args)
+        {
+            if (args.Id > 0)
+                while (!app.dbContext.ScheduledDuties.Any(t => t.Id == args.Id))
+                    await Task.Delay(100);
+
+            _editScheduledDuty = null;
+            await FreshenData();
+        }
+        private async Task EditScheduledDuty(long id)
+        {
+            _editScheduledDuty = id > 0 ? await FindScheduledDuty(id) : new ScheduledDutyModel();
+            StateHasChanged();
         }
     }
 }

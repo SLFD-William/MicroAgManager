@@ -1,7 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
-using Domain.Logic;
 using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -28,7 +27,7 @@ namespace BackEnd.BusinessLogic.Livestock
                     return 0;
                 var stud = _context.Livestocks.Find(request.StudId);
                 var dams = _context.Livestocks.Where(f => request.DamIds.Contains(f.Id)).ToList();
-                await LivestockLogic.VerifyNoOpenBreedingRecord(dams.Select(d=>d.Id).ToList(),request.TenantId,_context,cancellationToken);
+                //await LivestockLogic.VerifyNoOpenBreedingRecord(dams.Select(d=>d.Id).ToList(),request.TenantId,_context,cancellationToken);
                 var modified = new List<Domain.Entity.BreedingRecord>();
                 foreach (var dam in dams)
                 {

@@ -442,10 +442,13 @@ namespace FrontEnd.Data
                 var resolutionDate = AddNamedParameter(command, "$ResolutionDate");
                 var stillBornMales = AddNamedParameter(command, "$StillBornMales");
                 var stillBornFemales = AddNamedParameter(command, "$StillBornFemales");
+                var bornMales = AddNamedParameter(command, "$BornMales");
+                var bornFemales = AddNamedParameter(command, "$BornFemales");
+                var resolution = AddNamedParameter(command, "$Reolution");
 
-                command.CommandText = $"INSERT or REPLACE INTO BreedingRecords (Id,Deleted,EntityModifiedOn,ModifiedBy,FemaleId,MaleId,ServiceDate,ResolutionDate,StillBornMales,StillBornFemales,Notes) " +
+                command.CommandText = $"INSERT or REPLACE INTO BreedingRecords (Id,Deleted,EntityModifiedOn,ModifiedBy,FemaleId,MaleId,ServiceDate,ResolutionDate,StillBornMales,StillBornFemales,Notes,BornMales,BornFemales,Resolution) " +
                 $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{femaleId.ParameterName},{maleId.ParameterName},{serviceDate.ParameterName},{resolutionDate.ParameterName},{stillBornMales.ParameterName},{stillBornFemales.ParameterName},{notes.ParameterName})";
+                $"{femaleId.ParameterName},{maleId.ParameterName},{serviceDate.ParameterName},{resolutionDate.ParameterName},{stillBornMales.ParameterName},{stillBornFemales.ParameterName},{notes.ParameterName},{bornMales.ParameterName},{bornFemales.ParameterName},{resolution.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -457,6 +460,9 @@ namespace FrontEnd.Data
                     maleId.Value = model.MaleId.HasValue ? model.MaleId : DBNull.Value;
                     stillBornMales.Value= model.StillbornMales.HasValue ? model.StillbornMales : DBNull.Value;
                     stillBornFemales.Value = model.StillbornFemales.HasValue ? model.StillbornFemales : DBNull.Value;
+                    bornFemales.Value = model.BornFemales.HasValue ? model.BornFemales : DBNull.Value;
+                    bornMales.Value = model.BornMales.HasValue ? model.BornMales : DBNull.Value;
+                    resolution.Value = model.Resolution ?? string.Empty;
                     notes.Value = model.Notes ?? string.Empty;
                     await command.ExecuteNonQueryAsync();
                 }

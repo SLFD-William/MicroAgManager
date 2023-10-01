@@ -19,7 +19,7 @@
         }
 
         &.required {
-            &::after {
+            &::before {
                 margin-left: 0.1em;
                 padding-inline: 0.2em;
                 border-radius: 1em;
