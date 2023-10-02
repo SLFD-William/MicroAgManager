@@ -24,20 +24,21 @@ namespace BackEnd.BusinessLogic
         {
             var parturition = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Parturition
                 && e.TenantId == animalType.TenantId
-                && e.LivestockAnimal !=null 
-                && e.LivestockAnimal.Id == animalType.Id);
+                && e.RecipientType ==animalType.GetType().Name
+                && e.RecipientTypeId == animalType.Id);
             if (parturition == null)
             {
                 var birthDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
-                    LivestockAnimal = animalType,
+                    RecipientType=animalType.GetType().Name,
+                    RecipientTypeId=animalType.Id,
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
                     Name = "Birth",
                     CommandId = 0,
-                    Command = DutyCommands.Birth
+                    Command = DutyCommandConstants.Birth
                 };
                 parturition = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
@@ -45,7 +46,8 @@ namespace BackEnd.BusinessLogic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockAnimal = animalType,
+                    RecipientType = animalType.GetType().Name,
+                    RecipientTypeId = animalType.Id,
                     Name = MilestoneSystemRequiredConstants.Parturition,
                     Description= "The act of giving birth",
                 };
@@ -55,8 +57,8 @@ namespace BackEnd.BusinessLogic
 
             var death = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Death &&
                 e.TenantId == animalType.TenantId
-                && e.LivestockAnimal != null
-                && e.LivestockAnimal.Id == animalType.Id);
+                && e.RecipientType == animalType.GetType().Name
+                && e.RecipientTypeId == animalType.Id);
             if (death == null)
             {
                 death = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
@@ -65,7 +67,8 @@ namespace BackEnd.BusinessLogic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockAnimal = animalType,
+                    RecipientType = animalType.GetType().Name,
+                    RecipientTypeId = animalType.Id,
                     Name = MilestoneSystemRequiredConstants.Death,
                     Description = "The act of dying",
                 };
@@ -73,9 +76,9 @@ namespace BackEnd.BusinessLogic
             }
 
             var birth = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Birth 
-                && e.TenantId == animalType.TenantId 
-                && e.LivestockAnimal != null 
-                && e.LivestockAnimal.Id == animalType.Id);
+                && e.TenantId == animalType.TenantId
+                && e.RecipientType == animalType.GetType().Name
+                && e.RecipientTypeId == animalType.Id);
             if (birth == null)
             {
                 birth = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
@@ -84,7 +87,8 @@ namespace BackEnd.BusinessLogic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockAnimal = animalType,
+                    RecipientType = animalType.GetType().Name,
+                    RecipientTypeId = animalType.Id,
                     Name = MilestoneSystemRequiredConstants.Birth.ToString(),
                     Description = "The act of being born",
                 };
@@ -92,20 +96,21 @@ namespace BackEnd.BusinessLogic
             }
             var breed = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Breed
                 && e.TenantId == animalType.TenantId
-                && e.LivestockAnimal != null
-                && e.LivestockAnimal.Id == animalType.Id);
+                && e.RecipientType == animalType.GetType().Name
+                && e.RecipientTypeId == animalType.Id);
             if (breed == null)
             {
                 var breedDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
-                    LivestockAnimal = animalType,
+                    RecipientType = animalType.GetType().Name,
+                    RecipientTypeId = animalType.Id,
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
                     Name = MilestoneSystemRequiredConstants.Breed,
                     CommandId = 0,
-                    Command = DutyCommands.Breed,
+                    Command = DutyCommandConstants.Breed,
                 };
                 breed = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
@@ -113,7 +118,8 @@ namespace BackEnd.BusinessLogic
                     ModifiedBy = animalType.ModifiedBy,
                     ModifiedOn = animalType.ModifiedOn,
                     TenantId = animalType.TenantId,
-                    LivestockAnimal = animalType,
+                    RecipientType = animalType.GetType().Name,
+                    RecipientTypeId = animalType.Id,
                     Name = MilestoneSystemRequiredConstants.Breed,
                     Description= "The act of breeding",
                 };

@@ -3,6 +3,7 @@ using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -104,6 +105,8 @@ namespace FrontEnd.Data
                     await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateRegistrars(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateRegistrations(entityModels, db, connection, _api);
 
 
                     //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);

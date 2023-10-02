@@ -11,17 +11,10 @@ namespace FrontEnd.Components.ScheduledDuty
     {
         [Inject] FrontEndAuthenticationStateProvider _auth { get; set; }
         [CascadingParameter] public ScheduledDutyModel ScheduledDuty { get; set; }
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
-        [Parameter] public EventCallback<ScheduledDutyModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         [Parameter] public long? scheduledDutyId { get; set; }
         private ScheduledDutyModel scheduledDuty { get; set; }
         private ValidatedForm _validatedForm;
-
-        [Parameter] public bool Modal { get; set; }
         protected override async Task OnInitializedAsync() => await FreshenData();
-
         public override async Task FreshenData()
         {
             scheduledDuty=new ScheduledDutyModel();
@@ -61,10 +54,11 @@ namespace FrontEnd.Components.ScheduledDuty
 
             }
         }
-        private async Task BreedingRecordSubmitted(BreedingRecordModel e)
+        private async Task BreedingRecordSubmitted(object e)
         {
-            if(!string.IsNullOrEmpty(e.Resolution) && e.ResolutionDate.HasValue)
-                scheduledDuty.CompletedOn = e.ResolutionDate.Value;
+            var model = e as BreedingRecordModel;
+            if(!string.IsNullOrEmpty(model?.Resolution) && model.ResolutionDate.HasValue)
+                scheduledDuty.CompletedOn = model.ResolutionDate.Value;
 
             await OnSubmit();
         }

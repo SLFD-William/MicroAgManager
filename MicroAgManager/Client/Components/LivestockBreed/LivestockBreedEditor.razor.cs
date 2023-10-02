@@ -11,19 +11,12 @@ namespace FrontEnd.Components.LivestockBreed
     {
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedModel LivestockBreed { get; set; }
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
-        [Parameter] public EventCallback<LivestockBreedModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
 
         private LivestockBreedModel livestockBreed;
         private ValidatedForm _validatedForm;
-        [Parameter] public bool Modal { get; set; }
         protected override async Task OnInitializedAsync() => await FreshenData();
-
-
         public override async Task FreshenData()
         {
             if (LivestockBreed is not null)

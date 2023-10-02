@@ -13,6 +13,9 @@ namespace BackEnd.BusinessLogic.Duty
         public string? Relationship { get; set; }
         public string? Gender { get; set; }
         public bool? SystemRequired { get; set; }
+        public string? RecipientType { get; set; }
+        public long? RecipientTypeId { get; set; }
+
 
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
@@ -24,6 +27,8 @@ namespace BackEnd.BusinessLogic.Duty
             if (!string.IsNullOrWhiteSpace(Relationship)) query = query.Where(_ => _.Relationship != null && _.Relationship.Contains(Relationship));
             if (!string.IsNullOrWhiteSpace(Gender)) query = query.Where(_ => _.Gender != null && _.Gender.Contains(Gender));
             if (SystemRequired.HasValue) query = query.Where(_ => _.SystemRequired == SystemRequired);
+            if (RecipientType != null) query = query.Where(_ => _.RecipientType == RecipientType);
+            if (RecipientTypeId != null) query = query.Where(_ => _.RecipientTypeId == RecipientTypeId);
             return (IQueryable<T>)query;
         }
     }

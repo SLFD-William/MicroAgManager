@@ -14,6 +14,7 @@ namespace FrontEnd.Components.LivestockAnimal
             BreedsCount = context.LivestockAnimals.Find(livestockAnimalModel.Id)?.Breeds?.Count() ?? 0;
             StatusesCount = context.LivestockAnimals.Find(livestockAnimalModel.Id)?.Statuses?.Count() ?? 0;
             FeedsCount = context.LivestockAnimals.Find(livestockAnimalModel.Id)?.Feeds?.Count() ?? 0;
+            EntityName = livestockAnimalModel.GetType().Name;
         }
         public long Id => _livestockAnimalModel.Id;
         public string Name => _livestockAnimalModel.Name;   
@@ -21,6 +22,7 @@ namespace FrontEnd.Components.LivestockAnimal
         public string ParentFemaleName => _livestockAnimalModel.ParentFemaleName; 
         public string ParentMaleName => _livestockAnimalModel.ParentMaleName; 
         public string Care => _livestockAnimalModel.Care; 
+        public string EntityName { get; private set; }
         public int BreedsCount { get; private set; }
         public int StatusesCount { get; private set; }
         public int FeedsCount { get; private set; }

@@ -1,6 +1,6 @@
 ﻿namespace Domain.Constants
 {
-    public static class DutyCommands
+    public static class DutyCommandConstants
     {
         public static string Complete { get; private set; } = "Complete";
         public static string Measurement { get; private set; } = "Measurement";

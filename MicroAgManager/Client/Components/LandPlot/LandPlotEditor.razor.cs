@@ -14,14 +14,10 @@ namespace FrontEnd.Components.LandPlot
         [CascadingParameter] public LandPlotModel Plot { get; set; }
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
+
         LandPlotModel plot { get; set; }
         protected override async Task OnInitializedAsync() => await FreshenData();
-        [Parameter] public EventCallback<LandPlotModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         private ValidatedForm _validatedForm;
-        [Parameter] public bool Modal { get; set; }
         private async void Cancel()
         {
             editContext = new EditContext(plot);

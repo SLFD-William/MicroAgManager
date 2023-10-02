@@ -1,4 +1,6 @@
-﻿@using Domain.Models;
+﻿@using Domain.Constants;
+@using Domain.Models;
+@using FrontEnd.Components.Duty;
 @inherits DataComponent
 @if (editContext is not null)
 {
@@ -11,8 +13,53 @@
                    Modal="Modal"
     @ref=_validatedForm>
         <DataContent>
+            @if (milestone.RecipientTypeId <= 0)
+            {
+                <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => milestone.RecipientTypeId)">
+                    <InputSelect @bind-Value="@milestone.RecipientTypeId">
+                        @if (milestone.RecipientType == RecipientTypeConstants.LivestockAnimal)
+                        {
+                            <option value="0">Select Livestock Type ...</option>
+                            @foreach (var state in app.dbContext.LivestockAnimals.OrderBy(a => a.Name))
+                            {
+                                <option value="@state.Id">@state.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                </ValidatedField>
+            }
             <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => milestone.Name)">
                 <InputText placeholder="Milestone" @bind-Value="@milestone.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => milestone.Description)">
+                <InputTextArea placeholder="Description" @bind-Value="@milestone.Description" />
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => milestone.Duties)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Duties</span><button type="button" @onclick=ShowDutyEditor>+</button>
+                        @if (showDutyModal)
+                        {
+                            <DutyEditor showUpdateCancelButtons="true" @ref=_dutyEditor Modal="true" Submitted="DutyCreated" Cancelled="DutyCanceled"></DutyEditor>
+                        }
+                    </div>
+                </LegendContent>
+                
+                <ChildContent>
+                    <ul>
+                        @foreach (var g in app.dbContext.Duties.Where(l => milestone.Duties.Contains(l)))
+                        {
+                            <li><button type="button" @onclick=@(()=> DutyRemoved(g))>-</button> @g.Name</li>
+                        }
+                    </ul>
+                    <select @onchange="DutySelected">
+                        <option value="">Select Duty ...</option>
+                        @foreach (var g in app.dbContext.Duties.Where(l => !milestone.Duties.Contains(l)))
+                        {
+                            <option value="@g.Id">@g.Name</option>
+                        }
+                    </select>
+                </ChildContent>
             </ValidatedField>
         </DataContent>
     </ValidatedForm>

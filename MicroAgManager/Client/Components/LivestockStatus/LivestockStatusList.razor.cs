@@ -49,10 +49,12 @@ namespace FrontEnd.Components.LivestockStatus
             _editStatus = null;
             await FreshenData();
         }
-        private async Task StatusUpdated(LivestockStatusModel args)
+        private async Task StatusUpdated(object args)
         {
-            if (args.Id > 0)
-                while (!app.dbContext.LivestockStatuses.Any(t => t.Id == args.Id))
+            var model=args as LivestockStatusModel;
+
+            if (model?.Id > 0)
+                while (!app.dbContext.LivestockStatuses.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
 
             _editStatus = null;

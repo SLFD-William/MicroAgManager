@@ -8,6 +8,8 @@ using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
 using BackEnd.BusinessLogic.ManyToMany;
 using BackEnd.BusinessLogic.Milestone;
+using BackEnd.BusinessLogic.Registrar;
+using BackEnd.BusinessLogic.Registration;
 using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
 using Domain.Abstracts;
@@ -16,6 +18,7 @@ using Domain.ValueObjects;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using System.Data.Common;
+using System.Xml.Linq;
 
 namespace FrontEnd.Data
 {
@@ -362,11 +365,12 @@ namespace FrontEnd.Data
                 var name = AddNamedParameter(command, "$Name");
                 var description = AddNamedParameter(command, "$Description");
                 var systemRequired = AddNamedParameter(command, "$SystemRequired");
-                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
+                var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
+                var recipientType = AddNamedParameter(command, "$RecipientType");
 
-                command.CommandText = $"INSERT or REPLACE INTO Milestones (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Description,SystemRequired,LivestockAnimalId) " +
+                command.CommandText = $"INSERT or REPLACE INTO Milestones (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Description,SystemRequired,RecipientTypeId,RecipientType) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                    $"{name.ParameterName},{description.ParameterName},{systemRequired.ParameterName},{LivestockAnimalId.ParameterName})";
+                    $"{name.ParameterName},{description.ParameterName},{systemRequired.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -375,7 +379,8 @@ namespace FrontEnd.Data
                     name.Value = model.Name;
                     description.Value = model.Description;
                     systemRequired.Value = model.SystemRequired;
-                    LivestockAnimalId.Value = model.LivestockAnimalId.HasValue ? model.LivestockAnimalId : DBNull.Value;
+                    recipientTypeId.Value = model.RecipientTypeId;
+                    recipientType.Value = model.RecipientType;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -400,11 +405,12 @@ namespace FrontEnd.Data
                 var relationship = AddNamedParameter(command, "$Relationship");
                 var gender = AddNamedParameter(command, "$Gender");
                 var systemRequired = AddNamedParameter(command, "$SystemRequired");
-                var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
+                var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
+                var recipientType = AddNamedParameter(command, "$RecipientType");
 
-                command.CommandText = $"INSERT or REPLACE INTO Duties (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,DaysDue,Command,CommandId,Relationship,Gender,SystemRequired,LivestockAnimalId) " +
+                command.CommandText = $"INSERT or REPLACE INTO Duties (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,DaysDue,Command,CommandId,Relationship,Gender,SystemRequired,RecipientTypeId,RecipientType) " +
                 $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{name.ParameterName},{daysDue.ParameterName},{dutyType.ParameterName},{dutyTypeId.ParameterName},{relationship.ParameterName},{gender.ParameterName},{systemRequired.ParameterName},{LivestockAnimalId.ParameterName})";
+                $"{name.ParameterName},{daysDue.ParameterName},{dutyType.ParameterName},{dutyTypeId.ParameterName},{relationship.ParameterName},{gender.ParameterName},{systemRequired.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -417,7 +423,8 @@ namespace FrontEnd.Data
                     relationship.Value = model.Relationship;
                     gender.Value = model.Gender ?? string.Empty;
                     systemRequired.Value = model.SystemRequired;
-                    LivestockAnimalId.Value = model.LivestockAnimalId.HasValue ? model.LivestockAnimalId : DBNull.Value;
+                    recipientTypeId.Value = model.RecipientTypeId;
+                    recipientType.Value = model.RecipientType;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -468,7 +475,6 @@ namespace FrontEnd.Data
                 }
             }
         }
-
         public async static Task BulkUpdateScheduledDuties(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) return;
@@ -517,6 +523,80 @@ namespace FrontEnd.Data
             }
         }
 
+        public async static Task BulkUpdateRegistrars(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(RegistrarModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Registrars.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<RegistrarModel, GetRegistrarList>("api/GetRegistrars", new GetRegistrarList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var name = AddNamedParameter(command, "$Name");
+                var email = AddNamedParameter(command, "$Email");
+                var website = AddNamedParameter(command, "$Website");
+                var registrarApi = AddNamedParameter(command, "$API");
+                
+                command.CommandText = $"INSERT or REPLACE INTO Registrars (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Email,Website,API) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{name.ParameterName},{email.ParameterName},{website.ParameterName},{registrarApi.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    name.Value = model.Name;
+                    email.Value=model.Email ?? string.Empty;
+                    website.Value = model.Website ?? string.Empty;
+                    registrarApi.Value = model.API ?? string.Empty;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+        public async static Task BulkUpdateRegistrations(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(RegistrationModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Registrations.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrations.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<RegistrationModel, GetRegistrationList>("api/GetRegistrations", new GetRegistrationList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var registarId= AddNamedParameter(command, "$RegistrarId");
+                var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
+                var recipientId = AddNamedParameter(command, "$RecipientId");
+                var recipientType = AddNamedParameter(command, "$RecipientType");
+                var registrationDate = AddNamedParameter(command, "$RegistrationDate");
+                var identifier = AddNamedParameter(command, "$Identifier");
+                var defaultIdentification = AddNamedParameter(command, "$DefaultIdentification");
+
+                command.CommandText = $"INSERT or REPLACE INTO Registrations (Id,Deleted,EntityModifiedOn,ModifiedBy,RegistrarId,RecipientTypeId,RecipientId,RecipientType,RegistrationDate,Identifier,DefaultIdentification) " +
+                    $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                    $"{registarId.ParameterName},{recipientTypeId.ParameterName},{recipientId.ParameterName},{recipientType.ParameterName},{registrationDate.ParameterName},{identifier.ParameterName},{defaultIdentification.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    registarId.Value = model.RegistrarId;
+                    recipientTypeId.Value = model.RecipientTypeId;
+                    recipientId.Value = model.RecipientId;
+                    recipientType.Value = model.RecipientType;
+                    registrationDate.Value = model.RegistrationDate;
+                    identifier.Value = model.Identifier;
+                    defaultIdentification.Value = model.DefaultIdentification;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
         //public async static Task BulkUpdateLivestockFeeds(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         //{
         //    if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) return;

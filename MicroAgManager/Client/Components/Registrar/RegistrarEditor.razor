@@ -1,0 +1,27 @@
+﻿@using Domain.Constants;
+@inherits DataComponent
+@if (editContext is not null)
+{
+        <ValidatedForm editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="showUpdateCancelButtons"
+                   Modal="Modal"
+                    @ref=_validatedForm>
+            <DataContent>
+                <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => registrar.Name)">
+                    <InputText placeholder="Registrar Name" @bind-Value="@registrar.Name" />
+                </ValidatedField>
+                <ValidatedField Legend="Email" ValidationMessageFor="@(() => registrar.Email)">
+                    <InputText placeholder="Email" @bind-Value="@registrar.Email" />
+                </ValidatedField>
+                <ValidatedField Legend="Website" ValidationMessageFor="@(() => registrar.Website)">
+                    <InputText placeholder="Website" @bind-Value="@registrar.Website" />
+                </ValidatedField>
+                <ValidatedField Legend="API" ValidationMessageFor="@(() => registrar.API)">
+                    <InputText placeholder="API" @bind-Value="@registrar.API" />
+                </ValidatedField>
+            </DataContent>
+        </ValidatedForm>
+}

@@ -1,5 +1,6 @@
 ﻿using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Components.Shared
@@ -9,6 +10,11 @@ namespace FrontEnd.Components.Shared
         [Inject] protected ApplicationStateProvider app { get; set; }
         [Parameter] public bool Selectable { get; set; } = false;
         [Parameter] public bool CanDelete { get; set; } = false;
+        [Parameter] public EventCallback Cancelled { get; set; }
+        [Parameter] public EditContext editContext { get; set; }
+        [Parameter] public EventCallback<object> Submitted { get; set; }
+        [Parameter] public bool showUpdateCancelButtons { get; set; }
+        [Parameter] public bool Modal { get; set; }
         protected async override Task OnInitializedAsync()
         {
             while (app.dbSynchonizer is null)

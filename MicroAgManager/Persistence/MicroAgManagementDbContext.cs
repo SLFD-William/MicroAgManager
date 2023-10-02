@@ -33,6 +33,8 @@ namespace Persistence
         public DbSet<ScheduledDuty> ScheduledDuties { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<BreedingRecord> BreedingRecords { get; set; }
+        public DbSet<Registrar> Registrars { get; set; }
+        public DbSet<Registration> Registrations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

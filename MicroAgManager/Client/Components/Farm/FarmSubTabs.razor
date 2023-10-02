@@ -2,6 +2,8 @@
 @using FrontEnd.Components.LandPlot;
 @using FrontEnd.Components.LivestockAnimal;
 @using FrontEnd.Components.ScheduledDuty;
+@using FrontEnd.Components.Duty;
+@using FrontEnd.Components.Registrar;
 @inherits DataComponent
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(FarmSubTabs)" >
     <TabPage @ref="_plotTab">
@@ -29,10 +31,10 @@
         </ChildContent>
 
     </TabPage>
-    <TabPage @ref="_dutyTab" Text="Duties" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+    <TabPage @ref="_scheduledDutyTab" Text="Scheduled Duties" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
         <ButtonContent>
-            <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">
-                Duties
+            <button type="button" class="@_tabControl.GetButtonClass(_scheduledDutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_scheduledDutyTab))">
+                Scheduled Duties
                 @((MarkupString)GetOpenDutyCount())
             </button>
         </ButtonContent>
@@ -40,7 +42,25 @@
             <ScheduledDutyList @ref="_scheduledDutyList" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext))"></ScheduledDutyList>
         </ChildContent>
     </TabPage>
-    
-
+    <TabPage @ref="_dutyTab" Text="Duties" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">
+                Duties              
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            <DutyList @ref="_dutyList" Items="app.dbContext.Duties.OrderByDescending(f => f.Name).Select(s => new DutySummary(s, app.dbContext))"></DutyList>
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_registrarsTab" Text="Registrars" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_registrarsTab)" @onclick="@(() =>_tabControl.ActivatePage(_registrarsTab))">
+               Registrars
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            <RegistrarList @ref="_registrarList" Items="app.dbContext.Registrars.OrderByDescending(f => f.Name)"></RegistrarList>
+        </ChildContent>
+    </TabPage>
 </TabControl>
 

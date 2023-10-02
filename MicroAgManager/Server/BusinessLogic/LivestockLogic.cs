@@ -38,7 +38,7 @@ namespace BackEnd.BusinessLogic
                     CreatedBy = breedingRecord.ModifiedBy,
                     TenantId = breedingRecord.TenantId,
                     CreationMode = "Birth",
-                    Livestock = CreateBirthModel(i, breedingRecord, female, status, GenderConstants.Female)
+                    Livestock = CreateBirthModel(i+1, breedingRecord, female, status, GenderConstants.Female)
                 });
             }
             for (int i = 0; i < breedingRecord.BornMales; i++)
@@ -48,7 +48,7 @@ namespace BackEnd.BusinessLogic
                     CreatedBy = breedingRecord.ModifiedBy,
                     TenantId = breedingRecord.TenantId,
                     CreationMode = "Birth",
-                    Livestock = CreateBirthModel(i, breedingRecord, female, status, GenderConstants.Male)
+                    Livestock = CreateBirthModel(i+1, breedingRecord, female, status, GenderConstants.Male)
                 });
             }
             return entitiesModified;
@@ -58,13 +58,13 @@ namespace BackEnd.BusinessLogic
             var entitiesModified = new List<ModifiedEntity>();
             var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
             if (breedingRecord == null) throw new Exception("Breeding Record not found");
-            var livestock = await context.Livestocks.Include(b => b.Breed).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
+            var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a=>a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
             if (livestock == null || livestock.Gender == GenderConstants.Male) throw new Exception("Female Livestock not found");
 
             entitiesModified.Add(new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Modified", breedingRecord.ModifiedBy));
             entitiesModified.Add(new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy));
 
-            var birthDuty = await context.Duties.FirstOrDefaultAsync(d => d.LivestockAnimal != null && d.LivestockAnimal.Id == livestock.Breed.LivestockAnimalId && d.Command == DutyCommands.Birth);
+            var birthDuty = await context.Duties.FirstOrDefaultAsync(d => d.RecipientType == livestock.Breed.LivestockAnimal.GetType().Name && d.RecipientTypeId == livestock.Breed.LivestockAnimalId && d.Command == DutyCommandConstants.Birth);
             if (birthDuty == null) throw new Exception("Birth Duty not found");
 
             var scheduledDuty = new Domain.Entity.ScheduledDuty(breedingRecord.ModifiedBy, breedingRecord.TenantId)

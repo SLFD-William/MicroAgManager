@@ -9,14 +9,9 @@ namespace FrontEnd.Components.LivestockAnimal
 {
     public partial class LivestockAnimalEditor : DataComponent
     {
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
         [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
-        [Parameter] public EventCallback<LivestockAnimalModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         private ValidatedForm _validatedForm;
-        [Parameter] public bool Modal { get; set; }
 
         protected LivestockAnimalSubTabs _tabControl;
         private LivestockAnimalModel livestockAnimal;

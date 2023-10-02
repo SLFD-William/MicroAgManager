@@ -11,10 +11,6 @@ namespace FrontEnd.Components.Farm
         [Parameter] public long? farmId { get; set; }
 
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
-
-
-        [Parameter] public EventCallback<FarmLocationModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         private bool _editting=false;
         private void ShowEditor()=>_editting = true;
         

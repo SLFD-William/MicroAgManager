@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Milestone
@@ -19,12 +20,36 @@ namespace BackEnd.BusinessLogic.Milestone
 
             public override async Task<long> Handle(UpdateMilestone request, CancellationToken cancellationToken)
             {
-                var duty = _context.Milestones.First(d => d.TenantId == request.TenantId && d.Id == request.Milestone.Id);
-                duty = request.Milestone.MapToEntity(duty);
-                duty.ModifiedBy = request.ModifiedBy;
-                await _context.SaveChangesAsync(cancellationToken);
-                await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);
-                return duty.Id;
+                var milestone = _context.Milestones.Include(d=>d.Duties).First(d => d.TenantId == request.TenantId && d.Id == request.Milestone.Id);
+                milestone = request.Milestone.MapToEntity(milestone);
+                milestone.ModifiedBy = request.ModifiedBy;
+                var dutyIds=request.Milestone.Duties.Select(d=>d.Id).ToList();
+                var dutiesToDelete = milestone.Duties.Where(d => !dutyIds.Contains(d.Id)).ToList();
+                var dutiesToAdd = dutyIds.Where(id=> !milestone.Duties.Select(x=>x.Id).ToList().Contains(id) );
+
+                //var eventIds = request.Milestone.Events.Select(d => d.Id).ToList();
+                //var eventsToDelete = milestone.Events.Where(d => !eventIds.Contains(d.Id)).ToList();
+                //var eventsToAdd = dutyIds.Where(id => !milestone.Events.Select(x => x.Id).ToList().Contains(id));
+       
+                foreach (var dut in dutiesToDelete)
+                    milestone.Duties.Remove(dut);
+
+                foreach (var id in dutiesToAdd)
+                    milestone.Duties.Add(await _context.Duties.FindAsync(id));
+
+                //foreach (var dut in eventsToDelete)
+                //    milestone.Events.Remove(dut);
+
+                //foreach (var id in eventsToAdd)
+                //    milestone.Events.Add(await _context.Events.FindAsync(id));
+                try
+                {
+                    await _context.SaveChangesAsync(cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(milestone.Id.ToString(), milestone.GetType().Name, "Modified", milestone.ModifiedBy) }), cancellationToken);
+                }
+                catch (Exception ex) { _log.LogError(ex, "Unable to Update Milestone"); }
+
+                return milestone.Id;
             }
         }
     }

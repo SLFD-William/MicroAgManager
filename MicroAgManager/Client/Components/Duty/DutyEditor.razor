@@ -1,0 +1,99 @@
+﻿@using Domain.Constants;
+@using FrontEnd.Components.Registrar;
+@inherits DataComponent
+@if (editContext is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="showUpdateCancelButtons"
+                   Modal="Modal"
+    @ref=_validatedForm>
+        <DataContent>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => duty.Name)">
+                <InputText @bind-Value="duty.Name"></InputText>
+            </ValidatedField>
+            <ValidatedField Legend="Command" ValidationMessageFor="@(() => duty.Command)">
+                <InputSelect @bind-Value="@Command">
+                    <option value="0">Select Command ...</option>
+                    <option value="@DutyCommandConstants.Birth">@nameof(DutyCommandConstants.Birth)</option>
+                    <option value="@DutyCommandConstants.Breed">@nameof(DutyCommandConstants.Breed)</option>
+                    <option value="@DutyCommandConstants.Complete">@nameof(DutyCommandConstants.Complete)</option>
+                    <option value="@DutyCommandConstants.Registration">@nameof(DutyCommandConstants.Registration)</option>
+                    <option value="@DutyCommandConstants.Service">@nameof(DutyCommandConstants.Service)</option>
+                    @*<option value="@DutyCommandConstants.Death">@nameof(DutyCommandConstants.Death)</option>
+                    <option value="@DutyCommandConstants.Feed">@nameof(DutyCommandConstants.Feed)</option>
+                    <option value="@DutyCommandConstants.Measurement">@nameof(DutyCommandConstants.Measurement)</option>
+                    <option value="@DutyCommandConstants.Photograph">@nameof(DutyCommandConstants.Photograph)</option>
+                    <option value="@DutyCommandConstants.Treatment">@nameof(DutyCommandConstants.Treatment)</option> *@
+                </InputSelect>
+            </ValidatedField>
+            @if (showCommandId())
+            { 
+                <ValidatedField ValidationMessageFor="@(() => duty.CommandId)">
+                    <LegendContent>
+                        <div style="display:inline-flex">
+                            <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
+                            @if (showCommandModal)
+                            {
+                                if (duty.Command == DutyCommandConstants.Registration)
+                                {
+                                    <RegistrarEditor @ref=_registrarEditor Modal="true" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
+                                }
+                            }
+                        </div>
+                    </LegendContent>
+                    <ChildContent>
+                        <InputSelect @bind-Value="@duty.CommandId">
+                            <option value="0">Select Command Instance ...</option>
+                            @foreach (var command in commandIds())
+                            {
+                                <option value="@command.Key">@command.Value</option>
+                            }
+                        </InputSelect>
+                    </ChildContent>
+                </ValidatedField>
+            }
+            @if (!string.IsNullOrEmpty(duty.Command) && duty.Command != DutyCommandConstants.Complete)
+            {
+                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => duty.RecipientType)">
+                    <InputSelect @bind-Value="@duty.RecipientType">
+                        <option value="0">Select Recipient Type ...</option>
+                        <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => duty.RecipientTypeId)">
+                    <InputSelect @bind-Value="@duty.RecipientTypeId">
+                        <option value="0">Select Recipient Type Instance ...</option>
+                        @foreach (var recipient in recipientTypeIds())
+                        {
+                            <option value="@recipient.Key">@recipient.Value</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+            }
+            @if (duty.RecipientType == RecipientTypeConstants.LivestockAnimal)
+            { 
+                <ValidatedField Legend="Gender" ValidationMessageFor="@(() => duty.Gender)">
+                    <InputSelect @bind-Value="@duty.Gender">
+                        <option value="">Select Gender ...</option>
+                        <option value="@GenderConstants.Female">@nameof(GenderConstants.Female)</option>
+                        <option value="@GenderConstants.Male">@nameof(GenderConstants.Male)</option>
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="Relationship" ValidationMessageFor="@(() => duty.Relationship)">
+                    <InputSelect @bind-Value="@duty.Relationship">
+                        <option value="0">Select Relationship ...</option>
+                        <option value="@DutyRelationshipConstants.Self">@nameof(DutyRelationshipConstants.Self)</option>
+                        <option value="@DutyRelationshipConstants.Mother">@nameof(DutyRelationshipConstants.Mother)</option>
+                        <option value="@DutyRelationshipConstants.Father">@nameof(DutyRelationshipConstants.Father)</option>
+                    </InputSelect>
+                </ValidatedField>
+            }
+            <ValidatedField Legend="Number of Days from Event to schedule duty" ValidationMessageFor="@(() => duty.DaysDue)">
+                <InputNumber @bind-Value="duty.DaysDue"></InputNumber>
+            </ValidatedField>
+        </DataContent>
+    </ValidatedForm>
+}

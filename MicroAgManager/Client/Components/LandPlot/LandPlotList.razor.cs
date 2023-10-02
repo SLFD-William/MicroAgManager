@@ -34,10 +34,11 @@ namespace FrontEnd.Components.LandPlot
             _editPlot = null;
             await FreshenData();
         }
-        private async Task LandPlotUpdated(LandPlotModel args)
+        private async Task LandPlotUpdated(object args )
         {
-            if (args.Id > 0)
-                while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
+            var model = args as LandPlotModel;
+            if (model?.Id > 0)
+                while (!app.dbContext.LandPlots.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
             _editPlot = null;
             await FreshenData();

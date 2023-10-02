@@ -129,9 +129,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("LivestockAnimalId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -139,6 +136,14 @@ namespace FrontEnd.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Relationship")
                         .IsRequired()
@@ -847,9 +852,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<DateTime>("EntityModifiedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("LivestockAnimalId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -858,12 +860,103 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("SystemRequired")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Milestones");
+                });
+
+            modelBuilder.Entity("Domain.Models.RegistrarModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("API")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Registrars");
+                });
+
+            modelBuilder.Entity("Domain.Models.RegistrationModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("DefaultIdentification")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("RegistrarId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistrarId");
+
+                    b.ToTable("Registrations");
                 });
 
             modelBuilder.Entity("Domain.Models.ScheduledDutyModel", b =>
@@ -1075,6 +1168,17 @@ namespace FrontEnd.Persistence.Migrations
                         .HasForeignKey("LivestockAnimalModelId");
                 });
 
+            modelBuilder.Entity("Domain.Models.RegistrationModel", b =>
+                {
+                    b.HasOne("Domain.Models.RegistrarModel", "Registrar")
+                        .WithMany("Registrations")
+                        .HasForeignKey("RegistrarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Registrar");
+                });
+
             modelBuilder.Entity("Domain.Models.ScheduledDutyModel", b =>
                 {
                     b.HasOne("Domain.Models.DutyModel", null)
@@ -1177,6 +1281,11 @@ namespace FrontEnd.Persistence.Migrations
             modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
                 {
                     b.Navigation("Livestocks");
+                });
+
+            modelBuilder.Entity("Domain.Models.RegistrarModel", b =>
+                {
+                    b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618
         }

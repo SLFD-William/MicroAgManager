@@ -29,5 +29,7 @@ namespace FrontEnd.Persistence
         public DbSet<ScheduledDutyModel> ScheduledDuties { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<BreedingRecordModel> BreedingRecords { get; set; }
+        public DbSet<RegistrarModel> Registrars { get; set; }
+        public DbSet<RegistrationModel> Registrations { get; set; }
     }
 }

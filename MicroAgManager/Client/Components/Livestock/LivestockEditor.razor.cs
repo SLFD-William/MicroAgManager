@@ -17,19 +17,11 @@ namespace FrontEnd.Components.Livestock
         [CascadingParameter] public LivestockBreedSummary LivestockBreed { get; set; }
         [CascadingParameter] public LivestockModel Livestock { get; set; }
         
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
-        [Parameter] public EventCallback<LivestockModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         [Parameter] public long? livestockId { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
         private ValidatedForm _validatedForm;
         private LivestockStatusEditor _livestockStatusEditor;
-        [Parameter] public bool Modal { get; set; }
-
         private LivestockModel livestock;
-
-        //protected LivestockSubTabs _tabControl;
         public long StatusId
         { get => livestock.StatusId ?? 0;
             set {
@@ -119,11 +111,12 @@ namespace FrontEnd.Components.Livestock
             originalStatusId = null;
             StateHasChanged();
         }
-        private void StatusCreated(LivestockStatusModel e)
+        private void StatusCreated(object e)
         {
+            var status = e as LivestockStatusModel;
             _livestockStatusEditor.HideModal();
             showStatusModal = false;
-            livestock.StatusId = e.Id;
+            livestock.StatusId = status?.Id;
             StateHasChanged();
         }
         private async void Cancel()

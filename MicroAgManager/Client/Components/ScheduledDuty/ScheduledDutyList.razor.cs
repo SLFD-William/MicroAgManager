@@ -42,10 +42,11 @@ namespace FrontEnd.Components.ScheduledDuty
             _editScheduledDuty = null;
             await FreshenData();
         }
-        private async Task ScheduledDutyUpdated(ScheduledDutyModel args)
+        private async Task ScheduledDutyUpdated(object args)
         {
-            if (args.Id > 0)
-                while (!app.dbContext.ScheduledDuties.Any(t => t.Id == args.Id))
+            var model = args as ScheduledDutyModel;
+            if (model?.Id > 0)
+                while (!app.dbContext.ScheduledDuties.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
 
             _editScheduledDuty = null;

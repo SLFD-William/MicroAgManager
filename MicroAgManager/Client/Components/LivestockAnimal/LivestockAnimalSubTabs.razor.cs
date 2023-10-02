@@ -26,6 +26,9 @@ namespace FrontEnd.Components.LivestockAnimal
             _tabControl?.ActivatePage(app.SelectedTabs["LivestockAnimalSubTabs"] ?? _tabControl?.ActivePage ?? _breedsTab);
             await FreshenData();
         }
+        private IEnumerable<MilestoneSummary> milestoneSummaries =>
+            app.dbContext.Milestones.Where(s => s.RecipientTypeId == livestockAnimal.Id && s.RecipientType == livestockAnimal.GetEntityName())
+                .OrderBy(a => a.Name).Select(s => new MilestoneSummary(s, app.dbContext));
         public override async Task FreshenData()
         {
             if (LivestockAnimal is not null)

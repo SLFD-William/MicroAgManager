@@ -45,10 +45,12 @@ namespace FrontEnd.Components.Farm
             _editFarm = null;
             await FreshenData();
         }
-        private async Task FarmUpdated(FarmLocationModel args)
+        private async Task FarmUpdated(object args)
         {
-            if (args.Id > 0)
-                while (!app.dbContext.Farms.Any(t => t.Id == args.Id))
+            var model=args as FarmLocationModel;
+
+            if (model?.Id > 0)
+                while (!app.dbContext.Farms.Any(t => t.Id ==model.Id))
                     await Task.Delay(100);
 
             _editFarm = null;

@@ -207,9 +207,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("nvarchar(1)");
 
-                    b.Property<long?>("LivestockAnimalId")
-                        .HasColumnType("bigint");
-
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -220,6 +217,14 @@ namespace BackEnd.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Relationship")
                         .IsRequired()
@@ -239,8 +244,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("rowversion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("Duties");
                 });
@@ -1220,9 +1223,6 @@ namespace BackEnd.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long?>("LivestockAnimalId")
-                        .HasColumnType("bigint");
-
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -1233,6 +1233,14 @@ namespace BackEnd.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("SystemRequired")
                         .HasColumnType("bit");
@@ -1248,9 +1256,131 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockAnimalId");
-
                     b.ToTable("Milestones");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Registrar", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("API")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("TimeStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Registrars");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Registration", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("DefaultIdentification")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RegistrarId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("TimeStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistrarId");
+
+                    b.ToTable("Registrations");
                 });
 
             modelBuilder.Entity("Domain.Entity.ScheduledDuty", b =>
@@ -1752,15 +1882,6 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("Male");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Duty", b =>
-                {
-                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
-                        .WithMany()
-                        .HasForeignKey("LivestockAnimalId");
-
-                    b.Navigation("LivestockAnimal");
-                });
-
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
                 {
                     b.HasOne("Domain.Entity.FarmLocation", "FarmLocation")
@@ -1910,13 +2031,15 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("LivestockAnimal");
                 });
 
-            modelBuilder.Entity("Domain.Entity.Milestone", b =>
+            modelBuilder.Entity("Domain.Entity.Registration", b =>
                 {
-                    b.HasOne("Domain.Entity.LivestockAnimal", "LivestockAnimal")
-                        .WithMany()
-                        .HasForeignKey("LivestockAnimalId");
+                    b.HasOne("Domain.Entity.Registrar", "Registrar")
+                        .WithMany("Registrations")
+                        .HasForeignKey("RegistrarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("LivestockAnimal");
+                    b.Navigation("Registrar");
                 });
 
             modelBuilder.Entity("Domain.Entity.ScheduledDuty", b =>
@@ -2117,6 +2240,11 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("FeedServings");
 
                     b.Navigation("Livestocks");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Registrar", b =>
+                {
+                    b.Navigation("Registrations");
                 });
 #pragma warning restore 612, 618
         }

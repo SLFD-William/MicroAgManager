@@ -18,14 +18,9 @@ namespace FrontEnd.Components.LivestockStatus
         };
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockStatusModel LivestockStatus { get; set; }
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
-        [Parameter] public EventCallback<LivestockStatusModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? livestockStatusId { get; set; }
         private ValidatedForm _validatedForm;
-        [Parameter] public bool Modal { get; set; }
         protected override async Task OnInitializedAsync() => await FreshenData();
         public void HideModal() => _validatedForm.HideModal();
         public void ShowModal() => _validatedForm.ShowModal();

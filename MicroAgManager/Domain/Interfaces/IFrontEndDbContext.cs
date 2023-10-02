@@ -23,5 +23,7 @@ namespace Domain.Interfaces
         public DbSet<MilestoneModel> Milestones { get; set; }
         public DbSet<ScheduledDutyModel> ScheduledDuties { get; set; }
         public DbSet<BreedingRecordModel> BreedingRecords { get; set; }
+        public DbSet<RegistrarModel> Registrars { get; set; }
+        public DbSet<RegistrationModel> Registrations { get; set; }
     }
 }

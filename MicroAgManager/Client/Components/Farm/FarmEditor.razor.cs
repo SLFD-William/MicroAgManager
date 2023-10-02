@@ -13,14 +13,10 @@ namespace FrontEnd.Components.Farm
     {
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
         [Inject] protected IGeolocationService GeoLoc { get; set; }
         [Inject] private IFrontEndApiServices api { get; set; }
-        [Parameter] public EventCallback<FarmLocationModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
         private ValidatedForm _validatedForm;
-        [Parameter] public bool Modal { get; set; }
+        
         FarmLocationModel farm { get; set; }
 
         bool locationEnabled { get; set; } = true;

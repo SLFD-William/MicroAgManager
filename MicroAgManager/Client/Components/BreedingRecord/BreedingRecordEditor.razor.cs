@@ -13,12 +13,8 @@ namespace FrontEnd.Components.BreedingRecord
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedSummary Breed { get; set; }
         [CascadingParameter] public BreedingRecordModel BreedingRecord { get; set; }
-        [Parameter] public EventCallback<BreedingRecordModel> Submitted { get; set; }
-        [Parameter] public EventCallback Cancelled { get; set; }
+       
         private ValidatedForm _validatedForm;
-        [Parameter] public bool Modal { get; set; }
-        [Parameter] public bool showUpdateCancelButtons { get; set; }
-        [Parameter] public EditContext editContext { get; set; }
         [Parameter] public long? breedingRecordId { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }

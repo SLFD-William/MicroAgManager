@@ -17,5 +17,7 @@ namespace Domain.Abstracts
             model.ModifiedBy = entity.ModifiedBy;
             return model;
         }
+
+        public virtual string GetEntityName()=>GetType().Name.Replace("Model", "");
     }
 }

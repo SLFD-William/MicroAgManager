@@ -23,8 +23,8 @@ namespace Domain.Interfaces
         DbSet<Milestone> Milestones { get; set; }
         DbSet<ScheduledDuty> ScheduledDuties { get; set; }
         DbSet<BreedingRecord> BreedingRecords { get; set; }
-
-
+        DbSet<Registrar> Registrars { get; set; }
+        DbSet<Registration> Registrations { get; set; }
 
     }
 }

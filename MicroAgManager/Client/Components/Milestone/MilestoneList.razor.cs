@@ -27,7 +27,7 @@ namespace FrontEnd.Components.Milestone
 
             if (Items is null)
                 Items = (await app.dbContext.Milestones
-                    .Where(f => f.LivestockAnimalId == LivestockAnimal.Id).OrderBy(f => f.EntityModifiedOn)
+                    .Where(f => f.RecipientTypeId == LivestockAnimal.Id && f.RecipientType==LivestockAnimal.EntityName).OrderBy(f => f.EntityModifiedOn)
                     .Select(s => new MilestoneSummary(s, app.dbContext)).ToListAsync()).AsEnumerable();
 
             _listComponent?.Update();
@@ -40,7 +40,7 @@ namespace FrontEnd.Components.Milestone
         }
         private async Task EditMilestone(long id)
         {
-            _editMilestone = id > 0 ? await FindMilestone(id) : new MilestoneModel { LivestockAnimalId = LivestockAnimal.Id };
+            _editMilestone = id > 0 ? await FindMilestone(id) : new MilestoneModel { RecipientTypeId = LivestockAnimal.Id, RecipientType=LivestockAnimal.EntityName };
             StateHasChanged();
         }
         private async Task EditCancelled()
@@ -48,10 +48,11 @@ namespace FrontEnd.Components.Milestone
             _editMilestone = null;
             await FreshenData();
         }
-        private async Task MilestoneUpdated(MilestoneModel args)
+        private async Task MilestoneUpdated(object args)
         {
-            if (args.Id > 0)
-                while (!app.dbContext.Milestones.Any(t => t.Id == args.Id))
+            var model=args as MilestoneModel;
+            if (model?.Id > 0)
+                while (!app.dbContext.Milestones.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
 
             _editMilestone = null;

@@ -46,10 +46,11 @@ namespace FrontEnd.Components.Livestock
             _editLivestock = null;
             await FreshenData();
         }
-        private async Task LivestockUpdated(LivestockModel args)
+        private async Task LivestockUpdated(object args)
         {
-            if (args.Id > 0)
-                while (!app.dbContext.Livestocks.Any(t => t.Id == args.Id))
+            var model = args as LivestockModel;
+            if (model?.Id > 0)
+                while (!app.dbContext.Livestocks.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
 
             _editLivestock = null;

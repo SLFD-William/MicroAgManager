@@ -1,6 +1,8 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.Duty;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockAnimal;
+using FrontEnd.Components.Registrar;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
@@ -16,13 +18,17 @@ namespace FrontEnd.Components.Farm
         protected LandPlotList _landPlotList;
         protected LivestockAnimalList _livestockAnimalList;
         protected ScheduledDutyList _scheduledDutyList;
+        protected DutyList _dutyList;
+        protected RegistrarList _registrarList;
 
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         protected TabControl _tabControl;
         protected TabPage _plotTab;
         protected TabPage _livestockTab;
+        protected TabPage _scheduledDutyTab;
         protected TabPage _dutyTab;
-        
+        protected TabPage _registrarsTab;
+
         protected override void OnInitialized()
         {
             _tabControl?.ActivatePage(app.SelectedTabs[nameof(FarmSubTabs)] ?? _tabControl?.ActivePage ?? _plotTab);

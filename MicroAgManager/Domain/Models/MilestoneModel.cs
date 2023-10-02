@@ -1,7 +1,6 @@
 ﻿using Domain.Abstracts;
 using Domain.Entity;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
@@ -10,7 +9,9 @@ namespace Domain.Models
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][MaxLength(255)] public string Description { get; set; }
         [Required] public bool SystemRequired { get; set; }
-        [ForeignKey(nameof(LivestockAnimalModel))] public long? LivestockAnimalId { get; set; }
+        [MaxLength(40)] public string RecipientType { get; set; }
+        [Required]
+        [Range(1, long.MaxValue)] public long RecipientTypeId { get; set; }
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
         public static MilestoneModel? Create(Milestone? milestone)
@@ -18,7 +19,8 @@ namespace Domain.Models
             if (milestone == null) return null;
             var model = PopulateBaseModel(milestone, new MilestoneModel
             {
-                LivestockAnimalId= milestone.LivestockAnimalId,
+                RecipientTypeId = milestone.RecipientTypeId,
+                RecipientType = milestone.RecipientType,
                 Name = milestone.Name,
                 Description=milestone.Description,
                 SystemRequired = milestone.SystemRequired,
@@ -32,13 +34,8 @@ namespace Domain.Models
             milestone.Name= Name;
             milestone.Description = Description;
             milestone.SystemRequired= SystemRequired;
-            if(LivestockAnimalId.HasValue && milestone.LivestockAnimal is not null) milestone.LivestockAnimalId= LivestockAnimalId.Value;
-            if (milestone.Events?.Any() ?? false)
-                foreach (var plot in milestone.Events)
-                    Events.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
-            if (milestone.Duties?.Any() ?? false)
-                foreach (var plot in milestone.Duties)
-                    Duties.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
+            milestone.RecipientTypeId = RecipientTypeId;
+            milestone.RecipientType = RecipientType;
             milestone.ModifiedOn = DateTime.UtcNow;
             return milestone;
         }

@@ -17,6 +17,8 @@ using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.Event;
 using BackEnd.BusinessLogic.ManyToMany;
 using BackEnd.BusinessLogic.BreedingRecord;
+using BackEnd.BusinessLogic.Registrar;
+using BackEnd.BusinessLogic.Registration;
 
 namespace Host
 {
@@ -94,6 +96,9 @@ namespace Host
             app.MapPost("/api/GetEvent", [Authorize] async (GetEvent query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetBreedingRecords", [Authorize] async (GetBreedingRecordList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetBreedingRecord", [Authorize] async (GetBreedingRecord query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetRegistrars", [Authorize] async (GetRegistrarList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/GetRegistrations", [Authorize] async (GetRegistrationList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            
 
             app.MapPost("/api/GetDutyMilestoneList", [Authorize] async (GetDutyMilestoneList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetDutyEventList", [Authorize] async (GetDutyEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
@@ -127,6 +132,10 @@ namespace Host
             app.MapPost("/api/ServiceLivestock", [Authorize] async (ServiceLivestock command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/CreateBreedingRecord", [Authorize] async (CreateBreedingRecord command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateBreedingRecord", [Authorize] async (UpdateBreedingRecord command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/CreateRegistrar", [Authorize] async (CreateRegistrar command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateRegistrar", [Authorize] async (UpdateRegistrar command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/CreateRegistration", [Authorize] async (CreateRegistration command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateRegistration", [Authorize] async (UpdateRegistration command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
         }
     }
 }
