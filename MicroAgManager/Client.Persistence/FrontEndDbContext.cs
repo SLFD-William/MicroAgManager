@@ -31,5 +31,7 @@ namespace FrontEnd.Persistence
         public DbSet<BreedingRecordModel> BreedingRecords { get; set; }
         public DbSet<RegistrarModel> Registrars { get; set; }
         public DbSet<RegistrationModel> Registrations { get; set; }
+        public DbSet<MeasureModel> Measures { get; set; }
+        public DbSet<MeasurementModel> Measurements { get; set; }
     }
 }

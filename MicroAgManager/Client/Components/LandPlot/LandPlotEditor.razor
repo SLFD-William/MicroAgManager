@@ -1,5 +1,4 @@
 ﻿@using Domain.Constants;
-@using Domain.Enums;
 @using Domain.Models;
 @inherits DataComponent
 @if (editContext is not null)
@@ -34,10 +33,8 @@
             <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
                 <InputSelect @bind-Value="@plot.AreaUnit">
                     <option value="">Select Units ...</option>
-                    @foreach (var g in BaseEnumeration.GetAll<UnitEnum>().Where(a => a.Name.StartsWith("Area")))
-                    {
-                        <option value="@g.GetDescription()">@g.GetDescription()</option>
-                    }
+                    <option value="@nameof(MeasurementUnitConstants.Area_Acres)">@MeasurementUnitConstants.Area_Acres</option>
+                    
                 </InputSelect>
             </ValidatedField>
         </DataContent>

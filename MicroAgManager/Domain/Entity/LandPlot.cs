@@ -1,6 +1,5 @@
 ﻿using Domain.Abstracts;
 using Domain.Constants;
-using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +14,7 @@ namespace Domain.Entity
         [Required][MaxLength(50)]public string Name { get; set; }
         [Required][MaxLength(255)] public string Description { get; set; }
         [Precision(18,3)]public decimal Area { get; set; } = 0M;
-        [Required][MaxLength(50)] public string AreaUnit { get; set; }=UnitEnum.Area_Acres.GetDescription();
+        [Required][MaxLength(50)] public string AreaUnit { get; set; } = MeasurementUnitConstants.Area_Acres;
         [Required][MaxLength(50)] public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;
         [Required] public long FarmLocationId { get; set; }
 

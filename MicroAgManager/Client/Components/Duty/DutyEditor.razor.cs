@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using BackEnd.BusinessLogic.Duty;
 using Domain.Constants;
-using Domain.Entity;
-using FrontEnd.Components.LivestockStatus;
 using FrontEnd.Components.Registrar;
 using Domain.Abstracts;
 

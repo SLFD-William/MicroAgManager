@@ -1,5 +1,4 @@
 ﻿using Domain.Entity;
-using Domain.Enums;
 using Domain.Abstracts;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,8 +15,8 @@ namespace Domain.Models
         [Required] public string Name { get; set; }
         [Required] public string Description { get; set; }
         [Precision(18, 3)] public decimal Area { get; set; } = 0M;
-        public string AreaUnit { get; set; } = UnitEnum.Area_Acres.GetDescription();
-        public string Usage { get; set; } = LandPlotUseConstants.GeneralUse;
+        public string AreaUnit { get; set; } = nameof(MeasurementUnitConstants.Area_Acres);
+        public string Usage { get; set; } = nameof(LandPlotUseConstants.GeneralUse);
         [ForeignKey(nameof(LandPlotModel))] public long? ParentPlotId { get; set; }
         public virtual ICollection<LandPlotModel> Subplots { get; set; }=new List<LandPlotModel>();
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();

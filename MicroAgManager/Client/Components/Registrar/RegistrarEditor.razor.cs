@@ -2,13 +2,6 @@
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BackEnd.BusinessLogic.Duty;
-using Domain.Entity;
 using BackEnd.BusinessLogic.Registrar;
 
 namespace FrontEnd.Components.Registrar

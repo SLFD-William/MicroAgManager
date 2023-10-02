@@ -35,6 +35,8 @@ namespace Persistence
         public DbSet<BreedingRecord> BreedingRecords { get; set; }
         public DbSet<Registrar> Registrars { get; set; }
         public DbSet<Registration> Registrations { get; set; }
+        public DbSet<Measure> Measures { get; set; }
+        public DbSet<Measurement> Measurements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

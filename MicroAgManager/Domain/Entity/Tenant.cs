@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Domain.Constants;
 
 namespace Domain.Entity
 {
@@ -35,7 +35,7 @@ namespace Domain.Entity
             CreatedBy = createdBy;
             ModifiedOn = Created;
             ModifiedBy = createdBy;
-            AccessLevel = TenantAccessLevelEnum.SingleUser.GetDescription();
+            AccessLevel = nameof(TennantAccessLevelConstants.SingleUser);
         }
     }
 }

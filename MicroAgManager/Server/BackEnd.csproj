@@ -19,4 +19,9 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BusinessLogic\Measure\" />
+    <Folder Include="BusinessLogic\Measurement\" />
+  </ItemGroup>
+
 </Project>

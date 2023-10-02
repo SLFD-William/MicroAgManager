@@ -8,4 +8,9 @@
         public static string RegistrationUserExists { get; private set; } = "User already Exists";
         public static string RegistrationFailed { get; private set; } = "User creation failed! Please check user details and try again.";
     }
+    public static class TennantAccessLevelConstants
+    { 
+        public static string Admin { get; private set; } = "Admin";
+        public static string SingleUser { get; private set; } = "Single User";
+    }
 }

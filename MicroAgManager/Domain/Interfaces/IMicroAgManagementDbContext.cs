@@ -1,4 +1,5 @@
 ﻿using Domain.Entity;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Interfaces
@@ -25,6 +26,7 @@ namespace Domain.Interfaces
         DbSet<BreedingRecord> BreedingRecords { get; set; }
         DbSet<Registrar> Registrars { get; set; }
         DbSet<Registration> Registrations { get; set; }
-
+        DbSet<Measure> Measures { get; set; }
+        DbSet<Measurement> Measurements { get; set; }
     }
 }

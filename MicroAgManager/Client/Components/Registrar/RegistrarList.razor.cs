@@ -1,5 +1,4 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Shared.Sortable;
 using Microsoft.AspNetCore.Components;

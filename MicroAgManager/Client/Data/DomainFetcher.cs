@@ -18,7 +18,6 @@ using Domain.ValueObjects;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using System.Data.Common;
-using System.Xml.Linq;
 
 namespace FrontEnd.Data
 {

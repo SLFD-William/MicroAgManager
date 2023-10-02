@@ -3,7 +3,6 @@ using FrontEnd.Persistence;
 using FrontEnd.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -109,15 +108,7 @@ namespace FrontEnd.Data
                     await DomainFetcher.BulkUpdateRegistrations(entityModels, db, connection, _api);
 
 
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedModel))) await BulkUpdateLivestockFeeds(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedServingModel))) await BulkUpdateLivestockFeedServings(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedDistributionModel))) await BulkUpdateLivestockFeedDistributions(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisParameterModel))) await BulkUpdateLivestockFeedAnalysisParameters(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisModel))) await BulkUpdateLivestockFeedAnalyses(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(LivestockFeedAnalysisResultModel))) await BulkUpdateLivestockFeedAnalysisResults(db, connection, _api);
 
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) await BulkUpdateScheduledDuties(db, connection, _api);
-                    //if (ShouldEntityBeUpdated(entityModels, nameof(EventModel))) await BulkUpdateEvents(db, connection, _api);
                     await DomainFetcher.BulkUpdateDutyMilestone(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateDutyEvent(entityModels, db, connection, _api);
 
