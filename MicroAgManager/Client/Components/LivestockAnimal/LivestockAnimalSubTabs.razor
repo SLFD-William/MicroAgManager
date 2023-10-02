@@ -4,29 +4,31 @@
 @using FrontEnd.Components.Milestone;
 @using FrontEnd.Components.LivestockBreed;
 @inherits DataComponent
-<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockAnimalSubTabs)">
-    <TabPage @ref="_breedsTab" Text="Breeds">
-        <ButtonContent>
-            <button type="button" class="@_tabControl.GetButtonClass(_breedsTab)" @onclick="@(() =>_tabControl.ActivatePage(_breedsTab))">Breeds</button>
-        </ButtonContent>
-        <ChildContent>
-            <LivestockBreedList  @ref="_livestockBreedList" Items="app.dbContext.LivestockBreeds.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Name).Select(b=>new LivestockBreedSummary(b,app.dbContext))"></LivestockBreedList>
-        </ChildContent>
-    </TabPage>
-    <TabPage @ref="_statusTab" Text="Statuses">
-        <ButtonContent>
-            <button type="button" class="@_tabControl.GetButtonClass(_statusTab)" @onclick="@(() =>_tabControl.ActivatePage(_statusTab))">Statuses</button>
-        </ButtonContent>
-        <ChildContent>
-            <LivestockStatusList @ref="_livestockStatusList" Items="app.dbContext.LivestockStatuses.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Status).Select(s=>new LivestockStatusSummary(s,app.dbContext))"></LivestockStatusList>
-        </ChildContent>
-    </TabPage>
-    <TabPage @ref="_milestoneTab" Text="Milestones">
-        <ButtonContent>
-            <button type="button" class="@_tabControl.GetButtonClass(_milestoneTab)" @onclick="@(() =>_tabControl.ActivatePage(_milestoneTab))">Milestones</button>
-        </ButtonContent>
-        <ChildContent>
-            <MilestoneList @ref="_milestoneList" Items="milestoneSummaries"></MilestoneList>
-        </ChildContent>
-    </TabPage>
-</TabControl>
+<CascadingValue Value="livestockAnimal">
+    <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockAnimalSubTabs)">
+        <TabPage @ref="_breedsTab" Text="Breeds">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_breedsTab)" @onclick="@(() =>_tabControl.ActivatePage(_breedsTab))">Breeds</button>
+            </ButtonContent>
+            <ChildContent>
+                <LivestockBreedList @ref="_livestockBreedList" Items="app.dbContext.LivestockBreeds.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Name).Select(b=>new LivestockBreedSummary(b,app.dbContext))"></LivestockBreedList>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_statusTab" Text="Statuses">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_statusTab)" @onclick="@(() =>_tabControl.ActivatePage(_statusTab))">Statuses</button>
+            </ButtonContent>
+            <ChildContent>
+                <LivestockStatusList @ref="_livestockStatusList" Items="app.dbContext.LivestockStatuses.Where(s=>s.LivestockAnimalId==livestockAnimal.Id).OrderBy(a=>a.Status).Select(s=>new LivestockStatusSummary(s,app.dbContext))"></LivestockStatusList>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_milestoneTab" Text="Milestones">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_milestoneTab)" @onclick="@(() =>_tabControl.ActivatePage(_milestoneTab))">Milestones</button>
+            </ButtonContent>
+            <ChildContent>
+                <MilestoneList @ref="_milestoneList" Items="milestoneSummaries"></MilestoneList>
+            </ChildContent>
+        </TabPage>
+    </TabControl>
+</CascadingValue>

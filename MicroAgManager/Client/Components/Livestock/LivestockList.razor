@@ -3,49 +3,38 @@
 
 @if (app != null)
 {
-    @if (_editLivestock is not null || !Items.Any())
-    {
-        <CascadingValue Value="_editLivestock">
-            <LivestockEditor @ref="_livestockEditor" Modal="true" Submitted="@LivestockUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockEditor>
-        </CascadingValue>
-    }
-    else
-    {
-        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockSummary"
-            Items="@Items"
-            MultiSelect="@Multiselect"
-            Selectable="@Selectable"
-            OnSelectionChange="@TableItemSelected"
-            CanDelete="@CanDelete" 
-            RowDetailsShowing="@app.RowDetailsShowing["LivestockList"]"
-            NewItemName="@LivestockBreed.Name"
-            AddItemClicked="@(()=> EditLivestock(0))">
-            <ColumnContent>
-                <Column TableItem="LivestockSummary" Field="@(x => x.Id)" Title="ControlColumn">
-                    <Template Context="e">
-                        @if (CanDelete)
-                        {
-                            <button type="button">Delete</button>
-                        }
-                    </Template>
-                </Column>
-                <Column TableItem="LivestockSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true">
-                    <Template Context="e">
-                        <button type="button" onclick="@(()=> EditLivestock(e.Id))">@e.Name</button>
-                    </Template>
-                </Column>
-                <Column TableItem="LivestockSummary" Field="@(x => x.Variety)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockSummary" Field="@(x => x.Status)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockSummary" Field="@(x => x.Gender)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockSummary" Field="@(x => x.BatchNumber)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockSummary" Field="@(x => x.Birthdate)" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockSummary" Field="@(x => x.OpenScheduledDutyCount)" Title="Open Duties" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            </ColumnContent>
-            @* <TableRowDetailTemplate>
-                <CascadingValue Value="@(context as LivestockAnimalModel)">
-                    <LivestockAnimalSubTabs></LivestockAnimalSubTabs>
-                </CascadingValue>
-            </TableRowDetailTemplate> *@
-        </TableTemplate>
-    }
+    <CascadingValue Value="_editLivestock">
+        <LivestockEditor Show=@(_editLivestock is not null || !Items.Any()) @ref="_livestockEditor" Modal="true" Submitted="@LivestockUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockEditor>
+    </CascadingValue>
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockSummary"
+        Items="@Items"
+        MultiSelect="@Multiselect"
+        Selectable="@Selectable"
+        OnSelectionChange="@TableItemSelected"
+        CanDelete="@CanDelete" 
+        RowDetailsShowing="@app.RowDetailsShowing["LivestockList"]"
+        NewItemName="@LivestockBreed.Name"
+        AddItemClicked="@(()=> EditLivestock(0))">
+        <ColumnContent>
+            <Column TableItem="LivestockSummary" Field="@(x => x.Id)" Title="ControlColumn">
+                <Template Context="e">
+                    @if (CanDelete)
+                    {
+                        <button type="button">Delete</button>
+                    }
+                </Template>
+            </Column>
+            <Column TableItem="LivestockSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true">
+                <Template Context="e">
+                    <button type="button" onclick="@(()=> EditLivestock(e.Id))">@e.Name</button>
+                </Template>
+            </Column>
+            <Column TableItem="LivestockSummary" Field="@(x => x.Variety)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockSummary" Field="@(x => x.Status)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockSummary" Field="@(x => x.Gender)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockSummary" Field="@(x => x.BatchNumber)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockSummary" Field="@(x => x.Birthdate)" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockSummary" Field="@(x => x.OpenScheduledDutyCount)" Title="Open Duties" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        </ColumnContent>
+    </TableTemplate>
 }

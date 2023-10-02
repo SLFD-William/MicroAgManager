@@ -14,7 +14,7 @@ namespace FrontEnd.Components.ScheduledDuty
         [Parameter] public long? scheduledDutyId { get; set; }
         private ScheduledDutyModel scheduledDuty { get; set; }
         private ValidatedForm _validatedForm;
-        protected override async Task OnInitializedAsync() => await FreshenData();
+        
         public override async Task FreshenData()
         {
             scheduledDuty=new ScheduledDutyModel();
@@ -46,7 +46,6 @@ namespace FrontEnd.Components.ScheduledDuty
 
                 editContext = new EditContext(scheduledDuty);
                 await Submitted.InvokeAsync(scheduledDuty);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -65,23 +64,30 @@ namespace FrontEnd.Components.ScheduledDuty
 
         private async Task SnoozeSubmitted(DateTime e)
         {
+            showSnooze = false;
             scheduledDuty.DueOn = e.Date;
             scheduledDuty.CompletedOn = null;
             scheduledDuty.CompletedBy = null;
             await OnSubmit();
         }
         private bool showSnooze = false;
-        private void Snooze()
+        private bool showConfirm = false;
+        private void Snooze()=>showSnooze = true;
+        private void SnoozeCancel()=>showSnooze = false;
+            
+        private void Confirm()=>showConfirm = true;
+        private void ConfirmCancel() => showConfirm = false;
+        private async Task DismissedConfirmed()
         {
-            showSnooze = true;
-            StateHasChanged();
+            showConfirm = false;
+            scheduledDuty.Dismissed = true;
+            scheduledDuty.CompletedOn = DateTime.Now;
+            await OnSubmit();
         }
-
         private async Task Cancel()
         {
             editContext = new EditContext(scheduledDuty);
             await Cancelled.InvokeAsync(scheduledDuty);
-            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

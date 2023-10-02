@@ -13,6 +13,7 @@ namespace FrontEnd.Components.Duty
     {
         [CascadingParameter] public DutyModel Duty { get; set; }
         [Parameter] public long? dutyId { get; set; }
+        
         private DutyModel duty { get; set; }
         private ValidatedForm _validatedForm;
         private RegistrarEditor _registrarEditor;
@@ -25,7 +26,7 @@ namespace FrontEnd.Components.Duty
                     duty.Relationship = nameof(DutyRelationshipConstants.Self);
                 }
             } }
-        protected override async Task OnInitializedAsync() => await FreshenData();
+       
         public override async Task FreshenData()
         {
             duty = new DutyModel();
@@ -53,7 +54,6 @@ namespace FrontEnd.Components.Duty
 
                 editContext = new EditContext(duty);
                 await Submitted.InvokeAsync(duty);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -66,7 +66,6 @@ namespace FrontEnd.Components.Duty
             if (originalCommandId.HasValue) duty.CommandId = originalCommandId.Value;
             editContext = new EditContext(duty);
             await Cancelled.InvokeAsync(duty);
-            _validatedForm.HideModal();
             StateHasChanged();
         }
         private List<KeyValuePair<long, string>> recipientTypeIds()
@@ -120,11 +119,6 @@ namespace FrontEnd.Components.Duty
         private bool showCommandModal=false;
         private long? originalCommandId;
 
-        private void CloseCommandModals()
-        {
-            showCommandModal = false;
-            _registrarEditor.HideModal();
-        }
         private void ShowCommandEditor()
         {
             originalCommandId= duty.CommandId;
@@ -134,15 +128,14 @@ namespace FrontEnd.Components.Duty
         private void CommandCanceled()
         {
             duty.CommandId = originalCommandId.HasValue? originalCommandId.Value:0;
-            CloseCommandModals();
-            
+            showCommandModal = false;
             originalCommandId = null;
             StateHasChanged();
         }
         private void CommandCreated(object e)
         {
             var status = e as BaseModel;
-            CloseCommandModals();
+            showCommandModal = false;
             duty.CommandId = status?.Id ?? 0;
             StateHasChanged();
         }

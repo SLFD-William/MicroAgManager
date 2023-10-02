@@ -2,41 +2,35 @@
 @inherits DataComponent
 @if (app != null)
 {
-    @if (_editStatus is not null || !Items.Any())
-    {
-        <CascadingValue Value="_editStatus">
-            <LivestockStatusEditor @ref="_statusEditor" Submitted="@StatusUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockStatusEditor>
-        </CascadingValue>
-    }
-    else
-    {
-        <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockStatusSummary"
-                       Items="@Items"
-                       MultiSelect="@Multiselect"
-                       Selectable="@Selectable"
-                       OnSelectionChange="@TableItemSelected"
-                       CanDelete="@CanDelete"
-                       RowDetailsShowing="@app.RowDetailsShowing["LivestockStatusList"]"
-                       NewItemName="Status"
-                       AddItemClicked="@(async ()=>await EditStatus(0))">
-            <ColumnContent>
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.Id)" Title="ControlColumn">
-                    <Template Context="e">
-                        <button type="button" onclick="@(()=> EditStatus(e.Id))">Edit</button>
-                        @if (CanDelete)
-                        {
-                            <button type="button">Delete</button>
-                        }
-                    </Template>
-                </Column>
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.StatusName)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.DefaultStatus)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.BeingManaged)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.Sterile)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.InMilk)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.BottleFed)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="LivestockStatusSummary" Field="@(x => x.ForSale)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            </ColumnContent>
-        </TableTemplate>
-    }
+    <CascadingValue Value="_editStatus">
+        <LivestockStatusEditor Show=@(_editStatus is not null || !Items.Any()) Modal=true @ref="_statusEditor" Submitted="@StatusUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockStatusEditor>
+    </CascadingValue>
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockStatusSummary"
+                   Items="@Items"
+                   MultiSelect="@Multiselect"
+                   Selectable="@Selectable"
+                   OnSelectionChange="@TableItemSelected"
+                   CanDelete="@CanDelete"
+                   RowDetailsShowing="@app.RowDetailsShowing["LivestockStatusList"]"
+                   NewItemName="Status"
+                   AddItemClicked="@(async ()=>await EditStatus(0))">
+        <ColumnContent>
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.Id)" Title="ControlColumn">
+                <Template Context="e">
+                    <button type="button" onclick="@(()=> EditStatus(e.Id))">Edit</button>
+                    @if (CanDelete)
+                    {
+                        <button type="button">Delete</button>
+                    }
+                </Template>
+            </Column>
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.StatusName)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.DefaultStatus)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.BeingManaged)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.Sterile)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.InMilk)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.BottleFed)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="LivestockStatusSummary" Field="@(x => x.ForSale)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        </ColumnContent>
+    </TableTemplate>
 }

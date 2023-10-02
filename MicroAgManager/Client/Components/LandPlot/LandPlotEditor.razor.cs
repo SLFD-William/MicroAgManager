@@ -16,12 +16,11 @@ namespace FrontEnd.Components.LandPlot
         [Parameter] public long? parentPlotId { get; set; }
 
         LandPlotModel plot { get; set; }
-        protected override async Task OnInitializedAsync() => await FreshenData();
+       
         private ValidatedForm _validatedForm;
         private async void Cancel()
         {
             editContext = new EditContext(plot);
-            _validatedForm.HideModal();
             await Cancelled.InvokeAsync();
             StateHasChanged();
         }
@@ -37,7 +36,6 @@ namespace FrontEnd.Components.LandPlot
             
             editContext = new EditContext(plot);
             await Submitted.InvokeAsync(plot);
-            _validatedForm.HideModal();
             StateHasChanged();
         }
         public override async Task FreshenData()

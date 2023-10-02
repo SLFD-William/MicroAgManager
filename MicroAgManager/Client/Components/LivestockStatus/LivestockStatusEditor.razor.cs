@@ -21,9 +21,7 @@ namespace FrontEnd.Components.LivestockStatus
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? livestockStatusId { get; set; }
         private ValidatedForm _validatedForm;
-        protected override async Task OnInitializedAsync() => await FreshenData();
-        public void HideModal() => _validatedForm.HideModal();
-        public void ShowModal() => _validatedForm.ShowModal();
+       
         private LivestockStatusModel livestockStatus;
         public override async Task FreshenData()
         {
@@ -63,7 +61,6 @@ namespace FrontEnd.Components.LivestockStatus
                 livestockStatus.Id = id;
                 editContext = new EditContext(livestockStatus);
                 await Submitted.InvokeAsync(livestockStatus);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -75,7 +72,6 @@ namespace FrontEnd.Components.LivestockStatus
         {
             editContext = new EditContext(livestockStatus);
             await Cancelled.InvokeAsync(livestockStatus);
-            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

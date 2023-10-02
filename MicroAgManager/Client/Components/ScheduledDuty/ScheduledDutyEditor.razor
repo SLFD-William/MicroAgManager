@@ -9,6 +9,7 @@
                    Cancel="Cancel"
                    showUpdateCancelButtons="false"
                    Modal="Modal"
+                   Show="Show"
     @ref=_validatedForm>
         <DataContent>
             @if (scheduledDuty.Record == "BreedingRecord")
@@ -17,13 +18,15 @@
             }
         </DataContent>
         <SecondaryContent>
-            <section class="updateCancelButtons">
-                <button type="button" @onclick="Snooze">Snooze</button>
-                @if (showSnooze)
-                {
-                    <Snooze Cancelled="Cancel" Submitted="SnoozeSubmitted"></Snooze>
-                }
-            </section>
+            @if (scheduledDuty.Id > 0)
+            {
+                <section class="updateCancelButtons">
+                    <button type="button" @onclick="Snooze">Snooze</button>
+                    <Snooze Show=showSnooze Cancelled="SnoozeCancel" Submitted="SnoozeSubmitted"></Snooze>
+                    <button type="button" @onclick="Confirm">Dismiss</button>
+                    <ConfirmationYesNo Prompt="Are you sure you want to Dismiss this Duty?" Show=showConfirm Cancelled="ConfirmCancel" Submitted="DismissedConfirmed"></ConfirmationYesNo>
+                </section>
+            }
         </SecondaryContent>
     </ValidatedForm>
 }

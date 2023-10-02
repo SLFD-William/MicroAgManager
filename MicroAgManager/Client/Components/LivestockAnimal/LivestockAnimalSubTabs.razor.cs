@@ -4,15 +4,13 @@ using FrontEnd.Components.LivestockStatus;
 using FrontEnd.Components.Milestone;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockAnimal
 {
     public partial class LivestockAnimalSubTabs : DataComponent
     {
-        [CascadingParameter] public LivestockAnimalSummary? LivestockAnimal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
-        private LivestockAnimalModel livestockAnimal { get; set; } = new LivestockAnimalModel();
+        private LivestockAnimalSummary livestockAnimal { get; set; }
         protected TabControl _tabControl;
         protected TabPage _breedsTab;
         protected LivestockBreedList _livestockBreedList;
@@ -20,26 +18,20 @@ namespace FrontEnd.Components.LivestockAnimal
         protected LivestockStatusList _livestockStatusList;
         protected TabPage _milestoneTab;
         protected MilestoneList _milestoneList;
-
-        protected async override Task OnInitializedAsync()
+        protected async override Task OnParametersSetAsync()
         {
             _tabControl?.ActivatePage(app.SelectedTabs["LivestockAnimalSubTabs"] ?? _tabControl?.ActivePage ?? _breedsTab);
             await FreshenData();
         }
         private IEnumerable<MilestoneSummary> milestoneSummaries =>
-            app.dbContext.Milestones.Where(s => s.RecipientTypeId == livestockAnimal.Id && s.RecipientType == livestockAnimal.GetEntityName())
+            app.dbContext.Milestones.Where(s => s.RecipientTypeId == livestockAnimal.Id && s.RecipientType == livestockAnimal.EntityName)
                 .OrderBy(a => a.Name).Select(s => new MilestoneSummary(s, app.dbContext));
+
         public override async Task FreshenData()
         {
-            if (LivestockAnimal is not null)
-                livestockAnimal = await app.dbContext.LivestockAnimals.FindAsync(LivestockAnimal.Id) ?? new LivestockAnimalModel();
-            else
-            {
-                var query = app.dbContext?.LivestockAnimals.AsQueryable();
-                if (livestockAnimalId.HasValue && livestockAnimalId > 0)
-                    query = query.Where(f => f.Id == livestockAnimalId);
-                livestockAnimal = await query.OrderBy(f => f.Id).SingleOrDefaultAsync() ?? new LivestockAnimalModel();
-            }
+            if (livestockAnimal is null && livestockAnimalId > 0)
+                livestockAnimal = new LivestockAnimalSummary(app.dbContext?.LivestockAnimals.Find(livestockAnimalId), app.dbContext);
+
             if (_livestockStatusList is not null)
                 await _livestockStatusList.FreshenData();
 
@@ -48,7 +40,7 @@ namespace FrontEnd.Components.LivestockAnimal
 
             if (_milestoneList is not null)
                 await _milestoneList.FreshenData();
-
+            StateHasChanged();
         }
         private async Task LivestockStatusUpdated(LivestockStatusModel args)
         {

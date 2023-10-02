@@ -2,19 +2,16 @@
 @using Domain.Models
 @if (app != null)
 {
-    @if (_editScheduledDuty is not null || !Items.Any())
-    {
-        <CascadingValue Value="_editScheduledDuty">
-            <ScheduledDutyEditor @ref="_scheduledDutyEditor" Modal="true" Submitted="@ScheduledDutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></ScheduledDutyEditor>
-        </CascadingValue>
-    }
+    <CascadingValue Value="_editScheduledDuty">
+        <ScheduledDutyEditor Show=@(_editScheduledDuty is not null || !Items.Any()) @ref="_scheduledDutyEditor" Modal="true" Submitted="@ScheduledDutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></ScheduledDutyEditor>
+    </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="ScheduledDutySummary"
-    Items="@Items" 
-        MultiSelect="@Multiselect" 
-        Selectable="@Selectable"
-        OnSelectionChange="@TableItemSelected"
-        RowDetailsShowing="@app.RowDetailsShowing["ScheduledDutyList"]"
-                    AddItemClicked="@(async ()=>await EditScheduledDuty(0))">
+                   Items="@Items"
+                   MultiSelect="@Multiselect"
+                   Selectable="@Selectable"
+                   OnSelectionChange="@TableItemSelected"
+                   RowDetailsShowing="@app.RowDetailsShowing["ScheduledDutyList"]"
+                   >
         <ColumnContent>
             <Column TableItem="ScheduledDutySummary" Field="@(x => x.Id)" Title="ControlColumn">
                 <Template Context="e">

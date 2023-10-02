@@ -10,11 +10,10 @@ namespace FrontEnd.Components.Registrar
     {
         [CascadingParameter] public RegistrarModel Registrar { get; set; }
         [Parameter] public long? registrarId { get; set; }
+        
         private RegistrarModel registrar { get; set; }
         private ValidatedForm _validatedForm;
-        public void HideModal() => _validatedForm.HideModal();
-        public void ShowModal() => _validatedForm.ShowModal();
-        protected override async Task OnInitializedAsync() => await FreshenData();
+       
         public override async Task FreshenData()
         {
             registrar = new RegistrarModel();
@@ -41,7 +40,6 @@ namespace FrontEnd.Components.Registrar
 
                 editContext = new EditContext(registrar);
                 await Submitted.InvokeAsync(registrar);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -53,7 +51,6 @@ namespace FrontEnd.Components.Registrar
         {
             editContext = new EditContext(registrar);
             await Cancelled.InvokeAsync(registrar);
-            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

@@ -9,6 +9,7 @@
                    showUpdateCancelButtons="true"
                    createOnly="@(livestockBreed.Id<1)"
                    Modal="Modal"
+Show="Show"
     @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockBreed.Name)">
@@ -24,13 +25,13 @@
                 <InputNumber placeholder="30" @bind-Value="@livestockBreed.HeatPeriod" />
             </ValidatedField>
         </DataContent>
-         <SecondaryContent>
+@*          <SecondaryContent>
             @if (livestockBreed.Id > 0)
             {
                 <CascadingValue Value="livestockBreed">
                     <LivestockBreedSubTabs></LivestockBreedSubTabs>
                 </CascadingValue>
             }
-        </SecondaryContent>
+        </SecondaryContent> *@
 </ValidatedForm>
 }

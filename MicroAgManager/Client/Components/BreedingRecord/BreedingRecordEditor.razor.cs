@@ -13,13 +13,14 @@ namespace FrontEnd.Components.BreedingRecord
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedSummary Breed { get; set; }
         [CascadingParameter] public BreedingRecordModel BreedingRecord { get; set; }
-       
+        
+
         private ValidatedForm _validatedForm;
         [Parameter] public long? breedingRecordId { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         BreedingRecordModel breedingRecord { get; set; }
-        protected override async Task OnInitializedAsync() => await FreshenData();
+       
         public override async Task FreshenData()
         {
             if (Breed is not null)
@@ -51,7 +52,6 @@ namespace FrontEnd.Components.BreedingRecord
         private async Task Cancel()
         {
             editContext = new EditContext(breedingRecord);
-            _validatedForm.HideModal();
             await Cancelled.InvokeAsync(breedingRecord);
             StateHasChanged();
         }
@@ -68,7 +68,6 @@ namespace FrontEnd.Components.BreedingRecord
                 breedingRecord.Id = id;
                 editContext = new EditContext(breedingRecord);
                 await Submitted.InvokeAsync(breedingRecord);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)

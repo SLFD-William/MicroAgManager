@@ -1,4 +1,6 @@
-﻿<div class="modalContainer">
+﻿@if(Show)
+{ 
+<div class="modalContainer">
     <dialog open="true">
         <ValidatedField Legend="Snooze Until" ValidationMessageFor="@(() => SnoozeUntil)">
             <InputDate @bind-Value="@SnoozeUntil" />
@@ -7,11 +9,12 @@
         <button type="button" @onclick="Cancel">Cancel</button>
     </dialog>
 </div>
-
+}
 @code {
     [Parameter] public EventCallback<DateTime> Submitted { get; set; }
     [Parameter] public EventCallback Cancelled { get; set; }
     [Parameter] public DateTime? SuggestedSnooze { get; set; }
+    [Parameter] public bool Show { get; set; }
     private DateTime? SnoozeUntil { get; set; }
 
     protected override void OnInitialized()

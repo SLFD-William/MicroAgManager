@@ -38,34 +38,30 @@ namespace FrontEnd.Components.Livestock
                 }
             }
         }
-        protected override async Task OnInitializedAsync() => await FreshenData();
+
         public override async Task FreshenData()
         {
-            if (Livestock is not null)
-            {
-                livestock = Livestock;
-                editContext = new EditContext(livestock);
-                StateHasChanged();
-                return;
-            }
             if (LivestockBreed is not null)
                 livestockBreedId = LivestockBreed.Id;
-
+            
+            if (Livestock is not null && Livestock.Id>0)
+            {
+                livestockId = Livestock.Id;
+                livestock = Livestock;
+            }
+            
             if (LivestockBreed is null && livestockBreedId.HasValue)
                 LivestockBreed = new LivestockBreedSummary(await app.dbContext.LivestockBreeds.FindAsync(livestockBreedId.Value),app.dbContext);
 
             if (LivestockAnimal is null)
                 LivestockAnimal = new LivestockAnimalSummary( await app.dbContext.LivestockAnimals.FindAsync(LivestockBreed.LivestockAnimalId),app.dbContext);
 
+            if ((Livestock is null || Livestock.Id<1) && livestockId > 0)
+                livestock = await app.dbContext.Livestocks.FindAsync(livestockId)  ;
 
-            livestock = new LivestockModel() { LivestockBreedId = livestockBreedId.Value };
-            var query = app.dbContext.Livestocks.AsQueryable();
-            if (livestockId.HasValue && livestockId > 0)
-                query = query.Where(f => f.Id == livestockId);
-            if (livestockBreedId.HasValue && livestockBreedId > 0)
-                query = query.Where(f => f.LivestockBreedId == livestockBreedId);
-
-
+            if (livestock is null)
+                livestock = new LivestockModel() { LivestockBreedId = livestockBreedId.HasValue ? livestockBreedId.Value : 0 };
+            Livestock = livestock;
             editContext = new EditContext(livestock);
         }
         public async Task OnSubmit()
@@ -87,7 +83,6 @@ namespace FrontEnd.Components.Livestock
 
                 editContext = new EditContext(livestock);
                 await Submitted.InvokeAsync(livestock);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -106,7 +101,6 @@ namespace FrontEnd.Components.Livestock
         private void StatusCanceled()
         {
             livestock.StatusId = originalStatusId;
-            _livestockStatusEditor.HideModal();
             showStatusModal = false;
             originalStatusId = null;
             StateHasChanged();
@@ -114,7 +108,6 @@ namespace FrontEnd.Components.Livestock
         private void StatusCreated(object e)
         {
             var status = e as LivestockStatusModel;
-            _livestockStatusEditor.HideModal();
             showStatusModal = false;
             livestock.StatusId = status?.Id;
             StateHasChanged();
@@ -125,7 +118,6 @@ namespace FrontEnd.Components.Livestock
 
             editContext = new EditContext(livestock);
             await Cancelled.InvokeAsync();
-            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

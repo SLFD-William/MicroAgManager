@@ -19,7 +19,7 @@ namespace FrontEnd.Components.LivestockAnimal
         public string Name { get => livestockAnimal.Name;
              set
                 { if(!CheckNameExists(value).Result) livestockAnimal.Name = value; } }
-        protected override async Task OnInitializedAsync() => await FreshenData();
+       
         private async Task<bool> CheckNameExists(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return false;
@@ -70,7 +70,6 @@ namespace FrontEnd.Components.LivestockAnimal
                 livestockAnimal.Id = id;
                 editContext = new EditContext(livestockAnimal);
                 await Submitted.InvokeAsync(livestockAnimal);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -80,7 +79,6 @@ namespace FrontEnd.Components.LivestockAnimal
         {
             editContext = new EditContext(livestockAnimal);
             await Cancelled.InvokeAsync();
-            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

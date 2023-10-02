@@ -16,7 +16,7 @@ namespace FrontEnd.Components.Milestone
         private MilestoneModel milestone { get; set; }
         private ValidatedForm _validatedForm;
         private List<DutyModel?> originalDuties;
-        protected override async Task OnInitializedAsync()
+        protected async override Task OnParametersSetAsync() 
         {
             await FreshenData();
             originalDuties = milestone.Duties.ToList();
@@ -60,7 +60,6 @@ namespace FrontEnd.Components.Milestone
                 originalDuties = milestone.Duties.ToList();
                 editContext = new EditContext(milestone);
                 await Submitted.InvokeAsync(milestone);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -109,7 +108,6 @@ namespace FrontEnd.Components.Milestone
             milestone.Duties = originalDuties;
             editContext = new EditContext(milestone);
             await Cancelled.InvokeAsync(milestone);
-            _validatedForm.HideModal();
             StateHasChanged();
         }
     }

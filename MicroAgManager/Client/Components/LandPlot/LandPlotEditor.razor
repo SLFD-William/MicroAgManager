@@ -10,6 +10,7 @@
                    showUpdateCancelButtons="true"
                    createOnly="@(plot.Id<1)"
                    Modal="Modal"
+                    Show="Show"
                     @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => plot.Usage)">

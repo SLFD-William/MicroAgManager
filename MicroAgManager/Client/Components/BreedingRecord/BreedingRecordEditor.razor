@@ -9,6 +9,7 @@
                    showUpdateCancelButtons="showUpdateCancelButtons"
         createOnly="@(breedingRecord.Id<1)"
         Modal="Modal"
+        Show="Show"
         @ref=_validatedForm>
             <DataContent>
                 <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => breedingRecord.ServiceDate)">

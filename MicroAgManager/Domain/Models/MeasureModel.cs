@@ -1,12 +1,7 @@
 ﻿using Domain.Abstracts;
 using Domain.Constants;
 using Domain.Entity;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Models
 {

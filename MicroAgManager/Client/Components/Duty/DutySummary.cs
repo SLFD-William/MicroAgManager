@@ -11,7 +11,7 @@ namespace FrontEnd.Components.Duty
         public DutySummary(DutyModel dutyModel, FrontEndDbContext context)
         {
             _dutyModel = dutyModel;
-            EntityName = _dutyModel.GetType().Name;
+            EntityName = _dutyModel.GetType().Name.Replace("Model", string.Empty); ;
             Gender= string.IsNullOrEmpty(_dutyModel.Gender) ? string.Empty : _dutyModel.Gender == GenderConstants.Male ? nameof(GenderConstants.Male) : nameof(GenderConstants.Female);
             switch (_dutyModel.Command)
             {

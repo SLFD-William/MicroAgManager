@@ -15,12 +15,13 @@ namespace FrontEnd.Components.Shared
         [Parameter] public bool showUpdateCancelButtons { get; set; }
         [Parameter] public EventCallback FreshenData{ get; set; }
         [Parameter] public EventCallback Cancel { get; set; }
-        
+        [Parameter] public bool Show { get; set; } = false;
+
         [Parameter] public bool createOnly { get; set; }
 
 
         [Parameter] public bool Modal { get; set; } = false;
-        private bool showModal = true;
+        
         protected virtual void DbSync_OnUpdate() => FreshenData.InvokeAsync();
         protected override void OnInitialized() => app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
         public virtual ValueTask DisposeAsync()
@@ -28,17 +29,5 @@ namespace FrontEnd.Components.Shared
             app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
             return ValueTask.CompletedTask;
         }
-
-        public void ShowModal()
-        {
-            showModal = true;
-            StateHasChanged();
-        }
-        public void HideModal()
-        {
-            showModal = false;
-            StateHasChanged();
-        }
-
     }
 }

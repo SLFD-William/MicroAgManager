@@ -9,7 +9,8 @@
                    Cancel="Cancel"
                    showUpdateCancelButtons="showUpdateCancelButtons"
                    Modal="Modal"
-    @ref=_validatedForm>
+                   Show="Show"
+                   @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => duty.Name)">
                 <InputText @bind-Value="duty.Name"></InputText>
@@ -35,13 +36,10 @@
                     <LegendContent>
                         <div style="display:inline-flex">
                             <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
-                            @if (showCommandModal)
-                            {
-                                if (duty.Command == DutyCommandConstants.Registration)
+                                @if (duty.Command == DutyCommandConstants.Registration)
                                 {
-                                    <RegistrarEditor @ref=_registrarEditor Modal="true" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
+                                    <RegistrarEditor @ref=_registrarEditor Modal="true" Show="showCommandModal" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
                                 }
-                            }
                         </div>
                     </LegendContent>
                     <ChildContent>

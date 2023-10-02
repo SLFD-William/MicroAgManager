@@ -15,20 +15,25 @@ namespace FrontEnd.Components.Shared
         [Parameter] public EventCallback<object> Submitted { get; set; }
         [Parameter] public bool showUpdateCancelButtons { get; set; }
         [Parameter] public bool Modal { get; set; }
-        protected async override Task OnInitializedAsync()
+        [Parameter] public bool Show { get; set; } = false;
+
+        protected async override Task OnParametersSetAsync() 
         {
+            var initialized = app.dbSynchonizer is not null;
             while (app.dbSynchonizer is null)
                 await Task.Delay(100);
             while (app.dbContext is null)
                 await Task.Delay(100);
-            app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
-
+            if (!initialized)
+                app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
+            if (Modal && !Show) return;
             await FreshenData();
         }
 
         protected virtual async void DbSync_OnUpdate()
         {
-            if(app.dbContext is not null)
+            if (Modal && !Show) return;
+            if (app.dbContext is not null)
                 await FreshenData();
             StateHasChanged();
         }
@@ -40,10 +45,6 @@ namespace FrontEnd.Components.Shared
         }
         public abstract Task FreshenData();
         public ILogger? Log { get => app.log;}
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender && app.dbContext is not null)
-                await FreshenData();
-        }
+        
     }
 }

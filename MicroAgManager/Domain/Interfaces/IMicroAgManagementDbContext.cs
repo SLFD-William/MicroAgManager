@@ -1,5 +1,4 @@
 ﻿using Domain.Entity;
-using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Interfaces

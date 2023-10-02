@@ -13,6 +13,7 @@ namespace FrontEnd.Components.Farm
     {
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
+        
         [Inject] protected IGeolocationService GeoLoc { get; set; }
         [Inject] private IFrontEndApiServices api { get; set; }
         private ValidatedForm _validatedForm;
@@ -20,7 +21,7 @@ namespace FrontEnd.Components.Farm
         FarmLocationModel farm { get; set; }
 
         bool locationEnabled { get; set; } = true;
-        protected override async Task OnInitializedAsync() => await FreshenData();
+       
         protected override void OnAfterRender(bool firstRender)
         {
             if (farm is null) return;
@@ -81,7 +82,6 @@ namespace FrontEnd.Components.Farm
         private async Task Cancel()
         {
             editContext = new EditContext(farm);
-            _validatedForm.HideModal();
             await Cancelled.InvokeAsync(farm);
             StateHasChanged();
         }
@@ -101,7 +101,6 @@ namespace FrontEnd.Components.Farm
                 farm.Id = id;
                 editContext = new EditContext(farm);
                 await Submitted.InvokeAsync(farm);
-                _validatedForm.HideModal();
                 StateHasChanged();
             }
             catch (Exception ex)

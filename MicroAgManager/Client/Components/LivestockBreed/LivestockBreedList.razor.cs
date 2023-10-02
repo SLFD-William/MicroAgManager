@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Shared.Sortable;
 using Microsoft.AspNetCore.Components;
@@ -9,7 +10,7 @@ namespace FrontEnd.Components.LivestockBreed
     public partial class LivestockBreedList:DataComponent
     {
         public TableTemplate<LivestockBreedSummary> _listComponent;
-        [CascadingParameter] LivestockAnimalModel LivestockAnimal { get; set; }
+        [CascadingParameter] LivestockAnimalSummary LivestockAnimal { get; set; }
         [Parameter] public IEnumerable<LivestockBreedSummary>? Items { get; set; }
 
         [Parameter] public bool Multiselect { get; set; } = false;

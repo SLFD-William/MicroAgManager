@@ -2,38 +2,33 @@
 @inherits DataComponent
 @if (app != null)
 {
-    @if (_editMilestone is not null || !Items.Any())
-    {
-        <CascadingValue Value="_editMilestone">
-            <MilestoneEditor @ref="_milestoneEditor" Submitted="@MilestoneUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></MilestoneEditor>
-        </CascadingValue>
-    }
-    else
-    {
-        <TableTemplate @ref="_listComponent" PageSize="0" TItem="MilestoneSummary"
-                       Items="@Items"
-                       MultiSelect="@Multiselect"
-                       Selectable="@Selectable"
-                       OnSelectionChange="@TableItemSelected"
-                       CanDelete="@CanDelete"
-                       RowDetailsShowing="@app.RowDetailsShowing["MilestoneList"]"
-                       NewItemName="Milestone"
-                       AddItemClicked="@(async ()=>await EditMilestone(0))">
-            <ColumnContent>
-                <Column TableItem="MilestoneSummary" Field="@(x => x.Id)" Title="ControlColumn">
-                    <Template Context="e">
-                        <button type="button" onclick="@(()=> EditMilestone(e.Id))">Edit</button>
-                        @if (CanDelete)
-                        {
-                            <button type="button">Delete</button>
-                        }
-                    </Template>
-                </Column>
-                <Column TableItem="MilestoneSummary" Field="@(x => x.Milestone)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="MilestoneSummary" Field="@(x => x.Description)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="MilestoneSummary" Field="@(x => x.DutyCount)" Title="Number of Duties" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-                <Column TableItem="MilestoneSummary" Field="@(x => x.EventCount)" Title="Number of Events" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            </ColumnContent>
-        </TableTemplate>
-    }
+
+    <CascadingValue Value="_editMilestone">
+        <MilestoneEditor Show=@(_editMilestone is not null || !Items.Any()) Modal=true @ref="_milestoneEditor" Submitted="@MilestoneUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></MilestoneEditor>
+    </CascadingValue>
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="MilestoneSummary"
+                   Items="@Items"
+                   MultiSelect="@Multiselect"
+                   Selectable="@Selectable"
+                   OnSelectionChange="@TableItemSelected"
+                   CanDelete="@CanDelete"
+                   RowDetailsShowing="@app.RowDetailsShowing["MilestoneList"]"
+                   NewItemName="Milestone"
+                   AddItemClicked="@(async ()=>await EditMilestone(0))">
+        <ColumnContent>
+            <Column TableItem="MilestoneSummary" Field="@(x => x.Id)" Title="ControlColumn">
+                <Template Context="e">
+                    <button type="button" onclick="@(()=> EditMilestone(e.Id))">Edit</button>
+                    @if (CanDelete)
+                    {
+                        <button type="button">Delete</button>
+                    }
+                </Template>
+            </Column>
+            <Column TableItem="MilestoneSummary" Field="@(x => x.Milestone)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="MilestoneSummary" Field="@(x => x.Description)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="MilestoneSummary" Field="@(x => x.DutyCount)" Title="Number of Duties" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="MilestoneSummary" Field="@(x => x.EventCount)" Title="Number of Events" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        </ColumnContent>
+    </TableTemplate>
 }
