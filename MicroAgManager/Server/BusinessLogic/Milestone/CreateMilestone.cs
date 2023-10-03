@@ -12,7 +12,7 @@ namespace BackEnd.BusinessLogic.Milestone
     public class CreateMilestone : BaseCommand, ICreateCommand
     {
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
-        [Required] public MilestoneModel Milestone { get; set; }
+        [Required] required public MilestoneModel Milestone { get; set; }
 
         public class Handler:BaseCommandHandler<CreateMilestone>
         {

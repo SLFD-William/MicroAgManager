@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
-using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
@@ -15,7 +14,8 @@ namespace Domain.Models
         [Required][MaxLength(40)] public string RecipientType { get; set; }
         [Required] public long RecipientId { get; set; }
         [Precision(18, 3)][Required] public decimal Value { get; set; }
-        [Required] public string MeasurementUnit { get; set; } = nameof(MeasurementUnitConstants.Undefined);
+        [Required][ForeignKey("MeasurementUnit")] public long MeasurementUnitId { get; set; }
+        public virtual UnitModel MeasurementUnit { get; set; }
         public string Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
 
@@ -28,7 +28,7 @@ namespace Domain.Models
                 RecipientType = measurement.RecipientType,
                 RecipientId = measurement.RecipientId,
                 Value = measurement.Value,
-                MeasurementUnit = measurement.MeasurementUnit,
+                MeasurementUnitId = measurement.MeasurementUnitId,
                 Notes = measurement.Notes,
                 DatePerformed = measurement.DatePerformed
             }) as MeasurementModel;
@@ -41,7 +41,7 @@ namespace Domain.Models
             measurement.RecipientType = RecipientType;
             measurement.RecipientId = RecipientId;
             measurement.Value = Value;
-            measurement.MeasurementUnit = MeasurementUnit;
+            measurement.MeasurementUnitId = MeasurementUnitId;
             measurement.Notes = Notes;
             measurement.DatePerformed = DatePerformed;
             measurement.ModifiedOn = DateTime.UtcNow;

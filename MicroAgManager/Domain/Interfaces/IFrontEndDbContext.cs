@@ -28,5 +28,6 @@ namespace Domain.Interfaces
         public DbSet<MeasureModel> Measures { get; set; }
         public DbSet<MeasurementModel> Measurements { get; set; }
 
+        public DbSet<UnitModel> Units { get; set; }
     }
 }

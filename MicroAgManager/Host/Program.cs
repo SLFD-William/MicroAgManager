@@ -64,8 +64,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 AuthenticationAPI.Map(app);
-BusinessLogicAPI.Map(app);
-
+BusinessLogicAPI.MapAnciliary(app);
+BusinessLogicAPI.MapFarm(app);
+BusinessLogicAPI.MapJoins(app);
+BusinessLogicAPI.MapLivestock(app);
+BusinessLogicAPI.MapScheduling(app);
 
 app.MapHub<NotificationHub>("/notificationhub");
 app.MapFallbackToFile("index.html");

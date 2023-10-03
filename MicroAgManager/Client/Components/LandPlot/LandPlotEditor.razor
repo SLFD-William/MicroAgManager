@@ -31,11 +31,13 @@
             <ValidatedField Legend="Area" ValidationMessageFor="@(() => plot.Area)">
                 <InputNumber placeholder="0" @bind-Value="@plot.Area" />
             </ValidatedField>
-            <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnit)">
-                <InputSelect @bind-Value="@plot.AreaUnit">
+            <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnitId)">
+                <InputSelect @bind-Value="@plot.AreaUnitId">
                     <option value="">Select Units ...</option>
-                    <option value="@nameof(MeasurementUnitConstants.Area_Acres)">@MeasurementUnitConstants.Area_Acres</option>
-                    
+                    @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area))
+                    {
+                        <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                    }
                 </InputSelect>
             </ValidatedField>
         </DataContent>

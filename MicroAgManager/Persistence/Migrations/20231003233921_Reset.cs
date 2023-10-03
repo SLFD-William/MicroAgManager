@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace BackEnd.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class newer : Migration
+    public partial class Reset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -71,6 +72,35 @@ namespace BackEnd.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceCodes", x => x.UserCode);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Duties",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Gender = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true),
+                    SystemRequired = table.Column<bool>(type: "bit", nullable: false),
+                    DaysDue = table.Column<int>(type: "int", nullable: false),
+                    CommandId = table.Column<long>(type: "bigint", nullable: false),
+                    Command = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    RecipientTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientType = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Relationship = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Duties", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,6 +243,31 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Milestones",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecipientTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientType = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    SystemRequired = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Milestones", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PersistedGrants",
                 columns: table => new
                 {
@@ -230,6 +285,30 @@ namespace BackEnd.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersistedGrants", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Registrars",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Website = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    API = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Registrars", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -252,6 +331,30 @@ namespace BackEnd.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tenants", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Units",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Symbol = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    ConversionFactorToSIUnit = table.Column<double>(type: "float", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Units", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -385,57 +488,46 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Plots",
+                name: "DutyEvent",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Area = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
-                    AreaUnit = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Usage = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FarmLocationId = table.Column<long>(type: "bigint", nullable: false),
-                    ParentPlotId = table.Column<long>(type: "bigint", nullable: true),
-                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    DutiesId = table.Column<long>(type: "bigint", nullable: false),
+                    EventsId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Plots", x => x.Id);
+                    table.PrimaryKey("PK_DutyEvent", x => new { x.DutiesId, x.EventsId });
                     table.ForeignKey(
-                        name: "FK_Plots_Farms_FarmLocationId",
-                        column: x => x.FarmLocationId,
-                        principalTable: "Farms",
+                        name: "FK_DutyEvent_Duties_DutiesId",
+                        column: x => x.DutiesId,
+                        principalTable: "Duties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Plots_Plots_ParentPlotId",
-                        column: x => x.ParentPlotId,
-                        principalTable: "Plots",
-                        principalColumn: "Id");
+                        name: "FK_DutyEvent_Events_EventsId",
+                        column: x => x.EventsId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Duties",
+                name: "ScheduledDuties",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Gender = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true),
-                    SystemRequired = table.Column<bool>(type: "bit", nullable: false),
-                    DaysDue = table.Column<int>(type: "int", nullable: false),
-                    CommandId = table.Column<long>(type: "bigint", nullable: false),
-                    Command = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Relationship = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: true),
+                    DutyId = table.Column<long>(type: "bigint", nullable: false),
+                    RecordId = table.Column<long>(type: "bigint", nullable: true),
+                    Record = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecipientId = table.Column<long>(type: "bigint", nullable: false),
+                    Recipient = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Dismissed = table.Column<bool>(type: "bit", nullable: false),
+                    DueOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReminderDays = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    CompletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    EventId = table.Column<long>(type: "bigint", nullable: true),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -447,11 +539,17 @@ namespace BackEnd.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Duties", x => x.Id);
+                    table.PrimaryKey("PK_ScheduledDuties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Duties_LivestockAnimals_LivestockAnimalId",
-                        column: x => x.LivestockAnimalId,
-                        principalTable: "LivestockAnimals",
+                        name: "FK_ScheduledDuties_Duties_DutyId",
+                        column: x => x.DutyId,
+                        principalTable: "Duties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ScheduledDuties_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
                         principalColumn: "Id");
                 });
 
@@ -556,15 +654,66 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Milestones",
+                name: "DutyMilestone",
+                columns: table => new
+                {
+                    DutiesId = table.Column<long>(type: "bigint", nullable: false),
+                    MilestonesId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DutyMilestone", x => new { x.DutiesId, x.MilestonesId });
+                    table.ForeignKey(
+                        name: "FK_DutyMilestone_Duties_DutiesId",
+                        column: x => x.DutiesId,
+                        principalTable: "Duties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DutyMilestone_Milestones_MilestonesId",
+                        column: x => x.MilestonesId,
+                        principalTable: "Milestones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventMilestone",
+                columns: table => new
+                {
+                    EventsId = table.Column<long>(type: "bigint", nullable: false),
+                    MilestonesId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventMilestone", x => new { x.EventsId, x.MilestonesId });
+                    table.ForeignKey(
+                        name: "FK_EventMilestone_Events_EventsId",
+                        column: x => x.EventsId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventMilestone_Milestones_MilestonesId",
+                        column: x => x.MilestonesId,
+                        principalTable: "Milestones",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Registrations",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LivestockAnimalId = table.Column<long>(type: "bigint", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    SystemRequired = table.Column<bool>(type: "bit", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    RegistrarId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientType = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    RecipientId = table.Column<long>(type: "bigint", nullable: false),
+                    Identifier = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    DefaultIdentification = table.Column<bool>(type: "bit", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -576,36 +725,84 @@ namespace BackEnd.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Milestones", x => x.Id);
+                    table.PrimaryKey("PK_Registrations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Milestones_LivestockAnimals_LivestockAnimalId",
-                        column: x => x.LivestockAnimalId,
-                        principalTable: "LivestockAnimals",
+                        name: "FK_Registrations_Registrars_RegistrarId",
+                        column: x => x.RegistrarId,
+                        principalTable: "Registrars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Measures",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UnitId = table.Column<long>(type: "bigint", nullable: false),
+                    Method = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Measures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Measures_Units_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "Units",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "DutyEvent",
+                name: "Plots",
                 columns: table => new
                 {
-                    DutiesId = table.Column<long>(type: "bigint", nullable: false),
-                    EventsId = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Area = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    AreaUnitId = table.Column<long>(type: "bigint", nullable: false),
+                    Usage = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FarmLocationId = table.Column<long>(type: "bigint", nullable: false),
+                    ParentPlotId = table.Column<long>(type: "bigint", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DutyEvent", x => new { x.DutiesId, x.EventsId });
+                    table.PrimaryKey("PK_Plots", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DutyEvent_Duties_DutiesId",
-                        column: x => x.DutiesId,
-                        principalTable: "Duties",
+                        name: "FK_Plots_Farms_FarmLocationId",
+                        column: x => x.FarmLocationId,
+                        principalTable: "Farms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DutyEvent_Events_EventsId",
-                        column: x => x.EventsId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Plots_Plots_ParentPlotId",
+                        column: x => x.ParentPlotId,
+                        principalTable: "Plots",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Plots_Units_AreaUnitId",
+                        column: x => x.AreaUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -707,6 +904,46 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Measurements",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MeasureId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientType = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    RecipientId = table.Column<long>(type: "bigint", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    MeasurementUnitId = table.Column<long>(type: "bigint", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DatePerformed = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Measurements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Measurements_Measures_MeasureId",
+                        column: x => x.MeasureId,
+                        principalTable: "Measures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Measurements_Units_MeasurementUnitId",
+                        column: x => x.MeasurementUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Livestocks",
                 columns: table => new
                 {
@@ -716,7 +953,7 @@ namespace BackEnd.Persistence.Migrations
                     MotherId = table.Column<long>(type: "bigint", nullable: true),
                     FatherId = table.Column<long>(type: "bigint", nullable: true),
                     StatusId = table.Column<long>(type: "bigint", nullable: false),
-                    LocationId = table.Column<long>(type: "bigint", nullable: true),
+                    LocationId = table.Column<long>(type: "bigint", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     BatchNumber = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -768,53 +1005,6 @@ namespace BackEnd.Persistence.Migrations
                         name: "FK_Livestocks_Plots_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Plots",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DutyMilestone",
-                columns: table => new
-                {
-                    DutiesId = table.Column<long>(type: "bigint", nullable: false),
-                    MilestonesId = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DutyMilestone", x => new { x.DutiesId, x.MilestonesId });
-                    table.ForeignKey(
-                        name: "FK_DutyMilestone_Duties_DutiesId",
-                        column: x => x.DutiesId,
-                        principalTable: "Duties",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DutyMilestone_Milestones_MilestonesId",
-                        column: x => x.MilestonesId,
-                        principalTable: "Milestones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EventMilestone",
-                columns: table => new
-                {
-                    EventsId = table.Column<long>(type: "bigint", nullable: false),
-                    MilestonesId = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EventMilestone", x => new { x.EventsId, x.MilestonesId });
-                    table.ForeignKey(
-                        name: "FK_EventMilestone_Events_EventsId",
-                        column: x => x.EventsId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EventMilestone_Milestones_MilestonesId",
-                        column: x => x.MilestonesId,
-                        principalTable: "Milestones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -856,19 +1046,21 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ScheduledDuties",
+                name: "BreedingRecords",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DutyId = table.Column<long>(type: "bigint", nullable: false),
-                    Dismissed = table.Column<bool>(type: "bit", nullable: false),
-                    DueOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReminderDays = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
-                    CompletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CompletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EventId = table.Column<long>(type: "bigint", nullable: true),
-                    LivestockId = table.Column<long>(type: "bigint", nullable: true),
+                    FemaleId = table.Column<long>(type: "bigint", nullable: false),
+                    MaleId = table.Column<long>(type: "bigint", nullable: true),
+                    ServiceDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ResolutionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StillbornMales = table.Column<int>(type: "int", nullable: true),
+                    StillbornFemales = table.Column<int>(type: "int", nullable: true),
+                    BornMales = table.Column<int>(type: "int", nullable: true),
+                    BornFemales = table.Column<int>(type: "int", nullable: true),
+                    Resolution = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -880,21 +1072,16 @@ namespace BackEnd.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScheduledDuties", x => x.Id);
+                    table.PrimaryKey("PK_BreedingRecords", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ScheduledDuties_Duties_DutyId",
-                        column: x => x.DutyId,
-                        principalTable: "Duties",
+                        name: "FK_BreedingRecords_Livestocks_FemaleId",
+                        column: x => x.FemaleId,
+                        principalTable: "Livestocks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ScheduledDuties_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ScheduledDuties_Livestocks_LivestockId",
-                        column: x => x.LivestockId,
+                        name: "FK_BreedingRecords_Livestocks_MaleId",
+                        column: x => x.MaleId,
                         principalTable: "Livestocks",
                         principalColumn: "Id");
                 });
@@ -968,6 +1155,16 @@ namespace BackEnd.Persistence.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BreedingRecords_FemaleId",
+                table: "BreedingRecords",
+                column: "FemaleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BreedingRecords_MaleId",
+                table: "BreedingRecords",
+                column: "MaleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
                 table: "DeviceCodes",
                 column: "DeviceCode",
@@ -977,11 +1174,6 @@ namespace BackEnd.Persistence.Migrations
                 name: "IX_DeviceCodes_Expiration",
                 table: "DeviceCodes",
                 column: "Expiration");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Duties_LivestockAnimalId",
-                table: "Duties",
-                column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DutyEvent_EventsId",
@@ -1080,9 +1272,19 @@ namespace BackEnd.Persistence.Migrations
                 column: "LivestockAnimalId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Milestones_LivestockAnimalId",
-                table: "Milestones",
-                column: "LivestockAnimalId");
+                name: "IX_Measurements_MeasureId",
+                table: "Measurements",
+                column: "MeasureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Measurements_MeasurementUnitId",
+                table: "Measurements",
+                column: "MeasurementUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Measures_UnitId",
+                table: "Measures",
+                column: "UnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_ConsumedTime",
@@ -1105,6 +1307,11 @@ namespace BackEnd.Persistence.Migrations
                 columns: new[] { "SubjectId", "SessionId", "Type" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Plots_AreaUnitId",
+                table: "Plots",
+                column: "AreaUnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Plots_FarmLocationId",
                 table: "Plots",
                 column: "FarmLocationId");
@@ -1115,6 +1322,11 @@ namespace BackEnd.Persistence.Migrations
                 column: "ParentPlotId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Registrations_RegistrarId",
+                table: "Registrations",
+                column: "RegistrarId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ScheduledDuties_DutyId",
                 table: "ScheduledDuties",
                 column: "DutyId");
@@ -1123,11 +1335,6 @@ namespace BackEnd.Persistence.Migrations
                 name: "IX_ScheduledDuties_EventId",
                 table: "ScheduledDuties",
                 column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ScheduledDuties_LivestockId",
-                table: "ScheduledDuties",
-                column: "LivestockId");
         }
 
         /// <inheritdoc />
@@ -1147,6 +1354,9 @@ namespace BackEnd.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BreedingRecords");
 
             migrationBuilder.DropTable(
                 name: "DeviceCodes");
@@ -1176,7 +1386,13 @@ namespace BackEnd.Persistence.Migrations
                 name: "Logs");
 
             migrationBuilder.DropTable(
+                name: "Measurements");
+
+            migrationBuilder.DropTable(
                 name: "PersistedGrants");
+
+            migrationBuilder.DropTable(
+                name: "Registrations");
 
             migrationBuilder.DropTable(
                 name: "ScheduledDuties");
@@ -1191,6 +1407,9 @@ namespace BackEnd.Persistence.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Livestocks");
+
+            migrationBuilder.DropTable(
                 name: "Milestones");
 
             migrationBuilder.DropTable(
@@ -1200,16 +1419,16 @@ namespace BackEnd.Persistence.Migrations
                 name: "LivestockFeedAnalysisParameters");
 
             migrationBuilder.DropTable(
+                name: "Measures");
+
+            migrationBuilder.DropTable(
+                name: "Registrars");
+
+            migrationBuilder.DropTable(
                 name: "Duties");
 
             migrationBuilder.DropTable(
                 name: "Events");
-
-            migrationBuilder.DropTable(
-                name: "Livestocks");
-
-            migrationBuilder.DropTable(
-                name: "LivestockFeeds");
 
             migrationBuilder.DropTable(
                 name: "LivestockBreeds");
@@ -1221,10 +1440,16 @@ namespace BackEnd.Persistence.Migrations
                 name: "Plots");
 
             migrationBuilder.DropTable(
-                name: "LivestockAnimals");
+                name: "LivestockFeeds");
 
             migrationBuilder.DropTable(
                 name: "Farms");
+
+            migrationBuilder.DropTable(
+                name: "Units");
+
+            migrationBuilder.DropTable(
+                name: "LivestockAnimals");
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Persistence
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<Measure> Measures { get; set; }
         public DbSet<Measurement> Measurements { get; set; }
+        public DbSet<Unit> Units { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,11 @@ namespace Persistence
                 .HasMany(lf => lf.Statuses)
                 .WithOne(s => s.LivestockAnimal)
                 .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<Measure>()
+                .HasOne(u=>u.Unit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<LandPlot>()
+                .HasOne(u => u.AreaUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+
 
             EntitySeeder.Seed(modelBuilder);
         }

@@ -260,9 +260,8 @@ namespace FrontEnd.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("AreaUnit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<long>("AreaUnitId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
@@ -295,6 +294,8 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AreaUnitId");
 
                     b.HasIndex("LandPlotModelId");
 
@@ -847,11 +848,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<DateTime>("EntityModifiedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("MeasurementType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Method")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -865,12 +861,12 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
+                    b.Property<long>("UnitId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Measures");
                 });
@@ -893,9 +889,8 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long>("MeasureId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("MeasurementUnit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<long>("MeasurementUnitId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
@@ -922,6 +917,8 @@ namespace FrontEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MeasureId");
+
+                    b.HasIndex("MeasurementUnitId");
 
                     b.ToTable("Measurements");
                 });
@@ -1150,6 +1147,44 @@ namespace FrontEnd.Persistence.Migrations
                     b.ToTable("Tenants");
                 });
 
+            modelBuilder.Entity("Domain.Models.UnitModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("ConversionFactorToSIUnit")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
+                });
+
             modelBuilder.Entity("DutyModelEventModel", b =>
                 {
                     b.Property<long>("DutiesId")
@@ -1197,9 +1232,17 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
+                    b.HasOne("Domain.Models.UnitModel", "AreaUnit")
+                        .WithMany()
+                        .HasForeignKey("AreaUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Models.LandPlotModel", null)
                         .WithMany("Subplots")
                         .HasForeignKey("LandPlotModelId");
+
+                    b.Navigation("AreaUnit");
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
@@ -1259,6 +1302,17 @@ namespace FrontEnd.Persistence.Migrations
                         .HasForeignKey("LivestockAnimalModelId");
                 });
 
+            modelBuilder.Entity("Domain.Models.MeasureModel", b =>
+                {
+                    b.HasOne("Domain.Models.UnitModel", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("Domain.Models.MeasurementModel", b =>
                 {
                     b.HasOne("Domain.Models.MeasureModel", "Measure")
@@ -1267,7 +1321,15 @@ namespace FrontEnd.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Models.UnitModel", "MeasurementUnit")
+                        .WithMany()
+                        .HasForeignKey("MeasurementUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Measure");
+
+                    b.Navigation("MeasurementUnit");
                 });
 
             modelBuilder.Entity("Domain.Models.RegistrationModel", b =>

@@ -11,7 +11,7 @@ namespace BackEnd.BusinessLogic.Milestone
 {
     public class UpdateMilestone : BaseCommand, IUpdateCommand
     {
-        public MilestoneModel Milestone { get; set; }
+        public required MilestoneModel Milestone { get; set; }
         public class Handler: BaseCommandHandler<UpdateMilestone>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
@@ -26,22 +26,13 @@ namespace BackEnd.BusinessLogic.Milestone
                 var dutyIds=request.Milestone.Duties.Select(d=>d.Id).ToList();
                 var dutiesToDelete = milestone.Duties.Where(d => !dutyIds.Contains(d.Id)).ToList();
                 var dutiesToAdd = dutyIds.Where(id=> !milestone.Duties.Select(x=>x.Id).ToList().Contains(id) );
-
-                //var eventIds = request.Milestone.Events.Select(d => d.Id).ToList();
-                //var eventsToDelete = milestone.Events.Where(d => !eventIds.Contains(d.Id)).ToList();
-                //var eventsToAdd = dutyIds.Where(id => !milestone.Events.Select(x => x.Id).ToList().Contains(id));
-       
+     
                 foreach (var dut in dutiesToDelete)
                     milestone.Duties.Remove(dut);
 
                 foreach (var id in dutiesToAdd)
                     milestone.Duties.Add(await _context.Duties.FindAsync(id));
 
-                //foreach (var dut in eventsToDelete)
-                //    milestone.Events.Remove(dut);
-
-                //foreach (var id in eventsToAdd)
-                //    milestone.Events.Add(await _context.Events.FindAsync(id));
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);

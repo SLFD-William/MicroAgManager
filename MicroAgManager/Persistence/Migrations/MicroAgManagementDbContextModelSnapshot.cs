@@ -386,10 +386,8 @@ namespace BackEnd.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<string>("AreaUnit")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<long>("AreaUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -440,6 +438,8 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AreaUnitId");
 
                     b.HasIndex("FarmLocationId");
 
@@ -1218,11 +1218,6 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MeasurementType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("Method")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -1248,12 +1243,12 @@ namespace BackEnd.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<long>("UnitId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Measures");
                 });
@@ -1284,9 +1279,8 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<long>("MeasureId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("MeasurementUnit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("MeasurementUnitId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -1325,6 +1319,8 @@ namespace BackEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MeasureId");
+
+                    b.HasIndex("MeasurementUnitId");
 
                     b.ToTable("Measurements");
                 });
@@ -1639,6 +1635,64 @@ namespace BackEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Unit", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<double>("ConversionFactorToSIUnit")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("TimeStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -2015,6 +2069,12 @@ namespace BackEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entity.LandPlot", b =>
                 {
+                    b.HasOne("Domain.Entity.Unit", "AreaUnit")
+                        .WithMany()
+                        .HasForeignKey("AreaUnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entity.FarmLocation", "FarmLocation")
                         .WithMany("Plots")
                         .HasForeignKey("FarmLocationId")
@@ -2024,6 +2084,8 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.LandPlot", "ParentPlot")
                         .WithMany("Subplots")
                         .HasForeignKey("ParentPlotId");
+
+                    b.Navigation("AreaUnit");
 
                     b.Navigation("FarmLocation");
 
@@ -2162,6 +2224,17 @@ namespace BackEnd.Persistence.Migrations
                     b.Navigation("LivestockAnimal");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Measure", b =>
+                {
+                    b.HasOne("Domain.Entity.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
+                });
+
             modelBuilder.Entity("Domain.Entity.Measurement", b =>
                 {
                     b.HasOne("Domain.Entity.Measure", "Measure")
@@ -2170,7 +2243,15 @@ namespace BackEnd.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entity.Unit", "MeasurementUnit")
+                        .WithMany()
+                        .HasForeignKey("MeasurementUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Measure");
+
+                    b.Navigation("MeasurementUnit");
                 });
 
             modelBuilder.Entity("Domain.Entity.Registration", b =>
