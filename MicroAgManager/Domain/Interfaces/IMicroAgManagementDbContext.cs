@@ -27,6 +27,9 @@ namespace Domain.Interfaces
         DbSet<Registration> Registrations { get; set; }
         DbSet<Measure> Measures { get; set; }
         DbSet<Measurement> Measurements { get; set; }
+        DbSet<Treatment> Treatments { get; set; }
+        DbSet<TreatmentRecord> TreatmentRecords { get; set; }
+
         DbSet<Unit> Units { get; set; }
     }
 }

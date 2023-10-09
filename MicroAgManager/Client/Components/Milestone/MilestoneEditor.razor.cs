@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using BackEnd.BusinessLogic.Milestone;
 using FrontEnd.Components.Duty;

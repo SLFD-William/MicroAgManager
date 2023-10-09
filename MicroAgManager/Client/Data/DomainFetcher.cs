@@ -13,6 +13,8 @@ using BackEnd.BusinessLogic.Registrar;
 using BackEnd.BusinessLogic.Registration;
 using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
+using BackEnd.BusinessLogic.Treatment;
+using BackEnd.BusinessLogic.TreatmentRecord;
 using BackEnd.BusinessLogic.Unit;
 using Domain.Abstracts;
 using Domain.Models;
@@ -20,6 +22,7 @@ using Domain.ValueObjects;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using System.Data.Common;
+using System.Xml.Linq;
 
 namespace FrontEnd.Data
 {
@@ -970,7 +973,78 @@ namespace FrontEnd.Data
                 }
             }
         }
+        public async static Task BulkUpdateTreatments(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
 
+            if (!ShouldEntityBeUpdated(entityModels, nameof(TreatmentModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Treatments.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<TreatmentModel, GetTreatmentList>("api/GetTreatments", new GetTreatmentList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var name = AddNamedParameter(command, "$Name");
+                var method = AddNamedParameter(command, "$Method");
+                var unitId = AddNamedParameter(command, "$UnitId");
+
+                command.CommandText = $"INSERT or REPLACE INTO Treatments (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Method,UnitId) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{name.ParameterName},{method.ParameterName},{unitId.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    name.Value = model.Name;
+                    method.Value = model.Method;
+                    unitId.Value = model.UnitId;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+
+        }
+        public async static Task BulkUpdateTreatmentRecordss(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels,nameof(TreatmentRecordModel))) return;
+            var existingAccountIds = new HashSet<long>(db.TreatmentRecords.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<TreatmentRecordModel, GetTreatmentRecordList>("api/GetTreatmentRecords", new GetTreatmentRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var treatmentId = AddNamedParameter(command, "$TreatmentId");
+                var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
+                var recipientType = AddNamedParameter(command, "$RecipientType");
+                var recipientId = AddNamedParameter(command, "$RecipientId");
+                var value = AddNamedParameter(command, "$Value");
+                var measurementUnitId = AddNamedParameter(command, "$MeasurementUnitId");
+                var notes = AddNamedParameter(command, "$Notes");
+                var datePerformed = AddNamedParameter(command, "$DatePerformed");
+
+                command.CommandText = $"INSERT or REPLACE INTO Treatments (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Method,UnitId) " +
+               $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+               $"{name.ParameterName},{method.ParameterName},{unitId.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    name.Value = model.Name;
+                    method.Value = model.Method;
+                    unitId.Value = model.UnitId;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+            
+        }
         public async static Task BulkUpdateDutyEvent(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;

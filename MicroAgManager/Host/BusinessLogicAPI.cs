@@ -21,6 +21,8 @@ using BackEnd.BusinessLogic.Unit;
 using BackEnd.BusinessLogic.Measure;
 using BackEnd.BusinessLogic.FarmLocation.LandPlots;
 using BackEnd.BusinessLogic.Livestock.Feed;
+using BackEnd.BusinessLogic.Treatment;
+using BackEnd.BusinessLogic.TreatmentRecord;
 
 namespace Host
 {
@@ -93,6 +95,14 @@ namespace Host
             app.MapPost("/api/GetMeasurements", [Authorize] async (GetMeasurementList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/CreateMeasurement", [Authorize] async (CreateMeasurement command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateMeasurement", [Authorize] async (UpdateMeasurement command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
+
+            app.MapPost("/api/GetTreatments", [Authorize] async (GetTreatmentList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/CreateTreatment", [Authorize] async (CreateTreatment command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateTreatment", [Authorize] async (UpdateTreatment command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
+            app.MapPost("/api/GetTreatmentRecords", [Authorize] async (GetTreatmentRecordList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            
 
         }
         public static void MapFarm(WebApplication app)

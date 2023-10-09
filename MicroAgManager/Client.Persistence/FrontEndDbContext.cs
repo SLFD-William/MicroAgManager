@@ -33,6 +33,12 @@ namespace FrontEnd.Persistence
         public DbSet<RegistrationModel> Registrations { get; set; }
         public DbSet<MeasureModel> Measures { get; set; }
         public DbSet<MeasurementModel> Measurements { get; set; }
+        public DbSet<TreatmentModel> Treatments { get; set; }
+        public DbSet<TreatmentRecordModel> TreatmentRecords { get; set; }
+
+
+
+
         public DbSet<UnitModel> Units { get; set; }
     }
 }

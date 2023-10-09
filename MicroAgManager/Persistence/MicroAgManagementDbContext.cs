@@ -38,6 +38,8 @@ namespace Persistence
         public DbSet<Measure> Measures { get; set; }
         public DbSet<Measurement> Measurements { get; set; }
         public DbSet<Unit> Units { get; set; }
+        public DbSet<Treatment> Treatments { get; set; }
+        public DbSet<TreatmentRecord> TreatmentRecords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +59,16 @@ namespace Persistence
                 .OnDelete(DeleteBehavior.ClientCascade);
             modelBuilder.Entity<Measure>()
                 .HasOne(u=>u.Unit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Treatment>()
+                .HasOne(u => u.AnimalMassUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Treatment>()
+                .HasOne(u => u.DosageUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Treatment>()
+                .HasOne(u => u.DurationUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Treatment>()
+                .HasOne(u => u.FrequencyUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<TreatmentRecord>()
+                .HasOne(u => u.DosageUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<LandPlot>()
                 .HasOne(u => u.AreaUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
 

@@ -1,11 +1,9 @@
 ﻿using BackEnd.BusinessLogic.FarmLocation.LandPlots;
-using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Unit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace FrontEnd.Components.LandPlot
