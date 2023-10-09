@@ -18,6 +18,9 @@ namespace FrontEnd.Components.Duty
                 case nameof(DutyCommandConstants.Registration):
                     CommandInstance = context.Registrars.Find(_dutyModel.CommandId).Name ?? "Registrar Not Found";
                     break;
+                case nameof(DutyCommandConstants.Measurement):
+                    CommandInstance = context.Measures.Find(_dutyModel.CommandId).Name ?? "Measure Not Found";
+                    break;
                 default:
                     CommandInstance = "No Application";
                     break;

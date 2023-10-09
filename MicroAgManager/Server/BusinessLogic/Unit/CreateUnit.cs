@@ -1,6 +1,5 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
-using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;

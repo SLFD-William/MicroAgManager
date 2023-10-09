@@ -1,6 +1,7 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
 @using FrontEnd.Components.Registrar;
+@using FrontEnd.Components.Measure;
 @inherits DataComponent<DutyModel>
 @if (editContext is not null)
 {
@@ -24,9 +25,10 @@
                     <option value="@DutyCommandConstants.Complete">@nameof(DutyCommandConstants.Complete)</option>
                     <option value="@DutyCommandConstants.Registration">@nameof(DutyCommandConstants.Registration)</option>
                     <option value="@DutyCommandConstants.Service">@nameof(DutyCommandConstants.Service)</option>
+                    <option value="@DutyCommandConstants.Measurement">@nameof(DutyCommandConstants.Measurement)</option>
                     @*<option value="@DutyCommandConstants.Death">@nameof(DutyCommandConstants.Death)</option>
                     <option value="@DutyCommandConstants.Feed">@nameof(DutyCommandConstants.Feed)</option>
-                    <option value="@DutyCommandConstants.Measurement">@nameof(DutyCommandConstants.Measurement)</option>
+                    
                     <option value="@DutyCommandConstants.Photograph">@nameof(DutyCommandConstants.Photograph)</option>
                     <option value="@DutyCommandConstants.Treatment">@nameof(DutyCommandConstants.Treatment)</option> *@
                 </InputSelect>
@@ -37,10 +39,8 @@
                     <LegendContent>
                         <div style="display:inline-flex">
                             <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
-                                @if (working.Command == DutyCommandConstants.Registration)
-                                {
-                                    <RegistrarEditor @ref=_registrarEditor Modal="true" Show="showCommandModal" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
-                                }
+                            <RegistrarEditor @ref=_registrarEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Registration)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
+                            <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Measurement)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></MeasureEditor>
                         </div>
                     </LegendContent>
                     <ChildContent>

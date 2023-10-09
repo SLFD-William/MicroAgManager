@@ -23,7 +23,7 @@ namespace FrontEnd.Components.Registrar
             if (Registrar is null && registrarId.HasValue)
                 working = await app.dbContext.Registrars.FindAsync(registrarId);
 
-            editContext = new EditContext(working);
+            SetEditContext(working);
         }
         public async Task OnSubmit()
         {

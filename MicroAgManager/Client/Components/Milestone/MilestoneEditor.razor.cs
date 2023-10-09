@@ -35,7 +35,7 @@ namespace FrontEnd.Components.Milestone
             if (Milestone is null && milestoneId > 0)
                 working = await app.dbContext.Milestones.FindAsync(milestoneId);
 
-            editContext = new EditContext(working);
+            SetEditContext(working);
         }
         public async Task OnSubmit()
         {
@@ -50,10 +50,8 @@ namespace FrontEnd.Components.Milestone
                     throw new Exception("Failed to save livestock Status");
 
                 working.Id = id;
-                original = working.Clone() as MilestoneModel;
-                editContext = new EditContext(working);
+                SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-                StateHasChanged();
             }
             catch (Exception ex)
             {
@@ -74,7 +72,6 @@ namespace FrontEnd.Components.Milestone
             var model = e as DutyModel;
             showDutyModal = false;
             working.Duties.Add(model);
-            editContext = new EditContext(working);
             StateHasChanged();
         }
         private void DutyCanceled()
@@ -85,14 +82,12 @@ namespace FrontEnd.Components.Milestone
         void DutySelected(ChangeEventArgs e)
         {
             working.Duties.Add(app.dbContext.Duties.Find(long.Parse(e.Value.ToString())));
-            editContext = new EditContext(working);
             StateHasChanged();
         }
 
         void DutyRemoved(DutyModel duty)
         {
             working.Duties.Remove(duty);
-            editContext = new EditContext(working);
             StateHasChanged();
         }
 

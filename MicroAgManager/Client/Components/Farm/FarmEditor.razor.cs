@@ -75,14 +75,13 @@ namespace FrontEnd.Components.Farm
             working  = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
             if (string.IsNullOrEmpty(working.Name) && !string.IsNullOrEmpty(farmName))
                 working.Name = farmName;
-            editContext=new EditContext(working);
+            SetEditContext(working);
         }
         private async Task Cancel()
         {
-            working =original.Clone() as FarmLocationModel; 
-            editContext = new EditContext(working);
+            working =original.Map(working) as FarmLocationModel;
+            SetEditContext(working);
             await Cancelled.InvokeAsync(working);
-            StateHasChanged();
         }
         public async Task OnSubmit()
         {
@@ -98,10 +97,8 @@ namespace FrontEnd.Components.Farm
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");
                 working.Id = id;
-                original = working.Clone() as FarmLocationModel;
-                editContext = new EditContext(working);
+                SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-                StateHasChanged();
             }
             catch (Exception ex)
             {

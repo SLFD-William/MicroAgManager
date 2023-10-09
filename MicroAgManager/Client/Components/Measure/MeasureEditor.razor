@@ -1,0 +1,45 @@
+﻿@using Domain.Constants;
+@using Domain.Models;
+@using FrontEnd.Components.Unit;
+@inherits DataComponent<MeasureModel>
+@if (editContext is not null)
+{
+    <ValidatedForm editContext="editContext"
+        FreshenData="FreshenData"
+        OnValidSubmit="OnSubmit"
+        Cancel="Cancel"
+        showUpdateCancelButtons="true"
+        createOnly="@(working.Id<1)"
+        Modal="Modal"
+        Show="Show"
+        @ref=_validatedForm>
+        <DataContent>
+            <ValidatedField Legend="Measure" ValidationMessageFor="@(() => working.Name)">
+                <InputText placeholder="Measure" @bind-Value="@working.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Method" ValidationMessageFor="@(() => working.Method)">
+                <InputSelect @bind-Value="@working.Method">
+                        <option value="">Select Method ...</option>
+                        <option value="@MeasurementMethodConstants.Direct">@MeasurementMethodConstants.Direct</option>
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => working.UnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="UnitCreated" Cancelled="UnitCanceled"></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@working.UnitId">
+                        <option value="">Select Units ...</option>
+                        @foreach (var unit in app.dbContext.Units.OrderBy(u=>u.Category).ThenBy(u=>u.Name))
+                        {
+                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+        </DataContent>
+    </ValidatedForm>
+}

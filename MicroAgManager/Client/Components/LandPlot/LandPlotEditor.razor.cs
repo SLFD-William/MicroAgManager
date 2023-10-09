@@ -1,4 +1,5 @@
 ﻿using BackEnd.BusinessLogic.FarmLocation.LandPlots;
+using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Unit;
@@ -62,17 +63,10 @@ namespace FrontEnd.Components.LandPlot
         {
             if (Farm is null) return;
             if (Plot is not null)
-            {
                 working = Plot;
-                SetEditContext(working);
-                return;
-            }
-            var query = app.dbContext.LandPlots.Where(f => f.FarmLocationId == Farm.Id).AsQueryable();
-            if (parentPlotId.HasValue && parentPlotId > 0)
-                query = query.Where(f => f.ParentPlotId == parentPlotId);
-            if (landPlotId.HasValue && landPlotId > 0)
-                query = query.Where(f => f.Id == landPlotId);
-            working = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LandPlotModel { FarmLocationId= Farm.Id };
+            if (Plot is null && landPlotId.HasValue)
+                working = await app.dbContext.LandPlots.FindAsync(landPlotId);
+            
             SetEditContext(working);
             
         }

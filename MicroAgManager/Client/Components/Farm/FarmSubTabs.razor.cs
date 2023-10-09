@@ -2,6 +2,7 @@
 using FrontEnd.Components.Duty;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockAnimal;
+using FrontEnd.Components.Measure;
 using FrontEnd.Components.Registrar;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
@@ -20,6 +21,7 @@ namespace FrontEnd.Components.Farm
         protected ScheduledDutyList _scheduledDutyList;
         protected DutyList _dutyList;
         protected RegistrarList _registrarList;
+        protected MeasureList _measureList;
 
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         protected TabControl _tabControl;
@@ -28,6 +30,7 @@ namespace FrontEnd.Components.Farm
         protected TabPage _scheduledDutyTab;
         protected TabPage _dutyTab;
         protected TabPage _registrarsTab;
+        protected TabPage _measuresTab;
 
         protected override void OnInitialized()
         {

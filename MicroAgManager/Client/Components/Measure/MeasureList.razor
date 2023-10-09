@@ -1,0 +1,33 @@
+﻿@using Domain.Models;
+@inherits DataComponent<MeasureModel>
+@if (app != null)
+{
+
+    <CascadingValue Value="_editMeasure">
+        <MeasureEditor Show=@(_editMeasure is not null) Modal=true @ref="_measureEditor" Submitted="@MeasureUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></MeasureEditor>
+    </CascadingValue>
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="MeasureSummary"
+                   Items="@Items"
+                   MultiSelect="@Multiselect"
+                   Selectable="@Selectable"
+                   OnSelectionChange="@TableItemSelected"
+                   CanDelete="@CanDelete"
+                   RowDetailsShowing="@app.RowDetailsShowing["MeasureList"]"
+                   NewItemName="Measure"
+                   AddItemClicked="@(async ()=>await EditMeasure(0))">
+        <ColumnContent>
+            <Column TableItem="MeasureSummary" Field="@(x => x.Id)" Title="ControlColumn">
+                <Template Context="e">
+                    <button type="button" onclick="@(()=> EditMeasure(e.Id))">Edit</button>
+                    @if (CanDelete)
+                    {
+                        <button type="button">Delete</button>
+                    }
+                </Template>
+            </Column>
+            <Column TableItem="MeasureSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="MeasureSummary" Field="@(x => x.Method)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="MeasureSummary" Field="@(x => x.Unit)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        </ColumnContent>
+    </TableTemplate>
+}

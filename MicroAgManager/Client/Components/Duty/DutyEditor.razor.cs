@@ -6,6 +6,7 @@ using BackEnd.BusinessLogic.Duty;
 using Domain.Constants;
 using FrontEnd.Components.Registrar;
 using Domain.Abstracts;
+using FrontEnd.Components.Measure;
 
 namespace FrontEnd.Components.Duty
 {
@@ -16,6 +17,7 @@ namespace FrontEnd.Components.Duty
         
         private ValidatedForm _validatedForm;
         private RegistrarEditor _registrarEditor;
+        private MeasureEditor _measureEditor;
         protected new DutyModel working { get => base.working as DutyModel; set { base.working = value; } }
         private string Command { get=>working.Command;
             set { working.Command = value;
@@ -37,7 +39,7 @@ namespace FrontEnd.Components.Duty
             if (Duty is null && dutyId.HasValue)
                 working = await app.dbContext.Duties.FindAsync(dutyId);
 
-            editContext = new EditContext(working);
+            SetEditContext(working);
         }
         public async Task OnSubmit()
         {
@@ -51,10 +53,8 @@ namespace FrontEnd.Components.Duty
                     throw new Exception("Failed to save Duty");
 
                 working.Id = id;
-                working = original.Clone() as DutyModel;
-                editContext = new EditContext(working);
+                SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-                StateHasChanged();
             }
             catch (Exception ex)
             {
@@ -63,10 +63,9 @@ namespace FrontEnd.Components.Duty
         }
         private async Task Cancel()
         {
-            working =original.Clone() as DutyModel;
-            editContext = new EditContext(working);
+            working =original.Map(working) as DutyModel;
+            SetEditContext(working);
             await Cancelled.InvokeAsync(working);
-            StateHasChanged();
         }
         private List<KeyValuePair<long, string>> recipientTypeIds()
         {
@@ -84,6 +83,8 @@ namespace FrontEnd.Components.Duty
             {
                 case nameof(DutyCommandConstants.Registration):
                     return app.dbContext.Registrars.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+                case nameof(DutyCommandConstants.Measurement):
+                    return app.dbContext.Measures.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
                 default:
                     return new List<KeyValuePair<long, string>>();
             }
@@ -110,6 +111,8 @@ namespace FrontEnd.Components.Duty
             {
                 case nameof(DutyCommandConstants.Registration):
                     return "Registrar";
+                case nameof(DutyCommandConstants.Measurement):
+                    return "Measure";
                 default:
                     return string.Empty;
             }

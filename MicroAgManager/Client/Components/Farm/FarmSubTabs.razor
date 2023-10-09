@@ -5,6 +5,7 @@
 @using FrontEnd.Components.ScheduledDuty;
 @using FrontEnd.Components.Duty;
 @using FrontEnd.Components.Registrar;
+@using FrontEnd.Components.Measure;
 @inherits DataComponent<FarmLocationModel>
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(FarmSubTabs)" >
     <TabPage @ref="_plotTab">
@@ -61,6 +62,16 @@
         </ButtonContent>
         <ChildContent>
             <RegistrarList @ref="_registrarList" Items="app.dbContext.Registrars.OrderByDescending(f => f.Name)"></RegistrarList>
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_measuresTab" Text="Measures" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_measuresTab)" @onclick="@(() =>_tabControl.ActivatePage(_measuresTab))">
+                Measures
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            <MeasureList @ref="_measureList" Items="app.dbContext.Measures.OrderByDescending(f => f.Name).Select(m=>new MeasureSummary(m,app.dbContext)).ToList()"></MeasureList>
         </ChildContent>
     </TabPage>
 </TabControl>
