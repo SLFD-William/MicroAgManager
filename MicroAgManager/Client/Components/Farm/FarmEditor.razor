@@ -1,5 +1,5 @@
 ﻿@using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<FarmLocationModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext" 
@@ -7,36 +7,36 @@
         OnValidSubmit="OnSubmit" 
         Cancel="Cancel"
         showUpdateCancelButtons="true"
-        createOnly="@(farm.Id<1)"
+        createOnly="@(working.Id<1)"
         Modal="Modal"
 Show="Show"
         @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => farm.Name)">
-                <InputText placeholder="Name" @bind-Value="@farm.Name" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
+                <InputText placeholder="Name" @bind-Value="@working.Name" />
             </ValidatedField>
-            <ValidatedField Legend="Address" ValidationMessageFor="@(() => farm.StreetAddress)">
-                <InputText placeholder="Street Address" @bind-Value="@farm.StreetAddress" />
+            <ValidatedField Legend="Address" ValidationMessageFor="@(() => working.StreetAddress)">
+                <InputText placeholder="Street Address" @bind-Value="@working.StreetAddress" />
             </ValidatedField>
-            <ValidatedField Legend="City" ValidationMessageFor="@(() => farm.City)">
-                <InputText placeholder="City" @bind-Value="@farm.City" />
+            <ValidatedField Legend="City" ValidationMessageFor="@(() => working.City)">
+                <InputText placeholder="City" @bind-Value="@working.City" />
             </ValidatedField>
-            <ValidatedField Legend="State" ValidationMessageFor="@(() => farm.State)">
-                <InputText placeholder="State" @bind-Value="@farm.State" />
+            <ValidatedField Legend="State" ValidationMessageFor="@(() => working.State)">
+                <InputText placeholder="State" @bind-Value="@working.State" />
             </ValidatedField>
-            <ValidatedField Legend="Zip" ValidationMessageFor="@(() => farm.Zip)">
-                <InputText placeholder="Zip" @bind-Value="@farm.Zip" />
+            <ValidatedField Legend="Zip" ValidationMessageFor="@(() => working.Zip)">
+                <InputText placeholder="Zip" @bind-Value="@working.Zip" />
             </ValidatedField>
-            <ValidatedField Legend="Country" ValidationMessageFor="@(() => farm.Country)">
-                <InputText placeholder="Country" @bind-Value="@farm.Country" />
+            <ValidatedField Legend="Country" ValidationMessageFor="@(() => working.Country)">
+                <InputText placeholder="Country" @bind-Value="@working.Country" />
             </ValidatedField>
             @if (locationEnabled)
             {
-                <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => farm.Latitude)">
-                    <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@farm.Latitude" />
+                <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => working.Latitude)">
+                    <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@working.Latitude" />
                 </ValidatedField>
-                <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => farm.Longitude)">
-                    <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@farm.Longitude" />
+                <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => working.Longitude)">
+                    <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@working.Longitude" />
                 </ValidatedField>
 
             }
@@ -49,9 +49,9 @@ Show="Show"
                     <button type="button" @onclick="OnCoordinateChange">Look up address</button>
                 }
             </section>
-            @if(farm.Id>0)
+            @if(working.Id>0)
             {
-                <CascadingValue Value="farm">
+                <CascadingValue Value="working">
                     <FarmSubTabs></FarmSubTabs>
                 </CascadingValue>
             }

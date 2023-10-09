@@ -1,4 +1,39 @@
-﻿@inherits DataComponent
+﻿@using Domain.Constants;
+@using Domain.Models;
+@inherits DataComponent<UnitModel>
 
-<h3>UnitEditor</h3>
+@if (editContext is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   FreshenData="FreshenData"
+                   OnValidSubmit="OnSubmit"
+                   Cancel="Cancel"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(working.Id<1)"
+                   Modal="Modal"
+                   Show="Show"
+                   @ref=_validatedForm>
+        <DataContent>
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => working.Category)">
+                <InputSelect @bind-Value="@working.Category">
+                    <option value="">Select Category ...</option>
+                    @foreach (var category in UnitCategoryConstants.Units.Keys.Order().ToList())
+                    {
+                        <option value="@category">@category</option>
+                    }
+                 </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => working.Name)">
+                    <InputText placeholder="Unit" @bind-Value="@working.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Symbol" ValidationMessageFor="@(() => working.Symbol)">
+                <InputText placeholder="Unit" @bind-Value="@working.Symbol" />
+            </ValidatedField>
+            <ValidatedField Legend=@($"Conversion to SI {UnitCategoryConstants.Units[working.Category]}") ValidationMessageFor="@(() => working.ConversionFactorToSIUnit)">
+                <InputNumber placeholder="0" @bind-Value="@working.ConversionFactorToSIUnit" />
+            </ValidatedField>
+        </DataContent>
+            
+    </ValidatedForm>
+}
 

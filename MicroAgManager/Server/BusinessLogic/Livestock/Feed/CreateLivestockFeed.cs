@@ -1,4 +1,5 @@
 ﻿using BackEnd.Abstracts;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
@@ -22,8 +23,7 @@ namespace BackEnd.BusinessLogic.Livestock.Feed
 
             public override async Task<long> Handle(CreateLivestockFeed request, CancellationToken cancellationToken)
             {
-                var livestockFeed = new Domain.Entity.LivestockFeed(request.ModifiedBy, request.TenantId);
-                livestockFeed = request.LivestockFeed.MapToEntity(livestockFeed);
+                var livestockFeed = request.LivestockFeed.Map(new LivestockFeed(request.ModifiedBy, request.TenantId)) as LivestockFeed;
                 _context.LivestockFeeds.Add(livestockFeed);
                 try
                 {

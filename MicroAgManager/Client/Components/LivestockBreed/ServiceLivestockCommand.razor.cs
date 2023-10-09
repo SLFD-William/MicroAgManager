@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace FrontEnd.Components.LivestockBreed
 {
-    public partial class ServiceLivestockCommand : DataComponent
+    public partial class ServiceLivestockCommand : DataComponent<LivestockBreedModel>
     {
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedSummary LivestockBreed { get; set; }

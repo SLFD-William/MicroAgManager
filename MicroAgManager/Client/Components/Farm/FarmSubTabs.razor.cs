@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmSubTabs : DataComponent
+    public partial class FarmSubTabs : DataComponent<FarmLocationModel>
     {
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }

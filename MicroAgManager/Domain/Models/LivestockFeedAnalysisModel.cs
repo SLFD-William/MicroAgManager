@@ -33,19 +33,36 @@ namespace Domain.Models
             }) as LivestockFeedAnalysisModel;
             return model;
         }
-        public LivestockFeedAnalysis MapToEntity(LivestockFeedAnalysis entity)
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.LabNumber = LabNumber;
-            entity.DateReceived = DateReceived;
-            entity.DateReported = DateReported;
-            entity.DateSampled = DateSampled;
-            entity.TestCode = TestCode;
-            entity.DatePrinted = DatePrinted;
-            entity.LivestockFeedId=FeedId;
+            if (entity == null || entity is not LivestockFeedAnalysisModel) return null;
+            ((LivestockFeedAnalysisModel)entity).LabNumber = LabNumber;
+            ((LivestockFeedAnalysisModel)entity).DateReceived = DateReceived;
+            ((LivestockFeedAnalysisModel)entity).DateReported = DateReported;
+            ((LivestockFeedAnalysisModel)entity).DateSampled = DateSampled;
+            ((LivestockFeedAnalysisModel)entity).TestCode = TestCode;
+            ((LivestockFeedAnalysisModel)entity).DatePrinted = DatePrinted;
+            ((LivestockFeedAnalysisModel)entity).FeedId = FeedId;
+            if (((LivestockFeedAnalysisModel)entity).Results?.Any() ?? false)
+                foreach (var breed in ((LivestockFeedAnalysisModel)entity).Results)
+                    Results?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not LivestockFeedAnalysis) return null;
+            ((LivestockFeedAnalysis)entity).LabNumber = LabNumber;
+            ((LivestockFeedAnalysis)entity).DateReceived = DateReceived;
+            ((LivestockFeedAnalysis)entity).DateReported = DateReported;
+            ((LivestockFeedAnalysis)entity).DateSampled = DateSampled;
+            ((LivestockFeedAnalysis)entity).TestCode = TestCode;
+            ((LivestockFeedAnalysis)entity).DatePrinted = DatePrinted;
+            ((LivestockFeedAnalysis)entity).LivestockFeedId = FeedId;
             entity.ModifiedOn = DateTime.UtcNow;
-            if (entity.Results?.Any() ?? false)
-                foreach (var breed in entity.Results)
-                    Results?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
+            if (((LivestockFeedAnalysis)entity).Results?.Any() ?? false)
+                foreach (var breed in ((LivestockFeedAnalysis)entity).Results)
+                    Results?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
             return entity;
         }
     }

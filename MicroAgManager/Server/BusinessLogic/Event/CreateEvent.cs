@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.Event
             public override async Task<long> Handle(CreateEvent request, CancellationToken cancellationToken)
             {
                 var eventEntity = new Domain.Entity.Event(request.ModifiedBy, request.TenantId);
-                eventEntity = request.Event.MapToEntity(eventEntity);
+                eventEntity = request.Event.Map(eventEntity) as Domain.Entity.Event;
                 eventEntity.ModifiedBy = eventEntity.CreatedBy = request.ModifiedBy;
                 eventEntity.TenantId = request.TenantId;
                 _context.Events.Add(eventEntity);

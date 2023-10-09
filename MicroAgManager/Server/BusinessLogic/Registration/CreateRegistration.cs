@@ -20,8 +20,7 @@ namespace BackEnd.BusinessLogic.Registration
 
             public override async Task<long> Handle(CreateRegistration request, CancellationToken cancellationToken)
             {
-                var registration = new Domain.Entity.Registration(request.ModifiedBy, request.TenantId);
-                registration = request.Registration.MapToEntity(registration);
+                var registration = request.Registration.Map(new Domain.Entity.Registration(request.ModifiedBy, request.TenantId)) as Domain.Entity.Registration;
                 _context.Registrations.Add(registration);
                 try
                 {

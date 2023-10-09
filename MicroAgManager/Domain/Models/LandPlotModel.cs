@@ -41,21 +41,42 @@ namespace Domain.Models
             return model;
         }
 
-        public LandPlot MapToEntity(LandPlot entity)
+
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.Name = Name ?? string.Empty;
-            entity.ParentPlotId = ParentPlotId;
-            entity.Area = Area;
-            entity.Usage =Usage;
-            entity.AreaUnitId = AreaUnitId;
-            entity.Description = Description ?? string.Empty;
-            entity.FarmLocationId = FarmLocationId;
-            if(entity.Subplots?.Any() ?? false)
-                foreach(var subplot in entity.Subplots)
-                    Subplots.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);
-            if(entity.Livestocks?.Any() ?? false)
-                foreach(var livestock in entity.Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.MapToEntity(livestock);
+            if (entity is not LandPlotModel || entity is null) return null;
+            ((LandPlotModel)entity).Name = Name ?? string.Empty;
+            ((LandPlotModel)entity).ParentPlotId = ParentPlotId;
+            ((LandPlotModel)entity).Area = Area;
+            ((LandPlotModel)entity).Usage = Usage;
+            ((LandPlotModel)entity).AreaUnitId = AreaUnitId;
+            ((LandPlotModel)entity).Description = Description ?? string.Empty;
+            ((LandPlotModel)entity).FarmLocationId = FarmLocationId;
+            if (((LandPlotModel)entity).Subplots?.Any() ?? false)
+                foreach (var subplot in ((LandPlotModel)entity).Subplots)
+                    Subplots.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
+            if (((LandPlotModel)entity).Livestocks?.Any() ?? false)
+                foreach (var livestock in ((LandPlotModel)entity).Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity is not LandPlot || entity is null) return null;
+            ((LandPlot)entity).Name = Name ?? string.Empty;
+            ((LandPlot)entity).ParentPlotId = ParentPlotId;
+            ((LandPlot)entity).Area = Area;
+            ((LandPlot)entity).Usage = Usage;
+            ((LandPlot)entity).AreaUnitId = AreaUnitId;
+            ((LandPlot)entity).Description = Description ?? string.Empty;
+            ((LandPlot)entity).FarmLocationId = FarmLocationId;
+            if (((LandPlot)entity).Subplots?.Any() ?? false)
+                foreach (var subplot in ((LandPlot)entity).Subplots)
+                    Subplots.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
+            if (((LandPlot)entity).Livestocks?.Any() ?? false)
+                foreach (var livestock in ((LandPlot)entity).Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }

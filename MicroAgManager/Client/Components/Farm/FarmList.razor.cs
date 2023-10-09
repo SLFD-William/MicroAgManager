@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmList:DataComponent
+    public partial class FarmList:DataComponent<FarmLocationModel>
     {
         public TableTemplate<FarmLocationSummary> _listComponent;
         [Parameter] public IEnumerable<FarmLocationSummary>? Items { get; set; }

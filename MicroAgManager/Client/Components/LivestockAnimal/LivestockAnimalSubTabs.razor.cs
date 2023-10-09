@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.LivestockAnimal
 {
-    public partial class LivestockAnimalSubTabs : DataComponent
+    public partial class LivestockAnimalSubTabs : DataComponent<LivestockAnimalModel>
     {
         [Parameter] public long? livestockAnimalId { get; set; }
         private LivestockAnimalSummary livestockAnimal { get; set; }

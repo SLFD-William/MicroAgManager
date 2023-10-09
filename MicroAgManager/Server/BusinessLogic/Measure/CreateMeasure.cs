@@ -23,8 +23,7 @@ namespace BackEnd.BusinessLogic.Measure
 
             public override async Task<long> Handle(CreateMeasure request, CancellationToken cancellationToken)
             {
-                var measure = new Domain.Entity.Measure(request.ModifiedBy, request.TenantId);
-                measure = request.Measure.MapToEntity(measure);
+                var measure = request.Measure.Map(new Domain.Entity.Measure(request.ModifiedBy, request.TenantId)) as Domain.Entity.Measure;
                 _context.Measures.Add(measure);
                 try
                 {

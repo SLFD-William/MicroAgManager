@@ -34,24 +34,44 @@ namespace Domain.Models
             }) as LivestockAnimalModel;
             return model;
         }
-
-        public LivestockAnimal MapToEntity(LivestockAnimal entity)
+        public override BaseEntity Map(BaseEntity entity)
         {
-            entity.ParentMaleName=ParentMaleName;
-            entity.ParentFemaleName=ParentFemaleName;
-            entity.Care=Care;
-            entity.GroupName=GroupName;
-            entity.Name=Name;
-            if (entity.Breeds?.Any() ?? false)
-                foreach (var breed in entity.Breeds)
-                    Breeds?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
-            if (entity.Statuses?.Any() ?? false)
-                foreach (var breed in entity.Statuses)
-                    Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
-            if (entity.Feeds?.Any() ?? false)
-                foreach (var breed in entity.Feeds)
-                    Feeds?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
-            entity.ModifiedOn = DateTime.UtcNow;
+            if (entity== null ||entity is not LivestockAnimal) return null;
+            ((LivestockAnimal)entity).ParentMaleName = ParentMaleName;
+            ((LivestockAnimal)entity).ParentFemaleName = ParentFemaleName;
+            ((LivestockAnimal)entity).Care = Care;
+            ((LivestockAnimal)entity).GroupName = GroupName;
+            ((LivestockAnimal)entity).Name = Name;
+            if (((LivestockAnimal)entity).Breeds?.Any() ?? false)
+                foreach (var breed in ((LivestockAnimal)entity).Breeds)
+                    Breeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            if (((LivestockAnimal)entity).Statuses?.Any() ?? false)
+                foreach (var breed in ((LivestockAnimal)entity).Statuses)
+                    Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            if (((LivestockAnimal)entity).Feeds?.Any() ?? false)
+                foreach (var breed in ((LivestockAnimal)entity).Feeds)
+                    Feeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            ((LivestockAnimal)entity).ModifiedOn = DateTime.UtcNow;
+            return entity;
+        }
+
+        public override BaseModel Map(BaseModel entity)
+        {
+            if (entity == null || entity is not LivestockAnimalModel) return null;
+            ((LivestockAnimalModel)entity).ParentMaleName = ParentMaleName;
+            ((LivestockAnimalModel)entity).ParentFemaleName = ParentFemaleName;
+            ((LivestockAnimalModel)entity).Care = Care;
+            ((LivestockAnimalModel)entity).GroupName = GroupName;
+            ((LivestockAnimalModel)entity).Name = Name;
+            if (((LivestockAnimalModel)entity).Breeds?.Any() ?? false)
+                foreach (var breed in ((LivestockAnimalModel)entity).Breeds)
+                    Breeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            if (((LivestockAnimalModel)entity).Statuses?.Any() ?? false)
+                foreach (var breed in ((LivestockAnimalModel)entity).Statuses)
+                    Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            if (((LivestockAnimalModel)entity).Feeds?.Any() ?? false)
+                foreach (var breed in ((LivestockAnimalModel)entity).Feeds)
+                    Feeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
             return entity;
         }
     }

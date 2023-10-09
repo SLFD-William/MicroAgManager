@@ -1,6 +1,6 @@
 ﻿@using Domain.Models;
 @using FrontEnd.Components.BreedingRecord;
-@inherits DataComponent
+@inherits DataComponent<ScheduledDutyModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -12,13 +12,13 @@
                    Show="Show"
     @ref=_validatedForm>
         <DataContent>
-            @if (scheduledDuty.Record == "BreedingRecord")
+            @if (working.Record == "BreedingRecord")
             {
-                <BreedingRecordEditor showUpdateCancelButtons="true" breedingRecordId="@scheduledDuty.RecordId" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
+                <BreedingRecordEditor showUpdateCancelButtons="true" breedingRecordId="@working.RecordId" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
             }
         </DataContent>
         <SecondaryContent>
-            @if (scheduledDuty.Id > 0)
+            @if (working.Id > 0)
             {
                 <section class="updateCancelButtons">
                     <button type="button" @onclick="Snooze">Snooze</button>

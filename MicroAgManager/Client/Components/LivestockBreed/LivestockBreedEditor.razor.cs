@@ -7,29 +7,27 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace FrontEnd.Components.LivestockBreed
 {
-    public partial class LivestockBreedEditor : DataComponent
+    public partial class LivestockBreedEditor : DataComponent<LivestockBreedModel>
     {
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedModel LivestockBreed { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }
-
-        private LivestockBreedModel livestockBreed;
         private ValidatedForm _validatedForm;
-       
+        protected new LivestockBreedModel working { get => base.working as LivestockBreedModel; set { base.working = value; } }
         public override async Task FreshenData()
         {
             if (LivestockBreed is not null)
             {
-                livestockBreed = LivestockBreed;
-                editContext = new EditContext(livestockBreed);
+                working = LivestockBreed;
+                editContext = new EditContext(working);
                 StateHasChanged();
                 return;
             }
             if (LivestockAnimal is not null)
                 livestockAnimalId = LivestockAnimal.Id;
 
-            livestockBreed = new LivestockBreedModel() { LivestockAnimalId = livestockAnimalId.Value };
+            working = new LivestockBreedModel() { LivestockAnimalId = livestockAnimalId.Value };
             var query = app.dbContext.LivestockBreeds.AsQueryable();
             if (livestockBreedId.HasValue && livestockBreedId > 0)
                 query = query.Where(f => f.Id == livestockBreedId);
@@ -37,23 +35,23 @@ namespace FrontEnd.Components.LivestockBreed
                 query = query.Where(f => f.LivestockAnimalId == livestockAnimalId);
 
 
-            editContext = new EditContext(livestockBreed);
+            editContext = new EditContext(working);
         }
         public async Task OnSubmit()
         {
             try
             {
 
-                if (livestockBreed.Id <= 0)
-                    livestockBreed.Id = await app.api.ProcessCommand<LivestockBreedModel, CreateLivestockBreed>("api/CreateLivestockBreed", new CreateLivestockBreed { LivestockBreed = livestockBreed });
+                if (working.Id <= 0)
+                    working.Id = await app.api.ProcessCommand<LivestockBreedModel, CreateLivestockBreed>("api/CreateLivestockBreed", new CreateLivestockBreed { LivestockBreed = working });
                 else
-                    livestockBreed.Id = await app.api.ProcessCommand<LivestockBreedModel, UpdateLivestockBreed>("api/UpdateLivestockBreed", new UpdateLivestockBreed { LivestockBreed = livestockBreed });
+                    working.Id = await app.api.ProcessCommand<LivestockBreedModel, UpdateLivestockBreed>("api/UpdateLivestockBreed", new UpdateLivestockBreed { LivestockBreed = working });
 
-                if (livestockBreed.Id <= 0)
+                if (working.Id <= 0)
                     throw new Exception("Failed to save livestock Breed");
-
-                editContext = new EditContext(livestockBreed);
-                await Submitted.InvokeAsync(livestockBreed);
+                original= working.Clone() as LivestockBreedModel;
+                editContext = new EditContext(working);
+                await Submitted.InvokeAsync(working);
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -63,7 +61,7 @@ namespace FrontEnd.Components.LivestockBreed
         }
         private async void Cancel()
         {
-            editContext = new EditContext(livestockBreed);
+            editContext = new EditContext(working);
             await Cancelled.InvokeAsync();
             StateHasChanged();
         }

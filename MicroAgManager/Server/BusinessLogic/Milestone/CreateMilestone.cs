@@ -22,8 +22,7 @@ namespace BackEnd.BusinessLogic.Milestone
 
             public override async Task<long> Handle(CreateMilestone request, CancellationToken cancellationToken)
             {
-                var duty = new Domain.Entity.Milestone(request.ModifiedBy, request.TenantId);
-                duty = request.Milestone.MapToEntity(duty);
+                var duty = request.Milestone.Map(new Domain.Entity.Milestone(request.ModifiedBy, request.TenantId)) as Domain.Entity.Milestone;
                 _context.Milestones.Add(duty);
                 try
                 {

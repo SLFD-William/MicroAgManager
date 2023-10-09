@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Milestone
 {
-    public partial class MilestoneList : DataComponent
+    public partial class MilestoneList : DataComponent<MilestoneModel>
     {
         protected TableTemplate<MilestoneSummary> _listComponent;
         [CascadingParameter] LivestockAnimalSummary LivestockAnimal { get; set; }

@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
             {
                 var breedingRecord = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId) 
                 { FemaleId =request.BreedingRecord.FemaleId};
-                breedingRecord = request.BreedingRecord.MapToEntity(breedingRecord);
+                breedingRecord = request.BreedingRecord.Map(breedingRecord) as Domain.Entity.BreedingRecord;
                 _context.BreedingRecords.Add(breedingRecord);
                 var resolutionNewleyChanged = !string.IsNullOrEmpty(breedingRecord.Resolution) && breedingRecord.ResolutionDate.HasValue;
                 try

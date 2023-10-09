@@ -18,8 +18,7 @@ namespace BackEnd.BusinessLogic.Livestock
 
             public override async Task<long> Handle(UpdateLivestock request, CancellationToken cancellationToken)
             {
-                var livestock = _context.Livestocks.Find(request.Livestock.Id);
-                livestock = request.Livestock.MapToEntity(livestock);
+                var livestock = request.Livestock.Map(_context.Livestocks.Find(request.Livestock.Id)) as Domain.Entity.Livestock;
                 livestock.ModifiedBy = request.ModifiedBy;
                 livestock.TenantId = request.TenantId;
                 _context.Livestocks.Update(livestock);

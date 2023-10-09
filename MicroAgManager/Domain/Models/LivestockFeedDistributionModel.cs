@@ -27,13 +27,26 @@ namespace Domain.Models
             }) as LivestockFeedDistributionModel;
             return model;
         }
-        public LivestockFeedDistribution MapToEntity(LivestockFeedDistribution entity)
+
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.Quantity = Quantity;
-            entity.Discarded = Discarded ?? false;
-            entity.Note = Note; 
-            entity.DatePerformed = DatePerformed;   
-            entity.Feed.Id = FeedId;
+            if (entity == null || entity is not LivestockFeedDistributionModel) return null;
+           ((LivestockFeedDistributionModel) entity).Quantity = Quantity;
+            ((LivestockFeedDistributionModel)entity).Discarded = Discarded ?? false;
+            ((LivestockFeedDistributionModel)entity).Note = Note;
+            ((LivestockFeedDistributionModel)entity).DatePerformed = DatePerformed;
+            ((LivestockFeedDistributionModel)entity).FeedId = FeedId;
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not LivestockFeedDistribution) return null;
+            ((LivestockFeedDistribution)entity).Quantity = Quantity;
+            ((LivestockFeedDistribution)entity).Discarded = Discarded ?? false;
+            ((LivestockFeedDistribution)entity).Note = Note;
+            ((LivestockFeedDistribution)entity).DatePerformed = DatePerformed;
+            ((LivestockFeedDistribution)entity).Feed.Id = FeedId;
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }

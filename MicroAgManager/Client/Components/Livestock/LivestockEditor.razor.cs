@@ -11,7 +11,7 @@ using FrontEnd.Components.LivestockStatus;
 
 namespace FrontEnd.Components.Livestock
 {
-    public partial class LivestockEditor : DataComponent
+    public partial class LivestockEditor : DataComponent<LivestockModel>
     {
         [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
         [CascadingParameter] public LivestockBreedSummary LivestockBreed { get; set; }
@@ -21,24 +21,23 @@ namespace FrontEnd.Components.Livestock
         [Parameter] public long? livestockBreedId { get; set; }
         private ValidatedForm _validatedForm;
         private LivestockStatusEditor _livestockStatusEditor;
-        private LivestockModel livestock;
+        protected new LivestockModel working { get => base.working as LivestockModel; set { base.working = value; } }
         public long StatusId
-        { get => livestock.StatusId ?? 0;
+        { get => working.StatusId ?? 0;
             set {
-                if (value != livestock.StatusId)
+                if (value != working.StatusId)
                 { 
-                    livestock.StatusId = value;
+                    working.StatusId = value;
                     var stat= app.dbContext.LivestockStatuses.Find(value);
-                    if (stat.InMilk!= LivestockStatusModeConstants.Unchanged) livestock.InMilk = bool.Parse(stat.InMilk);
-                    if (stat.BeingManaged != LivestockStatusModeConstants.Unchanged) livestock.BeingManaged = bool.Parse(stat.BeingManaged);
-                    if (stat.BottleFed != LivestockStatusModeConstants.Unchanged) livestock.BottleFed = bool.Parse(stat.BottleFed);
-                    if (stat.ForSale != LivestockStatusModeConstants.Unchanged) livestock.ForSale = bool.Parse(stat.ForSale);
-                    if (stat.Sterile != LivestockStatusModeConstants.Unchanged) livestock.Sterile = bool.Parse(stat.Sterile);
+                    if (stat.InMilk!= LivestockStatusModeConstants.Unchanged) working.InMilk = bool.Parse(stat.InMilk);
+                    if (stat.BeingManaged != LivestockStatusModeConstants.Unchanged) working.BeingManaged = bool.Parse(stat.BeingManaged);
+                    if (stat.BottleFed != LivestockStatusModeConstants.Unchanged) working.BottleFed = bool.Parse(stat.BottleFed);
+                    if (stat.ForSale != LivestockStatusModeConstants.Unchanged) working.ForSale = bool.Parse(stat.ForSale);
+                    if (stat.Sterile != LivestockStatusModeConstants.Unchanged) working.Sterile = bool.Parse(stat.Sterile);
                     StateHasChanged();
                 }
             }
         }
-
         public override async Task FreshenData()
         {
             if (LivestockBreed is not null)
@@ -47,7 +46,7 @@ namespace FrontEnd.Components.Livestock
             if (Livestock is not null && Livestock.Id>0)
             {
                 livestockId = Livestock.Id;
-                livestock = Livestock;
+                working = Livestock;
             }
             
             if (LivestockBreed is null && livestockBreedId.HasValue)
@@ -57,68 +56,60 @@ namespace FrontEnd.Components.Livestock
                 LivestockAnimal = new LivestockAnimalSummary( await app.dbContext.LivestockAnimals.FindAsync(LivestockBreed.LivestockAnimalId),app.dbContext);
 
             if ((Livestock is null || Livestock.Id<1) && livestockId > 0)
-                livestock = await app.dbContext.Livestocks.FindAsync(livestockId)  ;
+                working = await app.dbContext.Livestocks.FindAsync(livestockId)  ;
 
-            if (livestock is null)
-                livestock = new LivestockModel() { LivestockBreedId = livestockBreedId.HasValue ? livestockBreedId.Value : 0 };
-            Livestock = livestock;
-            editContext = new EditContext(livestock);
+            if (working is null)
+                working = new LivestockModel() { LivestockBreedId = livestockBreedId.HasValue ? livestockBreedId.Value : 0 };
+            Livestock = working;
+            editContext = new EditContext(working);
         }
         public async Task OnSubmit()
         {
             try
             {
 
-                var state = livestock.Id <= 0 ? EntityState.Added : EntityState.Modified;
+                var state = working.Id <= 0 ? EntityState.Added : EntityState.Modified;
 
-                if (livestock.Id <= 0)
-                    livestock.Id = await app.api.ProcessCommand<LivestockModel, CreateLivestock>("api/CreateLivestock", new CreateLivestock { Livestock = livestock });
+                if (working.Id <= 0)
+                    working.Id = await app.api.ProcessCommand<LivestockModel, CreateLivestock>("api/CreateLivestock", new CreateLivestock { Livestock = working });
                 else
-                    livestock.Id = await app.api.ProcessCommand<LivestockModel, UpdateLivestock>("api/UpdateLivestock", new UpdateLivestock { Livestock = livestock });
+                    working.Id = await app.api.ProcessCommand<LivestockModel, UpdateLivestock>("api/UpdateLivestock", new UpdateLivestock { Livestock = working });
 
-                if (livestock.Id <= 0)
-                    throw new Exception("Failed to save livestock Breed");
-
-
-
-                editContext = new EditContext(livestock);
-                await Submitted.InvokeAsync(livestock);
-                StateHasChanged();
+                if (working.Id <= 0)
+                    throw new Exception("Failed to save working Breed");
+                SetEditContext(working);
+                await Submitted.InvokeAsync(working);
+                
             }
             catch (Exception ex)
             {
 
             }
         }
-        private long? originalStatusId;
         private bool showStatusModal = false;
         private void ShowStatusEditor()
         {
-            originalStatusId = livestock.StatusId;
             showStatusModal = true;
             StateHasChanged();
         }
         private void StatusCanceled()
         {
-            livestock.StatusId = originalStatusId;
+            working.StatusId = ((LivestockModel)original).StatusId;
             showStatusModal = false;
-            originalStatusId = null;
-            StateHasChanged();
+            SetEditContext(working);
         }
         private void StatusCreated(object e)
         {
             var status = e as LivestockStatusModel;
             showStatusModal = false;
-            livestock.StatusId = status?.Id;
-            StateHasChanged();
+            working.StatusId = status?.Id;
+            SetEditContext(working);
         }
         private async void Cancel()
         {
-            if(originalStatusId.HasValue) livestock.StatusId = originalStatusId.Value;
-
-            editContext = new EditContext(livestock);
+            working = original.Clone() as LivestockModel;
+            SetEditContext(working);
             await Cancelled.InvokeAsync();
-            StateHasChanged();
         }
     }
 }

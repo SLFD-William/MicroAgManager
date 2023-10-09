@@ -7,7 +7,7 @@ namespace Domain.Models
 {
     public class BreedingRecordModel:BaseModel
     {
-        [Required][ForeignKey("Female")] public required long FemaleId { get; set; }
+        [Required][ForeignKey("Female")] public long FemaleId { get; set; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -37,21 +37,39 @@ namespace Domain.Models
             }) as BreedingRecordModel;
             return model;
         }
+        
+        public override BaseModel Map(BaseModel breedingRecord)
+        {
+            if (breedingRecord == null || breedingRecord is not BreedingRecordModel) return null;
 
-        public BreedingRecord MapToEntity(BreedingRecord breedingRecord)
-        { 
-            breedingRecord.FemaleId= FemaleId;
-            breedingRecord.MaleId = MaleId;
-            breedingRecord.ServiceDate = ServiceDate;
-            breedingRecord.ResolutionDate = ResolutionDate;
-            breedingRecord.StillbornMales = StillbornMales; 
-            breedingRecord.StillbornFemales = StillbornFemales; 
-            breedingRecord.Notes = Notes;   
-            breedingRecord.BornMales = BornMales;
-            breedingRecord.BornFemales = BornFemales;
-            breedingRecord.Resolution = Resolution;
+            ((BreedingRecordModel)breedingRecord).FemaleId = FemaleId;
+            ((BreedingRecordModel)breedingRecord).MaleId = MaleId;
+            ((BreedingRecordModel)breedingRecord).ServiceDate = ServiceDate;
+            ((BreedingRecordModel)breedingRecord).ResolutionDate = ResolutionDate;
+            ((BreedingRecordModel)breedingRecord).StillbornMales = StillbornMales;
+            ((BreedingRecordModel)breedingRecord).StillbornFemales = StillbornFemales;
+            ((BreedingRecordModel)breedingRecord).Notes = Notes;
+            ((BreedingRecordModel)breedingRecord).BornMales = BornMales;
+            ((BreedingRecordModel)breedingRecord).BornFemales = BornFemales;
+            ((BreedingRecordModel)breedingRecord).Resolution = Resolution;
             return breedingRecord;
         }
 
+        public override BaseEntity Map(BaseEntity breedingRecord)
+        {
+
+            ((BreedingRecord)breedingRecord).FemaleId = FemaleId;
+            ((BreedingRecord)breedingRecord).MaleId = MaleId;
+            ((BreedingRecord)breedingRecord).ServiceDate = ServiceDate;
+            ((BreedingRecord)breedingRecord).ResolutionDate = ResolutionDate;
+            ((BreedingRecord)breedingRecord).StillbornMales = StillbornMales;
+            ((BreedingRecord)breedingRecord).StillbornFemales = StillbornFemales;
+            ((BreedingRecord)breedingRecord).Notes = Notes;
+            ((BreedingRecord)breedingRecord).BornMales = BornMales;
+            ((BreedingRecord)breedingRecord).BornFemales = BornFemales;
+            ((BreedingRecord)breedingRecord).Resolution = Resolution;
+            breedingRecord.ModifiedOn = DateTime.UtcNow;
+            return breedingRecord;
+        }
     }
 }

@@ -51,26 +51,54 @@ namespace Domain.Models
             }) as LivestockModel;
             return model;
         }
-        public Livestock MapToEntity(Livestock entity)
+
+
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.MotherId = MotherId;
-            entity.FatherId = FatherId;
-            entity.LivestockBreedId = LivestockBreedId;
-            entity.BeingManaged = BeingManaged;
-            entity.Birthdate = Birthdate;
-            entity.BirthDefect = BirthDefect;
-            entity.BornDefective = BornDefective;
-            entity.BottleFed = BottleFed;
-            entity.Description = Description;
-            entity.ForSale = ForSale;
-            entity.Gender = Gender;
-            entity.InMilk = InMilk;
-            entity.Variety = Variety;   
-            entity.Sterile = Sterile;
-            entity.Name = Name;
-            entity.BatchNumber = BatchNumber;
-            entity.StatusId = StatusId;
-            entity.LocationId = LocationId;
+            if (entity == null || entity is not LivestockModel) return null;
+            ((LivestockModel)entity).MotherId = MotherId;
+            ((LivestockModel)entity).FatherId = FatherId;
+            ((LivestockModel)entity).LivestockBreedId = LivestockBreedId;
+            ((LivestockModel)entity).BeingManaged = BeingManaged;
+            ((LivestockModel)entity).Birthdate = Birthdate;
+            ((LivestockModel)entity).BirthDefect = BirthDefect;
+            ((LivestockModel)entity).BornDefective = BornDefective;
+            ((LivestockModel)entity).BottleFed = BottleFed;
+            ((LivestockModel)entity).Description = Description;
+            ((LivestockModel)entity).ForSale = ForSale;
+            ((LivestockModel)entity).Gender = Gender;
+            ((LivestockModel)entity).InMilk = InMilk;
+            ((LivestockModel)entity).Variety = Variety;
+            ((LivestockModel)entity).Sterile = Sterile;
+            ((LivestockModel)entity).Name = Name;
+            ((LivestockModel)entity).BatchNumber = BatchNumber;
+            ((LivestockModel)entity).StatusId = StatusId;
+            ((LivestockModel)entity).LocationId = LocationId;
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not Livestock) return null;
+            ((Livestock)entity).MotherId = MotherId;
+            ((Livestock)entity).FatherId = FatherId;
+            ((Livestock)entity).LivestockBreedId = LivestockBreedId;
+            ((Livestock)entity).BeingManaged = BeingManaged;
+            ((Livestock)entity).Birthdate = Birthdate;
+            ((Livestock)entity).BirthDefect = BirthDefect;
+            ((Livestock)entity).BornDefective = BornDefective;
+            ((Livestock)entity).BottleFed = BottleFed;
+            ((Livestock)entity).Description = Description;
+            ((Livestock)entity).ForSale = ForSale;
+            ((Livestock)entity).Gender = Gender;
+            ((Livestock)entity).InMilk = InMilk;
+            ((Livestock)entity).Variety = Variety;
+            ((Livestock)entity).Sterile = Sterile;
+            ((Livestock)entity).Name = Name;
+            ((Livestock)entity).BatchNumber = BatchNumber;
+            ((Livestock)entity).StatusId = StatusId;
+            ((Livestock)entity).LocationId = LocationId;
+            entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
     }

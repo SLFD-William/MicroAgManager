@@ -28,17 +28,32 @@ namespace Domain.Models
         }) as LivestockBreedModel;
             return model;
         }
-        public LivestockBreed MapToEntity(LivestockBreed entity)
+           public override BaseModel Map(BaseModel entity)
         {
-            entity.LivestockAnimalId = LivestockAnimalId;
-            entity.EmojiChar = EmojiChar;
-            entity.GestationPeriod = GestationPeriod;  
-            entity.HeatPeriod = HeatPeriod;
-            entity.Name = Name;
+            if (entity == null || entity is not LivestockBreedModel) return null;
+            ((LivestockBreedModel)entity).LivestockAnimalId = LivestockAnimalId;
+            ((LivestockBreedModel)entity).EmojiChar = EmojiChar;
+            ((LivestockBreedModel)entity).GestationPeriod = GestationPeriod;
+            ((LivestockBreedModel)entity).HeatPeriod = HeatPeriod;
+            ((LivestockBreedModel)entity).Name = Name;
+            if (((LivestockBreedModel)entity).Livestocks.Any())
+                foreach (var livestock in ((LivestockBreedModel)entity).Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not LivestockBreed) return null;
+            ((LivestockBreed)entity).LivestockAnimalId = LivestockAnimalId;
+            ((LivestockBreed)entity).EmojiChar = EmojiChar;
+            ((LivestockBreed)entity).GestationPeriod = GestationPeriod;
+            ((LivestockBreed)entity).HeatPeriod = HeatPeriod;
+            ((LivestockBreed)entity).Name = Name;
             entity.ModifiedOn = DateTime.UtcNow;
-            if (entity.Livestocks.Any())
-                foreach (var livestock in entity.Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.MapToEntity(livestock);
+            if (((LivestockBreed)entity).Livestocks.Any())
+                foreach (var livestock in ((LivestockBreed)entity).Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
             return entity;
         }
     }

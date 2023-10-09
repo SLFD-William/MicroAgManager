@@ -1,9 +1,9 @@
 ﻿@using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<LivestockStatusModel>
 @if (app != null)
 {
     <CascadingValue Value="_editStatus">
-        <LivestockStatusEditor Show=@(_editStatus is not null || !Items.Any()) Modal=true @ref="_statusEditor" Submitted="@StatusUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockStatusEditor>
+        <LivestockStatusEditor Show=@(_editStatus is not null) Modal=true @ref="_statusEditor" Submitted="@StatusUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockStatusEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockStatusSummary"
                    Items="@Items"

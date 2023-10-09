@@ -1,6 +1,6 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<LivestockAnimalModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -8,34 +8,34 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(livestockAnimal.Id<1)"
+                   createOnly="@(working.Id<1)"
                    Modal="Modal"
                    Show="Show"
     @ref=_validatedForm>
          <DataContent>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestockAnimal.Name)">
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
                 <InputText placeholder="Name" @bind-Value="@Name" />
             </ValidatedField>
-            <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => livestockAnimal.GroupName)">
-                <InputText placeholder="Collective Name" @bind-Value="@livestockAnimal.GroupName" />
+            <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => working.GroupName)">
+                <InputText placeholder="Collective Name" @bind-Value="@working.GroupName" />
             </ValidatedField>
-            <ValidatedField Legend="Male Parent Name" ValidationMessageFor="@(() => livestockAnimal.ParentMaleName)">
-                <InputText placeholder="Male Parent Name" @bind-Value="@livestockAnimal.ParentMaleName" />
+            <ValidatedField Legend="Male Parent Name" ValidationMessageFor="@(() => working.ParentMaleName)">
+                <InputText placeholder="Male Parent Name" @bind-Value="@working.ParentMaleName" />
             </ValidatedField>
-            <ValidatedField Legend="Female Parent Name" ValidationMessageFor="@(() => livestockAnimal.ParentFemaleName)">
-                <InputText placeholder="Female Parent Name" @bind-Value="@livestockAnimal.ParentFemaleName" />
+            <ValidatedField Legend="Female Parent Name" ValidationMessageFor="@(() => working.ParentFemaleName)">
+                <InputText placeholder="Female Parent Name" @bind-Value="@working.ParentFemaleName" />
             </ValidatedField>
-            <ValidatedField Legend="Care" ValidationMessageFor="@(() => livestockAnimal.Care)">
-                <InputSelect @bind-Value="@livestockAnimal.Care">
+            <ValidatedField Legend="Care" ValidationMessageFor="@(() => working.Care)">
+                <InputSelect @bind-Value="@working.Care">
                     <option value="@LivestockCareConstants.Individual">@LivestockCareConstants.Individual</option>
                     <option value="@LivestockCareConstants.Collective">@LivestockCareConstants.Collective</option>
                 </InputSelect>
             </ValidatedField>
         </DataContent>
 @*         <SecondaryContent>
-            @if (livestockAnimal.Id > 0)
+            @if (working.Id > 0)
             {
-             <CascadingValue Value="@livestockAnimal">
+             <CascadingValue Value="@working">
                 <LivestockAnimalSubTabs @ref="_tabControl"></LivestockAnimalSubTabs>
              </CascadingValue>
             }

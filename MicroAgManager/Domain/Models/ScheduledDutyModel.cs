@@ -39,23 +39,37 @@ namespace Domain.Models
             }) as ScheduledDutyModel;
             return model;
         }
-        public ScheduledDuty MapToEntity(ScheduledDuty duty)
+        public override BaseModel Map(BaseModel duty)
         {
-            duty.CompletedBy = CompletedBy;
-            duty.CompletedOn = CompletedOn;
-            duty.Dismissed = Dismissed;
-            duty.DueOn = DueOn;
-            duty.ReminderDays = ReminderDays;
-            duty.DutyId=DutyId;
-            duty.ModifiedOn = DateTime.UtcNow;
-            duty.Recipient = Recipient;
-            duty.RecipientId = RecipientId;
-            duty.Record = Record;
-            duty.RecordId = RecordId;
-
+            if (duty == null || duty is not ScheduledDutyModel) return null;
+            ((ScheduledDutyModel)duty).CompletedBy = CompletedBy;
+            ((ScheduledDutyModel)duty).CompletedOn = CompletedOn;
+            ((ScheduledDutyModel)duty).Dismissed = Dismissed;
+            ((ScheduledDutyModel)duty).DueOn = DueOn;
+            ((ScheduledDutyModel)duty).ReminderDays = ReminderDays;
+            ((ScheduledDutyModel)duty).DutyId = DutyId;
+            ((ScheduledDutyModel)duty).Recipient = Recipient;
+            ((ScheduledDutyModel)duty).RecipientId = RecipientId;
+            ((ScheduledDutyModel)duty).Record = Record;
+            ((ScheduledDutyModel)duty).RecordId = RecordId;
             return duty;
         }
 
-
+        public override BaseEntity Map(BaseEntity duty)
+        {
+            if (duty == null || duty is not ScheduledDuty) return null;
+            ((ScheduledDuty)duty).CompletedBy = CompletedBy;
+            ((ScheduledDuty)duty).CompletedOn = CompletedOn;
+            ((ScheduledDuty)duty).Dismissed = Dismissed;
+            ((ScheduledDuty)duty).DueOn = DueOn;
+            ((ScheduledDuty)duty).ReminderDays = ReminderDays;
+            ((ScheduledDuty)duty).DutyId = DutyId;
+            duty.ModifiedOn = DateTime.UtcNow;
+            ((ScheduledDuty)duty).Recipient = Recipient;
+            ((ScheduledDuty)duty).RecipientId = RecipientId;
+            ((ScheduledDuty)duty).Record = Record;
+            ((ScheduledDuty)duty).RecordId = RecordId;
+            return duty;
+        }
     }
 }

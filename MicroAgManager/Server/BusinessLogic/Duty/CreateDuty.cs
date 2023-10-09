@@ -23,7 +23,7 @@ public class CreateDuty : BaseCommand, ICreateCommand
         public override async Task<long> Handle(CreateDuty request, CancellationToken cancellationToken)
         {
             var duty = new Domain.Entity.Duty(request.ModifiedBy, request.TenantId);
-            duty = request.Duty.MapToEntity(duty);
+            duty = request.Duty.Map(duty) as Domain.Entity.Duty;
             duty.CreatedOn = DateTime.Now;
             duty.ModifiedBy = duty.CreatedBy = request.ModifiedBy;
             duty.TenantId = request.TenantId;

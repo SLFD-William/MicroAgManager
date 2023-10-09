@@ -23,12 +23,22 @@ namespace Domain.Models
             }) as MeasureModel;
             return model;
         }
-        public Measure MapToEntity(Measure measure)
+        public override BaseModel Map(BaseModel measure)
         {
-            measure.UnitId = UnitId;
-            measure.Method = Method;
-            measure.Name = Name;
-            measure.ModifiedOn = DateTime.UtcNow;
+            if (measure == null || measure is not MeasureModel) return null;
+           ((MeasureModel) measure).UnitId = UnitId;
+            ((MeasureModel)measure).Method = Method;
+            ((MeasureModel)measure).Name = Name;
+            return measure;
+        }
+
+        public override BaseEntity Map(BaseEntity measure)
+        {
+            if (measure == null || measure is not Measure) return null;
+            ((Measure)measure).UnitId = UnitId;
+            ((Measure)measure).Method = Method;
+            ((Measure)measure).Name = Name;
+            ((Measure)measure).ModifiedOn = DateTime.UtcNow;
             return measure;
         }
     }

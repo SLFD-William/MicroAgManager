@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmViewer :DataComponent
+    public partial class FarmViewer :DataComponent<FarmLocationModel>
     {
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }

@@ -24,5 +24,15 @@ namespace Domain.Models
                 ModifiedBy = tenant.ModifiedBy
             };
         }
+
+        public override BaseModel Map(BaseModel model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override BaseEntity Map(BaseEntity model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

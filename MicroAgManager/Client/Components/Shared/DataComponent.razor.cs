@@ -1,11 +1,12 @@
-﻿using FrontEnd.Services;
+﻿using Domain.Abstracts;
+using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Components.Shared
 {
-    public abstract class DataComponent : ComponentBase, IAsyncDisposable
+    public abstract class DataComponent<Model> : ComponentBase, IAsyncDisposable where Model : BaseModel, new()
     {
         [Inject] protected ApplicationStateProvider app { get; set; }
         [Parameter] public bool Selectable { get; set; } = false;
@@ -16,7 +17,8 @@ namespace FrontEnd.Components.Shared
         [Parameter] public bool showUpdateCancelButtons { get; set; }
         [Parameter] public bool Modal { get; set; }
         [Parameter] public bool Show { get; set; } = false;
-
+        protected BaseModel original { get; set; }
+        protected BaseModel working { get; set; }
         protected async override Task OnParametersSetAsync() 
         {
             var initialized = app.dbSynchonizer is not null;
@@ -27,9 +29,23 @@ namespace FrontEnd.Components.Shared
             if (!initialized)
                 app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
             if (Modal && !Show) return;
+
             await FreshenData();
         }
+        protected void SetEditContext(Model work)
+        {
+            working = work;
+            if (working is null)
+            {
+                original = null;
+                return;
+            }
+            if(original is null) original = new Model();
+            original = working.Map(original);
+            editContext = new EditContext(working);
+            StateHasChanged();
 
+        }
         protected virtual async void DbSync_OnUpdate()
         {
             if (Modal && !Show) return;

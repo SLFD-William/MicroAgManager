@@ -1,5 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
@@ -22,7 +23,7 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 
             public override async Task<long> Handle(CreateLandPlot request, CancellationToken cancellationToken)
             {
-                var plot = request.LandPlot.MapToEntity(new Domain.Entity.LandPlot(request.ModifiedBy, request.TenantId));
+                var plot = request.LandPlot.Map(new LandPlot(request.ModifiedBy, request.TenantId)) as LandPlot ;
                 plot.FarmLocation = _context.Farms.Find(plot.FarmLocationId);
 
                 _context.Plots.Add(plot);

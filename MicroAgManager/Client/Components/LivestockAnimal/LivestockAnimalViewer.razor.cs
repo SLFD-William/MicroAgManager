@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockAnimal
 {
-    public partial class LivestockAnimalViewer : DataComponent
+    public partial class LivestockAnimalViewer : DataComponent<LivestockAnimalModel>
     {
         [CascadingParameter] public LivestockAnimalModel? LivestockAnimal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }

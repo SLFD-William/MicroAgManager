@@ -1,7 +1,7 @@
 ﻿@using BackEnd.BusinessLogic.Livestock;
 @using Domain.Constants;
 @using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<LivestockBreedModel>
 @if (editContext is not null)
 {
     <CommandButton editContext="editContext"

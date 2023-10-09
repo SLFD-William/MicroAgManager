@@ -35,17 +35,35 @@ namespace Domain.Models
             }) as FarmLocationModel;
             return model;
         }
-        public FarmLocation MapToEntity(FarmLocation farm)
+
+
+        public override BaseModel Map(BaseModel farm)
         {
-            farm.Longitude =Longitude;
-            farm.Latitude =Latitude;
-            farm.StreetAddress =StreetAddress;
-            farm.City =City;
-            farm.State = State;
-            farm.Zip = Zip;
-            farm.Country = Country;
-            farm.Name = Name;
-            farm.CountryCode = CountryCode;
+            if (farm is null | farm is not FarmLocationModel) return null;
+            ((FarmLocationModel)farm).Longitude = Longitude;
+            ((FarmLocationModel)farm).Latitude = Latitude;
+            ((FarmLocationModel)farm).StreetAddress = StreetAddress;
+            ((FarmLocationModel)farm).City = City;
+            ((FarmLocationModel)farm).State = State;
+            ((FarmLocationModel)farm).Zip = Zip;
+            ((FarmLocationModel)farm).Country = Country;
+            ((FarmLocationModel)farm).Name = Name;
+            ((FarmLocationModel)farm).CountryCode = CountryCode;
+            return farm;
+        }
+
+        public override BaseEntity Map(BaseEntity farm)
+        {
+            if (farm is null | farm is not FarmLocation) return null;
+            ((FarmLocation)farm).Longitude = Longitude;
+            ((FarmLocation)farm).Latitude = Latitude;
+            ((FarmLocation)farm).StreetAddress = StreetAddress;
+            ((FarmLocation)farm).City = City;
+            ((FarmLocation)farm).State = State;
+            ((FarmLocation)farm).Zip = Zip;
+            ((FarmLocation)farm).Country = Country;
+            ((FarmLocation)farm).Name = Name;
+            ((FarmLocation)farm).CountryCode = CountryCode;
             farm.ModifiedOn = DateTime.UtcNow;
             return farm;
         }

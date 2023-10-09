@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Registrar
 {
-    public partial class RegistrarList : DataComponent
+    public partial class RegistrarList : DataComponent<RegistrarModel>
     {
         protected TableTemplate<RegistrarModel> _listComponent;
         [Parameter] public IEnumerable<RegistrarModel>? Items { get; set; }

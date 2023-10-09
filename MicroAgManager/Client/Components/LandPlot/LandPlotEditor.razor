@@ -1,6 +1,7 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
-@inherits DataComponent
+@using FrontEnd.Components.Unit;
+@inherits DataComponent<LandPlotModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -8,13 +9,13 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(plot.Id<1)"
+                   createOnly="@(working.Id<1)"
                    Modal="Modal"
                     Show="Show"
                     @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => plot.Usage)">
-                <InputSelect @bind-Value="@plot.Usage">
+            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => working.Usage)">
+                <InputSelect @bind-Value="@working.Usage">
                     <option value="">Select Use ...</option>
                     <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
                     <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
@@ -22,23 +23,31 @@
                     <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => plot.Name)">
-                <InputText placeholder="Name" @bind-Value="@plot.Name" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
+                <InputText placeholder="Name" @bind-Value="@working.Name" />
             </ValidatedField>
-            <ValidatedField Legend="Description" ValidationMessageFor="@(() => plot.Description)">
-                <InputText placeholder="Description" @bind-Value="@plot.Description" />
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => working.Description)">
+                <InputText placeholder="Description" @bind-Value="@working.Description" />
             </ValidatedField>
-            <ValidatedField Legend="Area" ValidationMessageFor="@(() => plot.Area)">
-                <InputNumber placeholder="0" @bind-Value="@plot.Area" />
+            <ValidatedField Legend="Area" ValidationMessageFor="@(() => working.Area)">
+                <InputNumber placeholder="0" @bind-Value="@working.Area" />
             </ValidatedField>
-            <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnitId)">
-                <InputSelect @bind-Value="@plot.AreaUnitId">
-                    <option value="">Select Units ...</option>
-                    @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
-                    {
-                        <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
-                    }
-                </InputSelect>
+            <ValidatedField ValidationMessageFor="@(() => working.AreaUnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Area Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="UnitCreated" Cancelled="UnitCanceled"></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@working.AreaUnitId">
+                        <option value="">Select Units ...</option>
+                        @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
+                        {
+                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
             </ValidatedField>
         </DataContent>
     </ValidatedForm>

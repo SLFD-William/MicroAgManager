@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 
 namespace FrontEnd.Pages
 {
-    public partial class FarmsPage : DataComponent
+    public partial class FarmsPage : DataComponent<FarmLocationModel>
     {
         [Parameter] public long? farmId { get; set; }
         [Inject] public  IJSRuntime js { get; set; }

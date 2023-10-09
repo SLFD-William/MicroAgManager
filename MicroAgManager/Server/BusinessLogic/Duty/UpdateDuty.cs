@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic.Duty
             public override async Task<long> Handle(UpdateDuty request, CancellationToken cancellationToken)
             {
                 var duty = _context.Duties.First(d => d.TenantId == request.TenantId && d.Id == request.Duty.Id);
-                duty = request.Duty.MapToEntity(duty);
+                duty = request.Duty.Map(duty) as Domain.Entity.Duty; 
                 duty.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);

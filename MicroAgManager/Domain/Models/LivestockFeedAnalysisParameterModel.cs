@@ -22,12 +22,24 @@ namespace Domain.Models
             }) as LivestockFeedAnalysisParameterModel;
             return model;
         }
-        public LivestockFeedAnalysisParameter MapToEntity(LivestockFeedAnalysisParameter entity)
+
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.Parameter = Parameter;
-            entity.SubParameter = SubParameter;
-            entity.Unit = Unit;
-            entity.Method = Method;
+            if (entity == null || entity is not LivestockFeedAnalysisParameterModel) return null;
+            ((LivestockFeedAnalysisParameterModel)entity).Parameter = Parameter;
+            ((LivestockFeedAnalysisParameterModel)entity).SubParameter = SubParameter;
+            ((LivestockFeedAnalysisParameterModel)entity).Unit = Unit;
+            ((LivestockFeedAnalysisParameterModel)entity).Method = Method;
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not LivestockFeedAnalysisParameter) return null;
+            ((LivestockFeedAnalysisParameter)entity).Parameter = Parameter;
+            ((LivestockFeedAnalysisParameter)entity).SubParameter = SubParameter;
+            ((LivestockFeedAnalysisParameter)entity).Unit = Unit;
+            ((LivestockFeedAnalysisParameter)entity).Method = Method;
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }

@@ -1,5 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
@@ -20,8 +21,7 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
 
             public override async Task<long> Handle(CreateLivestockBreed request, CancellationToken cancellationToken)
             {
-                var livestockBreed = new Domain.Entity.LivestockBreed(request.ModifiedBy, request.TenantId);
-                livestockBreed = request.LivestockBreed.MapToEntity(livestockBreed);
+                var livestockBreed = request.LivestockBreed.Map(new Domain.Entity.LivestockBreed(request.ModifiedBy, request.TenantId)) as LivestockBreed;
                 if(livestockBreed.LivestockAnimal is null)
                     livestockBreed.LivestockAnimal = await _context.LivestockAnimals.FindAsync(request.LivestockBreed.LivestockAnimalId);
 

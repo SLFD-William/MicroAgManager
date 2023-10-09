@@ -1,10 +1,11 @@
 ﻿@using Domain.Constants;
+@using Domain.Models;
 @using FrontEnd.Components.LandPlot;
 @using FrontEnd.Components.LivestockAnimal;
 @using FrontEnd.Components.ScheduledDuty;
 @using FrontEnd.Components.Duty;
 @using FrontEnd.Components.Registrar;
-@inherits DataComponent
+@inherits DataComponent<FarmLocationModel>
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(FarmSubTabs)" >
     <TabPage @ref="_plotTab">
         <ButtonContent>
@@ -18,7 +19,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <LandPlotList @ref="_landPlotList" Items="app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name)"></LandPlotList>
+            <LandPlotList @ref="_landPlotList" Items="app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).Select(f=>new LandPlotSummary(f,app.dbContext))"></LandPlotList>
         </ChildContent>
     </TabPage>
 

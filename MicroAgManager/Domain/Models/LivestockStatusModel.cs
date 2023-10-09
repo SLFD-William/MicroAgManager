@@ -34,19 +34,36 @@ namespace Domain.Models
             }) as LivestockStatusModel;
             return model;
         }
-        public LivestockStatus MapToEntity(LivestockStatus entity)
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.Status = Status;
-            entity.BeingManaged = BeingManaged;
-            entity.InMilk = InMilk;
-            entity.BottleFed = BottleFed;
-            entity.ForSale = ForSale;
-            entity.Sterile = Sterile;
-            entity.DefaultStatus = DefaultStatus;
-            entity.LivestockAnimalId=LivestockAnimalId;
-            if (entity.Livestocks.Any())
-                foreach (var subplot in entity.Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.MapToEntity(subplot);
+            if (entity == null || entity is not LivestockStatusModel) return null;
+            ((LivestockStatusModel) entity).Status = Status;
+            ((LivestockStatusModel)entity).BeingManaged = BeingManaged;
+            ((LivestockStatusModel)entity).InMilk = InMilk;
+            ((LivestockStatusModel)entity).BottleFed = BottleFed;
+            ((LivestockStatusModel)entity).ForSale = ForSale;
+            ((LivestockStatusModel)entity).Sterile = Sterile;
+            ((LivestockStatusModel)entity).DefaultStatus = DefaultStatus;
+            ((LivestockStatusModel)entity).LivestockAnimalId = LivestockAnimalId;
+            if (((LivestockStatusModel)entity).Livestocks.Any())
+                foreach (var subplot in ((LivestockStatusModel)entity).Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
+            return entity;
+        }
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not LivestockStatus) return null;
+            ((LivestockStatus)entity).Status = Status;
+            ((LivestockStatus)entity).BeingManaged = BeingManaged;
+            ((LivestockStatus)entity).InMilk = InMilk;
+            ((LivestockStatus)entity).BottleFed = BottleFed;
+            ((LivestockStatus)entity).ForSale = ForSale;
+            ((LivestockStatus)entity).Sterile = Sterile;
+            ((LivestockStatus)entity).DefaultStatus = DefaultStatus;
+            ((LivestockStatus)entity).LivestockAnimalId = LivestockAnimalId;
+            if (((LivestockStatus)entity).Livestocks.Any())
+                foreach (var subplot in ((LivestockStatus)entity).Livestocks)
+                    Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }

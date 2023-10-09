@@ -21,7 +21,7 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
             public override async Task<long> Handle(UpdateLandPlot request, CancellationToken cancellationToken)
             {
                 var farm = _context.Plots.First(f => f.TenantId == request.TenantId && f.Id == request.LandPlot.Id);
-                farm = request.LandPlot.MapToEntity(farm);
+                farm = request.LandPlot.Map(farm) as Domain.Entity.LandPlot;
                 farm.ModifiedBy = request.ModifiedBy;
 
                 await _context.SaveChangesAsync(cancellationToken);

@@ -1,6 +1,7 @@
 ﻿@using Domain.Constants;
+@using Domain.Models;
 @using FrontEnd.Components.Registrar;
-@inherits DataComponent
+@inherits DataComponent<DutyModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -12,10 +13,10 @@
                    Show="Show"
                    @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => duty.Name)">
-                <InputText @bind-Value="duty.Name"></InputText>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
+                <InputText @bind-Value="working.Name"></InputText>
             </ValidatedField>
-            <ValidatedField Legend="Command" ValidationMessageFor="@(() => duty.Command)">
+            <ValidatedField Legend="Command" ValidationMessageFor="@(() => working.Command)">
                 <InputSelect @bind-Value="@Command">
                     <option value="0">Select Command ...</option>
                     <option value="@DutyCommandConstants.Birth">@nameof(DutyCommandConstants.Birth)</option>
@@ -32,18 +33,18 @@
             </ValidatedField>
             @if (showCommandId())
             { 
-                <ValidatedField ValidationMessageFor="@(() => duty.CommandId)">
+                <ValidatedField ValidationMessageFor="@(() => working.CommandId)">
                     <LegendContent>
                         <div style="display:inline-flex">
                             <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
-                                @if (duty.Command == DutyCommandConstants.Registration)
+                                @if (working.Command == DutyCommandConstants.Registration)
                                 {
                                     <RegistrarEditor @ref=_registrarEditor Modal="true" Show="showCommandModal" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
                                 }
                         </div>
                     </LegendContent>
                     <ChildContent>
-                        <InputSelect @bind-Value="@duty.CommandId">
+                        <InputSelect @bind-Value="@working.CommandId">
                             <option value="0">Select Command Instance ...</option>
                             @foreach (var command in commandIds())
                             {
@@ -53,16 +54,16 @@
                     </ChildContent>
                 </ValidatedField>
             }
-            @if (!string.IsNullOrEmpty(duty.Command) && duty.Command != DutyCommandConstants.Complete)
+            @if (!string.IsNullOrEmpty(working.Command) && working.Command != DutyCommandConstants.Complete)
             {
-                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => duty.RecipientType)">
-                    <InputSelect @bind-Value="@duty.RecipientType">
+                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
+                    <InputSelect @bind-Value="@working.RecipientType">
                         <option value="0">Select Recipient Type ...</option>
                         <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => duty.RecipientTypeId)">
-                    <InputSelect @bind-Value="@duty.RecipientTypeId">
+                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => working.RecipientTypeId)">
+                    <InputSelect @bind-Value="@working.RecipientTypeId">
                         <option value="0">Select Recipient Type Instance ...</option>
                         @foreach (var recipient in recipientTypeIds())
                         {
@@ -71,17 +72,17 @@
                     </InputSelect>
                 </ValidatedField>
             }
-            @if (duty.RecipientType == RecipientTypeConstants.LivestockAnimal)
+            @if (working.RecipientType == RecipientTypeConstants.LivestockAnimal)
             { 
-                <ValidatedField Legend="Gender" ValidationMessageFor="@(() => duty.Gender)">
-                    <InputSelect @bind-Value="@duty.Gender">
+                <ValidatedField Legend="Gender" ValidationMessageFor="@(() => working.Gender)">
+                    <InputSelect @bind-Value="@working.Gender">
                         <option value="">Select Gender ...</option>
                         <option value="@GenderConstants.Female">@nameof(GenderConstants.Female)</option>
                         <option value="@GenderConstants.Male">@nameof(GenderConstants.Male)</option>
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="Relationship" ValidationMessageFor="@(() => duty.Relationship)">
-                    <InputSelect @bind-Value="@duty.Relationship">
+                <ValidatedField Legend="Relationship" ValidationMessageFor="@(() => working.Relationship)">
+                    <InputSelect @bind-Value="@working.Relationship">
                         <option value="0">Select Relationship ...</option>
                         <option value="@DutyRelationshipConstants.Self">@nameof(DutyRelationshipConstants.Self)</option>
                         <option value="@DutyRelationshipConstants.Mother">@nameof(DutyRelationshipConstants.Mother)</option>
@@ -89,8 +90,8 @@
                     </InputSelect>
                 </ValidatedField>
             }
-            <ValidatedField Legend="Number of Days from Event to schedule duty" ValidationMessageFor="@(() => duty.DaysDue)">
-                <InputNumber @bind-Value="duty.DaysDue"></InputNumber>
+            <ValidatedField Legend="Number of Days from Event to schedule working" ValidationMessageFor="@(() => working.DaysDue)">
+                <InputNumber @bind-Value="working.DaysDue"></InputNumber>
             </ValidatedField>
         </DataContent>
     </ValidatedForm>

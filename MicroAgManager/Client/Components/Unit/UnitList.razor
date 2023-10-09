@@ -1,2 +1,34 @@
-﻿@inherits DataComponent
-<h3>UnitList</h3>
+﻿@using Domain.Models;
+@inherits DataComponent<UnitModel>
+@if (app != null)
+{
+
+    <CascadingValue Value="_editUnit">
+        <UnitEditor Show=@(_editUnit is not null) Modal=true @ref="_unitEditor" Submitted="@UnitUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></UnitEditor>
+    </CascadingValue>
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="UnitModel"
+                   Items="@Items"
+                   MultiSelect="@Multiselect"
+                   Selectable="@Selectable"
+                   OnSelectionChange="@TableItemSelected"
+                   CanDelete="@CanDelete"
+                   RowDetailsShowing="@app.RowDetailsShowing["UnitList"]"
+                   NewItemName="Unit"
+                   AddItemClicked="@(async ()=>await EditUnit(0))">
+        <ColumnContent>
+            <Column TableItem="UnitModel" Field="@(x => x.Id)" Title="ControlColumn">
+                <Template Context="e">
+                    <button type="button" onclick="@(()=> EditUnit(e.Id))">Edit</button>
+                    @if (CanDelete)
+                    {
+                        <button type="button">Delete</button>
+                    }
+                </Template>
+            </Column>
+            <Column TableItem="UnitModel" Field="@(x => x.Category)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="UnitModel" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="UnitModel" Field="@(x => x.Symbol)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="UnitModel" Field="@(x => x.ConversionFactorToSIUnit)" Title="Conversion to SI" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+        </ColumnContent>
+    </TableTemplate>
+}

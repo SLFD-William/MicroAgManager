@@ -19,8 +19,7 @@ namespace BackEnd.BusinessLogic.Measure
 
             public override async Task<long> Handle(UpdateMeasure request, CancellationToken cancellationToken)
             {
-                var measure = await _context.Measures.FindAsync(request.Measure.Id);
-                measure = request.Measure.MapToEntity(measure);
+                var measure = request.Measure.Map(await _context.Measures.FindAsync(request.Measure.Id)) as Domain.Entity.Measure;
                 measure.ModifiedBy = request.ModifiedBy;
                
                 try

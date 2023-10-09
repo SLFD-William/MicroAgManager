@@ -21,7 +21,7 @@ namespace BackEnd.BusinessLogic.Registration
             {
                 var registration = await _context.Registrations.FindAsync(request.Registration.Id);
                 if (registration is null) throw new KeyNotFoundException($"Registration {request.Registration.Id} not found.");
-                registration = request.Registration.MapToEntity(registration);
+                registration = request.Registration.Map(registration) as Domain.Entity.Registration;
                 _context.Registrations.Update(registration);
                 try
                 {

@@ -39,24 +39,48 @@ namespace Domain.Models
             }) as LivestockFeedModel;
             return model;
         }
-        public LivestockFeed MapToEntity(LivestockFeed entity)
+        
+
+        public override BaseModel Map(BaseModel entity)
         {
-            entity.Active = Active;
-            entity.Source = Source;
-            entity.Quantity = Quantity;
-            entity.QuantityUnit = QuantityUnit;
-            entity.QuantityWarning = QuantityWarning;
-            entity.FeedType = FeedType;
-            entity.Distribution = Distribution;
-            entity.Name = Name;
-            entity.LivestockAnimal.Id = LivestockAnimalId;
+            if (entity == null || entity is not LivestockFeedModel) return null;
+            ((LivestockFeedModel)entity).Active = Active;
+            ((LivestockFeedModel)entity).Source = Source;
+            ((LivestockFeedModel)entity).Quantity = Quantity;
+            ((LivestockFeedModel)entity).QuantityUnit = QuantityUnit;
+            ((LivestockFeedModel)entity).QuantityWarning = QuantityWarning;
+            ((LivestockFeedModel)entity).FeedType = FeedType;
+            ((LivestockFeedModel)entity).Distribution = Distribution;
+            ((LivestockFeedModel)entity).Name = Name;
+            ((LivestockFeedModel)entity).LivestockAnimalId = LivestockAnimalId;
+            if (((LivestockFeedModel)entity).Servings?.Any() ?? false)
+                foreach (var breed in ((LivestockFeedModel)entity).Servings)
+                    Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            if (((LivestockFeedModel)entity).Distributions?.Any() ?? false)
+                foreach (var breed in ((LivestockFeedModel)entity).Distributions)
+                    Distributions?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            return entity;
+        }
+
+        public override BaseEntity Map(BaseEntity entity)
+        {
+            if (entity == null || entity is not LivestockFeed) return null;
+            ((LivestockFeed)entity).Active = Active;
+            ((LivestockFeed)entity).Source = Source;
+            ((LivestockFeed)entity).Quantity = Quantity;
+            ((LivestockFeed)entity).QuantityUnit = QuantityUnit;
+            ((LivestockFeed)entity).QuantityWarning = QuantityWarning;
+            ((LivestockFeed)entity).FeedType = FeedType;
+            ((LivestockFeed)entity).Distribution = Distribution;
+            ((LivestockFeed)entity).Name = Name;
+            ((LivestockFeed)entity).LivestockAnimalId = LivestockAnimalId;
             entity.ModifiedOn = DateTime.UtcNow;
-            if (entity.Servings?.Any() ?? false)
-                foreach (var breed in entity.Servings)
-                    Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
-            if (entity.Distributions?.Any() ?? false)
-                foreach (var breed in entity.Distributions)
-                    Distributions?.FirstOrDefault(p => p?.Id == breed.Id)?.MapToEntity(breed);
+            if (((LivestockFeed)entity).Servings?.Any() ?? false)
+                foreach (var breed in ((LivestockFeed)entity).Servings)
+                    Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            if (((LivestockFeed)entity).Distributions?.Any() ?? false)
+                foreach (var breed in ((LivestockFeed)entity).Distributions)
+                    Distributions?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
             return entity;
         }
     }

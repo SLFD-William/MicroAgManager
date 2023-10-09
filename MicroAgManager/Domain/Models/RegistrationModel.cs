@@ -31,16 +31,31 @@ namespace Domain.Models
             }) as RegistrationModel;
             return model;
         }
-        public Registration MapToEntity(Registration registration)
+
+        public override BaseModel Map(BaseModel registration)
         {
-            registration.RegistrarId = RegistrarId;
-            registration.RecipientTypeId = RecipientTypeId;
-            registration.RecipientType = RecipientType;
-            registration.RecipientId = RecipientId;
-            registration.Identifier = Identifier;
-            registration.DefaultIdentification = DefaultIdentification;
+            if (registration == null || registration is not RegistrationModel) return null;
+            ((RegistrationModel)registration).RegistrarId = RegistrarId;
+            ((RegistrationModel)registration).RecipientTypeId = RecipientTypeId;
+            ((RegistrationModel)registration).RecipientType = RecipientType;
+            ((RegistrationModel)registration).RecipientId = RecipientId;
+            ((RegistrationModel)registration).Identifier = Identifier;
+            ((RegistrationModel)registration).DefaultIdentification = DefaultIdentification;
+            ((RegistrationModel)registration).RegistrationDate = RegistrationDate;
+            return registration;
+        }
+
+        public override BaseEntity Map(BaseEntity registration)
+        {
+            if (registration == null || registration is not Registration) return null;
+            ((Registration)registration).RegistrarId = RegistrarId;
+            ((Registration)registration).RecipientTypeId = RecipientTypeId;
+            ((Registration)registration).RecipientType = RecipientType;
+            ((Registration)registration).RecipientId = RecipientId;
+            ((Registration)registration).Identifier = Identifier;
+            ((Registration)registration).DefaultIdentification = DefaultIdentification;
             registration.ModifiedOn = DateTime.UtcNow;
-            registration.RegistrationDate = RegistrationDate;
+            ((Registration)registration).RegistrationDate = RegistrationDate;
             return registration;
         }
     }

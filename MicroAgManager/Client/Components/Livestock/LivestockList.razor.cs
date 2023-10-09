@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.Livestock
 {
-    public partial class LivestockList : DataComponent
+    public partial class LivestockList : DataComponent<LivestockModel>
     {
         [CascadingParameter] LivestockBreedSummary LivestockBreed { get; set; }
         public TableTemplate<LivestockSummary> _listComponent;

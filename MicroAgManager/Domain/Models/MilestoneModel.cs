@@ -29,13 +29,26 @@ namespace Domain.Models
             }) as MilestoneModel;
             return model;
         }
-        public Milestone MapToEntity(Milestone milestone)
+
+        public override BaseModel Map(BaseModel milestone)
         {
-            milestone.Name= Name;
-            milestone.Description = Description;
-            milestone.SystemRequired= SystemRequired;
-            milestone.RecipientTypeId = RecipientTypeId;
-            milestone.RecipientType = RecipientType;
+            if (milestone == null || milestone is not MilestoneModel) return null;
+            ((MilestoneModel)milestone).Name = Name;
+            ((MilestoneModel)milestone).Description = Description;
+            ((MilestoneModel)milestone).SystemRequired = SystemRequired;
+            ((MilestoneModel)milestone).RecipientTypeId = RecipientTypeId;
+            ((MilestoneModel)milestone).RecipientType = RecipientType;
+            return milestone;
+        }
+
+        public override BaseEntity Map(BaseEntity milestone)
+        {
+            if (milestone == null || milestone is not Milestone) return null;
+            ((Milestone)milestone).Name = Name;
+            ((Milestone)milestone).Description = Description;
+            ((Milestone)milestone).SystemRequired = SystemRequired;
+            ((Milestone)milestone).RecipientTypeId = RecipientTypeId;
+            ((Milestone)milestone).RecipientType = RecipientType;
             milestone.ModifiedOn = DateTime.UtcNow;
             return milestone;
         }

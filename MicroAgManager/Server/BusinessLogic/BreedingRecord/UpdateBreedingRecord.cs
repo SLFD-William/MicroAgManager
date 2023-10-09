@@ -1,5 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
@@ -23,7 +24,7 @@ public class Handler: BaseCommandHandler<UpdateBreedingRecord>
                 var resolutionNewleyChanged = breedingRecord.Resolution != request.BreedingRecord.Resolution && !breedingRecord.ResolutionDate.HasValue;
                 
 
-                breedingRecord = request.BreedingRecord.MapToEntity(breedingRecord);
+                breedingRecord = request.BreedingRecord.Map(breedingRecord) as Domain.Entity.BreedingRecord;
                 breedingRecord.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
                 if (resolutionNewleyChanged)

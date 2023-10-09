@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic.Event
             public override async Task<long> Handle(UpdateEvent request, CancellationToken cancellationToken)
             {
                 var eventEntity = _context.Events.First(d => d.TenantId == request.TenantId && d.Id == request.Event.Id);
-                eventEntity = request.Event.MapToEntity(eventEntity);
+                eventEntity = request.Event.Map(eventEntity) as Domain.Entity.Event;
                 await _context.SaveChangesAsync(cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(eventEntity.Id.ToString(), eventEntity.GetType().Name, "Modified", eventEntity.ModifiedBy) }), cancellationToken);
                 return eventEntity.Id;

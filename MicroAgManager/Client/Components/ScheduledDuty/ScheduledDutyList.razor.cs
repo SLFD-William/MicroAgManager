@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.ScheduledDuty
 {
-    public partial class ScheduledDutyList : DataComponent
+    public partial class ScheduledDutyList : DataComponent<ScheduledDutyModel>
     {
         public TableTemplate<ScheduledDutySummary> _listComponent;
         [Parameter] public IEnumerable<ScheduledDutySummary>? Items { get; set; }

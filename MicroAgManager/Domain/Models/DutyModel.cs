@@ -44,17 +44,33 @@ namespace Domain.Models
             }) as DutyModel;
             return model;
         }
-        public Duty MapToEntity(Duty duty)
-        { 
-            duty.Command= Command;
-            duty.CommandId= CommandId;
-            duty.RecipientType = RecipientType;
-            duty.RecipientTypeId = RecipientTypeId;
-            duty.Name= Name;
-            duty.DaysDue= DaysDue;
-            duty.Relationship= Relationship;
-            duty.Gender= Gender;
-            duty.SystemRequired= SystemRequired;
+        public override BaseModel Map(BaseModel duty)
+        {
+            if (duty == null || duty is not DutyModel) return null;
+            ((DutyModel)duty).Command = Command;
+            ((DutyModel)duty).CommandId = CommandId;
+            ((DutyModel)duty).RecipientType = RecipientType;
+            ((DutyModel)duty).RecipientTypeId = RecipientTypeId;
+            ((DutyModel)duty).Name = Name;
+            ((DutyModel)duty).DaysDue = DaysDue;
+            ((DutyModel)duty).Relationship = Relationship;
+            ((DutyModel)duty).Gender = Gender;
+            ((DutyModel)duty).SystemRequired = SystemRequired;
+            return duty;
+        }
+        public override BaseEntity Map(BaseEntity duty)
+        {
+            if(duty == null || duty is not Duty) return null;
+
+            ((Duty)duty).Command = Command;
+            ((Duty)duty).CommandId = CommandId;
+            ((Duty)duty).RecipientType = RecipientType;
+            ((Duty)duty).RecipientTypeId = RecipientTypeId;
+            ((Duty)duty).Name = Name;
+            ((Duty)duty).DaysDue = DaysDue;
+            ((Duty)duty).Relationship = Relationship;
+            ((Duty)duty).Gender = Gender;
+            ((Duty)duty).SystemRequired = SystemRequired;
 
             duty.ModifiedOn = DateTime.UtcNow;
             return duty;

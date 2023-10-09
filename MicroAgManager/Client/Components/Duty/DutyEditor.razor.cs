@@ -9,51 +9,51 @@ using Domain.Abstracts;
 
 namespace FrontEnd.Components.Duty
 {
-    public partial class DutyEditor : DataComponent
+    public partial class DutyEditor : DataComponent<DutyModel>
     {
         [CascadingParameter] public DutyModel Duty { get; set; }
         [Parameter] public long? dutyId { get; set; }
         
-        private DutyModel duty { get; set; }
         private ValidatedForm _validatedForm;
         private RegistrarEditor _registrarEditor;
-        private string Command { get=>duty.Command;
-            set { duty.Command = value;
-                if (duty.Command == DutyCommandConstants.Complete)
+        protected new DutyModel working { get => base.working as DutyModel; set { base.working = value; } }
+        private string Command { get=>working.Command;
+            set { working.Command = value;
+                if (working.Command == DutyCommandConstants.Complete)
                 {
-                    duty.RecipientType = nameof(RecipientTypeConstants.None);
-                    duty.RecipientTypeId = 0;
-                    duty.Relationship = nameof(DutyRelationshipConstants.Self);
+                    working.RecipientType = nameof(RecipientTypeConstants.None);
+                    working.RecipientTypeId = 0;
+                    working.Relationship = nameof(DutyRelationshipConstants.Self);
                 }
             } }
-       
+        
         public override async Task FreshenData()
         {
-            duty = new DutyModel();
+            working = new DutyModel();
 
             if (Duty is not null)
-                duty = Duty;
+                working = Duty;
 
             if (Duty is null && dutyId.HasValue)
-                duty = await app.dbContext.Duties.FindAsync(dutyId);
+                working = await app.dbContext.Duties.FindAsync(dutyId);
 
-            editContext = new EditContext(duty);
+            editContext = new EditContext(working);
         }
         public async Task OnSubmit()
         {
             try
             {
-                long id = (duty.Id <= 0) ?
-                    await app.api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = duty }) :
-                    await app.api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = duty });
+                long id = (working.Id <= 0) ?
+                    await app.api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = working }) :
+                    await app.api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save Duty");
 
-                duty.Id = id;
-
-                editContext = new EditContext(duty);
-                await Submitted.InvokeAsync(duty);
+                working.Id = id;
+                working = original.Clone() as DutyModel;
+                editContext = new EditContext(working);
+                await Submitted.InvokeAsync(working);
                 StateHasChanged();
             }
             catch (Exception ex)
@@ -63,14 +63,14 @@ namespace FrontEnd.Components.Duty
         }
         private async Task Cancel()
         {
-            if (originalCommandId.HasValue) duty.CommandId = originalCommandId.Value;
-            editContext = new EditContext(duty);
-            await Cancelled.InvokeAsync(duty);
+            working =original.Clone() as DutyModel;
+            editContext = new EditContext(working);
+            await Cancelled.InvokeAsync(working);
             StateHasChanged();
         }
         private List<KeyValuePair<long, string>> recipientTypeIds()
         {
-            switch (duty.RecipientType)
+            switch (working.RecipientType)
             {
                 case nameof(RecipientTypeConstants.LivestockAnimal):
                     return app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
@@ -80,7 +80,7 @@ namespace FrontEnd.Components.Duty
         }
         private List<KeyValuePair<long, string>> commandIds()
         {
-            switch (duty.Command)
+            switch (working.Command)
             {
                 case nameof(DutyCommandConstants.Registration):
                     return app.dbContext.Registrars.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
@@ -90,7 +90,7 @@ namespace FrontEnd.Components.Duty
         }
         private bool showCommandId()
         {
-            switch (duty.Command)
+            switch (working.Command)
             {
                 case "":
                 case null:
@@ -106,7 +106,7 @@ namespace FrontEnd.Components.Duty
         }
         private string commandLabel()
         {
-            switch (duty.Command)
+            switch (working.Command)
             {
                 case nameof(DutyCommandConstants.Registration):
                     return "Registrar";
@@ -117,26 +117,23 @@ namespace FrontEnd.Components.Duty
 
 
         private bool showCommandModal=false;
-        private long? originalCommandId;
 
         private void ShowCommandEditor()
         {
-            originalCommandId= duty.CommandId;
             showCommandModal = true;
             StateHasChanged();
         }
         private void CommandCanceled()
         {
-            duty.CommandId = originalCommandId.HasValue? originalCommandId.Value:0;
+            working.CommandId = ((DutyModel)original).CommandId;
             showCommandModal = false;
-            originalCommandId = null;
             StateHasChanged();
         }
         private void CommandCreated(object e)
         {
             var status = e as BaseModel;
             showCommandModal = false;
-            duty.CommandId = status?.Id ?? 0;
+            working.CommandId = status?.Id ?? 0;
             StateHasChanged();
         }
     }

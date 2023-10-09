@@ -22,13 +22,24 @@ namespace Domain.Models
             }) as RegistrarModel;
             return model;
         }
-        public Registrar MapToEntity(Registrar registrar)
-        {
-            registrar.Name = Name;
-            registrar.Email = Email;
-            registrar.Website = Website;
-            registrar.API = API;
 
+        public override BaseModel Map(BaseModel registrar)
+        {
+            if (registrar == null || registrar is not RegistrarModel) return null;
+            ((RegistrarModel)registrar).Name = Name;
+            ((RegistrarModel)registrar).Email = Email;
+            ((RegistrarModel)registrar).Website = Website;
+            ((RegistrarModel)registrar).API = API;
+            return registrar;
+        }
+
+        public override BaseEntity Map(BaseEntity registrar)
+        {
+            if (registrar == null || registrar is not Registrar) return null;
+            ((Registrar)registrar).Name = Name;
+            ((Registrar)registrar).Email = Email;
+            ((Registrar)registrar).Website = Website;
+            ((Registrar)registrar).API = API;
             registrar.ModifiedOn = DateTime.UtcNow;
             return registrar;
         }

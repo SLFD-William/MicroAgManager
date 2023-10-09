@@ -1,8 +1,9 @@
 ﻿@layout MainLayout
-@inherits DataComponent
+@inherits DataComponent<FarmLocationModel>
 @page "/"
 @page "/Farms"
 @page "/Farms/{farmId:long}"
+@using Domain.Models;
 @using FrontEnd.Components.Farm;
 <PageTitle>Farms</PageTitle>
 <div style="max-height:100vh">

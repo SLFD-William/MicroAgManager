@@ -19,8 +19,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
 
             public override async Task<long> Handle(UpdateScheduledDuty request, CancellationToken cancellationToken)
             {
-                var duty = _context.ScheduledDuties.First(d => d.TenantId == request.TenantId && d.Id == request.Duty.Id);
-                duty = request.Duty.MapToEntity(duty);
+               var duty = request.Duty.Map(_context.ScheduledDuties.First(d => d.TenantId == request.TenantId && d.Id == request.Duty.Id)) as Domain.Entity.ScheduledDuty;
                 duty.ModifiedBy = request.ModifiedBy;
                 await _context.SaveChangesAsync(cancellationToken);
                 await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);

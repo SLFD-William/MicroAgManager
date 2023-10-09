@@ -18,8 +18,7 @@ namespace BackEnd.BusinessLogic.Unit
 
             public async override Task<long> Handle(UpdateUnit request, CancellationToken cancellationToken)
             {
-                var unit = await _context.Units.FindAsync(request.Unit.Id);
-                unit = request.Unit.MapToEntity(unit);
+                var unit = request.Unit.Map(await _context.Units.FindAsync(request.Unit.Id)) as Domain.Entity.Unit;
                 _context.Units.Update(unit);
                 await _context.SaveChangesAsync(cancellationToken);
                 return unit.Id;

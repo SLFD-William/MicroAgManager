@@ -1,5 +1,6 @@
 ﻿@using Domain.Constants;
-@inherits DataComponent
+@using Domain.Models;
+@inherits DataComponent<RegistrarModel>
 @if (editContext is not null)
 {
         <ValidatedForm editContext="editContext"
@@ -11,17 +12,17 @@
                    Show="Show"
                     @ref=_validatedForm>
             <DataContent>
-                <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => registrar.Name)">
-                    <InputText placeholder="Registrar Name" @bind-Value="@registrar.Name" />
+                <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => working.Name)">
+                    <InputText placeholder="Registrar Name" @bind-Value="@working.Name" />
                 </ValidatedField>
-                <ValidatedField Legend="Email" ValidationMessageFor="@(() => registrar.Email)">
-                    <InputText placeholder="Email" @bind-Value="@registrar.Email" />
+                <ValidatedField Legend="Email" ValidationMessageFor="@(() => working.Email)">
+                    <InputText placeholder="Email" @bind-Value="@working.Email" />
                 </ValidatedField>
-                <ValidatedField Legend="Website" ValidationMessageFor="@(() => registrar.Website)">
-                    <InputText placeholder="Website" @bind-Value="@registrar.Website" />
+                <ValidatedField Legend="Website" ValidationMessageFor="@(() => working.Website)">
+                    <InputText placeholder="Website" @bind-Value="@working.Website" />
                 </ValidatedField>
-                <ValidatedField Legend="API" ValidationMessageFor="@(() => registrar.API)">
-                    <InputText placeholder="API" @bind-Value="@registrar.API" />
+                <ValidatedField Legend="API" ValidationMessageFor="@(() => working.API)">
+                    <InputText placeholder="API" @bind-Value="@working.API" />
                 </ValidatedField>
             </DataContent>
         </ValidatedForm>

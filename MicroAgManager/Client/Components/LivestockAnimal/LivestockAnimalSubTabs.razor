@@ -1,9 +1,10 @@
 ﻿@using Domain.Constants;
+@using Domain.Models;
 @using FrontEnd.Components.LivestockAnimal;
 @using FrontEnd.Components.LivestockStatus;
 @using FrontEnd.Components.Milestone;
 @using FrontEnd.Components.LivestockBreed;
-@inherits DataComponent
+@inherits DataComponent<LivestockAnimalModel>
 <CascadingValue Value="livestockAnimal">
     <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockAnimalSubTabs)">
         <TabPage @ref="_breedsTab" Text="Breeds">

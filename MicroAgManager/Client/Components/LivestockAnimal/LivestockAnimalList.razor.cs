@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.LivestockAnimal
 {
-    public partial class LivestockAnimalList : DataComponent
+    public partial class LivestockAnimalList : DataComponent<LivestockAnimalModel>
     {
         [CascadingParameter] FarmLocationModel farm { get; set; }
 

@@ -34,16 +34,32 @@ namespace Domain.Models
             }) as MeasurementModel;
             return model;
         }
-        public Measurement MapToEntity(Measurement measurement)
+
+        public override BaseModel Map(BaseModel measurement)
         {
-            measurement.MeasureId = MeasureId;
-            measurement.RecipientTypeId = RecipientTypeId;
-            measurement.RecipientType = RecipientType;
-            measurement.RecipientId = RecipientId;
-            measurement.Value = Value;
-            measurement.MeasurementUnitId = MeasurementUnitId;
-            measurement.Notes = Notes;
-            measurement.DatePerformed = DatePerformed;
+            if (measurement == null || measurement is not MeasurementModel) return null;
+            ((MeasurementModel) measurement).MeasureId = MeasureId;
+            ((MeasurementModel)measurement).RecipientTypeId = RecipientTypeId;
+            ((MeasurementModel)measurement).RecipientType = RecipientType;
+            ((MeasurementModel)measurement).RecipientId = RecipientId;
+            ((MeasurementModel)measurement).Value = Value;
+            ((MeasurementModel)measurement).MeasurementUnitId = MeasurementUnitId;
+            ((MeasurementModel)measurement).Notes = Notes;
+            ((MeasurementModel)measurement).DatePerformed = DatePerformed;
+            return measurement;
+        }
+
+        public override BaseEntity Map(BaseEntity measurement)
+        {
+            if (measurement == null || measurement is not Measurement) return null;
+            ((Measurement)measurement).MeasureId = MeasureId;
+            ((Measurement)measurement).RecipientTypeId = RecipientTypeId;
+            ((Measurement)measurement).RecipientType = RecipientType;
+            ((Measurement)measurement).RecipientId = RecipientId;
+            ((Measurement)measurement).Value = Value;
+            ((Measurement)measurement).MeasurementUnitId = MeasurementUnitId;
+            ((Measurement)measurement).Notes = Notes;
+            ((Measurement)measurement).DatePerformed = DatePerformed;
             measurement.ModifiedOn = DateTime.UtcNow;
             return measurement;
         }

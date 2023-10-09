@@ -1,5 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 using MediatR;
@@ -18,8 +19,7 @@ namespace BackEnd.BusinessLogic.Livestock.Animals
 
             public override async Task<long> Handle(UpdateLivestockAnimal request, CancellationToken cancellationToken)
             {
-                var livestockAnimal = _context.LivestockAnimals.Find(request.LivestockAnimal.Id);
-                livestockAnimal = request.LivestockAnimal.MapToEntity(livestockAnimal);
+                var livestockAnimal = request.LivestockAnimal.Map(_context.LivestockAnimals.Find(request.LivestockAnimal.Id)) as LivestockAnimal;
                 livestockAnimal.ModifiedBy = request.ModifiedBy;
                 livestockAnimal.TenantId = request.TenantId;
                 _context.LivestockAnimals.Update(livestockAnimal);

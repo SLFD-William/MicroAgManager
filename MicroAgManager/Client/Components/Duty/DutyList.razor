@@ -1,9 +1,9 @@
 ﻿@using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<DutyModel>
 @if (app != null)
 {
     <CascadingValue Value="_editDuty">
-        <DutyEditor Show=@(_editDuty is not null || !Items.Any()) @ref="_DutyEditor" Modal=true Submitted="@DutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></DutyEditor>
+        <DutyEditor Show=@(_editDuty is not null) @ref="_DutyEditor" Modal=true Submitted="@DutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></DutyEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="DutySummary"
                     Items="@Items"

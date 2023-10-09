@@ -9,7 +9,7 @@ using Microsoft.JSInterop;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmEditor:DataComponent 
+    public partial class FarmEditor:DataComponent<FarmLocationModel> 
     {
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
@@ -17,48 +17,46 @@ namespace FrontEnd.Components.Farm
         [Inject] protected IGeolocationService GeoLoc { get; set; }
         [Inject] private IFrontEndApiServices api { get; set; }
         private ValidatedForm _validatedForm;
-        
-        FarmLocationModel farm { get; set; }
-
+        protected new FarmLocationModel working { get => base.working as FarmLocationModel; set { base.working = value; } }
         bool locationEnabled { get; set; } = true;
        
         protected override void OnAfterRender(bool firstRender)
         {
-            if (farm is null) return;
-            if (firstRender && !(farm.Longitude.HasValue || farm.Latitude.HasValue)) 
+            if (working is null) return;
+            if (firstRender && !(working.Longitude.HasValue || working.Latitude.HasValue)) 
                 GeoLoc.GetCurrentPosition(this, nameof(OnCoordinatesPermitted), nameof(OnErrorRequestingCoordinates));
         }
         [JSInvokable]
-        public async void OnCoordinatesPermitted(GeolocationPosition position)
+        public async void OnCoordinatesPermitted(GeolocationPosition position)  
         {
             locationEnabled = true;
-            var locChanged = farm.Latitude != position.Coords.Latitude || farm.Longitude != position.Coords.Longitude;
+            var locChanged = working.Latitude != position.Coords.Latitude || working.Longitude != position.Coords.Longitude;
             if(!locChanged) return;
-            farm.Latitude = position.Coords.Latitude;
-            farm.Longitude = position.Coords.Longitude;
+            working.Latitude = position.Coords.Latitude;
+            working.Longitude = position.Coords.Longitude;
             await OnCoordinateChange();
             StateHasChanged();
         }
-        private async Task OnCoordinateChange()
+        private async Task OnCoordinateChange()     
         {
-            var geoLoc = await api.GetClosestAddress(farm.Latitude.Value, farm.Longitude.Value);
+            var geoLoc = await api.GetClosestAddress(working.Latitude.Value, working.Longitude.Value);
             var address=geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Address;
             if (address == null) return;
 
-            farm.StreetAddress = address.AddressLine;
-            farm.City = address.Locality;
-            farm.State = address.AdminDistrict;
-            farm.Country = address.CountryRegion;
-            farm.Zip = address.PostalCode;
+            working.StreetAddress = address.AddressLine;
+            working.City = address.Locality;
+            working.State = address.AdminDistrict;
+            working.Country = address.CountryRegion;
+            working.Zip = address.PostalCode;
             StateHasChanged();
         }
         private async Task GetGeoLocation()
         {
-            var geoLoc = await app.api.GetClosestGeoLocation(farm);
+            var geoLoc = await app.api.GetClosestGeoLocation(working    );
             var point = geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Point;
             if (point == null) return;
-            farm.Latitude = point.Coordinates[0];
-            farm.Longitude = point.Coordinates[1];
+            working.Latitude = point.Coordinates[0];
+            working.Longitude = point.Coordinates[1];
             StateHasChanged();
         }
         [JSInvokable]
@@ -74,33 +72,35 @@ namespace FrontEnd.Components.Farm
             var query= app.dbContext.Farms.AsQueryable();
             if (farmId.HasValue && farmId>0)
                 query = query.Where(f => f.Id == farmId);
-            farm = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
-            if (string.IsNullOrEmpty(farm.Name) && !string.IsNullOrEmpty(farmName))
-                farm.Name = farmName;
-            editContext=new EditContext(farm);
+            working  = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
+            if (string.IsNullOrEmpty(working.Name) && !string.IsNullOrEmpty(farmName))
+                working.Name = farmName;
+            editContext=new EditContext(working);
         }
         private async Task Cancel()
         {
-            editContext = new EditContext(farm);
-            await Cancelled.InvokeAsync(farm);
+            working =original.Clone() as FarmLocationModel; 
+            editContext = new EditContext(working);
+            await Cancelled.InvokeAsync(working);
             StateHasChanged();
         }
         public async Task OnSubmit()
         {
             try
             {
-                if (!(farm.Latitude.HasValue || farm.Longitude.HasValue))
+                if (!(working.Latitude.HasValue || working.Longitude.HasValue))
                     await GetGeoLocation();
 
-                var id=(farm.Id <= 0)?
-                    await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=farm }):
-                    await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = farm });
+                var id=(working.Id <= 0)?
+                    await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=working }):
+                    await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = working });
 
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");
-                farm.Id = id;
-                editContext = new EditContext(farm);
-                await Submitted.InvokeAsync(farm);
+                working.Id = id;
+                original = working.Clone() as FarmLocationModel;
+                editContext = new EditContext(working);
+                await Submitted.InvokeAsync(working);
                 StateHasChanged();
             }
             catch (Exception ex)

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Duty
 {
-    public partial class DutyList : DataComponent
+    public partial class DutyList : DataComponent<DutyModel>
     {
         protected TableTemplate<DutySummary> _listComponent;
         [CascadingParameter] LivestockAnimalSummary LivestockAnimal { get; set; }

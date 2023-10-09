@@ -2,7 +2,7 @@
 
 namespace Domain.Abstracts
 {
-    public abstract class BaseModel
+    public abstract class BaseModel : ICloneable
     {
         [Required] public long Id { get; set; }
         [Required] public DateTime EntityModifiedOn { get; private set; } = DateTime.MinValue;
@@ -16,6 +16,12 @@ namespace Domain.Abstracts
             model.EntityModifiedOn = entity.ModifiedOn;
             model.ModifiedBy = entity.ModifiedBy;
             return model;
+        }
+        public abstract BaseModel Map(BaseModel model);
+        public abstract BaseEntity Map(BaseEntity entity);
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
 
         public virtual string GetEntityName()=>GetType().Name.Replace("Model", "");

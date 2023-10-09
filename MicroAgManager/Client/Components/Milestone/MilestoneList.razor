@@ -1,10 +1,10 @@
 ﻿@using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<MilestoneModel>
 @if (app != null)
 {
 
     <CascadingValue Value="_editMilestone">
-        <MilestoneEditor Show=@(_editMilestone is not null || !Items.Any()) Modal=true @ref="_milestoneEditor" Submitted="@MilestoneUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></MilestoneEditor>
+        <MilestoneEditor Show=@(_editMilestone is not null) Modal=true @ref="_milestoneEditor" Submitted="@MilestoneUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></MilestoneEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="MilestoneSummary"
                    Items="@Items"

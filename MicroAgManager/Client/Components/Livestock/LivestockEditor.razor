@@ -1,7 +1,7 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
 @using FrontEnd.Components.LivestockStatus;
-@inherits DataComponent
+@inherits DataComponent<LivestockModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -9,16 +9,16 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(livestock.Id<1)" 
+                   createOnly="@(working.Id<1)" 
                    Modal="Modal"
 Show="Show"
                    @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Breed" ValidationMessageFor="@(() => livestock.LivestockBreedId)">
+            <ValidatedField Legend="Breed" ValidationMessageFor="@(() => working.LivestockBreedId)">
                 @LivestockBreed.Name
             </ValidatedField>
-            <ValidatedField Legend="Variety" ValidationMessageFor="@(() => livestock.Variety)">
-                <InputText placeholder="Variety" @bind-Value="@livestock.Variety" list="varietyList" />
+            <ValidatedField Legend="Variety" ValidationMessageFor="@(() => working.Variety)">
+                <InputText placeholder="Variety" @bind-Value="@working.Variety" list="varietyList" />
                 <datalist id="varietyList">
                     @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == LivestockBreed.Id).Select(a => a.Variety).Distinct().OrderBy(a => a))
                     {
@@ -26,19 +26,19 @@ Show="Show"
                     }
                 </datalist>
             </ValidatedField>
-            <ValidatedField Legend="BatchNumber" ValidationMessageFor="@(() => livestock.BatchNumber)">
-                <InputText placeholder="BatchNumber" @bind-Value="@livestock.BatchNumber" />
+            <ValidatedField Legend="BatchNumber" ValidationMessageFor="@(() => working.BatchNumber)">
+                <InputText placeholder="BatchNumber" @bind-Value="@working.BatchNumber" />
             </ValidatedField>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => livestock.Name)">
-                <InputText placeholder="Name" @bind-Value="@livestock.Name" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
+                <InputText placeholder="Name" @bind-Value="@working.Name" />
             </ValidatedField>
-            <ValidatedField Legend="Description" ValidationMessageFor="@(() => livestock.Description)">
-                <InputText placeholder="Description" @bind-Value="@livestock.Description" />
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => working.Description)">
+                <InputText placeholder="Description" @bind-Value="@working.Description" />
             </ValidatedField>
-            <ValidatedField Legend="Birth Date" ValidationMessageFor="@(() => livestock.Birthdate)">
-                <InputDate @bind-Value="@livestock.Birthdate"/>
+            <ValidatedField Legend="Birth Date" ValidationMessageFor="@(() => working.Birthdate)">
+                <InputDate @bind-Value="@working.Birthdate"/>
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => livestock.StatusId)">
+            <ValidatedField ValidationMessageFor="@(() => working.StatusId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Status</span><button type="button" @onclick=ShowStatusEditor>+</button>
@@ -56,8 +56,8 @@ Show="Show"
                 </ChildContent>
                 
             </ValidatedField>
-            <ValidatedField Legend="Location" ValidationMessageFor="@(() => livestock.LocationId)">
-                <InputSelect @bind-Value="@livestock.LocationId">
+            <ValidatedField Legend="Location" ValidationMessageFor="@(() => working.LocationId)">
+                <InputSelect @bind-Value="@working.LocationId">
                     <option value="0">Select Location ...</option>
                     @foreach (var g in app.dbContext.LandPlots.Where(p => p.Usage == LandPlotUseConstants.Livestock).OrderBy(a=>a.Name).ToList())
                     {
@@ -65,55 +65,55 @@ Show="Show"
                     }
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Gender" ValidationMessageFor="@(() => livestock.Gender)">
-                <InputSelect @bind-Value="@livestock.Gender">
+            <ValidatedField Legend="Gender" ValidationMessageFor="@(() => working.Gender)">
+                <InputSelect @bind-Value="@working.Gender">
                     <option value="0">Select Gender ...</option>
                     <option value="@GenderConstants.Female">@nameof(GenderConstants.Female)</option>
                     <option value="@GenderConstants.Male">@nameof(GenderConstants.Male)</option>
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Birth Defect" ValidationMessageFor="@(() => livestock.BornDefective)">
-                <InputCheckbox @bind-Value="@livestock.BornDefective" />
+            <ValidatedField Legend="Birth Defect" ValidationMessageFor="@(() => working.BornDefective)">
+                <InputCheckbox @bind-Value="@working.BornDefective" />
             </ValidatedField>
-            @if (livestock.BornDefective)
+            @if (working.BornDefective)
             {
-                <ValidatedField Legend="Defect Description" ValidationMessageFor="@(() => livestock.BirthDefect)">
-                    <InputText placeholder="Defect Description" @bind-Value="@livestock.BirthDefect" />
+                <ValidatedField Legend="Defect Description" ValidationMessageFor="@(() => working.BirthDefect)">
+                    <InputText placeholder="Defect Description" @bind-Value="@working.BirthDefect" />
                 </ValidatedField>
             }
 
-            <ValidatedField Legend="Being Managed" ValidationMessageFor="@(() => livestock.BeingManaged)">
-                <InputCheckbox @bind-Value="@livestock.BeingManaged" />
+            <ValidatedField Legend="Being Managed" ValidationMessageFor="@(() => working.BeingManaged)">
+                <InputCheckbox @bind-Value="@working.BeingManaged" />
             </ValidatedField>
-            <ValidatedField Legend="Bottle Fed" ValidationMessageFor="@(() => livestock.BottleFed)">
-                <InputCheckbox @bind-Value="@livestock.BottleFed" />
+            <ValidatedField Legend="Bottle Fed" ValidationMessageFor="@(() => working.BottleFed)">
+                <InputCheckbox @bind-Value="@working.BottleFed" />
             </ValidatedField>
-            <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => livestock.Sterile)">
-                <InputCheckbox @bind-Value="@livestock.Sterile" />
+            <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => working.Sterile)">
+                <InputCheckbox @bind-Value="@working.Sterile" />
             </ValidatedField>
-            <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => livestock.InMilk)">
-                <InputCheckbox @bind-Value="@livestock.InMilk" />
+            <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => working.InMilk)">
+                <InputCheckbox @bind-Value="@working.InMilk" />
             </ValidatedField>
-            <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => livestock.ForSale)">
-                <InputCheckbox @bind-Value="@livestock.ForSale" />
+            <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => working.ForSale)">
+                <InputCheckbox @bind-Value="@working.ForSale" />
             </ValidatedField>
-            <ValidatedField Legend="@LivestockAnimal.ParentFemaleName" ValidationMessageFor="@(() => livestock.MotherId)">
-                <InputSelect @bind-Value="@livestock.MotherId">
+            <ValidatedField Legend="@LivestockAnimal.ParentFemaleName" ValidationMessageFor="@(() => working.MotherId)">
+                <InputSelect @bind-Value="@working.MotherId">
                     <option value="0">Select @LivestockAnimal.ParentFemaleName ...</option>
                     @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == LivestockBreed.Id 
                         && s.Gender == GenderConstants.Female
-                        && s.Id != livestock.Id).OrderBy(a => a.Name))
+                        && s.Id != working.Id).OrderBy(a => a.Name))
                     {
                         <option value="@g.Id" >@g.Name</option>
                     }
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="@LivestockAnimal.ParentMaleName" ValidationMessageFor="@(() => livestock.FatherId)">
-                <InputSelect @bind-Value="@livestock.FatherId">
+            <ValidatedField Legend="@LivestockAnimal.ParentMaleName" ValidationMessageFor="@(() => working.FatherId)">
+                <InputSelect @bind-Value="@working.FatherId">
                     <option value="0">Select @LivestockAnimal.ParentMaleName ...</option>
                     @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == LivestockBreed.Id
                         && s.Gender == GenderConstants.Male
-                        && s.Id != livestock.Id).OrderBy(a => a.Name))
+                        && s.Id != working.Id).OrderBy(a => a.Name))
                     {
                         <option value="@g.Id">@g.Name</option>
                     }
@@ -121,9 +121,9 @@ Show="Show"
             </ValidatedField>
         </DataContent>
 @*         <SecondaryContent>
-            @if (livestock.Id > 0)
+            @if (working.Id > 0)
             {
-                <CascadingValue Value="@livestock">
+                <CascadingValue Value="@working">
                     <LivestockSubTabs @ref="_tabControl"></LivestockSubTabs>
                 </CascadingValue>
             }

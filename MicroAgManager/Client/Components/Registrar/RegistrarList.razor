@@ -1,9 +1,9 @@
 ﻿@using Domain.Models;
-@inherits DataComponent
+@inherits DataComponent<RegistrarModel>
 @if (app != null)
 {
     <CascadingValue Value="_editRegistrar">
-        <RegistrarEditor Show=@(_editRegistrar is not null || !Items.Any()) Modal=true @ref="_RegistrarEditor" Submitted="@RegistrarUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></RegistrarEditor>
+        <RegistrarEditor Show=@(_editRegistrar is not null) Modal=true @ref="_RegistrarEditor" Submitted="@RegistrarUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></RegistrarEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="RegistrarModel"
                    Items="@Items"

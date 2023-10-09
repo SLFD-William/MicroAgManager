@@ -29,21 +29,41 @@ namespace Domain.Models
             }) as EventModel;
             return model;
         }
-        public Event MapToEntity(Event duty)
+        public override BaseModel Map(BaseModel duty)
         {
-            duty.Name= Name;
-            duty.Color= Color;
-            duty.StartDate= StartDate;
-            duty.EndDate= EndDate;
-            if (duty.Duties?.Any() ?? false)
-                foreach (var plot in duty.Duties)
-                    Duties.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
-            if (duty.Milestones?.Any() ?? false)
-                foreach (var plot in duty.Milestones)
-                    Milestones.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
-            if (duty.ScheduledDuties?.Any() ?? false)
-                foreach (var plot in duty.ScheduledDuties)
-                    ScheduledDuties.FirstOrDefault(p => p?.Id == plot.Id)?.MapToEntity(plot);
+            if (duty == null || duty is not EventModel) return null;
+            ((EventModel)duty).Name = Name;
+            ((EventModel)duty).Color = Color;
+            ((EventModel)duty).StartDate = StartDate;
+            ((EventModel)duty).EndDate = EndDate;
+            if (((EventModel)duty).Duties?.Any() ?? false)
+                foreach (var plot in ((EventModel)duty).Duties)
+                    Duties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
+            if (((EventModel)duty).Milestones?.Any() ?? false)
+                foreach (var plot in ((EventModel)duty).Milestones)
+                    Milestones.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
+            if (((EventModel)duty).ScheduledDuties?.Any() ?? false)
+                foreach (var plot in ((EventModel)duty).ScheduledDuties)
+                    ScheduledDuties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
+            return duty;
+        }
+
+        public override BaseEntity Map(BaseEntity duty)
+        {
+            if (duty == null || duty is not Event) return null;
+            ((Event)duty).Name = Name;
+            ((Event)duty).Color = Color;
+            ((Event)duty).StartDate = StartDate;
+            ((Event)duty).EndDate = EndDate;
+            if (((Event)duty).Duties?.Any() ?? false)
+                foreach (var plot in ((Event)duty).Duties)
+                    Duties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
+            if (((Event)duty).Milestones?.Any() ?? false)
+                foreach (var plot in ((Event)duty).Milestones)
+                    Milestones.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
+            if (((Event)duty).ScheduledDuties?.Any() ?? false)
+                foreach (var plot in ((Event)duty).ScheduledDuties)
+                    ScheduledDuties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
             duty.ModifiedOn = DateTime.UtcNow;
             return duty;
         }

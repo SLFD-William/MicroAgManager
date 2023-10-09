@@ -21,7 +21,7 @@ namespace BackEnd.BusinessLogic.Milestone
             public override async Task<long> Handle(UpdateMilestone request, CancellationToken cancellationToken)
             {
                 var milestone = _context.Milestones.Include(d=>d.Duties).First(d => d.TenantId == request.TenantId && d.Id == request.Milestone.Id);
-                milestone = request.Milestone.MapToEntity(milestone);
+                milestone = request.Milestone.Map(milestone) as Domain.Entity.Milestone;
                 milestone.ModifiedBy = request.ModifiedBy;
                 var dutyIds=request.Milestone.Duties.Select(d=>d.Id).ToList();
                 var dutiesToDelete = milestone.Duties.Where(d => !dutyIds.Contains(d.Id)).ToList();

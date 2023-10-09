@@ -1,10 +1,6 @@
 ﻿using BackEnd.Abstracts;
-using BackEnd.BusinessLogic.Livestock.Animals;
-using BackEnd.Infrastructure;
-using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -25,7 +21,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
             public override async Task<long> Handle(CreateFarmLocation request, CancellationToken cancellationToken)
             {
 
-                var farm = request.Farm.MapToEntity(new Domain.Entity.FarmLocation(request.ModifiedBy, request.TenantId));
+                var farm = request.Farm.Map(new Domain.Entity.FarmLocation(request.ModifiedBy, request.TenantId)) as Domain.Entity.FarmLocation;
                 _context.Farms.Add(farm);
                 try
                 {

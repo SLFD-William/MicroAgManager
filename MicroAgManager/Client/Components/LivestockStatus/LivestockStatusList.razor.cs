@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockStatus
 {
-    public partial class LivestockStatusList:DataComponent
+    public partial class LivestockStatusList:DataComponent<LivestockStatusModel>
     {
         protected TableTemplate<LivestockStatusSummary> _listComponent;
         [CascadingParameter] LivestockAnimalSummary LivestockAnimal { get; set; }

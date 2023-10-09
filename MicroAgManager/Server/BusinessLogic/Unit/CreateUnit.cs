@@ -1,5 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
@@ -22,8 +23,7 @@ namespace BackEnd.BusinessLogic.Unit
 
             public override async Task<long> Handle(CreateUnit request, CancellationToken cancellationToken)
             {
-                var unit = new Domain.Entity.Unit(request.ModifiedBy, request.TenantId) { ConversionFactorToSIUnit =1};
-                unit = request.Unit.MapToEntity(unit);
+                var unit = request.Unit.Map(new Domain.Entity.Unit(request.ModifiedBy, request.TenantId) { ConversionFactorToSIUnit = 1 }) as Domain.Entity.Unit;
                 _context.Units.Add(unit);
                 try
                 {

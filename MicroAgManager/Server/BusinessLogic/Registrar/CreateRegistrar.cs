@@ -21,8 +21,7 @@ namespace BackEnd.BusinessLogic.Registrar
 
             public override async Task<long> Handle(CreateRegistrar request, CancellationToken cancellationToken)
             {
-                var registrar = new Domain.Entity.Registrar(request.ModifiedBy, request.TenantId);
-                registrar = request.Registrar.MapToEntity(registrar);
+                var registrar = request.Registrar.Map(new Domain.Entity.Registrar(request.ModifiedBy, request.TenantId)) as Domain.Entity.Registrar;
                 _context.Registrars.Add(registrar);
                 try
                 {

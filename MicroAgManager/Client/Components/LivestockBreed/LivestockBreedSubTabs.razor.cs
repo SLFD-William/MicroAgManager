@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockBreed
 {
-    public partial class LivestockBreedSubTabs : DataComponent
+    public partial class LivestockBreedSubTabs : DataComponent<LivestockBreedModel>
     {
         [CascadingParameter] public LivestockBreedModel? LivestockBreed { get; set; }
         [Parameter] public long? livestockBreedId { get; set; }

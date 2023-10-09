@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.Livestock
             public override async Task<long> Handle(CreateLivestock request, CancellationToken cancellationToken)
             {
                 var livestock = new Domain.Entity.Livestock(request.ModifiedBy, request.TenantId);
-                livestock = request.Livestock.MapToEntity(livestock);
+                livestock = request.Livestock.Map(livestock) as Domain.Entity.Livestock;
                 _context.Livestocks.Add(livestock);
                 try
                 {
