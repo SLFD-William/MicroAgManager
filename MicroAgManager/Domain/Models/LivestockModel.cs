@@ -10,7 +10,7 @@ namespace Domain.Models
         [ForeignKey(nameof(LivestockModel))] public long? MotherId { get; set; }
         [ForeignKey(nameof(LivestockModel))] public long? FatherId { get; set; }
         [Required][ForeignKey(nameof(LivestockStatusModel))] public long? StatusId { get; set; }
-        [Required][ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
+        [ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
         [Required][ForeignKey(nameof(LivestockBreedModel))]  public long LivestockBreedId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }

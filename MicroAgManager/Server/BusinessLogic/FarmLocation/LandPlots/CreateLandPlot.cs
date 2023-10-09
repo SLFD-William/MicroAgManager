@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.BusinessLogic.LandPlots
+namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 {
     public class CreateLandPlot : BaseCommand, ICreateCommand
     {

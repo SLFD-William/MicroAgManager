@@ -94,6 +94,10 @@ namespace FrontEnd.Data
                 {
                     // Begin fetching any updates to the dataset from the backend server
                     await DomainFetcher.BulkUpdateTenants(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateUnits(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateMeasures(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateRegistrars(entityModels, db, connection, _api);
+
                     await DomainFetcher.BulkUpdateFarmLocations(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateLandPlots(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateLivestockAnimals(entityModels, db, connection, _api);
@@ -104,8 +108,10 @@ namespace FrontEnd.Data
                     await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);
-                    await DomainFetcher.BulkUpdateRegistrars(entityModels, db, connection, _api);
+                    
                     await DomainFetcher.BulkUpdateRegistrations(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateMeasurements(entityModels, db, connection, _api);
+
 
 
 

@@ -9,7 +9,7 @@ namespace Domain.Models
         [Required][MaxLength(20)] required public string Name { get; set; }
         [Required][MaxLength(20)] required public string Category { get; set; }
         [Required][MaxLength(20)] required public string Symbol { get; set; }
-        [Required] required public double ConversionFactorToSIUnit { get; set; } = 1;
+        [Required] required public double ConversionFactorToSIUnit { get; set; } = 0;
 
         public static UnitModel Create(Unit unit)
         {

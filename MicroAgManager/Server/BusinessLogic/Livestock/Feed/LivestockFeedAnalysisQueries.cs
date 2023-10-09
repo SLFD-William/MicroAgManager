@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.LivestockFeedAnalysis
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class LivestockFeedAnalysisQueries : BaseQuery
     {
@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.LivestockFeedAnalysis
             if (DateReported.HasValue) query = query.Where(x => x.DateReported == DateReported);
             if (DatePrinted.HasValue) query = query.Where(x => x.DatePrinted == DatePrinted);
 
-            
+
             return (IQueryable<T>)query;
         }
 

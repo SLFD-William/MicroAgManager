@@ -1,4 +1,4 @@
-﻿using BackEnd.BusinessLogic.LandPlots;
+﻿using BackEnd.BusinessLogic.FarmLocation.LandPlots;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;

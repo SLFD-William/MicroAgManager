@@ -1,17 +1,19 @@
 ﻿using BackEnd.BusinessLogic.BreedingRecord;
 using BackEnd.BusinessLogic.Duty;
 using BackEnd.BusinessLogic.FarmLocation;
-using BackEnd.BusinessLogic.LandPlots;
+using BackEnd.BusinessLogic.FarmLocation.LandPlots;
 using BackEnd.BusinessLogic.Livestock;
 using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
 using BackEnd.BusinessLogic.ManyToMany;
+using BackEnd.BusinessLogic.Measure;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.Registrar;
 using BackEnd.BusinessLogic.Registration;
 using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.Tenant;
+using BackEnd.BusinessLogic.Unit;
 using Domain.Abstracts;
 using Domain.Models;
 using Domain.ValueObjects;
@@ -183,11 +185,11 @@ namespace FrontEnd.Data
                 var name = AddNamedParameter(command, "$Name");
                 var description = AddNamedParameter(command, "$Description");
                 var area = AddNamedParameter(command, "$Area");
-                var areaUnit = AddNamedParameter(command, "$AreaUnit");
+                var areaUnit = AddNamedParameter(command, "$AreaUnitId");
                 var usage = AddNamedParameter(command, "$Usage");
                 var parentPlotId = AddNamedParameter(command, "$ParentPlotId");
 
-                command.CommandText = $"INSERT or REPLACE INTO LandPlots (Id,Deleted,EntityModifiedOn,ModifiedBy,FarmLocationId,Name,Description,Area,AreaUnit,Usage,ParentPlotId) " +
+                command.CommandText = $"INSERT or REPLACE INTO LandPlots (Id,Deleted,EntityModifiedOn,ModifiedBy,FarmLocationId,Name,Description,Area,AreaUnitId,Usage,ParentPlotId) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}" +
                     $",{farmLocationId.ParameterName},{name.ParameterName},{description.ParameterName},{area.ParameterName},{areaUnit.ParameterName},{usage.ParameterName},{parentPlotId.ParameterName})";
                 foreach (var model in returned.Item2)
@@ -198,7 +200,7 @@ namespace FrontEnd.Data
                     name.Value = model.Name;
                     description.Value = model.Description;
                     area.Value = model.Area;
-                    areaUnit.Value = model.AreaUnit;
+                    areaUnit.Value = model.AreaUnitId;
                     usage.Value = model.Usage;
 
                     parentPlotId.Value = model.ParentPlotId.HasValue ? model.ParentPlotId.Value : DBNull.Value;
@@ -857,6 +859,118 @@ namespace FrontEnd.Data
         //    }
         //}
 
+        public async static Task BulkUpdateUnits(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(UnitModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Units.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<UnitModel, GetUnitList>("api/GetUnits", new GetUnitList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var name = AddNamedParameter(command, "$Name");
+                var category = AddNamedParameter(command, "$Category");
+                var symbol = AddNamedParameter(command, "$Symbol");
+                var conversionFactorToSIUnit = AddNamedParameter(command, "$ConversionFactorToSIUnit");
+
+                command.CommandText = $"INSERT or REPLACE INTO Units (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Category,Symbol,ConversionFactorToSIUnit) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{name.ParameterName},{category.ParameterName},{symbol.ParameterName},{conversionFactorToSIUnit.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    name.Value = model.Name;
+                    category.Value = model.Category;
+                    symbol.Value = model.Symbol;
+                    conversionFactorToSIUnit.Value = model.ConversionFactorToSIUnit;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async static Task BulkUpdateMeasures(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(MeasureModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Measures.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<MeasureModel, GetMeasureList>("api/GetMeasures", new GetMeasureList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var name = AddNamedParameter(command, "$Name");
+                var method = AddNamedParameter(command, "$Method");
+                var unitId = AddNamedParameter(command, "$UnitId");
+
+                command.CommandText = $"INSERT or REPLACE INTO Measures (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Method,UnitId) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{name.ParameterName},{method.ParameterName},{unitId.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    name.Value = model.Name;
+                    method.Value = model.Method;
+                    unitId.Value = model.UnitId;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+        public async static Task BulkUpdateMeasurements(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(MeasurementModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Measurements.Select(t => t.Id));
+            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            while (true)
+            {
+                var returned = await api.ProcessQuery<MeasurementModel, GetMeasurementList>("api/GetMeasurements", new GetMeasurementList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                if (returned.Item2.Count == 0) break;
+                totalCount += returned.Item2.Count;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var measureId = AddNamedParameter(command, "$MeasureId");
+                var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
+                var recipientType = AddNamedParameter(command, "$RecipientType");
+                var recipientId = AddNamedParameter(command, "$RecipientId");
+                var value = AddNamedParameter(command, "$Value");
+                var measurementUnitId = AddNamedParameter(command, "$MeasurementUnitId");
+                var notes = AddNamedParameter(command, "$Notes");
+                var datePerformed = AddNamedParameter(command, "$DatePerformed");
+
+
+                command.CommandText = $"INSERT or REPLACE INTO Measurements (Id,Deleted,EntityModifiedOn,ModifiedBy,MeasureId,RecipientTypeId,RecipientType,RecipientId,Value,MeasurementUnitId,Notes,DatePerformed) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{measureId.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName},{recipientId.ParameterName}," +
+                $"{value.ParameterName},{measurementUnitId.ParameterName},{notes.ParameterName},{datePerformed.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    measureId.Value = model.MeasureId;
+                    recipientTypeId.Value = model.RecipientTypeId;
+                    recipientType.Value = model.RecipientType;
+                    recipientId.Value = model.RecipientId;
+                    value.Value = model.Value;
+                    measurementUnitId.Value = model.MeasurementUnitId;
+                    notes.Value = model.Notes ?? string.Empty;
+                    datePerformed.Value = model.DatePerformed;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
         public async static Task BulkUpdateDutyEvent(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
@@ -916,72 +1030,6 @@ namespace FrontEnd.Data
             }
         }
         
-        //public async static Task BulkUpdatePlotLivestock(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
-        //{
-        //    if (!ShouldEntityBeUpdated(entityModels, nameof(LandPlotModel)) && !ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
-        //    long totalCount = 0;
-        //    var dataReceived = new List<LandPlotLivestock>();
-        //    while (true)
-        //    {
-        //        var returned = await api.ProcessQuery<LandPlotLivestock, GetLandPlotLivestockList>("api/GetLandPlotLivestockList", new GetLandPlotLivestockList { Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
-        //        totalCount += returned.Item2.Count;
-        //        dataReceived.AddRange(returned.Item2);
-        //    }
-        //    var command = connection.CreateCommand();
-        //    var location = AddNamedParameter(command, "$LocationsId");
-        //    var livestock = AddNamedParameter(command, "$LivestocksId");
-
-        //    command.CommandText = $"Delete FROM LandPlotModelLivestockModel; ";
-        //    await command.ExecuteNonQueryAsync();
-        //    command.CommandText = $"INSERT or REPLACE INTO LandPlotModelLivestockModel (LocationsId,LivestocksId) " +
-        //        $"Values ({location.ParameterName},{livestock.ParameterName})";
-
-        //    foreach (var model in dataReceived)
-        //    {
-        //        if (model is null) continue;
-        //        location.Value = model.LocationsId;
-        //        livestock.Value = model.LivestocksId;
-        //        await command.ExecuteNonQueryAsync();
-        //    }
-
-
-        //}
-        //public async static Task BulkUpdateLivestockStatusLivestock(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
-        //{
-        //    if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockStatusModel)) && !ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
-        //    long totalCount = 0;
-        //    var dataReceived = new List<LivestockLivestockStatus>();
-        //    while (true)
-        //    {
-        //        var returned = await api.ProcessQuery<LivestockLivestockStatus, GetLivestockLivestockStatusList>("api/GetLivestockLivestockStatusList", new GetLivestockLivestockStatusList { Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
-        //        totalCount += returned.Item2.Count;
-        //        dataReceived.AddRange(returned.Item2);
-        //    }
-        //    var command = connection.CreateCommand();
-        //    var status = AddNamedParameter(command, "$StatusesId");
-        //    var livestock = AddNamedParameter(command, "$LivestocksId");
-
-        //    command.CommandText = $"Delete FROM LivestockModelLivestockStatusModel; ";
-        //    await command.ExecuteNonQueryAsync();
-        //    command.CommandText = $"INSERT or REPLACE INTO LivestockModelLivestockStatusModel (StatusesId,LivestocksId) " +
-        //        $"Values ({status.ParameterName},{livestock.ParameterName})";
-
-        //    foreach (var model in dataReceived)
-        //    {
-        //        if (model is null) continue;
-        //        status.Value = model.StatusesId;
-        //        livestock.Value = model.LivestocksId;
-        //        await command.ExecuteNonQueryAsync();
-        //    }
-        //}
-
-
-
-        //public async static Task BulkUpdateEventMilestone(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
-        //{
-        //    if (!ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel)) && !ShouldEntityBeUpdated(entityModels, nameof(EventModel))) return;
-        //}
+       
     }
 }

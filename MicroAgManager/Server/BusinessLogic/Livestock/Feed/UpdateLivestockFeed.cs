@@ -5,7 +5,7 @@ using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     //Create a class called UpdateLivestockFeed implementing BaseCommand and IUpdateCommand
     public class UpdateLivestockFeed : BaseCommand, IUpdateCommand

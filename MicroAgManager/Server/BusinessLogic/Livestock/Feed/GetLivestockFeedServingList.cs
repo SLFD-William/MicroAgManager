@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class GetLivestockFeedServingList : LivestockFeedServingQueries, IRequest<Tuple<long, ICollection<LivestockFeedServingModel?>>>
     {

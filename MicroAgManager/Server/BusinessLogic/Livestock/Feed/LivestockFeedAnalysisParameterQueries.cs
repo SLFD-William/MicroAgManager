@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class LivestockFeedAnalysisParameterQueries : BaseQuery
     {
@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (ReportOrder.HasValue) query = query.Where(x => x.ReportOrder == ReportOrder);
             if (!string.IsNullOrWhiteSpace(SubParameter)) query = query.Where(x => x.SubParameter == SubParameter);
 
-            
+
             return (IQueryable<T>)query;
         }
 

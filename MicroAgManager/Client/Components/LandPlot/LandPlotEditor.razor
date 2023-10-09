@@ -34,7 +34,7 @@
             <ValidatedField Legend="Units" ValidationMessageFor="@(() => plot.AreaUnitId)">
                 <InputSelect @bind-Value="@plot.AreaUnitId">
                     <option value="">Select Units ...</option>
-                    @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area))
+                    @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
                     {
                         <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
                     }

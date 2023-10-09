@@ -5,9 +5,7 @@ using System.Security.Claims;
 using BackEnd.BusinessLogic.Tenant;
 using BackEnd.BusinessLogic.FarmLocation;
 using Microsoft.AspNetCore.Authorization;
-using BackEnd.BusinessLogic.LandPlots;
 using BackEnd.BusinessLogic.Livestock;
-using BackEnd.BusinessLogic.LivestockFeed;
 using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
@@ -19,6 +17,10 @@ using BackEnd.BusinessLogic.ManyToMany;
 using BackEnd.BusinessLogic.BreedingRecord;
 using BackEnd.BusinessLogic.Registrar;
 using BackEnd.BusinessLogic.Registration;
+using BackEnd.BusinessLogic.Unit;
+using BackEnd.BusinessLogic.Measure;
+using BackEnd.BusinessLogic.FarmLocation.LandPlots;
+using BackEnd.BusinessLogic.Livestock.Feed;
 
 namespace Host
 {
@@ -72,12 +74,25 @@ namespace Host
         public static void MapAnciliary(WebApplication app)
         {
             app.MapPost("/api/GetRegistrars", [Authorize] async (GetRegistrarList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            app.MapPost("/api/GetRegistrations", [Authorize] async (GetRegistrationList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-
             app.MapPost("/api/CreateRegistrar", [Authorize] async (CreateRegistrar command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateRegistrar", [Authorize] async (UpdateRegistrar command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
+            app.MapPost("/api/GetRegistrations", [Authorize] async (GetRegistrationList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/CreateRegistration", [Authorize] async (CreateRegistration command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
             app.MapPost("/api/UpdateRegistration", [Authorize] async (UpdateRegistration command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
+
+            app.MapPost("/api/GetUnits", [Authorize] async (GetUnitList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/CreateUnit", [Authorize] async (CreateUnit command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateUnit", [Authorize] async (UpdateUnit command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
+            app.MapPost("/api/GetMeasures", [Authorize] async (GetMeasureList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/CreateMeasure", [Authorize] async (CreateMeasure command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateMeasure", [Authorize] async (UpdateMeasure command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
+            app.MapPost("/api/GetMeasurements", [Authorize] async (GetMeasurementList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
+            app.MapPost("/api/CreateMeasurement", [Authorize] async (CreateMeasurement command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateMeasurement", [Authorize] async (UpdateMeasurement command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
 
         }
         public static void MapFarm(WebApplication app)

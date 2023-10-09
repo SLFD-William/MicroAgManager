@@ -1,5 +1,7 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.BusinessLogic.Livestock.Animals;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ValueObjects;
@@ -28,12 +30,11 @@ namespace BackEnd.BusinessLogic.FarmLocation
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() {new ModifiedEntity(farm.Id.ToString(),farm.GetType().Name,"Created",farm.ModifiedBy) }), cancellationToken);
+                    await _mediator.Publish(new FarmLocationCreated { EntityName = farm.GetType().Name, Id = farm.Id, ModifiedBy = farm.ModifiedBy, TenantId = farm.TenantId }, cancellationToken);
                 }
                 catch (Exception ex) { _log.LogError(ex, "Unable to Create Farm Location"); }
                 return farm.Id;
             }
-
         }
 
     }

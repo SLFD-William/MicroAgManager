@@ -1,12 +1,11 @@
 ﻿using BackEnd.Abstracts;
-using BackEnd.BusinessLogic.LivestockFeedAnalysis;
 using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class GetLivestockFeedAnalysisList : LivestockFeedAnalysisQueries, IRequest<Tuple<long, ICollection<LivestockFeedAnalysisModel?>>>
     {

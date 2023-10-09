@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic
             if (save) await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
         }
-        public static void AddRequiredMilestones(LivestockAnimal animalType, IMicroAgManagementDbContext context)
+        private static void AddRequiredMilestones(LivestockAnimal animalType, IMicroAgManagementDbContext context)
         {
             var parturition = context.Milestones.FirstOrDefault(e => e.Name == MilestoneSystemRequiredConstants.Parturition
                 && e.TenantId == animalType.TenantId

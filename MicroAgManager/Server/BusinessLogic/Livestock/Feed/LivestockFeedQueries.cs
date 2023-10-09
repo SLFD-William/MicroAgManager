@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class LivestockFeedQueries : BaseQuery
     {
@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (LivestockAnimalId.HasValue) query = query.Where(x => x.LivestockAnimal.Id == LivestockAnimalId);
             if (!string.IsNullOrWhiteSpace(Name)) query = query.Where(x => x.Name.Contains(Name));
             if (!string.IsNullOrWhiteSpace(Source)) query = query.Where(x => x.Source.Contains(Source));
-            if (Cutting.HasValue) query = query.Where(x => x.Cutting.HasValue && x.Cutting==Cutting);
+            if (Cutting.HasValue) query = query.Where(x => x.Cutting.HasValue && x.Cutting == Cutting);
             if (Active.HasValue) query = query.Where(x => x.Active == Active);
             if (Quantity.HasValue) query = query.Where(x => x.Quantity == Quantity);
             if (!string.IsNullOrWhiteSpace(QuantityUnit)) query = query.Where(x => x.QuantityUnit.Contains(QuantityUnit));
@@ -36,7 +36,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (!string.IsNullOrWhiteSpace(FeedType)) query = query.Where(x => x.FeedType.Contains(FeedType));
             if (!string.IsNullOrWhiteSpace(Distribution)) query = query.Where(x => x.Distribution.Contains(Distribution));
 
-            
+
             return (IQueryable<T>)query;
         }
 

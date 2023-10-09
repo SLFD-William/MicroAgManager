@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class CreateLivestockFeed : BaseCommand, ICreateCommand
     {
@@ -30,7 +30,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
                     await _context.SaveChangesAsync(cancellationToken);
                 }
                 catch (Exception ex) { _log.LogError(ex, "Unable to Create Livestock Feed"); }
-            
+
                 return livestockFeed.Id;
             }
         }

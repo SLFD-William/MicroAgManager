@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.LandPlots
+namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 {
     public class GetLandPlot : LandPlotQueries, IRequest<LandPlotModel?>
     {

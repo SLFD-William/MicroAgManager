@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class LivestockFeedServingQueries : BaseQuery
     {
@@ -19,11 +19,11 @@ namespace BackEnd.BusinessLogic.LivestockFeed
                 throw new ArgumentNullException(nameof(query));
 
 
-            if(FeedId.HasValue) query=query.Where(f=>f.Feed.Id == FeedId);
+            if (FeedId.HasValue) query = query.Where(f => f.Feed.Id == FeedId);
             if (StatusId.HasValue) query = query.Where(f => f.Status.Id == StatusId);
-            if (Serving.HasValue) query = query.Where(f=>f.Serving==Serving);
+            if (Serving.HasValue) query = query.Where(f => f.Serving == Serving);
 
-            
+
             return (IQueryable<T>)query;
         }
 

@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.LandPlots
+namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 {
     public class LandPlotQueries : BaseQuery
     {
@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.LandPlots
             if (ParentPlotId.HasValue) query = query.Where(_ => _.ParentPlotId == ParentPlotId);
             if (!string.IsNullOrEmpty(Usage)) query = query.Where(_ => _.Usage == Usage);
 
-            
+
             return (IQueryable<T>)query;
         }
     }

@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.LivestockFeed
+namespace BackEnd.BusinessLogic.Livestock.Feed
 {
     public class LivestockFeedDistributionQueries : BaseQuery
     {
@@ -23,7 +23,7 @@ namespace BackEnd.BusinessLogic.LivestockFeed
             if (!string.IsNullOrWhiteSpace(Note)) query = query.Where(x => x.Note.Contains(Note));
             if (DatePerformed.HasValue) query = query.Where(x => x.DatePerformed == DatePerformed);
 
-            
+
             return (IQueryable<T>)query;
         }
 

@@ -6,7 +6,7 @@ using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.LandPlots
+namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 {
     public class UpdateLandPlot : BaseCommand, IUpdateCommand
     {
