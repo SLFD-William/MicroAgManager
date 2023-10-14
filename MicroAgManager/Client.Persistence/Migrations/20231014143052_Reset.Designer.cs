@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    [Migration("20231003234030_Reset")]
+    [Migration("20231014143052_Reset")]
     partial class Reset
     {
         /// <inheritdoc />
@@ -741,7 +741,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<long?>("LocationId")
-                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ModifiedBy")
@@ -1150,6 +1149,144 @@ namespace FrontEnd.Persistence.Migrations
                     b.ToTable("Tenants");
                 });
 
+            modelBuilder.Entity("Domain.Models.TreatmentModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("DosageAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("DosageUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Duration")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("DurationUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Frequency")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("FrequencyUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LabelMethod")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MeatWithdrawal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MilkWithdrawal")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("RecipientMass")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("RecipientMassUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DosageUnitId");
+
+                    b.HasIndex("DurationUnitId");
+
+                    b.HasIndex("FrequencyUnitId");
+
+                    b.HasIndex("RecipientMassUnitId");
+
+                    b.ToTable("Treatments");
+                });
+
+            modelBuilder.Entity("Domain.Models.TreatmentRecordModel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AppliedMethod")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DatePerformed")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("DosageAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("DosageUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("EntityModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("TreatmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DosageUnitId");
+
+                    b.HasIndex("TreatmentId");
+
+                    b.ToTable("TreatmentRecords");
+                });
+
             modelBuilder.Entity("Domain.Models.UnitModel", b =>
                 {
                     b.Property<long>("Id")
@@ -1355,6 +1492,52 @@ namespace FrontEnd.Persistence.Migrations
                     b.HasOne("Domain.Models.EventModel", null)
                         .WithMany("ScheduledDuties")
                         .HasForeignKey("EventModelId");
+                });
+
+            modelBuilder.Entity("Domain.Models.TreatmentModel", b =>
+                {
+                    b.HasOne("Domain.Models.UnitModel", "DosageUnit")
+                        .WithMany()
+                        .HasForeignKey("DosageUnitId");
+
+                    b.HasOne("Domain.Models.UnitModel", "DurationUnit")
+                        .WithMany()
+                        .HasForeignKey("DurationUnitId");
+
+                    b.HasOne("Domain.Models.UnitModel", "FrequencyUnit")
+                        .WithMany()
+                        .HasForeignKey("FrequencyUnitId");
+
+                    b.HasOne("Domain.Models.UnitModel", "RecipientMassUnit")
+                        .WithMany()
+                        .HasForeignKey("RecipientMassUnitId");
+
+                    b.Navigation("DosageUnit");
+
+                    b.Navigation("DurationUnit");
+
+                    b.Navigation("FrequencyUnit");
+
+                    b.Navigation("RecipientMassUnit");
+                });
+
+            modelBuilder.Entity("Domain.Models.TreatmentRecordModel", b =>
+                {
+                    b.HasOne("Domain.Models.UnitModel", "DosageUnit")
+                        .WithMany()
+                        .HasForeignKey("DosageUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.TreatmentModel", "Treatment")
+                        .WithMany()
+                        .HasForeignKey("TreatmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DosageUnit");
+
+                    b.Navigation("Treatment");
                 });
 
             modelBuilder.Entity("DutyModelEventModel", b =>

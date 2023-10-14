@@ -2,6 +2,7 @@
 @using Domain.Models;
 @using FrontEnd.Components.Registrar;
 @using FrontEnd.Components.Measure;
+@using FrontEnd.Components.Treatment;
 @inherits DataComponent<DutyModel>
 @if (editContext is not null)
 {
@@ -23,14 +24,14 @@
                     <option value="@DutyCommandConstants.Birth">@nameof(DutyCommandConstants.Birth)</option>
                     <option value="@DutyCommandConstants.Breed">@nameof(DutyCommandConstants.Breed)</option>
                     <option value="@DutyCommandConstants.Complete">@nameof(DutyCommandConstants.Complete)</option>
+                    <option value="@DutyCommandConstants.Measurement">@nameof(DutyCommandConstants.Measurement)</option>
                     <option value="@DutyCommandConstants.Registration">@nameof(DutyCommandConstants.Registration)</option>
                     <option value="@DutyCommandConstants.Service">@nameof(DutyCommandConstants.Service)</option>
-                    <option value="@DutyCommandConstants.Measurement">@nameof(DutyCommandConstants.Measurement)</option>
-                    @*<option value="@DutyCommandConstants.Death">@nameof(DutyCommandConstants.Death)</option>
+                    <option value="@DutyCommandConstants.Treatment">@nameof(DutyCommandConstants.Treatment)</option>
+                    @*<option value="@DutyCommandConstants.Reap">@nameof(DutyCommandConstants.Reap)</option>
                     <option value="@DutyCommandConstants.Feed">@nameof(DutyCommandConstants.Feed)</option>
-                    
                     <option value="@DutyCommandConstants.Photograph">@nameof(DutyCommandConstants.Photograph)</option>
-                    <option value="@DutyCommandConstants.Treatment">@nameof(DutyCommandConstants.Treatment)</option> *@
+                     *@
                 </InputSelect>
             </ValidatedField>
             @if (showCommandId())
@@ -41,6 +42,7 @@
                             <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
                             <RegistrarEditor @ref=_registrarEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Registration)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
                             <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Measurement)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></MeasureEditor>
+                            <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Treatment)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></TreatmentEditor>
                         </div>
                     </LegendContent>
                     <ChildContent>

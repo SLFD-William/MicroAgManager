@@ -16,20 +16,20 @@ namespace Domain.Models
         [Required] public int MeatWithdrawal { get; set; } = 0;
         [Required] public int MilkWithdrawal { get; set; } = 0;
         [Required][Precision(18, 3)] public decimal DosageAmount { get; set; } = 0;
-        [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
-        public virtual UnitModel DosageUnit { get; set; }
+        [ForeignKey(nameof(DosageUnit))] public long? DosageUnitId { get; set; }
+        public virtual UnitModel? DosageUnit { get; set; }
 
-        [Required][Precision(18, 3)] public decimal AnimalMass { get; set; } = 0;
-        [Required][ForeignKey(nameof(AnimalMassUnit))] public long AnimalMassUnitId { get; set; }
-        public virtual UnitModel AnimalMassUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal RecipientMass { get; set; } = 0;
+        [ForeignKey(nameof(RecipientMassUnit))] public long? RecipientMassUnitId { get; set; }
+        public virtual UnitModel? RecipientMassUnit { get; set; }
 
 
         [Required][Precision(18, 3)] public decimal Frequency { get; set; } = 0;
-        [Required][ForeignKey(nameof(FrequencyUnit))] public long FrequencyUnitId { get; set; }
-        public virtual UnitModel FrequencyUnit { get; set; }
+        [ForeignKey(nameof(FrequencyUnit))] public long? FrequencyUnitId { get; set; }
+        public virtual UnitModel? FrequencyUnit { get; set; }
         [Required][Precision(18, 3)] public decimal Duration { get; set; } = 0;
-        [Required][ForeignKey(nameof(DurationUnit))] public long DurationUnitId { get; set; }
-        public virtual UnitModel DurationUnit { get; set; }
+        [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
+        public virtual UnitModel? DurationUnit { get; set; }
 
 
         public static TreatmentModel Create(Treatment treatment)
@@ -44,8 +44,8 @@ namespace Domain.Models
                 MilkWithdrawal = treatment.MilkWithdrawal,
                 DosageAmount = treatment.DosageAmount,
                 DosageUnitId = treatment.DosageUnitId,
-                AnimalMass = treatment.AnimalMass,
-                AnimalMassUnitId = treatment.AnimalMassUnitId,
+                RecipientMass = treatment.RecipientMass,
+                RecipientMassUnitId = treatment.RecipientMassUnitId,
                 Frequency = treatment.Frequency,
                 FrequencyUnitId = treatment.FrequencyUnitId,
                 Duration = treatment.Duration,
@@ -65,8 +65,8 @@ namespace Domain.Models
             ((TreatmentModel)model).MilkWithdrawal = MilkWithdrawal;
             ((TreatmentModel)model).DosageAmount = DosageAmount;
             ((TreatmentModel)model).DosageUnitId = DosageUnitId;
-            ((TreatmentModel)model).AnimalMass = AnimalMass;
-            ((TreatmentModel)model).AnimalMassUnitId = AnimalMassUnitId;
+            ((TreatmentModel)model).RecipientMass = RecipientMass;
+            ((TreatmentModel)model).RecipientMassUnitId = RecipientMassUnitId;
             ((TreatmentModel)model).Frequency = Frequency;
             ((TreatmentModel)model).FrequencyUnitId = FrequencyUnitId;
             ((TreatmentModel)model).Duration = Duration;
@@ -85,8 +85,8 @@ namespace Domain.Models
             ((Treatment)entity).MilkWithdrawal = MilkWithdrawal;
             ((Treatment)entity).DosageAmount = DosageAmount;
             ((Treatment)entity).DosageUnitId = DosageUnitId;
-            ((Treatment)entity).AnimalMass = AnimalMass;
-            ((Treatment)entity).AnimalMassUnitId = AnimalMassUnitId;
+            ((Treatment)entity).RecipientMass = RecipientMass;
+            ((Treatment)entity).RecipientMassUnitId = RecipientMassUnitId;
             ((Treatment)entity).Frequency = Frequency;
             ((Treatment)entity).FrequencyUnitId = FrequencyUnitId;
             ((Treatment)entity).Duration = Duration;

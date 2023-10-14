@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -805,6 +806,60 @@ namespace BackEnd.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Treatments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BrandName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LabelMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MeatWithdrawal = table.Column<int>(type: "int", nullable: false),
+                    MilkWithdrawal = table.Column<int>(type: "int", nullable: false),
+                    DosageAmount = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    DosageUnitId = table.Column<long>(type: "bigint", nullable: true),
+                    RecipientMass = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    RecipientMassUnitId = table.Column<long>(type: "bigint", nullable: true),
+                    Frequency = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    FrequencyUnitId = table.Column<long>(type: "bigint", nullable: true),
+                    Duration = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    DurationUnitId = table.Column<long>(type: "bigint", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Treatments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Treatments_Units_DosageUnitId",
+                        column: x => x.DosageUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Treatments_Units_DurationUnitId",
+                        column: x => x.DurationUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Treatments_Units_FrequencyUnitId",
+                        column: x => x.FrequencyUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Treatments_Units_RecipientMassUnitId",
+                        column: x => x.RecipientMassUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LivestockFeedAnalyses",
                 columns: table => new
                 {
@@ -952,7 +1007,7 @@ namespace BackEnd.Persistence.Migrations
                     MotherId = table.Column<long>(type: "bigint", nullable: true),
                     FatherId = table.Column<long>(type: "bigint", nullable: true),
                     StatusId = table.Column<long>(type: "bigint", nullable: false),
-                    LocationId = table.Column<long>(type: "bigint", nullable: false),
+                    LocationId = table.Column<long>(type: "bigint", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     BatchNumber = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
                     Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -1004,8 +1059,47 @@ namespace BackEnd.Persistence.Migrations
                         name: "FK_Livestocks_Plots_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Plots",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TreatmentRecords",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TreatmentId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    RecipientType = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    RecipientId = table.Column<long>(type: "bigint", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DatePerformed = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DosageAmount = table.Column<decimal>(type: "decimal(18,3)", precision: 18, scale: 3, nullable: false),
+                    DosageUnitId = table.Column<long>(type: "bigint", nullable: false),
+                    AppliedMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimeStamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TreatmentRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TreatmentRecords_Treatments_TreatmentId",
+                        column: x => x.TreatmentId,
+                        principalTable: "Treatments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TreatmentRecords_Units_DosageUnitId",
+                        column: x => x.DosageUnitId,
+                        principalTable: "Units",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1334,6 +1428,36 @@ namespace BackEnd.Persistence.Migrations
                 name: "IX_ScheduledDuties_EventId",
                 table: "ScheduledDuties",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TreatmentRecords_DosageUnitId",
+                table: "TreatmentRecords",
+                column: "DosageUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TreatmentRecords_TreatmentId",
+                table: "TreatmentRecords",
+                column: "TreatmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatments_DosageUnitId",
+                table: "Treatments",
+                column: "DosageUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatments_DurationUnitId",
+                table: "Treatments",
+                column: "DurationUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatments_FrequencyUnitId",
+                table: "Treatments",
+                column: "FrequencyUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatments_RecipientMassUnitId",
+                table: "Treatments",
+                column: "RecipientMassUnitId");
         }
 
         /// <inheritdoc />
@@ -1400,6 +1524,9 @@ namespace BackEnd.Persistence.Migrations
                 name: "Tenants");
 
             migrationBuilder.DropTable(
+                name: "TreatmentRecords");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -1428,6 +1555,9 @@ namespace BackEnd.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Treatments");
 
             migrationBuilder.DropTable(
                 name: "LivestockBreeds");

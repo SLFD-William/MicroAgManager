@@ -96,6 +96,7 @@ namespace FrontEnd.Data
                     await DomainFetcher.BulkUpdateTenants(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateUnits(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateMeasures(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateTreatments(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateRegistrars(entityModels, db, connection, _api);
 
                     await DomainFetcher.BulkUpdateFarmLocations(entityModels, db, connection, _api);
@@ -111,6 +112,8 @@ namespace FrontEnd.Data
                     
                     await DomainFetcher.BulkUpdateRegistrations(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateMeasurements(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateTreatmentRecords(entityModels, db, connection, _api);
+                    
 
 
 
@@ -132,10 +135,5 @@ namespace FrontEnd.Data
                 _isSynchronizing = false;
             }
         }
-        
-       
-        
-        
-        
     }
 }

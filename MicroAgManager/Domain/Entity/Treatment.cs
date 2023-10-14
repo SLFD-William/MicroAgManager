@@ -19,20 +19,20 @@ namespace Domain.Entity
         public int MilkWithdrawal { get; set; } = 0;
 
         [Precision(18,3)]public decimal DosageAmount { get; set; } = 0;
-        [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
-        public virtual Unit DosageUnit { get; set; }
+        [ForeignKey(nameof(DosageUnit))] public long? DosageUnitId { get; set; }
+        public virtual Unit? DosageUnit { get; set; }
 
-        [Precision(18, 3)] public decimal AnimalMass { get; set; } = 0;
-        [Required][ForeignKey(nameof(AnimalMassUnit))] public long AnimalMassUnitId { get; set; }
-        public virtual Unit AnimalMassUnit { get; set; }
+        [Precision(18, 3)] public decimal RecipientMass { get; set; } = 0;
+        [ForeignKey(nameof(RecipientMassUnit))] public long? RecipientMassUnitId { get; set; }
+        public virtual Unit? RecipientMassUnit { get; set; }
 
 
         [Precision(18, 3)] public decimal Frequency { get; set; }
-        [Required][ForeignKey(nameof(FrequencyUnit))] public long FrequencyUnitId { get; set; }
-        public virtual Unit FrequencyUnit { get; set; }
+        [ForeignKey(nameof(FrequencyUnit))] public long? FrequencyUnitId { get; set; }
+        public virtual Unit? FrequencyUnit { get; set; }
         [Precision(18, 3)] public decimal Duration { get; set; }
-        [Required][ForeignKey(nameof(DurationUnit))] public long DurationUnitId { get; set; }
-        public virtual Unit DurationUnit { get; set; }
+        [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
+        public virtual Unit? DurationUnit { get; set; }
 
     }
 }

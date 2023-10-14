@@ -6,6 +6,7 @@ using FrontEnd.Components.Measure;
 using FrontEnd.Components.Registrar;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
+using FrontEnd.Components.Treatment;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,7 @@ namespace FrontEnd.Components.Farm
         protected DutyList _dutyList;
         protected RegistrarList _registrarList;
         protected MeasureList _measureList;
+        protected TreatmentList _treatmentList;
 
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         protected TabControl _tabControl;
@@ -31,6 +33,8 @@ namespace FrontEnd.Components.Farm
         protected TabPage _dutyTab;
         protected TabPage _registrarsTab;
         protected TabPage _measuresTab;
+        protected TabPage _treatmentsTab;
+        
 
         protected override void OnInitialized()
         {
@@ -60,8 +64,16 @@ namespace FrontEnd.Components.Farm
                 await _landPlotList.FreshenData();
             if (_livestockAnimalList is not null)
                 await _livestockAnimalList.FreshenData();
-
-            
+            if (_scheduledDutyList is not null)
+                await _scheduledDutyList.FreshenData();
+            if (_dutyList is not null)
+                await _dutyList.FreshenData();
+            if (_registrarList is not null)
+                await _registrarList.FreshenData();
+            if (_measureList is not null)
+                await _measureList.FreshenData();
+            if (_treatmentList is not null)
+                await _treatmentList.FreshenData();
         }
         private async Task LandPlotUpdated(LandPlotModel args)
         {

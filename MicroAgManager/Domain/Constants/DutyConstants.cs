@@ -11,7 +11,7 @@
         public static string Service { get; private set; } = "Service";
         public static string Birth { get; private set; } = "Birth";
         public static string Feed { get; private set; } = "Feed";
-        public static string Death { get; private set; } = "Death";
+        public static string Reap { get; private set; } = "Reap";
     }
     public static class DutyRelationshipConstants
     {

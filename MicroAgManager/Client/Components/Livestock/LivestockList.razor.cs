@@ -25,7 +25,7 @@ namespace FrontEnd.Components.Livestock
         
         private async Task EditLivestock(long id)
         {
-            _editLivestock = id > 0 ? await FindLivestock(id) : new LivestockModel { LivestockBreedId=LivestockBreed.Id};
+            _editLivestock = id > 0 ? await FindLivestock(id) : new LivestockModel {LivestockBreedId=LivestockBreed.Id};
             StateHasChanged();
         }
         private void TableItemSelected()

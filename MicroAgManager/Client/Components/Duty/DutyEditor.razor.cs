@@ -6,6 +6,7 @@ using Domain.Constants;
 using FrontEnd.Components.Registrar;
 using Domain.Abstracts;
 using FrontEnd.Components.Measure;
+using FrontEnd.Components.Treatment;
 
 namespace FrontEnd.Components.Duty
 {
@@ -17,6 +18,7 @@ namespace FrontEnd.Components.Duty
         private ValidatedForm _validatedForm;
         private RegistrarEditor _registrarEditor;
         private MeasureEditor _measureEditor;
+        private TreatmentEditor _treatmentEditor;
         protected new DutyModel working { get => base.working as DutyModel; set { base.working = value; } }
         private string Command { get=>working.Command;
             set { working.Command = value;
@@ -84,6 +86,8 @@ namespace FrontEnd.Components.Duty
                     return app.dbContext.Registrars.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
                 case nameof(DutyCommandConstants.Measurement):
                     return app.dbContext.Measures.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+                case nameof(DutyCommandConstants.Treatment):
+                    return app.dbContext.Treatments.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
                 default:
                     return new List<KeyValuePair<long, string>>();
             }
@@ -97,7 +101,7 @@ namespace FrontEnd.Components.Duty
                 case nameof(DutyCommandConstants.Birth):
                 case nameof(DutyCommandConstants.Breed):
                 case nameof(DutyCommandConstants.Complete):
-                case nameof(DutyCommandConstants.Death):
+                case nameof(DutyCommandConstants.Reap):
                 case nameof(DutyCommandConstants.Service):
                     return false;
                 default:
@@ -112,6 +116,8 @@ namespace FrontEnd.Components.Duty
                     return "Registrar";
                 case nameof(DutyCommandConstants.Measurement):
                     return "Measure";
+                case nameof(DutyCommandConstants.Treatment):
+                    return "Treatment";
                 default:
                     return string.Empty;
             }

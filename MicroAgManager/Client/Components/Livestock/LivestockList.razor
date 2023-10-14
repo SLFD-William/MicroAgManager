@@ -4,7 +4,7 @@
 @if (app != null)
 {
     <CascadingValue Value="_editLivestock">
-        <LivestockEditor Show=@(_editLivestock is not null) @ref="_livestockEditor" Modal="true" Submitted="@LivestockUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockEditor>
+        <LivestockEditor Show=@(_editLivestock is not null) livestockId="@(_editLivestock?.Id ?? 0)" @ref="_livestockEditor" Modal="true" Submitted="@LivestockUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></LivestockEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="LivestockSummary"
         Items="@Items"

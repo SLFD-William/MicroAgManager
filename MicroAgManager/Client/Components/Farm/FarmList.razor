@@ -3,7 +3,7 @@
 @if (app != null)
 {
     <CascadingValue Value="_editFarm">
-        <FarmEditor Show=@(_editFarm is not null || !Items.Any()) @ref="_farmEditor" Modal="true" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
+        <FarmEditor Show=@(_editFarm is not null || !Items.Any()) @ref="_farmEditor" farmId=@(_editFarm?.Id ??0 ) Modal="true" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="FarmLocationSummary" 
     Items="@Items" 

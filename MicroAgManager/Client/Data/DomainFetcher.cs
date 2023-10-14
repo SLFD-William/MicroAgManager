@@ -17,6 +17,7 @@ using BackEnd.BusinessLogic.Treatment;
 using BackEnd.BusinessLogic.TreatmentRecord;
 using BackEnd.BusinessLogic.Unit;
 using Domain.Abstracts;
+using Domain.Entity;
 using Domain.Models;
 using Domain.ValueObjects;
 using FrontEnd.Persistence;
@@ -988,26 +989,52 @@ namespace FrontEnd.Data
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
-                var method = AddNamedParameter(command, "$Method");
-                var unitId = AddNamedParameter(command, "$UnitId");
+                var brandBame = AddNamedParameter(command, "$BrandName");
+                var reason = AddNamedParameter(command, "$Reason");
+                var labelMethod = AddNamedParameter(command, "$LabelMethod");
+                var meatWithdrawal = AddNamedParameter(command, "$MeatWithdrawal");
+                var milkWithdrawal = AddNamedParameter(command, "$MilkWithdrawal");
+                var dosageAmount = AddNamedParameter(command, "$DosageAmount");
+                var dosageUnitId = AddNamedParameter(command, "$DosageUnitId");
+                var animalMass = AddNamedParameter(command, "$RecipientMass");
+                var animalMassUnitId = AddNamedParameter(command, "$RecipientMassUnitId");
+                var frequency = AddNamedParameter(command, "$Frequency");
+                var frequencyUnitId = AddNamedParameter(command, "$FrequencyUnitId");
+                var duration = AddNamedParameter(command, "$Duration");
+                var durationUnitId = AddNamedParameter(command, "$DurationUnitId");
 
-                command.CommandText = $"INSERT or REPLACE INTO Treatments (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Method,UnitId) " +
+
+                command.CommandText = $"INSERT or REPLACE INTO Treatments (Id,Deleted,EntityModifiedOn,ModifiedBy,[Name],[BrandName],[Reason],[LabelMethod],[MeatWithdrawal]" +
+                    $",[MilkWithdrawal],[DosageAmount],[DosageUnitId],[RecipientMass],[RecipientMassUnitId],[Frequency],[FrequencyUnitId],[Duration],[DurationUnitId]) " +
                 $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{name.ParameterName},{method.ParameterName},{unitId.ParameterName})";
+                $"{name.ParameterName},{brandBame.ParameterName},{reason.ParameterName},{labelMethod.ParameterName},{meatWithdrawal.ParameterName},{milkWithdrawal.ParameterName}" +
+                $",{dosageAmount.ParameterName},{dosageUnitId.ParameterName},{animalMass.ParameterName},{animalMassUnitId.ParameterName},{frequency.ParameterName},{frequencyUnitId.ParameterName}" +
+                $",{duration.ParameterName},{durationUnitId.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
                     name.Value = model.Name;
-                    method.Value = model.Method;
-                    unitId.Value = model.UnitId;
+                    brandBame.Value = model.BrandName;
+                    reason.Value = model.Reason;
+                    labelMethod.Value = model.LabelMethod;
+                    meatWithdrawal.Value = model.MeatWithdrawal;
+                    milkWithdrawal.Value = model.MilkWithdrawal;
+                    dosageAmount.Value = model.DosageAmount;
+                    dosageUnitId.Value = model.DosageUnitId.HasValue ? model.DosageUnitId : DBNull.Value;
+                    animalMass.Value = model.RecipientMass;
+                    animalMassUnitId.Value = model.RecipientMassUnitId.HasValue ? model.RecipientMassUnitId : DBNull.Value;
+                    frequency.Value = model.Frequency;
+                    frequencyUnitId.Value = model.FrequencyUnitId.HasValue ? model.FrequencyUnitId:DBNull.Value;
+                    duration.Value = model.Duration;
+                    durationUnitId.Value = model.DurationUnitId.HasValue ? model.DosageUnitId:DBNull.Value;
                     await command.ExecuteNonQueryAsync();
                 }
             }
 
         }
-        public async static Task BulkUpdateTreatmentRecordss(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
+        public async static Task BulkUpdateTreatmentRecords(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels,nameof(TreatmentRecordModel))) return;
             var existingAccountIds = new HashSet<long>(db.TreatmentRecords.Select(t => t.Id));
@@ -1024,22 +1051,32 @@ namespace FrontEnd.Data
                 var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
                 var recipientType = AddNamedParameter(command, "$RecipientType");
                 var recipientId = AddNamedParameter(command, "$RecipientId");
-                var value = AddNamedParameter(command, "$Value");
-                var measurementUnitId = AddNamedParameter(command, "$MeasurementUnitId");
                 var notes = AddNamedParameter(command, "$Notes");
                 var datePerformed = AddNamedParameter(command, "$DatePerformed");
+                var dosageAmount = AddNamedParameter(command,"$DosageAmount");
+                var dosageUnitId = AddNamedParameter(command,"$DosageUnitId");
+                var appliedMethod = AddNamedParameter(command,"$AppliedMethod");
+                
 
-                command.CommandText = $"INSERT or REPLACE INTO Treatments (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Method,UnitId) " +
+                command.CommandText = $"INSERT or REPLACE INTO TreatmentRecords (Id,Deleted,EntityModifiedOn,ModifiedBy," +
+                    $"[TreatmentId],[RecipientTypeId],[RecipientType],[RecipientId],[Notes],[DatePerformed],[DosageAmount],[DosageUnitId],[AppliedMethod]) " +
                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-               $"{name.ParameterName},{method.ParameterName},{unitId.ParameterName})";
-
+                $"{treatmentId.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName},{recipientId.ParameterName}," +
+                $"{notes.ParameterName},{datePerformed.ParameterName},{dosageAmount.ParameterName},{dosageUnitId.ParameterName},{appliedMethod.ParameterName})";
                 foreach (var model in returned.Item2)
+                
                 {
                     if (model is null) continue;
                     PopulateBaseModelParameters(baseParameters, model);
-                    name.Value = model.Name;
-                    method.Value = model.Method;
-                    unitId.Value = model.UnitId;
+                    treatmentId.Value = model.TreatmentId;
+                    recipientTypeId.Value = model.RecipientTypeId;
+                    recipientType.Value = model.RecipientType;
+                    recipientId.Value = model.RecipientId;
+                    notes.Value = model.Notes ?? string.Empty;
+                    datePerformed.Value = model.DatePerformed;
+                    dosageAmount.Value = model.DosageAmount;
+                    dosageUnitId.Value = model.DosageUnitId;
+                    appliedMethod.Value = model.AppliedMethod;
                     await command.ExecuteNonQueryAsync();
                 }
             }

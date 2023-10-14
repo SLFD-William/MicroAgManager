@@ -15,6 +15,12 @@
         public static KeyValuePair<string,string> Count { get; private set; } =new(nameof(Count),"ea");
         public static KeyValuePair<string,string> Temperature { get; private set; } =new(nameof(Temperature),"C");
 
+        public static Dictionary<string, string> DosageUnits { get; private set; } = new Dictionary<string, string>()
+        {
+            {Mass.Key,Mass.Value },
+            {Volume.Key,Volume.Value },
+            {Count.Key,Count.Value }
+        };
         public static Dictionary<string,string> Units { get; private set; }=new Dictionary<string,string>()
         {
             {Mass.Key,Mass.Value },

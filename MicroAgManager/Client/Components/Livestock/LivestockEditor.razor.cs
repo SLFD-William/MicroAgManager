@@ -107,7 +107,7 @@ namespace FrontEnd.Components.Livestock
         }
         private async void Cancel()
         {
-            working = original.Clone() as LivestockModel;
+            working = original?.Clone() as LivestockModel;
             SetEditContext(working);
             await Cancelled.InvokeAsync();
         }

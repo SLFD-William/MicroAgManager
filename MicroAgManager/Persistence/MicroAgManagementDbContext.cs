@@ -60,7 +60,7 @@ namespace Persistence
             modelBuilder.Entity<Measure>()
                 .HasOne(u=>u.Unit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Treatment>()
-                .HasOne(u => u.AnimalMassUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+                .HasOne(u => u.RecipientMassUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Treatment>()
                 .HasOne(u => u.DosageUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Treatment>()

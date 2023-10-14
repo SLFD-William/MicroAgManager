@@ -1152,13 +1152,6 @@ namespace FrontEnd.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("AnimalMass")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("AnimalMassUnitId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("BrandName")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -1171,14 +1164,14 @@ namespace FrontEnd.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("DosageUnitId")
+                    b.Property<long?>("DosageUnitId")
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Duration")
                         .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("DurationUnitId")
+                    b.Property<long?>("DurationUnitId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EntityModifiedOn")
@@ -1188,7 +1181,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("FrequencyUnitId")
+                    b.Property<long?>("FrequencyUnitId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("LabelMethod")
@@ -1215,15 +1208,22 @@ namespace FrontEnd.Persistence.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.Property<decimal>("RecipientMass")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("AnimalMassUnitId");
+                    b.Property<long?>("RecipientMassUnitId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DosageUnitId");
 
                     b.HasIndex("DurationUnitId");
 
                     b.HasIndex("FrequencyUnitId");
+
+                    b.HasIndex("RecipientMassUnitId");
 
                     b.ToTable("Treatments");
                 });
@@ -1493,37 +1493,29 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.TreatmentModel", b =>
                 {
-                    b.HasOne("Domain.Models.UnitModel", "AnimalMassUnit")
-                        .WithMany()
-                        .HasForeignKey("AnimalMassUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Models.UnitModel", "DosageUnit")
                         .WithMany()
-                        .HasForeignKey("DosageUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DosageUnitId");
 
                     b.HasOne("Domain.Models.UnitModel", "DurationUnit")
                         .WithMany()
-                        .HasForeignKey("DurationUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DurationUnitId");
 
                     b.HasOne("Domain.Models.UnitModel", "FrequencyUnit")
                         .WithMany()
-                        .HasForeignKey("FrequencyUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FrequencyUnitId");
 
-                    b.Navigation("AnimalMassUnit");
+                    b.HasOne("Domain.Models.UnitModel", "RecipientMassUnit")
+                        .WithMany()
+                        .HasForeignKey("RecipientMassUnitId");
 
                     b.Navigation("DosageUnit");
 
                     b.Navigation("DurationUnit");
 
                     b.Navigation("FrequencyUnit");
+
+                    b.Navigation("RecipientMassUnit");
                 });
 
             modelBuilder.Entity("Domain.Models.TreatmentRecordModel", b =>

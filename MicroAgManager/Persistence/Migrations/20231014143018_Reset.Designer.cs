@@ -12,8 +12,8 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    [Migration("20231009141244_NullLoc")]
-    partial class NullLoc
+    [Migration("20231014143018_Reset")]
+    partial class Reset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1639,6 +1639,180 @@ namespace BackEnd.Persistence.Migrations
                     b.ToTable("Tenants");
                 });
 
+            modelBuilder.Entity("Domain.Entity.Treatment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DosageAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<long?>("DosageUnitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Duration")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<long?>("DurationUnitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Frequency")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<long?>("FrequencyUnitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("LabelMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MeatWithdrawal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MilkWithdrawal")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("RecipientMass")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<long?>("RecipientMassUnitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("TimeStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DosageUnitId");
+
+                    b.HasIndex("DurationUnitId");
+
+                    b.HasIndex("FrequencyUnitId");
+
+                    b.HasIndex("RecipientMassUnitId");
+
+                    b.ToTable("Treatments");
+                });
+
+            modelBuilder.Entity("Domain.Entity.TreatmentRecord", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AppliedMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DatePerformed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DosageAmount")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<long>("DosageUnitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("RecipientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<long>("RecipientTypeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("TimeStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long>("TreatmentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DosageUnitId");
+
+                    b.HasIndex("TreatmentId");
+
+                    b.ToTable("TreatmentRecords");
+                });
+
             modelBuilder.Entity("Domain.Entity.Unit", b =>
                 {
                     b.Property<long>("Id")
@@ -2278,6 +2452,56 @@ namespace BackEnd.Persistence.Migrations
                         .HasForeignKey("EventId");
 
                     b.Navigation("Duty");
+                });
+
+            modelBuilder.Entity("Domain.Entity.Treatment", b =>
+                {
+                    b.HasOne("Domain.Entity.Unit", "DosageUnit")
+                        .WithMany()
+                        .HasForeignKey("DosageUnitId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Entity.Unit", "DurationUnit")
+                        .WithMany()
+                        .HasForeignKey("DurationUnitId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Entity.Unit", "FrequencyUnit")
+                        .WithMany()
+                        .HasForeignKey("FrequencyUnitId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Entity.Unit", "RecipientMassUnit")
+                        .WithMany()
+                        .HasForeignKey("RecipientMassUnitId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("DosageUnit");
+
+                    b.Navigation("DurationUnit");
+
+                    b.Navigation("FrequencyUnit");
+
+                    b.Navigation("RecipientMassUnit");
+                });
+
+            modelBuilder.Entity("Domain.Entity.TreatmentRecord", b =>
+                {
+                    b.HasOne("Domain.Entity.Unit", "DosageUnit")
+                        .WithMany()
+                        .HasForeignKey("DosageUnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entity.Treatment", "Treatment")
+                        .WithMany()
+                        .HasForeignKey("TreatmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DosageUnit");
+
+                    b.Navigation("Treatment");
                 });
 
             modelBuilder.Entity("DutyEvent", b =>

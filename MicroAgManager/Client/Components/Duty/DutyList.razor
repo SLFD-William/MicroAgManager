@@ -3,7 +3,7 @@
 @if (app != null)
 {
     <CascadingValue Value="_editDuty">
-        <DutyEditor Show=@(_editDuty is not null) @ref="_DutyEditor" Modal=true Submitted="@DutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></DutyEditor>
+        <DutyEditor Show=@(_editDuty is not null) @ref="_DutyEditor" dutyId=@(_editDuty?.Id ?? 0) Modal=true Submitted="@DutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></DutyEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="DutySummary"
                     Items="@Items"
