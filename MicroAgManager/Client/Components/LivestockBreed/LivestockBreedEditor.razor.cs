@@ -59,10 +59,10 @@ namespace FrontEnd.Components.LivestockBreed
 
             }
         }
-        private async void Cancel()
+        private void Cancel()
         {
             editContext = new EditContext(working);
-            await Cancelled.InvokeAsync();
+            Task.Run(Cancelled.InvokeAsync);
             StateHasChanged();
         }
     }

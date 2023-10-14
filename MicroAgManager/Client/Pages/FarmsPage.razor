@@ -2,7 +2,6 @@
 @inherits DataComponent<FarmLocationModel>
 @page "/"
 @page "/Farms"
-@page "/Farms/{farmId:long}"
 @using Domain.Models;
 @using FrontEnd.Components.Farm;
 <PageTitle>Farms</PageTitle>
@@ -10,31 +9,7 @@
 
     @if (app?.dbContext is not null)
     {
-        @if (@app.dbContext.Farms.Count() == 1)
-        {
-            <CascadingValue Value="@app.dbContext.Farms.First()">
-                <FrontEnd.Components.Farm.FarmViewer  ></FrontEnd.Components.Farm.FarmViewer>
-            </CascadingValue>
-        }
-        else
-        {
             <FrontEnd.Components.Farm.FarmList Items="@app.dbContext.Farms.Select(f=>new FarmLocationSummary(f,app.dbContext)).ToList()"></FrontEnd.Components.Farm.FarmList>
-        }
     }
-    
-
-@* @if (selectedFarm is not null)
-{
-    @if (farmId.HasValue || (!app?.dbContext?.Farms.Any() ?? true ) || selectedFarm.Id<1)
-    {
-        <FrontEnd.Components.Farm.FarmEditor farmId="@farmId" Submitted="FarmLocationUpdated" Cancelled="Cancelled"></FrontEnd.Components.Farm.FarmEditor>
-    }
-    else
-    {
-        <CascadingValue Value="@selectedFarm">
-            <FrontEnd.Components.Farm.FarmViewer></FrontEnd.Components.Farm.FarmViewer>
-        </CascadingValue>
-    }
-} *@
 
 </div>

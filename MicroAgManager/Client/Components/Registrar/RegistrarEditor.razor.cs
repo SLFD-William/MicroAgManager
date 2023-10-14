@@ -14,8 +14,6 @@ namespace FrontEnd.Components.Registrar
         protected new RegistrarModel working { get => base.working as RegistrarModel; set { base.working = value; } }
         public override async Task FreshenData()
         {
-            working = new RegistrarModel();
-
             if (Registrar is not null)
                 working    = Registrar;
 

@@ -105,11 +105,11 @@ namespace FrontEnd.Components.Livestock
             working.StatusId = status?.Id;
             SetEditContext(working);
         }
-        private async void Cancel()
+        private void Cancel()
         {
             working = original?.Clone() as LivestockModel;
             SetEditContext(working);
-            await Cancelled.InvokeAsync();
+            Task.Run(Cancelled.InvokeAsync);
         }
     }
 }

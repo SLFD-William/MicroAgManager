@@ -19,10 +19,10 @@ namespace FrontEnd.Components.LandPlot
         private LandPlotEditor? _landPlotEditor;
 
         private async Task<LandPlotModel?> FindPlot(long Id) => await app.dbContext.LandPlots.FindAsync(Id);
-        private async void TableItemSelected()
+        private void TableItemSelected()
         { 
             if(_listComponent.SelectedItems.Count() > 0)
-                PlotSelected?.Invoke(await FindPlot(_listComponent.SelectedItems.First().Id));
+                PlotSelected?.Invoke(Task.Run(async () => await FindPlot(_listComponent.SelectedItems.First().Id)).Result);
         }
         private async Task EditPlot(long id)
         {

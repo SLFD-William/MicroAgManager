@@ -3,16 +3,27 @@
 @if (app != null)
 {
     <CascadingValue Value="_editFarm">
-        <FarmEditor Show=@(_editFarm is not null || !Items.Any()) @ref="_farmEditor" farmId=@(_editFarm?.Id ??0 ) Modal="true" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
+        <FarmEditor Show=@(_editFarm is not null) @ref="_farmEditor" Modal="true" Submitted="@FarmUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></FarmEditor>
     </CascadingValue>
     <TableTemplate @ref="_listComponent" PageSize="0" TItem="FarmLocationSummary" 
     Items="@Items" 
     MultiSelect="@Multiselect" 
     Selectable="@Selectable"
     OnSelectionChange="@TableItemSelected"
+    NewItemName="Farm"
+    AddItemClicked="@(async ()=>await EditFarm(0))"
     RowDetailsShowing="@app.RowDetailsShowing["FarmList"]">
         <ColumnContent>
-            <Column TableItem="FarmLocationSummary" Field="@(x => x.Name)" Title="Plot Use" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="FarmLocationSummary" Field="@(x => x.Id)" Title="ControlColumn">
+                <Template Context="e">
+                    <button type="button" onclick="@(async ()=> await EditFarm(e.Id))">Edit</button>
+                    @if (CanDelete)
+                    {
+                        <button type="button">Delete</button>
+                    }
+                </Template>
+            </Column>
+            <Column TableItem="FarmLocationSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="FarmLocationSummary" Field="@(x => x.StreetAddress)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="FarmLocationSummary" Field="@(x => x.City)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="FarmLocationSummary" Field="@(x => x.State)" Sortable="true" Filterable="true" UseInSuperSearch="true" />

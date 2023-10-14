@@ -37,11 +37,11 @@ namespace FrontEnd.Components.LandPlot
             showUnitModal = false;
             StateHasChanged();
         }
-        private async void Cancel()
+        private void Cancel()
         {
             working = original.Map(working) as LandPlotModel;
             SetEditContext(working);
-            await Cancelled.InvokeAsync();
+            Task.Run(Cancelled.InvokeAsync);
         }
         public async Task OnSubmit()
         {

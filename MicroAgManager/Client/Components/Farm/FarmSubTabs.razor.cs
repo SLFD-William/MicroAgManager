@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.Abstracts;
+using Domain.Models;
 using FrontEnd.Components.Duty;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockAnimal;
@@ -36,10 +37,9 @@ namespace FrontEnd.Components.Farm
         protected TabPage _treatmentsTab;
         
 
-        protected override void OnInitialized()
-        {
+        protected override void OnInitialized()=>
             _tabControl?.ActivatePage(app.SelectedTabs[nameof(FarmSubTabs)] ?? _tabControl?.ActivePage ?? _plotTab);
-        }
+        
         private string GetPlotCount(string plotUsage)
         {
             var count = app.dbContext.LandPlots.Count(p => p.FarmLocationId == farm.Id && p.Usage == plotUsage);
@@ -74,22 +74,6 @@ namespace FrontEnd.Components.Farm
                 await _measureList.FreshenData();
             if (_treatmentList is not null)
                 await _treatmentList.FreshenData();
-        }
-        private async Task LandPlotUpdated(LandPlotModel args)
-        {
-            if (args.Id > 0)
-                while (!app.dbContext.LandPlots.Any(t => t.Id == args.Id))
-                    await Task.Delay(100);
-
-            await FreshenData();
-        }
-        private async Task LivestockAnimalUpdated(LivestockAnimalModel args)
-        {
-            if (args.Id > 0)
-                while (!app.dbContext.LivestockAnimals.Any(t => t.Id == args.Id))
-                    await Task.Delay(100);
-
-            await FreshenData();
         }
     }
 }

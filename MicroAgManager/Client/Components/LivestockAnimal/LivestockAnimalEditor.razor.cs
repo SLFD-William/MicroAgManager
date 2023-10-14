@@ -1,4 +1,5 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Animals;
+using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
@@ -34,52 +35,38 @@ namespace FrontEnd.Components.LivestockAnimal
         public override async Task FreshenData() 
         {
             if (LivestockAnimal is not null)
-            {
                 working = LivestockAnimal;
-                editContext = new EditContext(working);
-                StateHasChanged();
-                return;
-            }
-            if (LivestockAnimal is not null)
-                livestockAnimalId = LivestockAnimal.Id;
+               
+            if (LivestockAnimal is null && livestockAnimalId.HasValue)
+                working = await app.dbContext.LivestockAnimals.FindAsync(livestockAnimalId);
 
-            working = new LivestockAnimalModel();
-
-            var query = app.dbContext.LivestockAnimals.AsQueryable();
-            if (livestockAnimalId.HasValue && livestockAnimalId > 0)
-                query = query.Where(f => f.Id == livestockAnimalId);
-
-            working = await query.OrderBy(f => f.Id).FirstOrDefaultAsync() ?? new LivestockAnimalModel();
-
-            editContext = new EditContext(working);
+            SetEditContext(working);
         }
         public  async Task OnSubmit()
         {
             try
             {
-                var id = working.Id;
-                if (working.Id <= 0)
-                    working.Id = await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = working });
+                var id = working?.Id ?? 0;
+                if (id <= 0)
+                    id = await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = working });
                 else
-                    working.Id = await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = working });
+                    id = await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = working });
 
-                if (working.Id <= 0)
+                if (id <= 0)
                     throw new Exception("Failed to save livestock type");
 
                 working.Id = id;
-                original = working.Clone() as LivestockAnimalModel;
-                editContext = new EditContext(working);
+                SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-                StateHasChanged();
             }
             catch (Exception ex)
             { }
         }
-        private async void Cancel()
+        private void Cancel()
         {
-            editContext = new EditContext(working);
-            await Cancelled.InvokeAsync();
-            StateHasChanged();
+            working = original.Map(working) as LivestockAnimalModel;
+            SetEditContext(working);
+            Task.Run(Cancelled.InvokeAsync);
         }
     }
 }

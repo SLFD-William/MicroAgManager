@@ -22,10 +22,13 @@ namespace FrontEnd.Components.Measure
         }
         public override async Task FreshenData()
         {
+            if (_listComponent is null) return;
+            while (!app.dbContext.Measures.Any())
+                await Task.Delay(100);
 
             if (Items is null)
                 Items = (await app.dbContext.Measures
-                    .OrderBy(f => f.EntityModifiedOn).Select(m=> new MeasureSummary(m,app.dbContext))
+                    .OrderBy(f => f.Method).ThenBy(f=>f.Name).Select(m=> new MeasureSummary(m,app.dbContext))
                     .ToListAsync()).AsEnumerable();
 
             _listComponent?.Update();

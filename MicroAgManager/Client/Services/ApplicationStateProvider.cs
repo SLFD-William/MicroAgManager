@@ -48,8 +48,6 @@ namespace FrontEnd.Services
             _authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
 
             Task.Run(async () => await InitializeAsync(config));
-            
-            Task.Run(async()=> await _dbSynchonizer.SynchronizeInBackground());
         }
 
         private async Task ImportScripts(IJSRuntime js)

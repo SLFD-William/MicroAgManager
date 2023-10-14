@@ -46,11 +46,11 @@ namespace FrontEnd.Components.Shared
             StateHasChanged();
 
         }
-        protected virtual async void DbSync_OnUpdate()
+        protected virtual void DbSync_OnUpdate()
         {
             if (Modal && !Show) return;
             if (app.dbContext is not null)
-                await FreshenData();
+                Task.Run(FreshenData);
             StateHasChanged();
         }
       

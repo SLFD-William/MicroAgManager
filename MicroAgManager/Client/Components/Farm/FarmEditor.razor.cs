@@ -26,14 +26,15 @@ namespace FrontEnd.Components.Farm
                 GeoLoc.GetCurrentPosition(this, nameof(OnCoordinatesPermitted), nameof(OnErrorRequestingCoordinates));
         }
         [JSInvokable]
-        public async void OnCoordinatesPermitted(GeolocationPosition position)  
+        public void OnCoordinatesPermitted(GeolocationPosition position)  
         {
             locationEnabled = true;
             var locChanged = working.Latitude != position.Coords.Latitude || working.Longitude != position.Coords.Longitude;
             if(!locChanged) return;
             working.Latitude = position.Coords.Latitude;
             working.Longitude = position.Coords.Longitude;
-            await OnCoordinateChange();
+
+            Task.Run(OnCoordinateChange);
             StateHasChanged();
         }
         private async Task OnCoordinateChange()     

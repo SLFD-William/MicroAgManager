@@ -14,7 +14,7 @@ namespace FrontEnd.Components.Registrar
         [Parameter] public Action<RegistrarModel>? RegistrarSelected { get; set; }
 
         private RegistrarModel? _editRegistrar;
-        private RegistrarEditor? _RegistrarEditor;
+        private RegistrarEditor? _registrarEditor;
         protected override void OnInitialized()
         {
             if (!app.RowDetailsShowing.ContainsKey("RegistrarList"))

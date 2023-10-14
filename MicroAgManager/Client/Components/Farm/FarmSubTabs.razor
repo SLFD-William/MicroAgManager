@@ -21,7 +21,9 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <LandPlotList @ref="_landPlotList" Items="app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).Select(f=>new LandPlotSummary(f,app.dbContext))"></LandPlotList>
+            <LandPlotList @ref="_landPlotList"  
+                Items="app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).Select(f=>new LandPlotSummary(f,app.dbContext))">
+            </LandPlotList>
         </ChildContent>
     </TabPage>
 
@@ -30,11 +32,13 @@
             <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
         </ButtonContent>
         <ChildContent>
-            <LivestockAnimalList @ref="_livestockAnimalList" Items="app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(a=>new LivestockAnimalSummary(a,app.dbContext))" ></LivestockAnimalList>
+            <LivestockAnimalList @ref="_livestockAnimalList"
+                Items="app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(a=>new LivestockAnimalSummary(a,app.dbContext))" >
+            </LivestockAnimalList>
         </ChildContent>
 
     </TabPage>
-    <TabPage @ref="_scheduledDutyTab" Text="Scheduled Duties" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+    <TabPage @ref="_scheduledDutyTab" Text="Scheduled Duties" >
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_scheduledDutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_scheduledDutyTab))">
                 Scheduled Duties
@@ -45,7 +49,7 @@
             <ScheduledDutyList @ref="_scheduledDutyList" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext))"></ScheduledDutyList>
         </ChildContent>
     </TabPage>
-    <TabPage @ref="_dutyTab" Text="Duties" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+    <TabPage @ref="_dutyTab" Text="Duties" >
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_dutyTab)" @onclick="@(() =>_tabControl.ActivatePage(_dutyTab))">
                 Duties              
@@ -55,7 +59,7 @@
             <DutyList @ref="_dutyList" Items="app.dbContext.Duties.OrderByDescending(f => f.Name).Select(s => new DutySummary(s, app.dbContext))"></DutyList>
         </ChildContent>
     </TabPage>
-    <TabPage @ref="_registrarsTab" Text="Registrars" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+    <TabPage @ref="_registrarsTab" Text="Registrars">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_registrarsTab)" @onclick="@(() =>_tabControl.ActivatePage(_registrarsTab))">
                Registrars
@@ -65,7 +69,7 @@
             <RegistrarList @ref="_registrarList" Items="app.dbContext.Registrars.OrderByDescending(f => f.Name)"></RegistrarList>
         </ChildContent>
     </TabPage>
-    <TabPage @ref="_measuresTab" Text="Measures" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+    <TabPage @ref="_measuresTab" Text="Measures" >
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_measuresTab)" @onclick="@(() =>_tabControl.ActivatePage(_measuresTab))">
                 Measures
@@ -75,7 +79,7 @@
             <MeasureList @ref="_measureList" Items="app.dbContext.Measures.OrderByDescending(f => f.Name).Select(m=>new MeasureSummary(m,app.dbContext)).ToList()"></MeasureList>
         </ChildContent>
     </TabPage>
-    <TabPage @ref="_treatmentsTab" Text="Treatments" Visible="@(app?.dbContext?.LandPlots.Any() ?? false)">
+    <TabPage @ref="_treatmentsTab" Text="Treatments" >
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_treatmentsTab)" @onclick="@(() =>_tabControl.ActivatePage(_treatmentsTab))">
                 Treatments
