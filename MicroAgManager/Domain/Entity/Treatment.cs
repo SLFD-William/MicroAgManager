@@ -1,6 +1,5 @@
 ﻿using Domain.Abstracts;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 

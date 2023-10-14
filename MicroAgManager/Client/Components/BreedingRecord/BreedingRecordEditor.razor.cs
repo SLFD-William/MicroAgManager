@@ -4,7 +4,7 @@ using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.BreedingRecord
 {
@@ -32,9 +32,9 @@ namespace FrontEnd.Components.BreedingRecord
 
             working = new BreedingRecordModel() { FemaleId =0};
             if (BreedingRecord is not null)
-                working = BreedingRecord;
+                working = BreedingRecord.Clone() as BreedingRecordModel;
             if (BreedingRecord is null && breedingRecordId > 0)
-                working = await app.dbContext.BreedingRecords.FindAsync(breedingRecordId);
+                working = await app.dbContext.BreedingRecords.FirstOrDefaultAsync(b=>b.Id==breedingRecordId);
 
             if(working?.FemaleId >0 )
                 livestockBreedId=(await app.dbContext.Livestocks.FindAsync(working.FemaleId))?.LivestockBreedId;
@@ -47,14 +47,15 @@ namespace FrontEnd.Components.BreedingRecord
             if (livestockAnimalId.HasValue && (LivestockAnimal is null || LivestockAnimal.Id!=livestockAnimalId))
                 LivestockAnimal = new LivestockAnimalSummary(await app.dbContext.LivestockAnimals.FindAsync(livestockAnimalId), app.dbContext);
             
-            BreedingRecord=working;
-            editContext = new EditContext(working);
+            BreedingRecord=working.Clone() as BreedingRecordModel;
+            SetEditContext(working);
         }
         private async Task Cancel()
         {
             working =original.Clone() as BreedingRecordModel;
-            editContext = new EditContext(working);
+            SetEditContext(working);
             await Cancelled.InvokeAsync(working);
+            BreedingRecord = working.Clone() as BreedingRecordModel;
             StateHasChanged();
         }
         public async Task OnSubmit()
@@ -69,8 +70,9 @@ namespace FrontEnd.Components.BreedingRecord
                     throw new Exception("Unable to save farm location");
                 working.Id = id;
                 original = working.Clone() as BreedingRecordModel;
-                editContext = new EditContext(working);
+                SetEditContext(working);
                 await Submitted.InvokeAsync(working);
+                BreedingRecord = working.Clone() as BreedingRecordModel;
                 StateHasChanged();
             }
             catch (Exception ex)

@@ -1,5 +1,7 @@
 ﻿@using Domain.Models;
 @using FrontEnd.Components.BreedingRecord;
+@using FrontEnd.Components.Measurement;
+@using FrontEnd.Components.TreatmentRecord;
 @inherits DataComponent<ScheduledDutyModel>
 @if (editContext is not null)
 {
@@ -14,15 +16,26 @@
         <DataContent>
             @if (working.Record == "BreedingRecord")
             {
-                <BreedingRecordEditor showUpdateCancelButtons="true" breedingRecordId="@working.RecordId" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
+                <BreedingRecordEditor @ref=_breedingRecordEditor showUpdateCancelButtons="false"  breedingRecordId="@working.RecordId" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
+            }
+            @if (working.Record == "Measurement")
+            {
+                <MeasurementEditor @ref=_measurementEditor showUpdateCancelButtons="false" measurementId="@working.RecordId" Cancelled="Cancel" Submitted="MeasurementSubmitted"></MeasurementEditor>
+            }
+            @if (working.Record == "Treatment")
+            {
+                <TreatmentRecordEditor @ref=_treatmentRecordEditor showUpdateCancelButtons="false" treatmentRecordId="@working.RecordId" Cancelled="Cancel" Submitted="TreatmentRecordSubmitted"></TreatmentRecordEditor>
             }
         </DataContent>
         <SecondaryContent>
             @if (working.Id > 0)
             {
                 <section class="updateCancelButtons">
-                    <button type="button" @onclick="Snooze">Snooze</button>
-                    <Snooze Show=showSnooze Cancelled="SnoozeCancel" Submitted="SnoozeSubmitted"></Snooze>
+                    <button type="button" @onclick="Submit">Update</button>
+                    <button type="button" @onclick="Cancel">Cancel</button>
+
+                    <button type="button" @onclick="Snooze">@SnoozeLabel()</button>
+                    <Snooze @ref=_snoozeEditor Show=showSnooze Cancelled="SnoozeCancel" Submitted="SnoozeSubmitted" SuggestedSnooze="SuggestedSnooze"></Snooze>
                     <button type="button" @onclick="Confirm">Dismiss</button>
                     <ConfirmationYesNo Prompt="Are you sure you want to Dismiss this Duty?" Show=showConfirm Cancelled="ConfirmCancel" Submitted="DismissedConfirmed"></ConfirmationYesNo>
                 </section>

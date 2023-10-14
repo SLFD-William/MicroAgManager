@@ -30,7 +30,7 @@ namespace FrontEnd.Services
         public Dictionary<string, TabPage?> SelectedTabs { get; set; } = new Dictionary<string, TabPage?>();
 
         public ILogger? log { get => _log; }
-        public FrontEndDbContext? dbContext { get => _dbContext;}
+        public FrontEndDbContext dbContext { get => _dbContext;}
         public DataSynchronizer? dbSynchonizer { get => _dbSynchonizer; }
         public IFrontEndApiServices? api { get => _api; }
         public ApplicationStateProvider(FrontEndAuthenticationStateProvider authentication, 

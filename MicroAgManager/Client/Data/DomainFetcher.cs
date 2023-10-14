@@ -8,6 +8,7 @@ using BackEnd.BusinessLogic.Livestock.Breeds;
 using BackEnd.BusinessLogic.Livestock.Status;
 using BackEnd.BusinessLogic.ManyToMany;
 using BackEnd.BusinessLogic.Measure;
+using BackEnd.BusinessLogic.Measurement;
 using BackEnd.BusinessLogic.Milestone;
 using BackEnd.BusinessLogic.Registrar;
 using BackEnd.BusinessLogic.Registration;
@@ -17,13 +18,11 @@ using BackEnd.BusinessLogic.Treatment;
 using BackEnd.BusinessLogic.TreatmentRecord;
 using BackEnd.BusinessLogic.Unit;
 using Domain.Abstracts;
-using Domain.Entity;
 using Domain.Models;
 using Domain.ValueObjects;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using System.Data.Common;
-using System.Xml.Linq;
 
 namespace FrontEnd.Data
 {

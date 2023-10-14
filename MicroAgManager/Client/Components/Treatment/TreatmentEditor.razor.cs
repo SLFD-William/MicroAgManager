@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using BackEnd.BusinessLogic.Treatment;
 using FrontEnd.Components.Unit;
-using Domain.Constants;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Treatment
 {

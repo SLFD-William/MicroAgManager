@@ -2,7 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 
-namespace BackEnd.BusinessLogic.Measure
+namespace BackEnd.BusinessLogic.Measurement
 {
     public class MeasurementQueries : BaseQuery
     {

@@ -48,9 +48,9 @@
     public static class MilestoneSystemRequiredConstants
     { 
         public static string Parturition = "Parturition";
-        public static string Birth = "Birth";
+        public static string Birth = DutyCommandConstants.Birth;
         public static string Death = "Death";
-        public static string Breed = "Breed";
+        public static string Breed = DutyCommandConstants.Breed;
     }
     public static class BreedingResolutionConstants
     {

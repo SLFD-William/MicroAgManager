@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.Measure
+namespace BackEnd.BusinessLogic.Measurement
 {
     public class GetMeasurementList : MeasurementQueries, IRequest<Tuple<long, ICollection<MeasurementModel?>>>
     {

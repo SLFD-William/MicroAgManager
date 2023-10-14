@@ -23,6 +23,7 @@ using BackEnd.BusinessLogic.FarmLocation.LandPlots;
 using BackEnd.BusinessLogic.Livestock.Feed;
 using BackEnd.BusinessLogic.Treatment;
 using BackEnd.BusinessLogic.TreatmentRecord;
+using BackEnd.BusinessLogic.Measurement;
 
 namespace Host
 {
@@ -102,7 +103,9 @@ namespace Host
             app.MapPost("/api/UpdateTreatment", [Authorize] async (UpdateTreatment command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
 
             app.MapPost("/api/GetTreatmentRecords", [Authorize] async (GetTreatmentRecordList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            
+            app.MapPost("/api/CreateTreatmentRecord", [Authorize] async (CreateTreatmentRecord command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+            app.MapPost("/api/UpdateTreatmentRecord", [Authorize] async (UpdateTreatmentRecord command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request));
+
 
         }
         public static void MapFarm(WebApplication app)

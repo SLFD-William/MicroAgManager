@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
-namespace BackEnd.BusinessLogic.Measure
+namespace BackEnd.BusinessLogic.Measurement
 {
     public class CreateMeasurement : BaseCommand, ICreateCommand
     {

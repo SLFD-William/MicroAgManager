@@ -4,7 +4,7 @@ using Domain.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace BackEnd.BusinessLogic.Measure
+namespace BackEnd.BusinessLogic.Measurement
 {
     public class UpdateMeasurement : BaseCommand, IUpdateCommand
     {

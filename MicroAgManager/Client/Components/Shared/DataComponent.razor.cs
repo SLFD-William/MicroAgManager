@@ -40,7 +40,7 @@ namespace FrontEnd.Components.Shared
                 original = null;
                 return;
             }
-            if(original is null) original = new Model();
+            original = new Model();
             original = working.Map(original);
             editContext = new EditContext(working);
             StateHasChanged();
