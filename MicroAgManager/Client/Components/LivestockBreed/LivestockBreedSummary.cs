@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using Domain.ValueObjects;
 using FrontEnd.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockBreed
 {

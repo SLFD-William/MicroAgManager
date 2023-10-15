@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Farm
 {
@@ -9,7 +8,7 @@ namespace FrontEnd.Components.Farm
     {
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }
-
+        private Weather.Weather _weather;
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
         private bool _editting=false;
         private void ShowEditor()=>_editting = true;
@@ -25,15 +24,13 @@ namespace FrontEnd.Components.Farm
         public override async Task FreshenData()
         {
             if (FarmLocation is not null)
-            {
                 farm = FarmLocation;
-                StateHasChanged();
-                return;
-            }
-            var query = app.dbContext?.Farms.AsQueryable();
-            if (farmId.HasValue && farmId > 0)
-                query = query.Where(f => f.Id == farmId);
-            farm = await query.OrderBy(f => f.Id).SingleOrDefaultAsync() ?? new FarmLocationModel();
+            if (FarmLocation is null && farmId.HasValue)
+                farm = await app.dbContext.Farms.FindAsync(farmId);
+
+            if(_weather is not null)
+                await _weather.RefreshWeather();
+
             StateHasChanged();
         }
     }

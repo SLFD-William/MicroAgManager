@@ -18,7 +18,7 @@ namespace FrontEnd.Components.Weather
                 weatherUpdateTimer = new Timer(async _ => { await RefreshWeather(); }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
             }
         }
-        private async Task RefreshWeather()
+        public async Task RefreshWeather()
         {
             weather = await api.GetWeather(Latitude.Value, Longitude.Value);
             StateHasChanged();

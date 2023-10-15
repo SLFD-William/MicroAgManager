@@ -24,30 +24,30 @@
 .TableTemplate__Table caption, .TableTemplate__Table width, .TableTemplate__Table td {
   padding: 1rem;
 }
-.TableTemplate__Table th {
-  background: hsla(0deg, 0%, 0%, 0.5);
-}
-.TableTemplate__Table tr:nth-of-type(2n) {
-  background: hsla(0deg, 0%, 0%, 0.1);
-}
-.TableTemplate__Table tr.selected {
-  background: pink;
-}
 .TableTemplate__Table > table {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
   table-layout: fixed;
-  border: 1px solid #e8e8e8;
+  /*border: 1px solid #e8e8e8;*/
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 0 40px 0 rgba(82, 63, 105, 0.08);
-  background-color: #fff;
-  color: #606266;
+  /*            box-shadow: 0 0 40px 0 rgba(82,63,105,.08);
+              background-color: #fff;
+              color: #606266;*/
   font-size: 14px;
   text-align: left;
   word-break: break-all;
   word-wrap: break-word;
+}
+.TableTemplate__Table > table th {
+  background: hsla(0deg, 0%, 0%, 0.5);
+}
+.TableTemplate__Table > table tr:nth-of-type(2n) {
+  background: hsla(0deg, 0%, 0%, 0.1);
+}
+.TableTemplate__Table > table tr.selected {
+  background: pink;
 }
 @media (max-width: 650px) {
   .TableTemplate__Table th {

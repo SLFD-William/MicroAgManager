@@ -3,7 +3,6 @@ using Domain.Models;
 using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace FrontEnd.Components.LivestockBreed
 {

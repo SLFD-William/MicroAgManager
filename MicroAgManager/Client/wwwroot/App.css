@@ -10287,7 +10287,7 @@ body {
   --background-color-validation-required: transparent;
   --color-validation-required: blue;
   --color-active: white;
-  --background-color-active:blue;
+  --background-color-active: blue;
   /*    @media (prefers-color-scheme: dark) {
       --color-validation-validmodified: white;
       --background-color-validation-validmodified: green;
@@ -10296,6 +10296,7 @@ body {
       --color-action-primary: lightblue;
   }*/
   width: 100%;
+  overflow: hidden;
 }
 
 *, *::before, *::after {
@@ -10341,6 +10342,12 @@ form .updateCancelButtons {
   flex-wrap: wrap;
   gap: 0.25em;
   justify-items: center;
+}
+
+#app {
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+  max-height: 100vh;
 }
 
 .modalContainer {

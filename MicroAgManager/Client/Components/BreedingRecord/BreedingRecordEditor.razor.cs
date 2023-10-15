@@ -33,7 +33,8 @@ namespace FrontEnd.Components.BreedingRecord
 
             
             if (BreedingRecord is not null)
-                working = BreedingRecord.Clone() as BreedingRecordModel;
+                working = BreedingRecord;
+
             if (BreedingRecord is null && breedingRecordId > 0)
                 working = await app.dbContext.BreedingRecords.FirstOrDefaultAsync(b=>b.Id==breedingRecordId);
 
@@ -47,8 +48,7 @@ namespace FrontEnd.Components.BreedingRecord
 
             if (livestockAnimalId.HasValue && (LivestockAnimal is null || LivestockAnimal.Id!=livestockAnimalId))
                 LivestockAnimal = new LivestockAnimalSummary(await app.dbContext.LivestockAnimals.FindAsync(livestockAnimalId), app.dbContext);
-            
-            BreedingRecord=working.Clone() as BreedingRecordModel;
+
             SetEditContext(working);
         }
         private async Task Cancel()
@@ -56,8 +56,6 @@ namespace FrontEnd.Components.BreedingRecord
             working =original.Clone() as BreedingRecordModel;
             SetEditContext(working);
             await Cancelled.InvokeAsync(working);
-            BreedingRecord = working.Clone() as BreedingRecordModel;
-            StateHasChanged();
         }
         public async Task OnSubmit()
         {
@@ -70,11 +68,8 @@ namespace FrontEnd.Components.BreedingRecord
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");
                 working.Id = id;
-                original = working.Clone() as BreedingRecordModel;
                 SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-                BreedingRecord = working.Clone() as BreedingRecordModel;
-                StateHasChanged();
             }
             catch (Exception ex)
             {

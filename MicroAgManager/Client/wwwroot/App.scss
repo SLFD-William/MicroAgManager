@@ -14,8 +14,7 @@ body {
     --background-color-validation-required: transparent;
     --color-validation-required: blue;
     --color-active: white;
-    --background-color-active:blue;
-
+    --background-color-active: blue;
     /*    @media (prefers-color-scheme: dark) {
         --color-validation-validmodified: white;
         --background-color-validation-validmodified: green;
@@ -25,6 +24,7 @@ body {
     }*/
 
     width: 100%;
+    overflow: hidden;
 }
 *, *::before, *::after {
     box-sizing: border-box;
@@ -72,7 +72,11 @@ form {
         justify-items: center;
     }
 }
-
+#app {
+    display: grid;
+    grid-template-rows: min-content 1fr min-content;
+    max-height: 100vh;
+}
 .modalContainer {
     display: flex;
     align-items: center;

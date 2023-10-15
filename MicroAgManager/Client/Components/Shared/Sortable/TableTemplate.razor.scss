@@ -27,33 +27,33 @@
             padding: 1rem;
         }
 
-        & th {
-            background: hsl(0 0% 0% / 0.5);
-        }
-
-        & tr:nth-of-type(2n) {
-            background: hsl(0 0% 0% / 0.1);
-        }
-
-        & tr.selected {
-            background: pink;
-        }
-
         & > table {
             width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
             table-layout: fixed;
-            border: 1px solid #e8e8e8;
+            /*border: 1px solid #e8e8e8;*/
             border-radius: 4px;
             overflow: hidden;
-            box-shadow: 0 0 40px 0 rgba(82,63,105,.08);
+/*            box-shadow: 0 0 40px 0 rgba(82,63,105,.08);
             background-color: #fff;
-            color: #606266;
+            color: #606266;*/
             font-size: 14px;
             text-align: left;
             word-break: break-all;
             word-wrap: break-word;
+
+            & th {
+                background: hsl(0 0% 0% / 0.5);
+            }
+
+            & tr:nth-of-type(2n) {
+                background: hsl(0 0% 0% / 0.1);
+            }
+
+            & tr.selected {
+                background: pink;
+            }
         }
 
         @media(max-width:650px) {

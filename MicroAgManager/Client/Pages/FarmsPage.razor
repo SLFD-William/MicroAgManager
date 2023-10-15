@@ -5,9 +5,8 @@
 @using Domain.Models;
 @using FrontEnd.Components.Farm;
 <PageTitle>Farms</PageTitle>
-<div style="max-height:100vh">
-    @if (app?.dbContext is not null)
-    {
-        <FrontEnd.Components.Farm.FarmList Submitted="StateHasChanged" Items="app.dbContext.Farms.Select((f => new FarmLocationSummary(f, app.dbContext)))"></FrontEnd.Components.Farm.FarmList>
-    }
-</div>
+@if (app?.dbContext is not null)
+{
+    <FrontEnd.Components.Farm.FarmList Submitted="StateHasChanged" Items="app.dbContext.Farms.Select((f => new FarmLocationSummary(f, app.dbContext)))"></FrontEnd.Components.Farm.FarmList>
+}
+

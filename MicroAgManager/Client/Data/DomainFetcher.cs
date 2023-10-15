@@ -248,7 +248,7 @@ namespace FrontEnd.Data
         }
         public async static Task BulkUpdateLivestocks(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
-            if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockModel))) return;
+            if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockModel)) && !ShouldEntityBeUpdated(entityModels, nameof(BreedingRecordModel))) return;
             var existingAccountIds = new HashSet<long>(db.Livestocks.Select(t => t.Id));
             var mostRecentUpdate = db.Livestocks.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;

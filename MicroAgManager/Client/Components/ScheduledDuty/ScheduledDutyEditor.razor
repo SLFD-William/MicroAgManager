@@ -22,7 +22,7 @@
             {
                 <MeasurementEditor @ref=_measurementEditor showUpdateCancelButtons="false" measurementId="@working.RecordId" Cancelled="Cancel" Submitted="MeasurementSubmitted"></MeasurementEditor>
             }
-            @if (working.Record == "Treatment")
+            @if (working.Record == "TreatmentRecord")
             {
                 <TreatmentRecordEditor @ref=_treatmentRecordEditor showUpdateCancelButtons="false" treatmentRecordId="@working.RecordId" Cancelled="Cancel" Submitted="TreatmentRecordSubmitted"></TreatmentRecordEditor>
             }

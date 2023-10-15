@@ -21,6 +21,9 @@ namespace FrontEnd.Components.Duty
                 case nameof(DutyCommandConstants.Measurement):
                     CommandInstance = context.Measures.Find(_dutyModel.CommandId).Name ?? "Measure Not Found";
                     break;
+                case nameof(DutyCommandConstants.Treatment):
+                    CommandInstance = context.Treatments.Find(_dutyModel.CommandId).Name ?? "Treatment Not Found";
+                    break;
                 default:
                     CommandInstance = "No Application";
                     break;

@@ -55,7 +55,7 @@ namespace FrontEnd.Components.ScheduledDuty
                     working.CompletedBy = _auth.UserId();
                     
 
-                long id=(working.Id <= 0) ? 
+                var id=(working.Id <= 0) ? 
                     await app.api.ProcessCommand<ScheduledDutyModel, CreateScheduledDuty>("api/CreateScheduledDuty", new CreateScheduledDuty { ScheduledDuty = working }) : 
                     await app.api.ProcessCommand<ScheduledDutyModel, UpdateScheduledDuty>("api/UpdateScheduledDuty", new UpdateScheduledDuty { Duty=working });    
                

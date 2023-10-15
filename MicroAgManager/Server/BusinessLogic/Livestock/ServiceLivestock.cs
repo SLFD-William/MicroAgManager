@@ -45,13 +45,11 @@ namespace BackEnd.BusinessLogic.Livestock
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
-                    if (!request.GenerateScheduledDuties)
-                    {
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b=> new ModifiedEntity(b.Id.ToString(), b.GetType().Name,"Created",b.ModifiedBy)).ToList()), cancellationToken);
-                        return 0;
-                    }
-                    foreach (var dam in modified)
-                        await _mediator.Publish(new LivestockBred { EntityName =dam.GetType().Name, Id =dam.Id, ModifiedBy = request.ModifiedBy, TenantId =request.TenantId }, cancellationToken);
+                    if (request.GenerateScheduledDuties)
+                        foreach (var dam in modified)
+                            await _mediator.Publish(new LivestockBred { EntityName = dam.GetType().Name, Id = dam.Id, ModifiedBy = request.ModifiedBy, TenantId = request.TenantId }, cancellationToken);
+
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b=> new ModifiedEntity(b.Id.ToString(), b.GetType().Name,"Created",b.ModifiedBy)).ToList()), cancellationToken);
                 }
                 catch (Exception ex) { _log.LogError(ex, "Unable to Service Livestock"); }
                 return 0;

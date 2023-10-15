@@ -1,14 +1,11 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.Shared;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 using BackEnd.BusinessLogic.Livestock;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockAnimal;
 using Domain.Constants;
 using FrontEnd.Components.LivestockStatus;
-using Domain.Entity;
 
 namespace FrontEnd.Components.Livestock
 {

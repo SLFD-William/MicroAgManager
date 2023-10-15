@@ -40,6 +40,16 @@ namespace FrontEnd.Components.ScheduledDuty
                         var breedingRecord = context.BreedingRecords.Find(scheduledDutyModel.RecordId);
                         return (breedingRecord is not null) ? $"Breeding Record: {breedingRecord.Id}".Trim() : NO_RECORD;
                     }
+                case "Measurement":
+                    {
+                        var measurement = context.Measurements.Find(scheduledDutyModel.RecordId);
+                        return (measurement is not null) ? $"Measurement: {measurement.Id}".Trim() : NO_RECORD;
+                    }
+                case "TreatmentRecord":
+                {
+                    var treatmentRecord = context.TreatmentRecords.Find(scheduledDutyModel.RecordId);
+                    return (treatmentRecord is not null) ? $"Treatment Record: {treatmentRecord.Id}".Trim() : NO_RECORD;
+                }
             }
             return NO_RECORD;
         }
