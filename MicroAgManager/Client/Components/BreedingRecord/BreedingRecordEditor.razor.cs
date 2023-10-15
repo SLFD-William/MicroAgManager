@@ -24,13 +24,14 @@ namespace FrontEnd.Components.BreedingRecord
 
         public override async Task FreshenData()
         {
+            working = new BreedingRecordModel() { FemaleId = 0 };
             if (Breed is not null)
                 livestockBreedId = Breed.Id;
 
             if (LivestockAnimal is not null)
                 livestockAnimalId = LivestockAnimal.Id;
 
-            working = new BreedingRecordModel() { FemaleId =0};
+            
             if (BreedingRecord is not null)
                 working = BreedingRecord.Clone() as BreedingRecordModel;
             if (BreedingRecord is null && breedingRecordId > 0)

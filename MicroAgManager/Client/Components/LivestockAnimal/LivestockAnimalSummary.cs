@@ -11,9 +11,9 @@ namespace FrontEnd.Components.LivestockAnimal
         public LivestockAnimalSummary(LivestockAnimalModel livestockAnimalModel, FrontEndDbContext context)
         {
             _livestockAnimalModel = livestockAnimalModel ?? throw new ArgumentNullException(nameof(livestockAnimalModel));
-            BreedsCount = context.LivestockAnimals.Find(livestockAnimalModel.Id)?.Breeds?.Count() ?? 0;
-            StatusesCount = context.LivestockAnimals.Find(livestockAnimalModel.Id)?.Statuses?.Count() ?? 0;
-            FeedsCount = context.LivestockAnimals.Find(livestockAnimalModel.Id)?.Feeds?.Count() ?? 0;
+            BreedsCount = context.LivestockBreeds.Count(b=>b.LivestockAnimalId== livestockAnimalModel.Id);
+            StatusesCount = context.LivestockStatuses.Count(b => b.LivestockAnimalId == livestockAnimalModel.Id);
+            FeedsCount = context.LivestockFeeds.Count(b => b.LivestockAnimalId == livestockAnimalModel.Id);
             EntityName = livestockAnimalModel.GetType().Name.Replace("Model",string.Empty);
         }
         public long Id => _livestockAnimalModel.Id;

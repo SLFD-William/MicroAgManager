@@ -45,11 +45,9 @@ namespace FrontEnd.Components.LandPlot
         }
         public async Task OnSubmit()
         {
-            var id = working?.Id ?? 0;
-            if (id <= 0)
-                id = await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = working });
-            else
-                id = await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = working });
+            var id = (working?.Id <=0)?
+                await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = working }):
+                await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = working });
 
             if (id <= 0)
                 throw new Exception("Unable to save plot");
@@ -60,6 +58,7 @@ namespace FrontEnd.Components.LandPlot
         public override async Task FreshenData()    
         {
             if (Farm is null) return;
+            working = new LandPlotModel() {FarmLocationId=Farm.Id };
             if (Plot is not null)
                 working = Plot;
             if (Plot is null && landPlotId.HasValue)

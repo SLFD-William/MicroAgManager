@@ -2,16 +2,15 @@
 @using Domain.Models;
 @using FrontEnd.Components.LivestockStatus;
 @inherits DataComponent<LivestockModel>
-@if (editContext is not null)
+@if (editContext is not null && working is not null)
 {
     <ValidatedForm editContext="editContext"
                    FreshenData="FreshenData"
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(working.Id<1)" 
                    Modal="Modal"
-Show="Show"
+                   Show="Show"
                    @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Breed" ValidationMessageFor="@(() => working.LivestockBreedId)">
