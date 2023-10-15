@@ -20,11 +20,23 @@
             }
             @if (working.Record == "Measurement")
             {
-                <MeasurementEditor @ref=_measurementEditor showUpdateCancelButtons="false" measurementId="@working.RecordId" Cancelled="Cancel" Submitted="MeasurementSubmitted"></MeasurementEditor>
+                <MeasurementEditor @ref=_measurementEditor showUpdateCancelButtons="false" 
+                    measurementId="@working.RecordId"
+                    recipientId="@working.RecipientId"
+                    recipientType="@_duty.RecipientType"
+                    recipientTypeId="@_duty.RecipientTypeId"
+                    measureId="@_duty.CommandId"
+                    Cancelled="Cancel" Submitted="MeasurementSubmitted"></MeasurementEditor>
             }
             @if (working.Record == "TreatmentRecord")
             {
-                <TreatmentRecordEditor @ref=_treatmentRecordEditor showUpdateCancelButtons="false" treatmentRecordId="@working.RecordId" Cancelled="Cancel" Submitted="TreatmentRecordSubmitted"></TreatmentRecordEditor>
+                <TreatmentRecordEditor @ref=_treatmentRecordEditor showUpdateCancelButtons="false" 
+                    treatmentRecordId="@working.RecordId"
+                    recipientId="@working.RecipientId"
+                    recipientType="@_duty.RecipientType"
+                    recipientTypeId="@_duty.RecipientTypeId"
+                    treatmentId="@_duty.CommandId"
+                    Cancelled="Cancel" Submitted="TreatmentRecordSubmitted"></TreatmentRecordEditor>
             }
         </DataContent>
         <SecondaryContent>

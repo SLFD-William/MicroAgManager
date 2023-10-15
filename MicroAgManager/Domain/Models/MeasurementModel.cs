@@ -16,7 +16,7 @@ namespace Domain.Models
         [Precision(18, 3)][Required] public decimal Value { get; set; }
         [Required][ForeignKey("MeasurementUnit")] public long MeasurementUnitId { get; set; }
         public virtual UnitModel MeasurementUnit { get; set; }
-        public string Notes { get; set; }
+        public string Notes { get; set; }=string.Empty;
         [Required] public DateTime DatePerformed { get; set; }
 
         public static MeasurementModel Create(Measurement measurement)

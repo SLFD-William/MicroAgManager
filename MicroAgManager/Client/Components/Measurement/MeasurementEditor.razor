@@ -1,20 +1,86 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
 @using FrontEnd.Components.Unit;
+@using Microsoft.EntityFrameworkCore;
 @inherits DataComponent<MeasurementModel>
-@if (editContext is not null)
+@if (editContext is not null && working is not null)
 {
     <ValidatedForm editContext="editContext"
                    FreshenData="FreshenData"
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="showUpdateCancelButtons"
-                   createOnly="@(working.Id<1)"
                    Modal="Modal"
                    Show="Show"
-    @ref=_validatedForm>
+                   @ref=_validatedForm>
         <DataContent>
-
+            <ValidatedField ValidationMessageFor="@(() => working.MeasureId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Measure</span><button type="button" @onclick=ShowMeasureEditor>+</button>
+                        <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showMeasureModal)" showUpdateCancelButtons="true" Submitted="MeasureCreated" Cancelled="MeasureCanceled"></MeasureEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@working.MeasureId">
+                        <option value="0">Select Measure ...</option>
+                        @foreach (var measure in app.dbContext.Measures.Include(m=>m.Unit).OrderBy(m=>m.Unit.Category).ThenBy(m=>m.Name))
+                        {
+                            <option value="@measure.Id">@($"{measure.Name} ({measure.Unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
+                <InputSelect @bind-Value="@working.RecipientType">
+                    <option value="0">Select Recipient Type ...</option>
+                    <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => working.RecipientTypeId)">
+                <InputSelect @bind-Value="@working.RecipientTypeId">
+                    <option value="0">Select Recipient Type Instance ...</option>
+                    @foreach (var recipient in recipientTypeIds())
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => working.RecipientId)">
+                <InputSelect @bind-Value="@working.RecipientId">
+                    <option value="0">Select Recipient Instance ...</option>
+                    @foreach (var recipient in recipientIds())
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Value" ValidationMessageFor="@(() => working.Value)">
+                <InputNumber @bind-Value="working.Value"></InputNumber>
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => working.MeasurementUnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="UnitCreated" Cancelled="UnitCanceled"></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                <InputSelect @bind-Value="@working.MeasurementUnitId">
+                    <option value="0">Select Unit ...</option>
+                    @foreach (var unit in app.dbContext.Units.OrderBy(u=>u.Category).ThenBy(u=>u.Name))
+                    {
+                        <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                    }
+                </InputSelect>
+                </ChildContent>
+             </ValidatedField>
+            <ValidatedField Legend="Notes" ValidationMessageFor="@(() => working.Notes)">
+                <InputTextArea placeholder="Notes" @bind-Value="@working.Notes" />
+            </ValidatedField>
+            <ValidatedField Legend="Measurement Date" ValidationMessageFor="@(() => working.DatePerformed)">
+                <InputDate @bind-Value="@working.DatePerformed" />
+            </ValidatedField>
         </DataContent>
     </ValidatedForm>
 }

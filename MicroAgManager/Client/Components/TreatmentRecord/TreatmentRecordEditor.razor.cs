@@ -11,6 +11,11 @@ namespace FrontEnd.Components.TreatmentRecord
     {
         [CascadingParameter] public TreatmentRecordModel TreatmentRecord { get; set; }
         [Parameter] public long? treatmentRecordId { get; set; }
+        [Parameter] public required long treatmentId { get; set; }
+        [Parameter] public required long recipientTypeId { get; set; }
+        [Parameter] public required long recipientId { get; set; }
+        [Parameter] public required string recipientType { get; set; }
+
         private ValidatedForm _validatedForm;
 
         protected new TreatmentRecordModel working { get => base.working as TreatmentRecordModel; set { base.working = value; } }

@@ -40,7 +40,9 @@ Show="Show"
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Duties</span><button type="button" @onclick=ShowDutyEditor>+</button>
-                        <DutyEditor Show=@showDutyModal showUpdateCancelButtons="true" @ref=_dutyEditor Modal="true" Submitted="DutyCreated" Cancelled="DutyCanceled"></DutyEditor>
+                        <CascadingValue Value="_editDuty">
+                            <DutyEditor Show=@showDutyModal showUpdateCancelButtons="true" @ref=_dutyEditor Modal="true" Submitted="DutyCreated" Cancelled="DutyCanceled"></DutyEditor>
+                        </CascadingValue>
                     </div>
                 </LegendContent>
                 

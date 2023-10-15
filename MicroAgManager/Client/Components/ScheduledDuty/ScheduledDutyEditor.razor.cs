@@ -14,6 +14,10 @@ namespace FrontEnd.Components.ScheduledDuty
         [Inject] FrontEndAuthenticationStateProvider _auth { get; set; }
         [CascadingParameter] public ScheduledDutyModel ScheduledDuty { get; set; }
         [Parameter] public long? scheduledDutyId { get; set; }
+
+
+        private DutyModel _duty { get; set; }
+
         private Snooze? _snoozeEditor;
         private ValidatedForm _validatedForm;
         private BreedingRecordEditor _breedingRecordEditor;
@@ -30,6 +34,7 @@ namespace FrontEnd.Components.ScheduledDuty
             if (ScheduledDuty is null && scheduledDutyId.HasValue)
                 working = await app.dbContext.ScheduledDuties.FindAsync(scheduledDutyId);
 
+            _duty = await app.dbContext.Duties.FindAsync(working.DutyId);
             SetEditContext(working);
             await SetSuggestedSnooze();
         }
@@ -82,12 +87,14 @@ namespace FrontEnd.Components.ScheduledDuty
         private async Task MeasurementSubmitted(object e)
         {
             var model = e as MeasurementModel;
+            working.RecordId = model.Id;
             working.CompletedOn = model.DatePerformed;
             await OnSubmit();
         }
         private async Task TreatmentRecordSubmitted(object e)
         {
             var model = e as TreatmentRecordModel;
+            working.RecordId = model.Id;
             working.CompletedOn = model.DatePerformed;
             await OnSubmit();
         }

@@ -32,20 +32,19 @@ namespace FrontEnd.Components.Duty
         
         public override async Task FreshenData()
         {
-            working = new DutyModel();
-
             if (Duty is not null)
                 working = Duty;
 
             if (Duty is null && dutyId.HasValue)
                 working = await app.dbContext.Duties.FindAsync(dutyId);
 
+            if (working is null)
+                working = new DutyModel();
+
             SetEditContext(working);
         }
         public async Task OnSubmit()
         {
-            try
-            {
                 long id = (working.Id <= 0) ?
                     await app.api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = working }) :
                     await app.api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = working });
@@ -56,11 +55,6 @@ namespace FrontEnd.Components.Duty
                 working.Id = id;
                 SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-            }
-            catch (Exception ex)
-            {
-               
-            }
         }
         private async Task Cancel()
         {

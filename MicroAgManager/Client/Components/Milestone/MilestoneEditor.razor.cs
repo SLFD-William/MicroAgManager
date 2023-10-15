@@ -59,10 +59,12 @@ namespace FrontEnd.Components.Milestone
         }
 
         private DutyEditor _dutyEditor;
+        private DutyModel? _editDuty;
         private bool showDutyModal = false;
         
         private void ShowDutyEditor()
         {
+            _editDuty=new DutyModel();
             showDutyModal = true;
             StateHasChanged();
         }
@@ -71,11 +73,13 @@ namespace FrontEnd.Components.Milestone
             var model = e as DutyModel;
             showDutyModal = false;
             working.Duties.Add(model);
+            _editDuty = null;
             StateHasChanged();
         }
         private void DutyCanceled()
         {
             showDutyModal = false;
+            _editDuty = null;
             StateHasChanged();
         }
         void DutySelected(ChangeEventArgs e)
