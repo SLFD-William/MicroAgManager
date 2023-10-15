@@ -32,6 +32,7 @@ namespace FrontEnd.Components.LivestockAnimal
         }
         public override async Task FreshenData() 
         {
+            working = new LivestockAnimalModel();
             if (LivestockAnimal is not null)
                 working = LivestockAnimal;
                
@@ -44,11 +45,9 @@ namespace FrontEnd.Components.LivestockAnimal
         {
             try
             {
-                var id = working?.Id ?? 0;
-                if (id <= 0)
-                    id = await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = working });
-                else
-                    id = await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = working });
+                var id = (working?.Id <= 0) ?
+                    await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = working }):
+                    await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock type");

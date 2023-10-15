@@ -36,6 +36,7 @@ namespace FrontEnd.Components.Measure
         }
         public override async Task FreshenData()
         {
+            working = new MeasureModel();
             if (Measure is not null)
                 working = Measure;
 

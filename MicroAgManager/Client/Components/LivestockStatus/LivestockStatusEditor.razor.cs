@@ -44,7 +44,7 @@ namespace FrontEnd.Components.LivestockStatus
             if (LivestockStatus is null && livestockStatusId > 0)
                 working = await app.dbContext.LivestockStatuses.FindAsync(livestockStatusId);
 
-            editContext = new EditContext(working);
+            SetEditContext(working);
         }
         public async Task OnSubmit()
         {
@@ -58,21 +58,19 @@ namespace FrontEnd.Components.LivestockStatus
                     throw new Exception("Failed to save livestock Status");
 
                 working.Id = id;
-                original = working.Clone() as LivestockStatusModel;
-                editContext = new EditContext(working);
+                SetEditContext(working);
                 await Submitted.InvokeAsync(working);
-                StateHasChanged();
             }
             catch (Exception ex)
             {
 
             }
         }
-        private async Task Cancel()
+        private void Cancel()
         {
-            editContext = new EditContext(working);
-            await Cancelled.InvokeAsync(working);
-            StateHasChanged();
+            working = original.Map(working) as LivestockStatusModel;
+            SetEditContext(working);
+            Task.Run(Cancelled.InvokeAsync);
         }
     }
 }

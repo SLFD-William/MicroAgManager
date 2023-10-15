@@ -76,7 +76,7 @@ namespace FrontEnd.Components.Treatment
         public override async Task FreshenData()
         {
 
-
+            working = new TreatmentModel() { };
 
             if (Treatment is not null)
                 working = Treatment;

@@ -39,10 +39,10 @@
                 <ValidatedField ValidationMessageFor="@(() => working.CommandId)">
                     <LegendContent>
                         <div style="display:inline-flex">
-                            <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
+                            <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+ @(showCommandModal)</button>
                             <RegistrarEditor @ref=_registrarEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Registration)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
                             <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Measurement)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></MeasureEditor>
-                            <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Treatment)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></TreatmentEditor>
+                            <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showCommandModal && working.Command == DutyCommandConstants.Treatment)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></TreatmentEditor> 
                         </div>
                     </LegendContent>
                     <ChildContent>

@@ -68,6 +68,7 @@ namespace FrontEnd.Components.Farm
         }
         public override async Task FreshenData()
         {
+            working = new FarmLocationModel();
 
             if(Farm is not null)
                 working = Farm;
