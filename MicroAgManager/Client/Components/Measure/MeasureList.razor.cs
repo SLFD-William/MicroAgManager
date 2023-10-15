@@ -22,10 +22,6 @@ namespace FrontEnd.Components.Measure
         }
         public override async Task FreshenData()
         {
-            if (_listComponent is null) return;
-            while (!app.dbContext.Measures.Any())
-                await Task.Delay(100);
-
             if (Items is null)
                 Items = (await app.dbContext.Measures
                     .OrderBy(f => f.Method).ThenBy(f=>f.Name).Select(m=> new MeasureSummary(m,app.dbContext))
@@ -47,7 +43,7 @@ namespace FrontEnd.Components.Measure
         private async Task EditCancelled()
         {
             _editMeasure = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task MeasureUpdated(object args)
         {
@@ -57,7 +53,7 @@ namespace FrontEnd.Components.Measure
                     await Task.Delay(100);
 
             _editMeasure = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindMeasure(model.Id));
         }
     }
 }

@@ -22,17 +22,19 @@
         </ButtonContent>
         <ChildContent>
             <LandPlotList @ref="_landPlotList"  
+                Submitted="StateHasChanged"
                 Items="app.dbContext.LandPlots.Where(f => f.FarmLocationId == farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).Select(f=>new LandPlotSummary(f,app.dbContext))">
             </LandPlotList>
         </ChildContent>
     </TabPage>
 
-    <TabPage @ref="_livestockTab" Text="Livestock" Visible="@(app?.dbContext?.LandPlots.Any(p => p.FarmLocationId == farm.Id && p.Usage == LandPlotUseConstants.Livestock) ?? false)">
+    <TabPage @ref="_livestockTab" Text="Livestock">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>
         </ButtonContent>
         <ChildContent>
             <LivestockAnimalList @ref="_livestockAnimalList"
+                                 Submitted="StateHasChanged"
                 Items="app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(a=>new LivestockAnimalSummary(a,app.dbContext))" >
             </LivestockAnimalList>
         </ChildContent>
@@ -46,7 +48,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <ScheduledDutyList @ref="_scheduledDutyList" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext))"></ScheduledDutyList>
+            <ScheduledDutyList @ref="_scheduledDutyList" Submitted="StateHasChanged" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext))"></ScheduledDutyList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_dutyTab" Text="Duties" >
@@ -56,7 +58,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <DutyList @ref="_dutyList" Items="app.dbContext.Duties.OrderByDescending(f => f.Name).Select(s => new DutySummary(s, app.dbContext))"></DutyList>
+            <DutyList @ref="_dutyList" Submitted="StateHasChanged" Items="app.dbContext.Duties.OrderByDescending(f => f.Name).Select(s => new DutySummary(s, app.dbContext))"></DutyList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_registrarsTab" Text="Registrars">
@@ -66,7 +68,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <RegistrarList @ref="_registrarList" Items="app.dbContext.Registrars.OrderByDescending(f => f.Name)"></RegistrarList>
+            <RegistrarList @ref="_registrarList" Submitted="StateHasChanged" Items="app.dbContext.Registrars.OrderByDescending(f => f.Name)"></RegistrarList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_measuresTab" Text="Measures" >
@@ -76,7 +78,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <MeasureList @ref="_measureList" Items="app.dbContext.Measures.OrderByDescending(f => f.Name).Select(m=>new MeasureSummary(m,app.dbContext)).ToList()"></MeasureList>
+            <MeasureList @ref="_measureList" Submitted="StateHasChanged" Items="app.dbContext.Measures.OrderByDescending(f => f.Name).Select(m=>new MeasureSummary(m,app.dbContext)).ToList()"></MeasureList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_treatmentsTab" Text="Treatments" >
@@ -86,7 +88,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <TreatmentList @ref="_treatmentList" Items="app.dbContext.Treatments.OrderByDescending(f => f.Name).Select(m=>new TreatmentSummary(m,app.dbContext)).ToList()"></TreatmentList>
+            <TreatmentList @ref="_treatmentList" Submitted="StateHasChanged" Items="app.dbContext.Treatments.OrderByDescending(f => f.Name).Select(m=>new TreatmentSummary(m,app.dbContext)).ToList()"></TreatmentList>
         </ChildContent>
     </TabPage>
 </TabControl>

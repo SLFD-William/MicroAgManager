@@ -43,7 +43,7 @@ namespace FrontEnd.Components.Registrar
         }
         private async Task Cancel()
         {
-            working =((RegistrarModel) original).Map(working) as RegistrarModel;
+            working =original.Map(working) as RegistrarModel;
             SetEditContext(working);
             await Cancelled.InvokeAsync(working);
             

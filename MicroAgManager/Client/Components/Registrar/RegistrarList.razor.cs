@@ -42,7 +42,7 @@ namespace FrontEnd.Components.Registrar
         private async Task EditCancelled()
         {
             _editRegistrar = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task RegistrarUpdated(object args)
         {
@@ -52,7 +52,7 @@ namespace FrontEnd.Components.Registrar
                     await Task.Delay(100);
 
             _editRegistrar = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindRegistrar(model.Id));
         }
     }
 }

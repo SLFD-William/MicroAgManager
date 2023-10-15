@@ -46,7 +46,7 @@ namespace FrontEnd.Components.Milestone
         private async Task EditCancelled()
         {
             _editMilestone = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task MilestoneUpdated(object args)
         {
@@ -56,7 +56,7 @@ namespace FrontEnd.Components.Milestone
                     await Task.Delay(100);
 
             _editMilestone = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindMilestone(model.Id));
         }
     }
 }

@@ -46,7 +46,7 @@ namespace FrontEnd.Components.Duty
         private async Task EditCancelled()
         {
             _editDuty = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task DutyUpdated(object args)
         {
@@ -56,7 +56,7 @@ namespace FrontEnd.Components.Duty
                     await Task.Delay(100);
 
             _editDuty = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindDuty(model.Id));
         }
     }
 }

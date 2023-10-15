@@ -34,13 +34,12 @@ namespace FrontEnd.Components.ScheduledDuty
             if (Items is null)
                 Items = await app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext)).ToListAsync();
 
-            StateHasChanged();
             _listComponent.Update();
         }
         private async Task EditCancelled()
         {
             _editScheduledDuty = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task ScheduledDutyUpdated(object args)
         {
@@ -50,7 +49,7 @@ namespace FrontEnd.Components.ScheduledDuty
                     await Task.Delay(100);
 
             _editScheduledDuty = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindScheduledDuty(model.Id));
         }
         private async Task EditScheduledDuty(long id)
         {

@@ -32,7 +32,7 @@ namespace FrontEnd.Components.LandPlot
         private async Task EditCancelled()
         {
             _editPlot = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task LandPlotUpdated(object args )
         {
@@ -41,7 +41,7 @@ namespace FrontEnd.Components.LandPlot
                 while (!app.dbContext.LandPlots.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
             _editPlot = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindPlot(model.Id));
         }
         public override async Task FreshenData()
         {

@@ -22,7 +22,8 @@ namespace FrontEnd.Components.Farm
         private async Task<FarmLocationModel?> FindFarm(long Id) =>await  app.dbContext.Farms.FindAsync(Id);
         private async Task EditFarm(long id)
         {
-            _editFarm = await FindFarm(id);
+            
+            _editFarm = id > 0 ? await FindFarm(id) : new FarmLocationModel();
             StateHasChanged();
         }
         private void TableItemSelected()
@@ -37,13 +38,13 @@ namespace FrontEnd.Components.Farm
             if (Items is null)
                 Items = app.dbContext.Farms.OrderBy(f => f.Name).Select(f => new FarmLocationSummary(f, app.dbContext)).AsEnumerable();
 
-            StateHasChanged();
             _listComponent.Update();
+
         }
         private async Task EditCancelled()
         {
             _editFarm = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task FarmUpdated(object args)
         {
@@ -54,10 +55,7 @@ namespace FrontEnd.Components.Farm
                     await Task.Delay(100);
 
             _editFarm = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindFarm(model.Id));
         }
-
-
-
     }
 }

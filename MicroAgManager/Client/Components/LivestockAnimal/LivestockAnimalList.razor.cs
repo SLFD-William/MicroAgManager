@@ -29,7 +29,7 @@ namespace FrontEnd.Components.LivestockAnimal
         private async Task EditCancelled()
         {
             _editAnimal = null;
-            await FreshenData();
+            StateHasChanged(); 
         }
         private async Task AnimalUpdated(object args)
         {
@@ -38,7 +38,7 @@ namespace FrontEnd.Components.LivestockAnimal
                 while (!app.dbContext.LivestockAnimals.Any(t => t.Id == model.Id))
                     await Task.Delay(100);
             _editAnimal = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindAnimal(model.Id));
         }
         protected override void OnInitialized()
         {

@@ -1,5 +1,4 @@
-﻿using Domain.Abstracts;
-using Domain.Models;
+﻿using Domain.Models;
 using FrontEnd.Components.Duty;
 using FrontEnd.Components.LandPlot;
 using FrontEnd.Components.LivestockAnimal;

@@ -44,7 +44,7 @@ namespace FrontEnd.Components.Treatment
         private async Task EditCancelled()
         {
             _editTreatment = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task TreatmentUpdated(object args)
         {
@@ -54,7 +54,7 @@ namespace FrontEnd.Components.Treatment
                     await Task.Delay(100);
 
             _editTreatment = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindTreatment(model.Id));
         }
     }
 }

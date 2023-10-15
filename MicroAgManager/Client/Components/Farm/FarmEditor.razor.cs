@@ -3,13 +3,13 @@ using Domain.Models;
 using FrontEnd.Components.Shared;
 using FrontEnd.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 
 namespace FrontEnd.Components.Farm
 {
-    public partial class FarmEditor:DataComponent<FarmLocationModel> 
+    public partial class FarmEditor:DataComponent<FarmLocationModel>
     {
+        [CascadingParameter] FarmLocationModel Farm { get; set; }
         [Parameter] public long? farmId { get; set; }
         [Parameter] public string? farmName { get; set; }
         
@@ -68,13 +68,12 @@ namespace FrontEnd.Components.Farm
         }
         public override async Task FreshenData()
         {
-            if(app?.dbContext == null) return;
-            var query= app.dbContext.Farms.AsQueryable();
-            if (farmId.HasValue && farmId>0)
-                query = query.Where(f => f.Id == farmId);
-            working  = await query.OrderBy(f=>f.Id).FirstOrDefaultAsync() ?? new FarmLocationModel();
-            if (string.IsNullOrEmpty(working.Name) && !string.IsNullOrEmpty(farmName))
-                working.Name = farmName;
+
+            if(Farm is not null)
+                working = Farm;
+            if (Farm is null && farmId.HasValue)
+                working = await app.dbContext.Farms.FindAsync(farmId);
+
             SetEditContext(working);
         }
         private async Task Cancel()

@@ -47,7 +47,7 @@ namespace FrontEnd.Components.LivestockStatus
         private async Task EditCancelled()
         {
             _editStatus = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task StatusUpdated(object args)
         {
@@ -58,7 +58,7 @@ namespace FrontEnd.Components.LivestockStatus
                     await Task.Delay(100);
 
             _editStatus = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindStatus(model.Id));
         }
     }
 }

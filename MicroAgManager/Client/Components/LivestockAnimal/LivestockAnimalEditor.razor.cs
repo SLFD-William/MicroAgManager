@@ -1,9 +1,7 @@
 ﻿using BackEnd.BusinessLogic.Livestock.Animals;
-using Domain.Entity;
 using Domain.Models;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.LivestockAnimal

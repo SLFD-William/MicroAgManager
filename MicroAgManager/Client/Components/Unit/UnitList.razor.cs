@@ -44,7 +44,7 @@ namespace FrontEnd.Components.Unit
         private async Task EditCancelled()
         {
             _editUnit = null;
-            await FreshenData();
+            StateHasChanged();
         }
         private async Task UnitUpdated(object args)
         {
@@ -54,7 +54,7 @@ namespace FrontEnd.Components.Unit
                     await Task.Delay(100);
 
             _editUnit = null;
-            await FreshenData();
+            await Submitted.InvokeAsync(await FindUnit(model.Id));
         }
     }
 }

@@ -312,8 +312,7 @@ namespace FrontEnd.Components.Shared.Sortable
 
         [Parameter] public Action AddItemClicked { get; set; }
         private int _ServerFilterValue = 0;
-        [Parameter]
-        public int ServerFilterValue
+        [Parameter] public int ServerFilterValue
         {
             get { return _ServerFilterValue; }
             set
