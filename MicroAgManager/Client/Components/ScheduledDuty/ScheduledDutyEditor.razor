@@ -2,6 +2,7 @@
 @using FrontEnd.Components.BreedingRecord;
 @using FrontEnd.Components.Measurement;
 @using FrontEnd.Components.TreatmentRecord;
+@using FrontEnd.Components.Registration;
 @inherits DataComponent<ScheduledDutyModel>
 @if (editContext is not null)
 {
@@ -22,9 +23,9 @@
             {
                 <MeasurementEditor @ref=_measurementEditor showUpdateCancelButtons="false" 
                     measurementId="@working.RecordId"
-                    recipientId="@working.RecipientId"
-                    recipientType="@_duty.RecipientType"
-                    recipientTypeId="@_duty.RecipientTypeId"
+                    RecipientId="@working.RecipientId"
+                    RecipientType="@_duty.RecipientType"
+                    RecipientTypeId="@_duty.RecipientTypeId"
                     measureId="@_duty.CommandId"
                     Cancelled="Cancel" Submitted="MeasurementSubmitted"></MeasurementEditor>
             }
@@ -32,11 +33,21 @@
             {
                 <TreatmentRecordEditor @ref=_treatmentRecordEditor showUpdateCancelButtons="false" 
                     treatmentRecordId="@working.RecordId"
-                    recipientId="@working.RecipientId"
-                    recipientType="@_duty.RecipientType"
-                    recipientTypeId="@_duty.RecipientTypeId"
+                    RecipientId="@working.RecipientId"
+                    RecipientType="@_duty.RecipientType"
+                    RecipientTypeId="@_duty.RecipientTypeId"
                     treatmentId="@_duty.CommandId"
                     Cancelled="Cancel" Submitted="TreatmentRecordSubmitted"></TreatmentRecordEditor>
+            }
+            @if (working.Record == "Registration")
+            {
+                <RegistrationEditor @ref=_registrationEditor showUpdateCancelButtons="false"
+                                       registrationId="@working.RecordId"
+                                       RecipientId="@working.RecipientId"
+                                       RecipientType="@_duty.RecipientType"
+                                       RecipientTypeId="@_duty.RecipientTypeId"
+                                       registrarId="@_duty.CommandId"
+                                       Cancelled="Cancel" Submitted="RegistrationSubmitted"></RegistrationEditor>
             }
         </DataContent>
         <SecondaryContent>

@@ -1,10 +1,11 @@
 ﻿using Domain.Abstracts;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Domain.Interfaces;
 
 namespace Domain.Entity
 {
-    public class Registration : BaseEntity
+    public class Registration : BaseEntity, IHasRecipient
     {
         public Registration(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {

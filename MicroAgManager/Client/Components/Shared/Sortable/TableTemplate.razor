@@ -64,51 +64,21 @@
                                     <span style="@(column.Filter == null ? "opacity: 0.2;" : string.Empty)">&#128269;</span>
                                 </button>
                             }
-                        }
-@*                                @if (column.Title == "ControlColumn" )
+                            @if (column.FilterOpen)
                             {
-                                if (!OnlyAddInMenuBar)
-                                {
-                                    @*<ActionButtons Editting=@(AddItemClicked!=null) Add=@AddItemClicked  CssClass ="flex" ></ActionButtons>
-                                }
-                                else
-                                { <span></span>}
-                            }
-                            else
-                            {
-                                <div class=@("ListTemplate--Table_ColumnHeader__Title" + (column.FilterOpen ? " ListTemplate--Table_ColumnHeader__Title--FilterOpen" : string.Empty) )>
-                                    <button type="button" @onclick="@((e) => column.SortBy(e))">
-                                        <span>@column.Title</span>
-                                        @if (column.SortOrder > 0)
-                                        {
-                                            <span><i class="fas fa-1x @(column.SortDescending ? "fa-caret-up" : "fa-caret-down")"></i></span>
-                                            <span>@(column.SortOrder)</span>
-                                        }
-                                    </button>
-                                    @if (column.Filterable)
-                                    {
-                                        <button type="button" @ref="column.FilterRef" @onclick="@column.ToggleFilter">
-                                            <span style="@(column.Filter == null ? "opacity: 0.2;" : string.Empty)">&#128269;</span>
-                                        </button>
-                                    }
-                                </div>
-                                @if (column.FilterOpen)
-                                {
-                                    <div class="ListTemplate--Table_ColumnHeader__FilterOptions">
-                                        <FilterManager TableItem="TItem" Column="column">
-                                            <StringFilter TableItem="TItem" />
-                                            <BooleanFilter TableItem="TItem" />
-                                            <NumberFilter TableItem="TItem" />
-                                            <DateFilter TableItem="TItem" />
-                                            <EnumFilter TableItem="TItem" />
-                                            @* @if (CustomIFilters != null)
+                                <FilterManager TableItem="TItem" Column="column">
+                                    <StringFilter TableItem="TItem" />
+                                    <BooleanFilter TableItem="TItem" />
+                                    <NumberFilter TableItem="TItem" />
+                                    <DateFilter TableItem="TItem" />
+                                    <EnumFilter TableItem="TItem" />
+                                    @*@if (CustomIFilters != null)
                                         {
                                         @CustomIFilters(this);
-                                        }
-                                        </FilterManager>
-                                    </div>
-                                }
-                            }*@
+                                        }*@
+                                </FilterManager>
+                            }
+                        }
                         </th>
                     }
                 </tr>

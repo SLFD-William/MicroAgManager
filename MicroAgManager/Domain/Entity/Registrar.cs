@@ -12,6 +12,7 @@ namespace Domain.Entity
         public string Email { get; set; } = string.Empty;
         public string Website { get; set; } = string.Empty;
         public string API { get; set; } = string.Empty;
+        [Required][MaxLength(40)] public string RegistrarFarmID { get; set; } = string.Empty;
         public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
     }
 }

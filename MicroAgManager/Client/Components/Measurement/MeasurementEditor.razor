@@ -2,7 +2,7 @@
 @using Domain.Models;
 @using FrontEnd.Components.Unit;
 @using Microsoft.EntityFrameworkCore;
-@inherits DataComponent<MeasurementModel>
+@inherits HasRecipientComponent<MeasurementModel>
 @if (editContext is not null && working is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -14,23 +14,7 @@
                    Show="Show"
                    @ref=_validatedForm>
         <DataContent>
-            <ValidatedField ValidationMessageFor="@(() => working.MeasureId)">
-                <LegendContent>
-                    <div style="display:inline-flex">
-                        <span>Measure</span><button type="button" @onclick=ShowMeasureEditor>+</button>
-                        <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showMeasureModal)" showUpdateCancelButtons="true" Submitted="MeasureCreated" Cancelled="MeasureCanceled"></MeasureEditor>
-                    </div>
-                </LegendContent>
-                <ChildContent>
-                    <InputSelect @bind-Value="@working.MeasureId">
-                        <option value="0">Select Measure ...</option>
-                        @foreach (var measure in app.dbContext.Measures.Include(m=>m.Unit).OrderBy(m=>m.Unit.Category).ThenBy(m=>m.Name))
-                        {
-                            <option value="@measure.Id">@($"{measure.Name} ({measure.Unit.Symbol})")</option>
-                        }
-                    </InputSelect>
-                </ChildContent>
-            </ValidatedField>
+            
             <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
                 <InputSelect @bind-Value="@working.RecipientType">
                     <option value="0">Select Recipient Type ...</option>
@@ -54,6 +38,23 @@
                         <option value="@recipient.Key">@recipient.Value</option>
                     }
                 </InputSelect>
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => working.MeasureId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Measure</span><button type="button" @onclick=ShowMeasureEditor>+</button>
+                        <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showMeasureModal)" showUpdateCancelButtons="true" Submitted="MeasureCreated" Cancelled="MeasureCanceled"></MeasureEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@working.MeasureId">
+                        <option value="0">Select Measure ...</option>
+                        @foreach (var measure in app.dbContext.Measures.Include(m => m.Unit).OrderBy(m => m.Unit.Category).ThenBy(m => m.Name))
+                        {
+                            <option value="@measure.Id">@($"{measure.Name} ({measure.Unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
             </ValidatedField>
             <ValidatedField Legend="Value" ValidationMessageFor="@(() => working.Value)">
                 <InputNumber @bind-Value="working.Value"></InputNumber>

@@ -6,13 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class MeasurementModel : BaseModel
+    public class MeasurementModel : BaseHasRecipientModel
     {
         [Required][ForeignKey("Measure")] public long MeasureId { get; set; }
         public virtual MeasureModel Measure { get; set; }
-        [Required] public long RecipientTypeId { get; set; }
-        [Required][MaxLength(40)] public string RecipientType { get; set; }
-        [Required] public long RecipientId { get; set; }
+        
         [Precision(18, 3)][Required] public decimal Value { get; set; }
         [Required][ForeignKey("MeasurementUnit")] public long MeasurementUnitId { get; set; }
         public virtual UnitModel MeasurementUnit { get; set; }
@@ -24,9 +22,6 @@ namespace Domain.Models
             var model = PopulateBaseModel(measurement, new MeasurementModel
             {
                 MeasureId = measurement.MeasureId,
-                RecipientTypeId = measurement.RecipientTypeId,
-                RecipientType = measurement.RecipientType,
-                RecipientId = measurement.RecipientId,
                 Value = measurement.Value,
                 MeasurementUnitId = measurement.MeasurementUnitId,
                 Notes = measurement.Notes,
@@ -39,9 +34,6 @@ namespace Domain.Models
         {
             if (measurement == null || measurement is not MeasurementModel) return null;
             ((MeasurementModel) measurement).MeasureId = MeasureId;
-            ((MeasurementModel)measurement).RecipientTypeId = RecipientTypeId;
-            ((MeasurementModel)measurement).RecipientType = RecipientType;
-            ((MeasurementModel)measurement).RecipientId = RecipientId;
             ((MeasurementModel)measurement).Value = Value;
             ((MeasurementModel)measurement).MeasurementUnitId = MeasurementUnitId;
             ((MeasurementModel)measurement).Notes = Notes;

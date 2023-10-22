@@ -15,6 +15,9 @@
                 <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => working.Name)">
                     <InputText placeholder="Registrar Name" @bind-Value="@working.Name" />
                 </ValidatedField>
+            <ValidatedField Legend="Farm Number" ValidationMessageFor="@(() => working.RegistrarFarmID)">
+                <InputText placeholder="Farm Number" @bind-Value="@working.RegistrarFarmID" />
+            </ValidatedField>
                 <ValidatedField Legend="Email" ValidationMessageFor="@(() => working.Email)">
                     <InputText placeholder="Email" @bind-Value="@working.Email" />
                 </ValidatedField>

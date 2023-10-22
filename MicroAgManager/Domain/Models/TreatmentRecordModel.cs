@@ -7,13 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class TreatmentRecordModel : BaseModel
+    public class TreatmentRecordModel :  BaseHasRecipientModel
     {
         [Required][ForeignKey("Treatment")] public long TreatmentId { get; set; }
         public virtual TreatmentModel Treatment { get; set; }
-        [Required] public long RecipientTypeId { get; set; }
-        [Required][MaxLength(40)] public string RecipientType { get; set; }
-        [Required] public long RecipientId { get; set; }
         public string Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
         [Precision(18, 3)] public decimal DosageAmount { get; set; } = 0;
@@ -26,9 +23,6 @@ namespace Domain.Models
             var model = PopulateBaseModel(treatmentRecord, new TreatmentRecordModel
             {
                 TreatmentId = treatmentRecord.TreatmentId,
-                RecipientTypeId = treatmentRecord.RecipientTypeId,
-                RecipientType = treatmentRecord.RecipientType,
-                RecipientId = treatmentRecord.RecipientId,
                 Notes = treatmentRecord.Notes,
                 DatePerformed = treatmentRecord.DatePerformed,
                 DosageAmount = treatmentRecord.DosageAmount,

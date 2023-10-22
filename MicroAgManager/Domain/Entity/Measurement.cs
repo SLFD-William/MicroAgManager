@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Domain.Interfaces;
 
 namespace Domain.Entity
 {
-    public class Measurement : BaseEntity
+    public class Measurement : BaseEntity, IHasRecipient
     {
         public Measurement(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {

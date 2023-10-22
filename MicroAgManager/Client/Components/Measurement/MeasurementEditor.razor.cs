@@ -4,25 +4,21 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 using FrontEnd.Components.Unit;
 using BackEnd.BusinessLogic.Measurement;
-using Domain.Constants;
 using FrontEnd.Components.Measure;
 using Domain.Abstracts;
 
 namespace FrontEnd.Components.Measurement
 {
-    public partial class MeasurementEditor : DataComponent<MeasurementModel>
+    public partial class MeasurementEditor : HasRecipientComponent<MeasurementModel>
     {
         [CascadingParameter] public MeasurementModel Measurement { get; set; }
         [Parameter] public long? measurementId { get; set; }
         [Parameter] public required long measureId { get; set; }
-        [Parameter] public required long  recipientTypeId { get; set; }
-        [Parameter] public required long recipientId { get; set; }
-        [Parameter] public required string recipientType { get; set; }
-
 
         private ValidatedForm _validatedForm;
-        private MeasureEditor _measureEditor;
+ 
         protected new MeasurementModel working { get => base.working as MeasurementModel; set { base.working = value; } }
+        #region Unit
         private UnitEditor _unitEditor;
         private bool showUnitModal = false;
         private void ShowUnitEditor()
@@ -43,28 +39,10 @@ namespace FrontEnd.Components.Measurement
             showUnitModal = false;
             StateHasChanged();
         }
-        private List<KeyValuePair<long, string>> recipientTypeIds()
-        {
-            switch (working.RecipientType)
-            {
-                case nameof(RecipientTypeConstants.LivestockAnimal):
-                    return app.dbContext.LivestockAnimals.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-                default:
-                    return new List<KeyValuePair<long, string>>();
-            }
-        }
-        private List<KeyValuePair<long, string>> recipientIds()
-        {
-            switch (working.RecipientType)
-            {
-                case nameof(RecipientTypeConstants.LivestockAnimal):
-                    return app.dbContext.Livestocks.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-                default:
-                    return new List<KeyValuePair<long, string>>();
-            }
-        }
+        #endregion
+        #region Measure
         private bool showMeasureModal = false;
-
+        private MeasureEditor _measureEditor;
         private void ShowMeasureEditor()
         {
             showMeasureModal = true;
@@ -83,6 +61,7 @@ namespace FrontEnd.Components.Measurement
             working.MeasureId = status?.Id ?? 0;
             StateHasChanged();
         }
+        #endregion
         public override async Task FreshenData()
         {
             if (Measurement is not null)
@@ -96,9 +75,9 @@ namespace FrontEnd.Components.Measurement
                 var measure = await app.dbContext.Measures.FindAsync(measureId);
                 working = new MeasurementModel()
                 {
-                    RecipientId = recipientId,
-                    RecipientTypeId = recipientTypeId,
-                    RecipientType = recipientType,
+                    RecipientId = RecipientId,
+                    RecipientTypeId = RecipientTypeId,
+                    RecipientType = RecipientType,
                     MeasureId = measureId,
                     MeasurementUnitId = measure.UnitId,
                     DatePerformed = DateTime.Now,

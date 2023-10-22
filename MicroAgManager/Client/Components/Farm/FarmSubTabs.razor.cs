@@ -8,7 +8,6 @@ using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Treatment;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Farm
 {
@@ -16,6 +15,9 @@ namespace FrontEnd.Components.Farm
     {
         [CascadingParameter] public FarmLocationModel? FarmLocation { get; set; }
         [Parameter] public long? farmId { get; set; }
+
+        protected TabControl _tabControl;
+
 
         protected LandPlotList _landPlotList;
         protected LivestockAnimalList _livestockAnimalList;
@@ -26,7 +28,7 @@ namespace FrontEnd.Components.Farm
         protected TreatmentList _treatmentList;
 
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
-        protected TabControl _tabControl;
+    
         protected TabPage _plotTab;
         protected TabPage _livestockTab;
         protected TabPage _scheduledDutyTab;
@@ -51,14 +53,9 @@ namespace FrontEnd.Components.Farm
         }
         public override async Task FreshenData()
         {
-            if (FarmLocation is not null)
-                farm = await app.dbContext.Farms.FindAsync(FarmLocation.Id) ?? new FarmLocationModel();
-            else
-            {   var query = app.dbContext?.Farms.AsQueryable();
-                if (farmId.HasValue && farmId > 0)
-                    query = query.Where(f => f.Id == farmId);
-                farm = await query.OrderBy(f => f.Id).SingleOrDefaultAsync() ?? new FarmLocationModel();
-            }
+            farm =FarmLocation is not null ? FarmLocation:
+                    await app.dbContext.Farms.FindAsync(farmId.Value);
+            
             if (_landPlotList is not null)
                 await _landPlotList.FreshenData();
             if (_livestockAnimalList is not null)

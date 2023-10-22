@@ -544,10 +544,11 @@ namespace FrontEnd.Data
                 var email = AddNamedParameter(command, "$Email");
                 var website = AddNamedParameter(command, "$Website");
                 var registrarApi = AddNamedParameter(command, "$API");
-                
-                command.CommandText = $"INSERT or REPLACE INTO Registrars (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Email,Website,API) " +
+                var registrarFarmID = AddNamedParameter(command, "$RegistrarFarmID");
+
+                command.CommandText = $"INSERT or REPLACE INTO Registrars (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,Email,Website,API,RegistrarFarmID) " +
                 $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{name.ParameterName},{email.ParameterName},{website.ParameterName},{registrarApi.ParameterName})";
+                $"{name.ParameterName},{email.ParameterName},{website.ParameterName},{registrarApi.ParameterName},{registrarFarmID.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -557,6 +558,7 @@ namespace FrontEnd.Data
                     email.Value=model.Email ?? string.Empty;
                     website.Value = model.Website ?? string.Empty;
                     registrarApi.Value = model.API ?? string.Empty;
+                    registrarFarmID.Value = model.RegistrarFarmID ?? string.Empty;
                     await command.ExecuteNonQueryAsync();
                 }
             }

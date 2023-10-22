@@ -119,14 +119,14 @@
                 </InputSelect>
             </ValidatedField>
         </DataContent>
-@*         <SecondaryContent>
+        <SecondaryContent>
             @if (working.Id > 0)
             {
                 <CascadingValue Value="@working">
-                    <LivestockSubTabs @ref="_tabControl"></LivestockSubTabs>
+                    <LivestockSubTabs></LivestockSubTabs>
                 </CascadingValue>
             }
-        </SecondaryContent> *@
+        </SecondaryContent>
     </ValidatedForm>
 
 }

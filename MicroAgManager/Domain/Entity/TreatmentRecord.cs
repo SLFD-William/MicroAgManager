@@ -1,12 +1,13 @@
 ﻿using Domain.Abstracts;
 using Domain.Constants;
+using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
-    public class TreatmentRecord : BaseEntity
+    public class TreatmentRecord : BaseEntity, IHasRecipient
     {
         public TreatmentRecord(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {

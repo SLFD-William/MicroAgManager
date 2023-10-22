@@ -1,7 +1,7 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
 @using FrontEnd.Components.Unit;
-@inherits DataComponent<TreatmentRecordModel>
+@inherits HasRecipientComponent<TreatmentRecordModel>
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
@@ -14,7 +14,80 @@
                    Show="Show"
     @ref=_validatedForm>
         <DataContent>
-
+            <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
+                <InputSelect @bind-Value="@working.RecipientType">
+                    <option value="0">Select Recipient Type ...</option>
+                    <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => working.RecipientTypeId)">
+                <InputSelect @bind-Value="@working.RecipientTypeId">
+                    <option value="0">Select Recipient Type Instance ...</option>
+                    @foreach (var recipient in recipientTypeIds())
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => working.RecipientId)">
+                <InputSelect @bind-Value="@working.RecipientId">
+                    <option value="0">Select Recipient Instance ...</option>
+                    @foreach (var recipient in recipientIds())
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => working.TreatmentId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Treatment</span><button type="button" @onclick=ShowTreatmentEditor>+</button>
+                        <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showTreatmentModal)" showUpdateCancelButtons="true" Submitted="TreatmentCreated" Cancelled="TreatmentCanceled"></TreatmentEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@working.TreatmentId">
+                        <option value="0">Select Treatment ...</option>
+                        @foreach (var treatment in app.dbContext.Treatments.OrderBy(m => m.LabelMethod).ThenBy(m => m.Name))
+                        {
+                            <option value="@treatment.Id">@($"{treatment.Name} ({treatment.LabelMethod})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+            <ValidatedField Legend="Label Method" ValidationMessageFor="@(() => working.AppliedMethod)">
+                <InputSelect @bind-Value="@working.AppliedMethod">
+                    <option value="">Select Method ...</option>
+                    <option value="@TreatmentConstants.Grooming">@TreatmentConstants.Grooming</option>
+                    <option value="@TreatmentConstants.Intramuscular">@TreatmentConstants.Intramuscular</option>
+                    <option value="@TreatmentConstants.Intravenous">@TreatmentConstants.Intravenous</option>
+                    <option value="@TreatmentConstants.Oral">@TreatmentConstants.Oral</option>
+                    <option value="@TreatmentConstants.Subcutaneous">@TreatmentConstants.Subcutaneous</option>
+                    <option value="@TreatmentConstants.Surgical">@TreatmentConstants.Surgical</option>
+                    <option value="@TreatmentConstants.Topical">@TreatmentConstants.Topical</option>
+                </InputSelect>
+            </ValidatedField>
+            @if (!string.IsNullOrEmpty(working.AppliedMethod) && !TreatmentConstants.NonWithdrawalTreatments.Contains(working.AppliedMethod))
+            {
+                <ValidatedField Legend="Dose" ValidationMessageFor="@(() => working.DosageAmount)">
+                    <InputNumber @bind-Value="working.DosageAmount"></InputNumber>
+                </ValidatedField>
+                <ValidatedField Legend="Dose Unit" ValidationMessageFor="@(() => working.DosageUnitId)">
+                    <InputSelect @bind-Value="@working.DosageUnitId">
+                        <option value="0">Select Dose Unit ...</option>
+                        @foreach (var unit in app.dbContext.Units.Where(u => UnitCategoryConstants.DosageUnits.ContainsKey(u.Category)).OrderBy(u => u.Category).ThenBy(u => u.Symbol))
+                        {
+                            <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")"</option>
+                        }
+                    </InputSelect>
+            </ValidatedField>
+            }
+            <ValidatedField Legend="Notes" ValidationMessageFor="@(() => working.Notes)">
+                <InputTextArea placeholder="Notes" @bind-Value="@working.Notes" />
+            </ValidatedField>
+            <ValidatedField Legend="Treatment Date" ValidationMessageFor="@(() => working.DatePerformed)">
+                <InputDate @bind-Value="@working.DatePerformed" />
+            </ValidatedField>
         </DataContent>
     </ValidatedForm>
 }

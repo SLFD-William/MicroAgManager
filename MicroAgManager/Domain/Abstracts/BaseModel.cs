@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Abstracts
 {
@@ -15,6 +16,13 @@ namespace Domain.Abstracts
             model.Deleted = entity.DeletedOn.HasValue;
             model.EntityModifiedOn = entity.ModifiedOn;
             model.ModifiedBy = entity.ModifiedBy;
+
+            if (entity is IHasRecipient)
+            {
+                ((IHasRecipient)model).RecipientId= ((IHasRecipient)entity).RecipientId;
+                ((IHasRecipient)model).RecipientType = ((IHasRecipient)entity).RecipientType;
+                ((IHasRecipient)model).RecipientTypeId = ((IHasRecipient)entity).RecipientTypeId;
+            }
             return model;
         }
         public abstract BaseModel Map(BaseModel model);

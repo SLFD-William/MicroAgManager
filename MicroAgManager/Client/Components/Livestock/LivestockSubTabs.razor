@@ -1,0 +1,76 @@
+﻿@using Domain.Constants;
+@using FrontEnd.Components.Registration;
+@using FrontEnd.Components.TreatmentRecord;
+@using FrontEnd.Components.Measurement;
+@using Domain.Models;
+@inherits DataComponent<LivestockModel>
+
+
+<TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockSubTabs)" >
+    <TabPage @ref="_registrationTab">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_registrationTab)" @onclick="@(() =>_tabControl.ActivatePage(_registrationTab))">
+                Registrations
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            <RegistrationList @ref="_registrationList"
+                          Submitted="StateHasChanged"
+                          Items="app.dbContext.Registrations.Where(f => f.RecipientTypeId==breed.LivestockAnimalId 
+                                && f.RecipientType==RecipientTypeConstants.LivestockAnimal 
+                                && f.RecipientId == livestock.Id).OrderByDescending(r=>r.RegistrationDate)">
+            </RegistrationList>
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_treatmentRecordTab">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_treatmentRecordTab)" @onclick="@(() =>_tabControl.ActivatePage(_treatmentRecordTab))">
+                Treatments
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            <TreatmentRecordList @ref="_treatmentRecordList"
+                              Submitted="StateHasChanged"
+                              Items="app.dbContext.TreatmentRecords.Where(f => f.RecipientTypeId==breed.LivestockAnimalId
+                                && f.RecipientType==RecipientTypeConstants.LivestockAnimal
+                                && f.RecipientId == livestock.Id).OrderByDescending(r=>r.DatePerformed)">
+            </TreatmentRecordList>
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_measurementTab">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_measurementTab)" @onclick="@(() =>_tabControl.ActivatePage(_measurementTab))">
+                Measurements
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            <MeasurementList @ref="_measurementList"
+                                 Submitted="StateHasChanged"
+                                 Items="app.dbContext.Measurements.Where(f =>
+                f.RecipientTypeId==breed.LivestockAnimalId
+                && f.RecipientType==RecipientTypeConstants.LivestockAnimal
+                && f.RecipientId == livestock.Id).OrderByDescending(r=>r.DatePerformed)">
+            </MeasurementList>
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_progenyTab">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_progenyTab)" @onclick="@(() =>_tabControl.ActivatePage(_progenyTab))">
+                Progeny
+            </button>
+        </ButtonContent>
+        <ChildContent>
+            
+        </ChildContent>
+    </TabPage>
+    <TabPage @ref="_ancestryTab">
+        <ButtonContent>
+            <button type="button" class="@_tabControl.GetButtonClass(_ancestryTab)" @onclick="@(() =>_tabControl.ActivatePage(_ancestryTab))">
+                Ancestry
+            </button>
+        </ButtonContent>
+        <ChildContent>
+
+        </ChildContent>
+    </TabPage>
+</TabControl>
