@@ -34,5 +34,13 @@
   {
     "outputFile": "Components/LivestockAnimal/LivestockAnimalViewer.razor.css",
     "inputFile": "Components/LivestockAnimal/LivestockAnimalViewer.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockAncestry.razor.css",
+    "inputFile": "Components/Livestock/LivestockAncestry.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockProgeny.razor.css",
+    "inputFile": "Components/Livestock/LivestockProgeny.razor.scss"
   }
 ]

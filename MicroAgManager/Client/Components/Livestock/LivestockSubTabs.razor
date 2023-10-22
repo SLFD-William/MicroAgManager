@@ -60,7 +60,9 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            
+            <CascadingValue Value="livestock">
+                <LivestockProgeny></LivestockProgeny>
+            </CascadingValue>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_ancestryTab">
@@ -70,7 +72,18 @@
             </button>
         </ButtonContent>
         <ChildContent>
-
+            @if (livestockMom is not null)
+            { 
+            <CascadingValue Value="livestockMom">
+                <LivestockAncestry></LivestockAncestry>
+            </CascadingValue>
+            }
+            @if (livestockDad is not null)
+            {
+                <CascadingValue Value="livestockDad">
+                    <LivestockAncestry></LivestockAncestry>
+                </CascadingValue>
+            }
         </ChildContent>
     </TabPage>
 </TabControl>

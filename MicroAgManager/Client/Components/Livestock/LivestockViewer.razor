@@ -1,0 +1,21 @@
+﻿@using Domain.Models;
+@inherits DataComponent<LivestockModel>
+<div class="LivestockViewer">
+    @if (_editting)
+    {
+        <CascadingValue Value="livestock">
+            <LivestockEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></LivestockEditor>
+        </CascadingValue>
+    }
+    else{
+        <section >
+            <button type="button" onclick="@(()=> ShowEditor())"><p>@livestock.Name</p></button>
+        </section>
+        @if (livestock.Id > 0)
+        {
+            <CascadingValue Value="@livestock">
+                <LivestockSubTabs></LivestockSubTabs>
+            </CascadingValue>
+        }
+    }
+</div>

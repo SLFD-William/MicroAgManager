@@ -12,6 +12,8 @@ namespace FrontEnd.Components.Livestock
         [CascadingParameter] public LivestockModel? Livestock { get; set; }
         [Parameter] public long? livestockId { get; set; }
         private LivestockModel livestock { get; set; } = new LivestockModel();
+        private LivestockModel livestockMom { get; set; } = new LivestockModel();
+        private LivestockModel livestockDad { get; set; } = new LivestockModel();
         private LivestockBreedModel breed { get; set; }
 
         protected TabPage _registrationTab;
@@ -29,8 +31,9 @@ namespace FrontEnd.Components.Livestock
             livestock = Livestock is not null ? Livestock :
                await app.dbContext.Livestocks.FindAsync(livestockId.Value);
 
-            if(livestock is not null)
-                breed = await app.dbContext.LivestockBreeds.FindAsync(livestock.LivestockBreedId);
+            breed = await app.dbContext.LivestockBreeds.FindAsync(livestock?.LivestockBreedId);
+            livestockMom = await app.dbContext.Livestocks.FindAsync(livestock?.MotherId);
+            livestockDad = await app.dbContext.Livestocks.FindAsync(livestock?.FatherId);
 
             if (_registrationList is not null)
                 await _registrationList.FreshenData();

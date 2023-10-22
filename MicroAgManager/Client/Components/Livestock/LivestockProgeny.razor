@@ -1,0 +1,22 @@
+﻿@using Domain.Constants;
+@using Domain.Models;
+@inherits DataComponent<LivestockModel>
+<div class="LivestockProgeny">
+      <nav role="group">
+        @foreach(var mate in mates)
+        {
+            <button style="@SelectedMateStyle(mate)" type="button" @onclick=@(() => ToggleMate(mate))>@mate.Name</button>
+        }
+        @if (ShowUnkownButton())
+        {
+            <button type="button" @onclick=@(() => ToggleMate(new LivestockModel()) )>Unknown</button>
+        }
+    </nav>
+    <section>
+        @foreach (var child in offspring.OrderBy(c => c.MotherId).ThenBy(c => c.FatherId).ThenBy(o => o.Birthdate))
+        {
+            <span style="@ChildStyle(child)">@($"{child.Name}")</span>
+        }
+    </section>
+
+</div>

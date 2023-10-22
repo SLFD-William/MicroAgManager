@@ -1,0 +1,11 @@
+﻿.LivestockAncestry {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+
+    & > span:first-child {
+        grid-row: span 2;
+        align-self: center;
+    }
+}

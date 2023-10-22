@@ -36,5 +36,10 @@
             <Column TableItem="LivestockSummary" Field="@(x => x.Birthdate)" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="LivestockSummary" Field="@(x => x.OpenScheduledDutyCount)" Title="Open Duties" Sortable="true" Filterable="true" UseInSuperSearch="true" />
         </ColumnContent>
+        <TableRowTemplate>
+            <CascadingValue Value="@(app.dbContext.Livestocks.Find(context.Id))">
+                <LivestockViewer  ></LivestockViewer>
+            </CascadingValue>
+        </TableRowTemplate>
     </TableTemplate>
 }

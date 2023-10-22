@@ -1,0 +1,21 @@
+﻿@using Domain.Constants;
+@using Domain.Models;
+@inherits DataComponent<LivestockModel>
+@if (livestock is not null)
+{ 
+    <div class="LivestockAncestry">
+        <span>@($"{livestock.Variety} {GenderTitle()}: {livestock.Name} ")</span>
+        @if (livestockMom is not null)
+        {
+            <CascadingValue Value="livestockMom">
+                <LivestockAncestry></LivestockAncestry>
+            </CascadingValue>
+        }
+        @if (livestockDad is not null)
+        {
+            <CascadingValue Value="livestockDad">
+                <LivestockAncestry></LivestockAncestry>
+            </CascadingValue>
+        }
+    </div>
+}
