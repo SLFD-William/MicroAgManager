@@ -46,7 +46,7 @@ namespace FrontEnd.Components.Registration
             if (Registration is null && registrationId > 0)
                 working = await app.dbContext.Registrations.FindAsync(registrationId);
 
-            if (working is null)
+            if (working is null && registrarId>0)
                 working = new RegistrationModel()
                 {
                     RecipientId = RecipientId,

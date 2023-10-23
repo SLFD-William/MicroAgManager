@@ -14,6 +14,7 @@ namespace FrontEnd.Components.Measurement
         [CascadingParameter] public MeasurementModel Measurement { get; set; }
         [Parameter] public long? measurementId { get; set; }
         [Parameter] public required long measureId { get; set; }
+        
 
         private ValidatedForm _validatedForm;
  
@@ -70,7 +71,7 @@ namespace FrontEnd.Components.Measurement
             if (Measurement is null && measurementId > 0)
                 working = await app.dbContext.Measurements.FindAsync(measurementId);
 
-            if(working is null)
+            if(working is null && measureId>0 )
             {
                 var measure = await app.dbContext.Measures.FindAsync(measureId);
                 working = new MeasurementModel()
@@ -79,7 +80,7 @@ namespace FrontEnd.Components.Measurement
                     RecipientTypeId = RecipientTypeId,
                     RecipientType = RecipientType,
                     MeasureId = measureId,
-                    MeasurementUnitId = measure.UnitId,
+                    MeasurementUnitId = measure?.UnitId ?? 0,
                     DatePerformed = DateTime.Now,
                 };
             }

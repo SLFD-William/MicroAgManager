@@ -1,5 +1,6 @@
 ﻿@using Domain.Constants;
-@using FrontEnd.Components.Registration;
+@using FrontEnd.Components.Registration
+@using FrontEnd.Components.ScheduledDuty;
 @using FrontEnd.Components.TreatmentRecord;
 @using FrontEnd.Components.Measurement;
 @using Domain.Models;
@@ -14,13 +15,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <RegistrationList @ref="_registrationList"
-                          Submitted="StateHasChanged"
-                          Items="app.dbContext.Registrations.Where(f => f.RecipientTypeId==breed.LivestockAnimalId 
-                                && f.RecipientType==RecipientTypeConstants.LivestockAnimal 
-                                && f.RecipientId == livestock.Id).OrderByDescending(r=>r.RegistrationDate)">
-            </RegistrationList>
-        </ChildContent>
+           </ChildContent>
     </TabPage>
     <TabPage @ref="_treatmentRecordTab">
         <ButtonContent>
@@ -29,12 +24,6 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <TreatmentRecordList @ref="_treatmentRecordList"
-                              Submitted="StateHasChanged"
-                              Items="app.dbContext.TreatmentRecords.Where(f => f.RecipientTypeId==breed.LivestockAnimalId
-                                && f.RecipientType==RecipientTypeConstants.LivestockAnimal
-                                && f.RecipientId == livestock.Id).OrderByDescending(r=>r.DatePerformed)">
-            </TreatmentRecordList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_measurementTab">
@@ -44,13 +33,6 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <MeasurementList @ref="_measurementList"
-                                 Submitted="StateHasChanged"
-                                 Items="app.dbContext.Measurements.Where(f =>
-                f.RecipientTypeId==breed.LivestockAnimalId
-                && f.RecipientType==RecipientTypeConstants.LivestockAnimal
-                && f.RecipientId == livestock.Id).OrderByDescending(r=>r.DatePerformed)">
-            </MeasurementList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_progenyTab">

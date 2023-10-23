@@ -11,6 +11,7 @@ namespace FrontEnd.Components.Shared
         [Parameter] public long RecipientTypeId {get;set;}
         [Parameter] public long RecipientId { get; set; }
         [Parameter] public string RecipientType { get; set; }
+        [Parameter] public bool ShowRecipient { get; set; } = true;
         protected List<KeyValuePair<long, string>> recipientTypeIds()
         {
             switch (((IHasRecipient)working).RecipientType)

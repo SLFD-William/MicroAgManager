@@ -1,0 +1,102 @@
+﻿@using Domain.Constants;
+@using Domain.Models;
+@inherits DataComponent<LivestockModel>
+@if (livestock is not null)
+{
+    <div class="LivestockBadge" @attributes="InputAttributes">
+        <h1 onclick="@(async() => await OnClick.InvokeAsync())" class="@PointerClass()" style="@ButtonBackGround()">
+            @if (ShowEmoji)
+            {
+                <span>@breed?.EmojiChar</span>
+            }
+            @if (ShowGender)
+            {
+                <span class="fa-stack">
+                    <i class="fas fa-stack-1x @(livestock.Gender==GenderConstants.Female?"fa-venus female":"fa-mars male")"></i>
+                    @if (livestock.Sterile)
+                    {
+                        <i class="fas fa-ban fa-stack-1x"></i>
+                    }
+                </span>
+            }
+            @livestock.Name
+        </h1>
+        @if (ShowGeneral)
+        {
+            <p>@breed?.Name</p>
+            <p>@livestock.Variety</p>
+        }
+        @if (ShowStatus)
+        {
+            <p>@status?.Status</p>
+        }
+        @if (ShowAge)
+        {
+            <p>@Age()</p>
+        }
+        @if (ShowGeneral)
+        {
+            <p>@animal?.Name</p>
+        }
+    </div>
+}
+@code{
+    [CascadingParameter] public LivestockModel? Livestock { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? InputAttributes { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public long? livestockId { get; set; }
+    [Parameter] public bool ShowGender { get; set; } = true;
+    [Parameter] public bool ShowEmoji { get; set; } = true;
+    [Parameter] public bool ShowGeneral { get; set; } = false;
+    [Parameter] public bool ShowStatus { get; set; } = false;
+    [Parameter] public bool ShowAge { get; set; } = false;
+    [Parameter] public string BackGroundColor { get; set; }
+    private LivestockAnimalModel? animal { get; set; }
+    private LivestockBreedModel? breed { get; set; }
+    private LivestockModel? livestock { get; set; }
+    private LivestockStatusModel? status { get; set; }
+    private string Age()
+    {
+        if (livestock is null)
+            return "";
+
+        var age=DateTime.Now.Subtract(livestock.Birthdate);
+        switch (age.Days)
+        {
+            case var d when d < 1:
+                return $"{age.Hours} hours old";
+            case var d when d < 90:
+                return $"{age.Days} days old";
+            case var d when d < 548:
+                return $"{age.Days / 30} months old";
+            default:
+                return $"{age.Days / 365} years old";
+        }
+    }
+    public override async Task FreshenData()
+    {
+        if (Livestock is not null)
+            livestock = Livestock;
+        if (Livestock is null && livestockId.HasValue)
+            livestock = await app.dbContext.Livestocks.FindAsync(livestockId);
+
+        if (status is null)
+            status = await app.dbContext.LivestockStatuses.FindAsync(livestock?.StatusId);
+        if (breed is null)
+            breed = await app.dbContext.LivestockBreeds.FindAsync(livestock?.LivestockBreedId);
+        if (animal is null)
+            animal = await app.dbContext.LivestockAnimals.FindAsync(breed?.LivestockAnimalId);
+        StateHasChanged();
+    }
+    private string PointerClass()
+    {
+        var styleClass = OnClick.HasDelegate ? "pointer" : string.Empty;
+        var colorClass= BackGroundColor is null ? string.Empty : " customColor";
+        
+        return $"{styleClass} {colorClass}".Trim();
+
+
+    } 
+    private string ButtonBackGround()   => BackGroundColor is null ? string.Empty: $"background-color:{BackGroundColor}";
+}

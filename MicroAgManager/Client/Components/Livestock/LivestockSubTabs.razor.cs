@@ -1,6 +1,7 @@
 ﻿using Domain.Models;
 using FrontEnd.Components.Measurement;
 using FrontEnd.Components.Registration;
+using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.TreatmentRecord;
 using Microsoft.AspNetCore.Components;
@@ -17,11 +18,11 @@ namespace FrontEnd.Components.Livestock
         private LivestockBreedModel breed { get; set; }
 
         protected TabPage _registrationTab;
-        protected RegistrationList _registrationList;
+        protected ScheduledDutyList _registrationList;
         protected TabPage _treatmentRecordTab;
-        protected TreatmentRecordList _treatmentRecordList;
+        protected ScheduledDutyList _treatmentRecordList;
         protected TabPage _measurementTab;
-        protected MeasurementList _measurementList;
+        protected ScheduledDutyList _measurementList;
         protected TabControl _tabControl;
 
         protected TabPage _progenyTab;

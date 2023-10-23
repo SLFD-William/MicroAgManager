@@ -15,30 +15,33 @@
                    Show="Show"
     @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
-                <InputSelect @bind-Value="@working.RecipientType">
-                    <option value="0">Select Recipient Type ...</option>
-                    <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
-                </InputSelect>
-            </ValidatedField>
-            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => working.RecipientTypeId)">
-                <InputSelect @bind-Value="@working.RecipientTypeId">
-                    <option value="0">Select Recipient Type Instance ...</option>
-                    @foreach (var recipient in recipientTypeIds())
-                    {
-                        <option value="@recipient.Key">@recipient.Value</option>
-                    }
-                </InputSelect>
-            </ValidatedField>
-            <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => working.RecipientId)">
-                <InputSelect @bind-Value="@working.RecipientId">
-                    <option value="0">Select Recipient Instance ...</option>
-                    @foreach (var recipient in recipientIds())
-                    {
-                        <option value="@recipient.Key">@recipient.Value</option>
-                    }
-                </InputSelect>
-            </ValidatedField>
+            @if (ShowRecipient)
+            {
+                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
+                    <InputSelect @bind-Value="@working.RecipientType">
+                        <option value="0">Select Recipient Type ...</option>
+                        <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => working.RecipientTypeId)">
+                    <InputSelect @bind-Value="@working.RecipientTypeId">
+                        <option value="0">Select Recipient Type Instance ...</option>
+                        @foreach (var recipient in recipientTypeIds())
+                        {
+                            <option value="@recipient.Key">@recipient.Value</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => working.RecipientId)">
+                    <InputSelect @bind-Value="@working.RecipientId">
+                        <option value="0">Select Recipient Instance ...</option>
+                        @foreach (var recipient in recipientIds())
+                        {
+                            <option value="@recipient.Key">@recipient.Value</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+            }
             <ValidatedField ValidationMessageFor="@(() => working.RegistrarId)">
                 <LegendContent>
                     <div style="display:inline-flex">

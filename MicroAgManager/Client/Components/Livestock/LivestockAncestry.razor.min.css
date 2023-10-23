@@ -1,1 +1,1 @@
-﻿.LivestockAncestry{display:grid;grid-template-columns:max-content max-content;gap:.25rem;padding:.25rem .5rem;}.LivestockAncestry>span:first-child{grid-row:span 2;align-self:center;}
+﻿.LivestockAncestry{display:grid;grid-template-columns:max-content max-content;gap:.25rem;padding:.25rem .5rem;}.LivestockAncestry>::deep .LivestockBadge{grid-row:span 2;align-self:center;}

@@ -9,8 +9,8 @@ namespace FrontEnd.Components.Livestock
     {
         [CascadingParameter] public LivestockModel? Livestock { get; set; }
         [Parameter] public long? livestockId { get; set; }
-        private LivestockAnimalModel animal { get; set; } = new LivestockAnimalModel();
-        private LivestockBreedModel breed { get; set; } = new LivestockBreedModel();
+        private static LivestockAnimalModel animal { get; set; } = new LivestockAnimalModel();
+        private static LivestockBreedModel breed { get; set; } = new LivestockBreedModel();
         private LivestockModel livestock { get; set; } = new LivestockModel();
         private LivestockModel livestockMom { get; set; } = new LivestockModel();
         private LivestockModel livestockDad { get; set; } = new LivestockModel();
@@ -26,8 +26,10 @@ namespace FrontEnd.Components.Livestock
 
             livestockMom= await app.dbContext.Livestocks.FindAsync(livestock?.MotherId);
             livestockDad = await app.dbContext.Livestocks.FindAsync(livestock?.FatherId);
-            breed = await app.dbContext.LivestockBreeds.FindAsync(livestock?.LivestockBreedId);
-            animal = await app.dbContext.LivestockAnimals.FindAsync(breed?.LivestockAnimalId);
+            if(breed is null)
+                breed = await app.dbContext.LivestockBreeds.FindAsync(livestock?.LivestockBreedId);
+            if(animal is null)
+                animal = await app.dbContext.LivestockAnimals.FindAsync(breed?.LivestockAnimalId);
 
             StateHasChanged();
         }

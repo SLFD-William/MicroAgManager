@@ -4,7 +4,9 @@
 @if (livestock is not null)
 { 
     <div class="LivestockAncestry">
-        <span>@($"{livestock.Variety} {GenderTitle()}: {livestock.Name} ")</span>
+        <CascadingValue Value="livestock">
+            <LivestockBadge ShowEmoji=false></LivestockBadge>
+        </CascadingValue>
         @if (livestockMom is not null)
         {
             <CascadingValue Value="livestockMom">

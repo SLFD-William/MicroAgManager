@@ -30,24 +30,25 @@ namespace FrontEnd.Components.Livestock
         private bool ShowUnkownButton()=> livestock.Gender == GenderConstants.Male ?
                 offspring.Any(o => o.MotherId == null) :
                 offspring.Any(o => o.FatherId == null);
-        private string SelectedMateStyle(LivestockModel mate)
+        private string SelectedMateColor(LivestockModel mate)
         {
-            var index= selectedMates.IndexOf(mate);
-            return index < 0 ? string.Empty : $"background-color: {((KnownColor)index + 28).GetEnumDescription()};";
+            if(!selectedMates.Contains(mate)) return string.Empty;
+            var index= mates.IndexOf(mate);
+            return index < 0 ? string.Empty :((KnownColor)index + 28).GetEnumDescription();
         }
         private string ChildStyle(LivestockModel child)
         {
             if (!selectedMates.Any()) return string.Empty;
             if (ShowUnkownButton() && selectedMates.Any(m => m.Id < 1))
                 return livestock.Gender == GenderConstants.Male ?
-                    (!child.MotherId.HasValue ? SelectedMateStyle(new()) : string.Empty):
-                    (!child.FatherId.HasValue ? SelectedMateStyle(new()) : string.Empty);
+                    (!child.MotherId.HasValue ? $"background-color:{SelectedMateColor(new())}" : string.Empty):
+                    (!child.FatherId.HasValue ? $"background-color:{SelectedMateColor(new())}" : string.Empty);
             
             var thisMate= livestock.Gender == GenderConstants.Male ?
                 selectedMates.FirstOrDefault(m => m.Id == child.MotherId) :
                 selectedMates.FirstOrDefault(m => m.Id == child.FatherId);
 
-            return thisMate is null? "display:none;":SelectedMateStyle(thisMate);
+            return thisMate is null? "display:none;" : $"background-color:{SelectedMateColor(thisMate)}";
         }
         public override async Task FreshenData()
         {
@@ -70,6 +71,8 @@ namespace FrontEnd.Components.Livestock
                 offspring.Where(o => o.MotherId == livestock.Id).Select(o => o.FatherId).Distinct().ToList();
 
             mates = await app.dbContext.Livestocks.Where(x => mateIds.Contains(x.Id)).OrderBy(x=>x.Id).ToListAsync();
+            if(!selectedMates.Any())
+                selectedMates.AddRange(mates);
 
             StateHasChanged();
         }

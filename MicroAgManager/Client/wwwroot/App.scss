@@ -76,6 +76,18 @@ form {
     grid-template-rows: min-content 1fr min-content;
     max-height: 100vh;
 }
+.female {
+    color: hotpink;
+    -webkit-text-stroke: 1px black;
+}
+.male {
+    color: royalblue;
+    -webkit-text-stroke: 1px black;
+}
+.fa-ban {
+    color: red;
+    -webkit-text-stroke: 1px black;
+}
 .modalContainer {
     display: flex;
     align-items: center;

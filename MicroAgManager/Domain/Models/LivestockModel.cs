@@ -26,6 +26,8 @@ namespace Domain.Models
         public bool InMilk { get; set; } = false;
         public bool BottleFed { get; set; } = false;
         public bool ForSale { get; set; } = true;
+
+
         public static LivestockModel Create(Livestock livestock)
         {
             var model = PopulateBaseModel(livestock, new LivestockModel
@@ -51,8 +53,6 @@ namespace Domain.Models
             }) as LivestockModel;
             return model;
         }
-
-
         public override BaseModel Map(BaseModel entity)
         {
             if (entity == null || entity is not LivestockModel) return null;
@@ -76,7 +76,6 @@ namespace Domain.Models
             ((LivestockModel)entity).LocationId = LocationId;
             return entity;
         }
-
         public override BaseEntity Map(BaseEntity entity)
         {
             if (entity == null || entity is not Livestock) return null;

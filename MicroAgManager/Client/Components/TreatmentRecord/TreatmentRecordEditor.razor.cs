@@ -69,7 +69,7 @@ namespace FrontEnd.Components.TreatmentRecord
                 working = await app.dbContext.TreatmentRecords.FindAsync(treatmentRecordId);
 
 
-            if (working is null)
+            if (working is null && treatmentId>0)
             {
                 var treatment = await app.dbContext.Treatments.FindAsync(treatmentId);
                 working = new TreatmentRecordModel()

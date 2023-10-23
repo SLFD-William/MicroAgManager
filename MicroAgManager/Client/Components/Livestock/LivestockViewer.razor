@@ -8,9 +8,10 @@
         </CascadingValue>
     }
     else{
-        <section >
-            <button type="button" onclick="@(()=> ShowEditor())"><p>@livestock.Name</p></button>
-        </section>
+        <CascadingValue Value="livestock">
+            <LivestockBadge OnClick="@(()=> ShowEditor())" ShowAge="true" ShowGeneral="true" ShowStatus="true" ></LivestockBadge>
+        </CascadingValue>
+        
         @if (livestock.Id > 0)
         {
             <CascadingValue Value="@livestock">

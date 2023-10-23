@@ -5,7 +5,9 @@
       <nav role="group">
         @foreach(var mate in mates)
         {
-            <button style="@SelectedMateStyle(mate)" type="button" @onclick=@(() => ToggleMate(mate))>@mate.Name</button>
+            <CascadingValue  Value="mate">
+                <LivestockBadge ShowEmoji="false" BackGroundColor="@SelectedMateColor(mate)" OnClick="@(() => ToggleMate(mate))"></LivestockBadge>
+            </CascadingValue>
         }
         @if (ShowUnkownButton())
         {
@@ -15,8 +17,9 @@
     <section>
         @foreach (var child in offspring.OrderBy(c => c.MotherId).ThenBy(c => c.FatherId).ThenBy(o => o.Birthdate))
         {
-            <span style="@ChildStyle(child)">@($"{child.Name}")</span>
+            <CascadingValue Value="child">
+                <LivestockBadge ShowAge="true" ShowEmoji="false" style="@ChildStyle(child)"></LivestockBadge>
+            </CascadingValue>
         }
     </section>
-
 </div>
