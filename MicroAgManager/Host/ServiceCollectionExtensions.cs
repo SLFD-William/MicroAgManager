@@ -21,7 +21,7 @@ namespace Host
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<IMicroAgManagementDbContext, MicroAgManagementDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseNpgsql(connectionString));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
