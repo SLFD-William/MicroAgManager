@@ -13,7 +13,6 @@ namespace Domain.Abstracts
         [Required] public DateTime CreatedOn { get; set; }
         [Required] public Guid CreatedBy { get; set; }
         [Required] public DateTime ModifiedOn { get; set; }
-        [Timestamp] public byte[] TimeStamp { get; set; }
         [Required] public Guid ModifiedBy { get; set; }
         public DateTime? DeletedOn { get; set; }
         public Guid? DeletedBy { get; set; }
