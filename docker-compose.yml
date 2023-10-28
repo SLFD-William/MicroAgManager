@@ -1,0 +1,40 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge 
+
+services:
+  host:
+    image: ${DOCKER_REGISTRY-}host
+    depends_on:
+      - "micro_ag_manager_db"
+    container_name: micro_ag_manager_host
+    ports:
+      - "5009:80"
+    build:
+      context: .
+      dockerfile: MicroAgManager/Host/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=User Id=postgres;Password=postgres;Server=micro_ag_manager_db;Port=5432;Database=MicroAgManager;IntegratedSecurity=true;Pooling=true;
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    networks:
+      - dev
+
+  micro_ag_manager_db:
+    image: postgres:latest
+    container_name: micro_ag_manager_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=MicroAgManager
+    ports:
+      - "5433:5432"
+    restart: always
+    volumes:
+      - micro_ag_manager_data:/var/lib/postgresql/data/ 
+    networks:
+      - dev
+
+volumes:
+  micro_ag_manager_data:
