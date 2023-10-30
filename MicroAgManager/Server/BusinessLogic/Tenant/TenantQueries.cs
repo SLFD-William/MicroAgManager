@@ -26,7 +26,7 @@ namespace BackEnd.BusinessLogic.Tenant
 
             if (LastModified.HasValue)
                 query = query.Where(_ => _.ModifiedOn >= LastModified);
-            
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             return query;
         }
 

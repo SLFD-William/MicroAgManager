@@ -24,7 +24,7 @@ namespace BackEnd.BusinessLogic.Milestone
             if (SystemRequired != null) query = query.Where(_ => _.SystemRequired == SystemRequired);
             if (RecipientType != null) query = query.Where(_ => _.RecipientType == RecipientType);
             if (RecipientTypeId != null) query = query.Where(_ => _.RecipientTypeId == RecipientTypeId);
-            
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
     }

@@ -36,7 +36,7 @@ namespace BackEnd.BusinessLogic.Livestock.Feed
             if (!string.IsNullOrWhiteSpace(FeedType)) query = query.Where(x => x.FeedType.Contains(FeedType));
             if (!string.IsNullOrWhiteSpace(Distribution)) query = query.Where(x => x.Distribution.Contains(Distribution));
 
-
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
 

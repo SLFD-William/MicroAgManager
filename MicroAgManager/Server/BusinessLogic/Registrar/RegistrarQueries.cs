@@ -20,6 +20,7 @@ namespace BackEnd.BusinessLogic.Registrar
             if (!string.IsNullOrEmpty(Email)) query = query.Where(_ => _.Email != null && _.Email.Contains(Email));
             if (!string.IsNullOrEmpty(Website)) query = query.Where(_ => _.Website != null && _.Website.Contains(Website));
             if (!string.IsNullOrEmpty(API)) query = query.Where(_ => _.API != null && _.API.Contains(API));
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
     }

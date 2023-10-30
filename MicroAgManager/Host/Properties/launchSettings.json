@@ -30,13 +30,15 @@
     },
     "Docker": {
       "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "useSSL": true,
+      "sslPort": 5010,
+      "httpPort": 5009,
       "launchBrowser": true,
-      "launchUrl": "http://localhost:80",
       "environmentVariables": {
         "ASPNETCORE_URLS": "https://+:443;http://+:80"
-      },
-      "publishAllPorts": true,
-      "useSSL": true
+      }
     }
   },
   "iisSettings": {

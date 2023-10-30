@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using static System.Net.WebRequestMethods;
 
 namespace FrontEnd.Services
 {
@@ -65,7 +66,7 @@ namespace FrontEnd.Services
         {
             if (_authentication.User?.Identity?.IsAuthenticated == true)
             {
-               //await InitializeNotificationHub();
+                await InitializeNotificationHub();
                 await _dbSynchonizer.SynchronizeInBackground();
             }
             else
@@ -75,7 +76,7 @@ namespace FrontEnd.Services
         private async Task InitializeNotificationHub()
         {
             if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected) return;
-            var address = _navigation.ToAbsoluteUri("/notificationhub");
+            var address = "https://0.0.0.0:5010/notificationhub"; //_navigation.ToAbsoluteUri("/notificationhub");
 
             _hubConnection = new HubConnectionBuilder()
                 //.WithUrl(address)

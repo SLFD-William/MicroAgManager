@@ -22,6 +22,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
             if (ServiceDate.HasValue) query = query.Where(_ => _.ServiceDate == ServiceDate);
             if (ResolutionDate.HasValue) query = query.Where(_ => _.ResolutionDate == ResolutionDate);
             if (ExpectingDate.HasValue) query = query.Where(_ =>_.Female !=null && _.ServiceDate == ExpectingDate.Value.AddDays(-_.Female.Breed.GestationPeriod));
+            query= query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
     }

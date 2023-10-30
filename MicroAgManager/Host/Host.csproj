@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -26,6 +26,12 @@
     <ProjectReference Include="..\Persistence\BackEnd.Persistence.csproj" />
     <ProjectReference Include="..\Server\BackEnd.csproj" />
     <ProjectReference Include="..\WASM\WASM.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Certs\Host.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 

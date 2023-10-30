@@ -25,8 +25,9 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             if (Dismissed.HasValue) query = query.Where(_ => _.Dismissed == Dismissed);
             if (DutyId.HasValue) query = query.Where(_ => _.Duty.Id == DutyId);
             if (ReminderDays.HasValue) query = query.Where(_ => _.ReminderDays == ReminderDays);
-            
-            
+            query = query.OrderByDescending(_ => _.ModifiedOn);
+
+
             return (IQueryable<T>)query;
         }
     }
