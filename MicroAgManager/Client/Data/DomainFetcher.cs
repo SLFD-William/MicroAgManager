@@ -67,9 +67,10 @@ namespace FrontEnd.Data
                 var name = AddNamedParameter(command, "$Name");
                 var guidId = AddNamedParameter(command, "$GuidId");
                 var tenantUserAdminId = AddNamedParameter(command, "$TenantUserAdminId");
-                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedBy) " +
+                var weatherServiceQueryURL = AddNamedParameter(command, "$WeatherServiceQueryURL");
+                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedBy,WeatherServiceQueryURL) " +
                     $"Values ({baseParameters["Id"].ParameterName},{guidId.ParameterName},{name.ParameterName},{tenantUserAdminId.ParameterName},{baseParameters["Deleted"].ParameterName}," +
-                    $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName})";
+                    $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName},{weatherServiceQueryURL.ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
@@ -77,6 +78,7 @@ namespace FrontEnd.Data
                     name.Value = model.Name;
                     guidId.Value = model.GuidId;
                     tenantUserAdminId.Value = model.TenantUserAdminId;
+                    weatherServiceQueryURL.Value = model.WeatherServiceQueryURL ?? string.Empty;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -126,11 +128,6 @@ namespace FrontEnd.Data
                     country.Value = model.Country ?? string.Empty;
                     await command.ExecuteNonQueryAsync();
                 }
-
-
-
-
-
             }
         }
         public async static Task BulkUpdateLivestockAnimals(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)

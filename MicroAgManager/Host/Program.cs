@@ -3,6 +3,8 @@ using Host;
 using Host.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 const string CorsPolicy = nameof(CorsPolicy);
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +28,8 @@ builder.Services.AddCors(options =>
         {
             builder.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                ;
         });
 });
 
@@ -63,6 +66,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
+app.UseCors(CorsPolicy);
 app.UseAuthorization();
 AuthenticationAPI.Map(app);
 BusinessLogicAPI.MapAnciliary(app);
@@ -73,5 +77,11 @@ BusinessLogicAPI.MapScheduling(app);
 
 app.MapHub<NotificationHub>("/notificationhub");
 app.MapFallbackToFile("index.html");
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
 
+    var context = services.GetRequiredService<MicroAgManagementDbContext>();
+    context.Database.Migrate();
+}
 app.Run();

@@ -83,11 +83,8 @@
                 return;
 
 
-            StateHasChanged();
-            // if (IsRegistering)//TODO Handle Email Confirmation
-            //     navigationManager.NavigateTo("onboarding");
-            // else
-            navigationManager.NavigateTo(""); //TODO remove this once wizard is complete.
+            StateHasChanged();//TODO Handle Email Confirmation
+            navigationManager.NavigateTo(""); 
         }
         catch (Exception ex)
         {

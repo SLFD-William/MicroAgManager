@@ -65,7 +65,7 @@ namespace FrontEnd.Services
         {
             if (_authentication.User?.Identity?.IsAuthenticated == true)
             {
-                await InitializeNotificationHub();
+               //await InitializeNotificationHub();
                 await _dbSynchonizer.SynchronizeInBackground();
             }
             else

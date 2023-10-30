@@ -3,8 +3,12 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "host",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
       "serviceActions": {
-        "host": "StartDebugging"
+        "host": "StartDebugging",
+        "micro_ag_manager_db": "StartWithoutDebugging"
       }
     }
   }

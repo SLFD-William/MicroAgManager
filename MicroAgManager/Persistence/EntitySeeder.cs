@@ -13,8 +13,8 @@ namespace Persistence
         private static void SeedRoles(ModelBuilder builder)
         {
             builder.Entity<IdentityRole>().HasData(
-                new IdentityRole() { Id = Administration.SystemAdminRole.ToString(), Name = "SystemAdmin", ConcurrencyStamp = "1", NormalizedName = "SystemAdmin".Normalize() },
-                new IdentityRole() { Id = Administration.TenantAdminRole.ToString(), Name = "TenantAdmin", ConcurrencyStamp = "1", NormalizedName = "TenantAdmin".Normalize() }
+                new IdentityRole() { Id = Administration.SystemAdminRole.ToString(), Name = "SYSTEMADMIN", ConcurrencyStamp = "1" },
+                new IdentityRole() { Id = Administration.TenantAdminRole.ToString(), Name = "TENANTADMIN", ConcurrencyStamp = "1" }
                 );
         }
     }

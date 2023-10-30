@@ -9,6 +9,7 @@ namespace Domain.Models
         [Required] public Guid GuidId { get; set; }
         [Required] public string? Name { get; set; }
         [Required] public Guid? TenantUserAdminId { get; set; }
+        public string? WeatherServiceQueryURL { get; set; }
         public new DateTime EntityModifiedOn { get; private set; } = DateTime.MinValue;
         public static TenantModel Create(Tenant tenant)
         {
@@ -20,6 +21,7 @@ namespace Domain.Models
                 Name = tenant.Name,
                 TenantUserAdminId = tenant.TenantUserAdminId,
                 Deleted = false,
+                WeatherServiceQueryURL = tenant.WeatherServiceQueryURL,
                 EntityModifiedOn = tenant.ModifiedOn,
                 ModifiedBy = tenant.ModifiedBy
             };

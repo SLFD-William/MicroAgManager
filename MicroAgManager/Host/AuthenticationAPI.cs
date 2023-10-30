@@ -15,7 +15,7 @@ namespace Host
         public static void Map(WebApplication app)
         {
             app.MapPost("/api/security/register",
-                [AllowAnonymous] async (RegisterUserCommand command, IMediator mediator, IConfiguration configuration, UserManager<ApplicationUser> userManager,IMicroAgManagementDbContext context) =>
+                async (RegisterUserCommand command, IMediator mediator, IConfiguration configuration,RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager,IMicroAgManagementDbContext context) =>
                 {
                     if (!(command is AuthenticationCommand)) return Results.BadRequest();
                     try
@@ -43,6 +43,9 @@ namespace Host
                             return Results.Unauthorized();
                         if (!command.TenantId.HasValue)
                         {
+                            if(!await roleManager.RoleExistsAsync("TenantAdmin"))
+                                await roleManager.CreateAsync(new IdentityRole("TenantAdmin"));
+
                             var tenant = new Tenant(newTenant) { GuidId = newTenant, Name=command.Email, TenantUserAdminId = newTenant };
                             context.Tenants.Add(tenant);
                             await userManager.AddToRoleAsync(user, "TenantAdmin");
@@ -78,9 +81,9 @@ namespace Host
                     }
                     return Results.BadRequest();
                 }
-            );
+            ).AllowAnonymous();
             app.MapPost("/api/security/login",
-                [AllowAnonymous] async (LoginUserCommand command, IConfiguration configuration, SignInManager <ApplicationUser> signInManager, UserManager<ApplicationUser> userManager) =>
+                async (LoginUserCommand command, IConfiguration configuration, SignInManager <ApplicationUser> signInManager, UserManager<ApplicationUser> userManager) =>
                 {
                     if (!(command is IRequest<LoginResult>))
                         return Results.BadRequest();
@@ -121,9 +124,9 @@ namespace Host
 
                     return Results.Unauthorized();
                 }
-            );
+            ).AllowAnonymous();
             app.MapPost("/api/security/refreshtoken",
-                [AllowAnonymous] async (RefreshTokenCommand command, IMicroAgManagementDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration) =>
+                async (RefreshTokenCommand command, IMicroAgManagementDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration) =>
                 {
                     if (!(command is IRequest<TokenModel>))
                         return Results.BadRequest("Invalid access token or refresh token");
@@ -149,7 +152,7 @@ namespace Host
 
                     return Results.Ok(newAccessToken);
                 }
-            );
+            ).AllowAnonymous();
         }
 
 

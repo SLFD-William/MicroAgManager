@@ -12,12 +12,19 @@ services:
     container_name: micro_ag_manager_host
     ports:
       - "5009:80"
+      - "5010:443"
     build:
       context: .
       dockerfile: MicroAgManager/Host/Dockerfile
     environment:
       - ConnectionStrings__DefaultConnection=User Id=postgres;Password=postgres;Server=micro_ag_manager_db;Port=5432;Database=MicroAgManager;IntegratedSecurity=true;Pooling=true;
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=5010
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${USERPROFILE}/.aspnet/https:/root/.aspnet/https/ 
     networks:
       - dev
 

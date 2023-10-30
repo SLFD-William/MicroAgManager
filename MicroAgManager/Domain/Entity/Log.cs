@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
     public class Log //log object for Ilogger
     {
-        [Key]public long Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)][Key]public long Id { get; set; }
         public string Level { get; set; }
         public string CategoryName { get; set; }
         public string Message { get; set; }

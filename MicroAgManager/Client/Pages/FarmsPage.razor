@@ -9,4 +9,13 @@
 {
     <FrontEnd.Components.Farm.FarmList Submitted="StateHasChanged" Items="app.dbContext.Farms.Select((f => new FarmLocationSummary(f, app.dbContext)))"></FrontEnd.Components.Farm.FarmList>
 }
+@code{
+    protected virtual void DbSync_OnUpdate() => StateHasChanged();
+    protected override void OnInitialized() => app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
+    public virtual ValueTask DisposeAsync()
+    {
+        app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
+        return ValueTask.CompletedTask;
+    }
+}
 

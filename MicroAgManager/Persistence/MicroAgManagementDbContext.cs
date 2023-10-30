@@ -73,7 +73,7 @@ namespace Persistence
                 .HasOne(u => u.AreaUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
 
 
-            EntitySeeder.Seed(modelBuilder);
+            //EntitySeeder.Seed(modelBuilder);
         }
     }
 }
