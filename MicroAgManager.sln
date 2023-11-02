@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackEnd", "MicroAgManager\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASM", "MicroAgManager\WASM\WASM.csproj", "{230A4C8C-7EEF-4A08-8CE4-572CBFC62C62}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8EE0B046-EAA6-4162-887A-FACF6DA6F977}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +53,6 @@ Global
 		{230A4C8C-7EEF-4A08-8CE4-572CBFC62C62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{230A4C8C-7EEF-4A08-8CE4-572CBFC62C62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{230A4C8C-7EEF-4A08-8CE4-572CBFC62C62}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8EE0B046-EAA6-4162-887A-FACF6DA6F977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8EE0B046-EAA6-4162-887A-FACF6DA6F977}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8EE0B046-EAA6-4162-887A-FACF6DA6F977}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8EE0B046-EAA6-4162-887A-FACF6DA6F977}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
