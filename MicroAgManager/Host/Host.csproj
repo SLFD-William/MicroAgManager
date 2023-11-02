@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistence\BackEnd.Persistence.csproj" />
-    <ProjectReference Include="..\Server\BackEnd.csproj" />
+    <ProjectReference Include="..\BackEnd.Persistence\BackEnd.Persistence.csproj" />
+    <ProjectReference Include="..\BackEnd\BackEnd.csproj" />
     <ProjectReference Include="..\WASM\WASM.csproj" />
   </ItemGroup>
 

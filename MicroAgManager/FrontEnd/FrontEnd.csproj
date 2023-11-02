@@ -40,13 +40,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client.Persistence\FrontEnd.Persistence.csproj" />
-    <ProjectReference Include="..\Server\BackEnd.csproj" />
+    <Folder Include="Logging\" />
+    <Folder Include="wwwroot\FontAwesome\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logging\" />
-    <Folder Include="wwwroot\FontAwesome\" />
+    <ProjectReference Include="..\BackEnd\BackEnd.csproj" />
+    <ProjectReference Include="..\FrontEnd.Persistence\FrontEnd.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
