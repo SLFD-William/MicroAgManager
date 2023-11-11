@@ -1,14 +1,20 @@
 ﻿
 @inherits LayoutComponentBase
 @inject NavigationManager navigationManager
-
+@inject ApplicationStateProvider app
+<div class="MainLayout">
 <AuthorizeView>
     <Authorized>
-        <NavMenuMain></NavMenuMain>
-        <article>
+        <header>
+            <NavMenuMain></NavMenuMain>
+        </header>
+@*         <aside>
+
+        </aside> *@
+        <main>
             @Body
-        </article>
-        <footer>footer</footer>
+        </main>
+        <footer>@app.StatusMessage</footer>
     </Authorized>
     <Authorizing>
         @Body
@@ -20,3 +26,13 @@
         {@Body}
     </NotAuthorized>
 </AuthorizeView>
+</div>
+@code{
+    protected virtual void AppStatusChanged() => StateHasChanged();
+    protected override void OnInitialized() => app.OnStatusChanged += AppStatusChanged;
+    public virtual ValueTask DisposeAsync()
+    {
+        app.OnStatusChanged -= AppStatusChanged;
+        return ValueTask.CompletedTask;
+    }
+}

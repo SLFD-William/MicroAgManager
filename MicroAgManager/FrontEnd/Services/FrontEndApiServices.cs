@@ -1,6 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using Domain.Abstracts;
 using Domain.Models;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Json;
@@ -20,16 +21,16 @@ namespace FrontEnd.Services
     internal class FrontEndApiServices: IFrontEndApiServices
     {
         private readonly HttpClient _httpClient;
+        private readonly IConfiguration _config;
         private readonly FrontEndAuthenticationStateProvider _auth;
-        private const string BingMapsAPIKey = "AveuKfTkHgt1rHA0CQdugzV00kfhicCACDHBHoSH4ddPK24p8W1_hyPUnBmjUgSG";
-        private const string WeatherAPIKey = "UX43BL6B8S3P6KE6PGRA6PUSD";
         private Dictionary<string,Tuple<WeatherData,DateTime>> weatherTracking=new Dictionary<string, Tuple<WeatherData, DateTime>>();
-        
-        
+
         public async Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude)
         {
+            var key = _config["BingMapsAPIKey"];
+            var queryURL = _config["BingMapsLatLongQueryURL"];
+            string url =string.Format(queryURL,latitude,longitude,key);
 
-            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{latitude},{longitude}?key={BingMapsAPIKey} ";
             var response = await _httpClient.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions()
@@ -40,8 +41,9 @@ namespace FrontEnd.Services
         }
         public async Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm)
         {
-            string url = $"https://dev.virtualearth.net/REST/v1/Locations/{farm.Country}/{farm.State}/{farm.Zip}/{farm.City}/{farm.StreetAddress}?&maxResults={1}&key={BingMapsAPIKey}";
-
+            var key = _config["BingMapsAPIKey"];
+            var queryURL = _config["BingMapsLocationQueryURL"];
+            string url = string.Format(queryURL, farm.Country,farm.State,farm.Zip,farm.City,farm.StreetAddress,1,key);
             var response = await _httpClient.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions()
@@ -50,12 +52,12 @@ namespace FrontEnd.Services
             };
             return System.Text.Json.JsonSerializer.Deserialize<BingLocationResponse>(json, options);
         }
-        public FrontEndApiServices(HttpClient httpClient, FrontEndAuthenticationStateProvider auth)
+        public FrontEndApiServices(HttpClient httpClient, FrontEndAuthenticationStateProvider auth, IConfiguration config)
         {
+            _config = config;
             _httpClient = httpClient;
             _auth = auth;
         }
-
         public async Task<long> ProcessCommand<T, TCommand>(string address, TCommand command) where T : BaseModel where TCommand : BaseCommand
         {
             if (command is null) return -1;
@@ -68,8 +70,6 @@ namespace FrontEnd.Services
             var list = await result.Content.ReadFromJsonAsync<long>();
             return list;
         }
-
-
         public async Task<Tuple<long, ICollection<T?>>> ProcessQuery<T,TQuery>(string address, TQuery query) where  T : class where TQuery : BaseQuery
         {
             var queryString = new StringContent(JsonConvert.SerializeObject(query), Encoding.UTF8, "application/json");
@@ -112,7 +112,6 @@ namespace FrontEnd.Services
             //}
             return response;
         }
-
         public async Task<WeatherData> GetWeather(double latitude, double longitude, bool force = false)
         {
             var weatherKey = $"{latitude},{longitude}";
@@ -121,7 +120,9 @@ namespace FrontEnd.Services
             if (!force && currentWeatherData is not null && DateTime.Now.Subtract(currentWeatherData.Item2).TotalMinutes<60)
                 return currentWeatherData.Item1;
 
-            string url = $"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{latitude}%2C{longitude}?unitGroup=us&maxDistance=16093&key={WeatherAPIKey}&contentType=json";
+            var key = _config["WeatherAPIKey"];
+            var queryURL = _config["WeatherQueryURL"];
+            string url = string.Format(queryURL, latitude, longitude, key);
 
             var response = await _httpClient.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();

@@ -18,7 +18,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
+    <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.403" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
@@ -26,12 +27,6 @@
     <ProjectReference Include="..\BackEnd.Persistence\BackEnd.Persistence.csproj" />
     <ProjectReference Include="..\BackEnd\BackEnd.csproj" />
     <ProjectReference Include="..\WASM\WASM.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Certs\Host.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 

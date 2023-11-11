@@ -28,7 +28,8 @@ builder.Services.AddCors(options =>
         {
             builder.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(_ => true); 
         });
 });
 
@@ -42,7 +43,6 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
@@ -63,9 +63,9 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.UseCors(CorsPolicy);
 app.UseRouting();
 app.UseAuthentication();
-app.UseCors(CorsPolicy);
 app.UseAuthorization();
 AuthenticationAPI.Map(app);
 BusinessLogicAPI.MapAnciliary(app);

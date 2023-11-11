@@ -65,7 +65,7 @@ namespace FrontEnd.Data
  
             using var db = await _dbContextFactory.CreateDbContextAsync();
             await db.Database.MigrateAsync();
-            await db.Database.EnsureCreatedAsync();
+            //await db.Database.EnsureCreatedAsync();
         }
         public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
         { 

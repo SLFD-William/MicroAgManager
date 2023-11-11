@@ -46,5 +46,9 @@
   {
     "outputFile": "Components/Livestock/LivestockBadge.razor.css",
     "inputFile": "Components/Livestock/LivestockBadge.razor.scss"
+  },
+  {
+    "outputFile": "Shared/MainLayout.razor.css",
+    "inputFile": "Shared/MainLayout.razor.scss"
   }
 ]

@@ -1,6 +1,7 @@
 ﻿using BackEnd.Authentication;
 using FrontEnd.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -21,7 +22,7 @@ namespace FrontEnd.Services
         }
         
 
-        public FrontEndAuthenticationStateProvider(ILocalStorage localStorage, HttpClient httpClient)
+        public FrontEndAuthenticationStateProvider(ILocalStorage localStorage, HttpClient httpClient, IConfiguration config)
         {
             _localStorage = localStorage;
             _httpClient = httpClient;

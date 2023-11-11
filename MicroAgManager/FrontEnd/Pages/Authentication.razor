@@ -4,8 +4,10 @@
 
 @using BackEnd.Authentication;
 @using FrontEnd.Persistence;
+@using Microsoft.Extensions.Configuration;
 @inject NavigationManager navigationManager
 @inject FrontEndAuthenticationStateProvider authStateProvider
+@inject IConfiguration config
 <div class="Authentication">
     <EditForm OnValidSubmit="OnSubmit" EditContext="@editContext">
     <DataAnnotationsValidator />
@@ -84,7 +86,7 @@
 
 
             StateHasChanged();//TODO Handle Email Confirmation
-            navigationManager.NavigateTo(""); 
+            navigationManager.NavigateTo("");
         }
         catch (Exception ex)
         {

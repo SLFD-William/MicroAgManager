@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using static System.Net.WebRequestMethods;
+
 
 namespace FrontEnd.Services
 {
@@ -19,14 +19,17 @@ namespace FrontEnd.Services
     {
         private FrontEndAuthenticationStateProvider _authentication;
         private NavigationManager _navigation;
-        
+        private string _statusMessage = "Initializing Application";
+        public string StatusMessage { get { return _statusMessage; } set { _statusMessage = value; OnStatusChanged?.Invoke(); }} 
 
         private static HubConnection? _hubConnection;
         private static FrontEndDbContext _dbContext;
         private static DataSynchronizer _dbSynchonizer;
         private static IFrontEndApiServices _api;
         private static ILogger _log;
+        private readonly IConfiguration _config;
 
+        public event Action? OnStatusChanged;
         public Dictionary<string,List<object>> RowDetailsShowing { get; set; } = new Dictionary<string, List<object>>();
         public Dictionary<string, TabPage?> SelectedTabs { get; set; } = new Dictionary<string, TabPage?>();
 
@@ -44,11 +47,12 @@ namespace FrontEnd.Services
             _api = api;
             _authentication = authentication;
             _navigation = navigation;
+            StatusMessage = "Importing JavaScripts";
             Task.Run(async() => await ImportScripts(js));
             _dbSynchonizer = new DataSynchronizer(js, dbContextFactory, _api);
             _authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
-
-            Task.Run(async () => await InitializeAsync(config));
+            _config = config;
+            Task.Run(async () => await InitializeAsync(_config));
         }
 
         private async Task ImportScripts(IJSRuntime js)
@@ -58,16 +62,36 @@ namespace FrontEnd.Services
         }
         private async Task InitializeAsync(IConfiguration config)
         {
+            try { 
+
+            StatusMessage = "Creating dbContext";
             _dbContext = await _dbSynchonizer.GetPreparedDbContextAsync();
+            StatusMessage = "Creating Log";
             _log = new DatabaseLoggingProvider(_dbContext, config).CreateLogger("ClientLogging");
+            StatusMessage = "Refreshing Token";
             await _authentication.RefreshToken();
+            }
+            catch (Exception e)
+            {
+                StatusMessage = e.Message + e.StackTrace;
+            }
         }
         private async Task HandleAuthenticationChange()
         {
             if (_authentication.User?.Identity?.IsAuthenticated == true)
             {
-                await InitializeNotificationHub();
+                try
+                {
+                    StatusMessage = "Initializing SignalR";
+                    await InitializeNotificationHub();
+                }
+                catch (Exception e)
+                {
+                    StatusMessage = e.Message + e.StackTrace;
+                }
+                StatusMessage = "Synchronizing DB";
                 await _dbSynchonizer.SynchronizeInBackground();
+                StatusMessage = "Synchronized DB";
             }
             else
                 await DisposeAsync();
@@ -76,12 +100,22 @@ namespace FrontEnd.Services
         private async Task InitializeNotificationHub()
         {
             if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected) return;
-            var address = "https://0.0.0.0:5010/notificationhub"; //_navigation.ToAbsoluteUri("/notificationhub");
+            var address = _navigation.ToAbsoluteUri("/notificationhub");
 
             _hubConnection = new HubConnectionBuilder()
                 //.WithUrl(address)
                 .WithUrl(address,
-                    options => options.AccessTokenProvider = async () => await _authentication.GetJWT())
+                    options =>
+                    {
+                        ////if (env.IsDevelopment())
+                        ////{
+                        //options.HttpMessageHandlerFactory = (x) => new HttpClientHandler
+                        //{
+                        //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                        //};
+                        ////}
+                        options.AccessTokenProvider = async () => await _authentication.GetJWT();
+                    })
                 .WithAutomaticReconnect()
                 .AddMessagePackProtocol()
                 .Build();

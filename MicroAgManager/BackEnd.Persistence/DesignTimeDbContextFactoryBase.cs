@@ -46,7 +46,7 @@ namespace Persistence
 
             var optionsBuilder = new DbContextOptionsBuilder<TContext>();
 
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseSqlServer(connectionString);
                 
 
             return CreateNewInstance(optionsBuilder.Options);
