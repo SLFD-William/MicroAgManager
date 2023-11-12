@@ -1,4 +1,7 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.BusinessLogic.FarmLocation;
+using BackEnd.BusinessLogic.Tenant;
+using BackEnd.BusinessLogic.Unit;
 using Domain.Abstracts;
 using Domain.Models;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +10,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FrontEnd.Services
 {
@@ -70,14 +74,39 @@ namespace FrontEnd.Services
             var list = await result.Content.ReadFromJsonAsync<long>();
             return list;
         }
-        public async Task<Tuple<long, ICollection<T?>>> ProcessQuery<T,TQuery>(string address, TQuery query) where  T : class where TQuery : BaseQuery
+        public async Task<Tuple<long, ICollection<T?>>?> ProcessQuery<T,TQuery>(string address, TQuery query) where  T : class where TQuery : BaseQuery
         {
             var queryString = new StringContent(JsonConvert.SerializeObject(query), Encoding.UTF8, "application/json");
             var result = await SendTheRequest(HttpMethod.Post, address, queryString);
             if (result.StatusCode == HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
             result.EnsureSuccessStatusCode();
-            var list = await result.Content.ReadFromJsonAsync<Tuple<long, ICollection<T?>>>();
-            return list;
+            return await ParseTheJSON<T>(result);
+        }
+        private async Task<Tuple<long, ICollection<T?>>?> ParseTheJSON<T>(HttpResponseMessage result) where T : class
+        {
+            Console.WriteLine("Parsing the JSON");
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                PropertyNameCaseInsensitive = true,
+                IncludeFields = true
+            };
+            if (typeof(T) == typeof(TenantModel))
+            { 
+                var returnVal = await result.Content.ReadFromJsonAsync<TenantDto>(options);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(FarmLocationModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<FarmDto>(options);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if(typeof(T)==typeof(UnitModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<UnitDto>(options);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            return null;
         }
         private async Task<HttpResponseMessage> SendTheRequest(HttpMethod method, string address, StringContent? content)
         {
@@ -97,8 +126,10 @@ namespace FrontEnd.Services
                     for (int i = 0; i < 2; i++)
                     {
                         requestMsg.Headers.Add("Authorization", "Bearer " + await _auth.GetJWT());
+                        Console.WriteLine("Sending the Request to the API");
                         response = await _httpClient.SendAsync(requestMsg);
-                        if(response.StatusCode==HttpStatusCode.OK) break;
+                        Console.WriteLine("Received the Request from the API");
+                        if (response.StatusCode==HttpStatusCode.OK) break;
                         if (response.StatusCode != HttpStatusCode.Unauthorized)
                             continue;
                         await _auth.RefreshToken();

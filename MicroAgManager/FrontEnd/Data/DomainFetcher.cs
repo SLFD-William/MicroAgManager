@@ -54,12 +54,14 @@ namespace FrontEnd.Data
         public async static Task BulkUpdateTenants(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(TenantModel))) return;
-                var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t => t.GuidId));
+            var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t => t.GuidId));
             var mostRecentUpdate = db.Tenants.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             while (true)
             {
+                Console.WriteLine("Calling the API for the Tenants");
                 var returned = await api.ProcessQuery<TenantModel, GetTenantList>("api/GetTenants", new GetTenantList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                Console.WriteLine("Received the Tenants from the API");
                 if (returned.Item2.Count == 0) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
@@ -68,9 +70,9 @@ namespace FrontEnd.Data
                 var guidId = AddNamedParameter(command, "$GuidId");
                 var tenantUserAdminId = AddNamedParameter(command, "$TenantUserAdminId");
                 var weatherServiceQueryURL = AddNamedParameter(command, "$WeatherServiceQueryURL");
-                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedBy,WeatherServiceQueryURL) " +
+                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedBy) " +
                     $"Values ({baseParameters["Id"].ParameterName},{guidId.ParameterName},{name.ParameterName},{tenantUserAdminId.ParameterName},{baseParameters["Deleted"].ParameterName}," +
-                    $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName},{weatherServiceQueryURL.ParameterName})";
+                    $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
@@ -78,7 +80,7 @@ namespace FrontEnd.Data
                     name.Value = model.Name;
                     guidId.Value = model.GuidId;
                     tenantUserAdminId.Value = model.TenantUserAdminId;
-                    weatherServiceQueryURL.Value = model.WeatherServiceQueryURL ?? string.Empty;
+                    //weatherServiceQueryURL.Value =model.WeatherServiceQueryURL;
                     await command.ExecuteNonQueryAsync();
                 }
             }

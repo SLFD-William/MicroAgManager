@@ -17,12 +17,12 @@ namespace BackEnd.BusinessLogic.ManyToMany
         private IQueryable<DutyEvent> GetDutyEvents(IMicroAgManagementDbContext context)
         {
             var query = context.Events.Where(m => m.TenantId == TenantId)
-                .SelectMany(d => d.Duties.OrderByDescending(d => d.ModifiedOn).Select(s => new DutyEvent(s.Id, d.Id)));
+                .SelectMany(d => d.Duties.OrderByDescending(d => d.ModifiedOn).Select(s => new DutyEvent(s.Id, d.Id,d.ModifiedOn)));
 
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
-
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             if (query is null) throw new ArgumentNullException(nameof(query));
             return query;
         }

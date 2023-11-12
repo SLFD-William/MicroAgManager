@@ -51,9 +51,15 @@ namespace FrontEnd.Components.Farm
             var model=args as FarmLocationModel;
 
             if (model?.Id > 0)
-                while (!app.dbContext.Farms.Any(t => t.Id ==model.Id))
+            {
+                var start = DateTime.Now;
+                while (!app.dbContext.Farms.Any(t => t.Id == model.Id))
+                { 
                     await Task.Delay(100);
-
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
             _editFarm = null;
             await Submitted.InvokeAsync(await FindFarm(model.Id));
         }

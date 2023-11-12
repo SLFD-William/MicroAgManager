@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Unit
 {
-    public class GetUnitList:UnitQueries, IRequest<Tuple<long, ICollection<UnitModel?>>>
+    public class GetUnitList:UnitQueries, IRequest<UnitDto>
     {
-        public class Handler : BaseRequestHandler<GetUnitList>, IRequestHandler<GetUnitList, Tuple<long, ICollection<UnitModel?>>>
+        public class Handler : BaseRequestHandler<GetUnitList>, IRequestHandler<GetUnitList, UnitDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<UnitModel?>>> Handle(GetUnitList request, CancellationToken cancellationToken)
+            public async Task<UnitDto> Handle(GetUnitList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.Unit>(_context);
-                return new Tuple<long, ICollection<UnitModel?>>
+                return new UnitDto
                     (await query.LongCountAsync(cancellationToken),
                                        await query.Select(f => UnitModel.Create(f)).ToListAsync(cancellationToken));
             }

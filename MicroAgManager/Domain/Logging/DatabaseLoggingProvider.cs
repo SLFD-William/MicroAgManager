@@ -63,7 +63,7 @@ namespace Domain.Logging
                 _dbContext.Logs.Add(new Entity.Log
                 {
                     Level = logLevel.ToString(),
-                    Message = formatter(state, exception).ToString(),
+                    Message =$"{formatter(state, exception)} {exception?.StackTrace}",
                     CategoryName = _categoryName,
                     EventId = eventId.Id,
                     EventName = eventId.Name ?? string.Empty,

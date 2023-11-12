@@ -1,9 +1,6 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.Measurement;
-using FrontEnd.Components.Registration;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
-using FrontEnd.Components.TreatmentRecord;
 using Microsoft.AspNetCore.Components;
 
 namespace FrontEnd.Components.Livestock

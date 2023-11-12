@@ -1,6 +1,5 @@
 ﻿using Domain.Constants;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Domain.Entity;
 using Microsoft.AspNetCore.Identity;
 using Domain.Interfaces;

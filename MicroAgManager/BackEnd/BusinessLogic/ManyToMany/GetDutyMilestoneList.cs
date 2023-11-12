@@ -17,11 +17,12 @@ namespace BackEnd.BusinessLogic.ManyToMany
         private IQueryable<DutyMilestone> GetDutyMilestones(IMicroAgManagementDbContext context)
         {
             var query = context.Milestones.Where(m => m.TenantId == TenantId)
-                .SelectMany(d => d.Duties.OrderByDescending(d => d.ModifiedOn).Select(s => new DutyMilestone(s.Id, d.Id)));
+                .SelectMany(d => d.Duties.OrderByDescending(d => d.ModifiedOn).Select(s => new DutyMilestone(s.Id, d.Id,d.ModifiedOn)));
         
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
+            query = query.OrderByDescending(_ => _.ModifiedOn);
 
             if (query is null) throw new ArgumentNullException(nameof(query));
             return query;

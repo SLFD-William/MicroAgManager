@@ -29,7 +29,7 @@ namespace Domain.Entity
         [Required]
         [MaxLength(50)]
         public string AccessLevel { get; set; }
-        public string? WeatherServiceQueryURL { get; set; }
+        public string WeatherServiceQueryURL { get; set; } = string.Empty;
         public Tenant(Guid createdBy)
         {
             Created = DateTime.Now;

@@ -17,12 +17,12 @@ namespace BackEnd.BusinessLogic.ManyToMany
         private IQueryable<LivestockLivestockStatus> GetLivestockLivestockStatuss(IMicroAgManagementDbContext context)
         {
             var query = context.LivestockStatuses.Where(m => m.TenantId == TenantId)
-                .SelectMany(d => d.Livestocks.OrderByDescending(d => d.ModifiedOn).Select(s => new LivestockLivestockStatus(d.Id, s.Id)));
+                .SelectMany(d => d.Livestocks.OrderByDescending(d => d.ModifiedOn).Select(s => new LivestockLivestockStatus(d.Id, s.Id, s.ModifiedOn)));
 
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
-
+            query = query.OrderByDescending(_ => _.ModifiedOn);
             if (query is null) throw new ArgumentNullException(nameof(query));
             return query;
         }

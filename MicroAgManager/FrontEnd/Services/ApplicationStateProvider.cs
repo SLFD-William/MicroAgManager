@@ -99,9 +99,10 @@ namespace FrontEnd.Services
         private void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task) => Task.Run(HandleAuthenticationChange);
         private async Task InitializeNotificationHub()
         {
+            StatusMessage = "Entering Hub Initialization";
             if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected) return;
             var address = _navigation.ToAbsoluteUri("/notificationhub");
-
+            StatusMessage = $"Hub Address {address.AbsoluteUri}";
             _hubConnection = new HubConnectionBuilder()
                 //.WithUrl(address)
                 .WithUrl(address,
@@ -125,15 +126,22 @@ namespace FrontEnd.Services
             _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",
                 async (notifications) =>
                 {
+                    StatusMessage = "Server Data Updated";
                     await _dbSynchonizer.HandleModifiedEntities(_authentication?.UserId() ?? Guid.NewGuid(), notifications);
                 });
             try
             {
+                StatusMessage = "Starting Signalr Listener";
                 await _hubConnection.StartAsync();
                 var foo = _hubConnection.State;
+                StatusMessage = $"Hub Listener State {foo}";
                 await _hubConnection.InvokeAsync("JoinGroup", _authentication?.TenantId() ?? Guid.NewGuid());
             }
-            catch (Exception ex) { Console.WriteLine(ex); }
+            catch (Exception ex) {
+                StatusMessage = ex.Message;
+                Console.WriteLine(ex);
+                throw;
+            }
         }
         private Task _hubConnection_Reconnecting(Exception? arg)
         {
