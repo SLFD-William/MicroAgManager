@@ -53,9 +53,15 @@ namespace FrontEnd.Components.LivestockBreed
         {
             var model=args as LivestockBreedModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.LivestockBreeds.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
-
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
             _editBreed = null;
             await Submitted.InvokeAsync(await FindBreed(model.Id));
         }

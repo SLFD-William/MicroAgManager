@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Measure
 {
-    public class GetMeasureList:MeasureQueries, IRequest<Tuple<long, ICollection<MeasureModel?>>>
+    public class GetMeasureList:MeasureQueries, IRequest<MeasureDto>
     {
-        public class Handler : BaseRequestHandler<GetMeasureList>, IRequestHandler<GetMeasureList, Tuple<long, ICollection<MeasureModel?>>>
+        public class Handler : BaseRequestHandler<GetMeasureList>, IRequestHandler<GetMeasureList, MeasureDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<MeasureModel?>>> Handle(GetMeasureList request, CancellationToken cancellationToken)
+            public async Task<MeasureDto> Handle(GetMeasureList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.Measure>(_context);
-                return new Tuple<long, ICollection<MeasureModel?>>
+                return new MeasureDto
                     (await query.LongCountAsync(cancellationToken),
                      await query.Select(f => MeasureModel.Create(f)).ToListAsync(cancellationToken));
             }

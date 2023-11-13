@@ -50,8 +50,15 @@ namespace FrontEnd.Components.Unit
         {
             var model = args as UnitModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Units.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editUnit = null;
             await Submitted.InvokeAsync(await FindUnit(model.Id));

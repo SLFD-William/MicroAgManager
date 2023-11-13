@@ -1,8 +1,11 @@
 ﻿using Domain.Abstracts;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
     public class FarmLocation : BaseEntity
     {
         public FarmLocation(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

@@ -2,9 +2,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
+    [Index(nameof(RecipientType), nameof(RecipientTypeId))]
     public class Registration : BaseEntity, IHasRecipient
     {
         public Registration(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

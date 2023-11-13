@@ -37,17 +37,32 @@ namespace FrontEnd.Components.LandPlot
         private async Task LandPlotUpdated(object args )
         {
             var model = args as LandPlotModel;
+
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.LandPlots.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
+
             _editPlot = null;
             await Submitted.InvokeAsync(await FindPlot(model.Id));
         }
         public override async Task FreshenData()
         {
             if (_listComponent is null) return;
+            var start = DateTime.Now;
             while (!app.dbContext.LandPlots.Any())
-                await Task.Delay(100);
+            {
+                await Task.Delay(1000);
+                if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                    break;
+            }
+            
 
             if (Items is null)
                 Items = app.dbContext.LandPlots.Where(f => f.FarmLocationId == Farm.Id).OrderBy(f => f.Usage).ThenBy(f=>f.Name).Select(f=>new LandPlotSummary(f,app.dbContext)).AsEnumerable() ?? new List<LandPlotSummary>();

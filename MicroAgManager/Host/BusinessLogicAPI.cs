@@ -125,8 +125,6 @@ namespace Host
         {
             app.MapPost("/api/GetDutyMilestoneList", [Authorize] async (GetDutyMilestoneList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
             app.MapPost("/api/GetDutyEventList", [Authorize] async (GetDutyEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            app.MapPost("/api/GetLandPlotLivestockList", [Authorize] async (GetLandPlotLivestockList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
-            app.MapPost("/api/GetLivestockLivestockStatusList", [Authorize] async (GetLivestockLivestockStatusList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request));
         }
         public static void MapLivestock(WebApplication app)
         {

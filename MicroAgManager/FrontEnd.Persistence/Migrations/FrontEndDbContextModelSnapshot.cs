@@ -1134,8 +1134,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("GuidId")
-                        .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "guid_id");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
@@ -1145,8 +1144,10 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("TenantUserAdminId")
-                        .HasColumnType("TEXT")
-                        .HasAnnotation("Relational:JsonPropertyName", "tenant_user_admin_id");
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("WeatherServiceQueryURL")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

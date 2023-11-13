@@ -50,8 +50,6 @@ namespace BackEnd.BusinessLogic.Livestock
             if (InMilk.HasValue) query = query.Where(_ => _.InMilk == InMilk);
             if (BottleFed.HasValue) query = query.Where(_ => _.BottleFed == BottleFed);
             if (ForSale.HasValue) query = query.Where(_ => _.ForSale == ForSale);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
-
             return (IQueryable<T>)query;
         }
     }

@@ -18,8 +18,6 @@ namespace BackEnd.BusinessLogic.Measure
             if (Method != null) query = query.Where(_ => _.Method == Method);
             if (Name != null) query = query.Where(_ => _.Name == Name);
             if (UnitId != null) query = query.Where(_ => _.UnitId == UnitId);
-
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
 
 

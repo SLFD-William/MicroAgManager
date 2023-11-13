@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.ScheduledDuty
 {
-    public class GetScheduledDutyList:ScheduledDutyQueries, IRequest<Tuple<long, ICollection<ScheduledDutyModel?>>>
+    public class GetScheduledDutyList:ScheduledDutyQueries, IRequest<ScheduledDutyDto>
     {
-        public class Handler : BaseRequestHandler<GetScheduledDutyList>, IRequestHandler<GetScheduledDutyList, Tuple<long, ICollection<ScheduledDutyModel?>>>
+        public class Handler : BaseRequestHandler<GetScheduledDutyList>, IRequestHandler<GetScheduledDutyList, ScheduledDutyDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<ScheduledDutyModel?>>> Handle(GetScheduledDutyList request, CancellationToken cancellationToken)
+            public async Task<ScheduledDutyDto> Handle(GetScheduledDutyList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.ScheduledDuty>(_context);
-                return new Tuple<long, ICollection<ScheduledDutyModel?>>
+                return new ScheduledDutyDto
                     (await query.LongCountAsync(cancellationToken),
                     await query.Select(f => ScheduledDutyModel.Create(f)).ToListAsync(cancellationToken));
             }

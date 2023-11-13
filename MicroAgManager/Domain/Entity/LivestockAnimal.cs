@@ -5,8 +5,9 @@ using System.ComponentModel.DataAnnotations;
 namespace Domain.Entity
 {
 
-
-    [Index("Name",IsUnique =true)]
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
+    [Index(nameof(Name), IsUnique =true)]
     public class LivestockAnimal : BaseEntity
     {
         public LivestockAnimal(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

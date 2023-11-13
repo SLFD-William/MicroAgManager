@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
     public class Treatment : BaseEntity
     {
         public Treatment(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

@@ -17,7 +17,6 @@ namespace BackEnd.BusinessLogic.Livestock.Status
 
             if (LivestockAnimalId.HasValue) query = query.Where(l => l.LivestockAnimal.Id == LivestockAnimalId);
             if (!string.IsNullOrEmpty(Status)) query = query.Where(l => l.Status.Contains(Status));
-            query = query.OrderByDescending(_ => _.ModifiedOn);
 
             return (IQueryable<T>)query;
         }

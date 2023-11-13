@@ -23,11 +23,21 @@ using Domain.ValueObjects;
 using FrontEnd.Persistence;
 using FrontEnd.Services;
 using System.Data.Common;
+using System.Net.Http.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using BackEnd.BusinessLogic.Event;
 
 namespace FrontEnd.Data
 {
     internal static class DomainFetcher
     {
+        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            PropertyNameCaseInsensitive = true,
+            IncludeFields = true
+        };
         private static void PopulateBaseModelParameters(Dictionary<string, DbParameter> parameters, BaseModel model)
         {
             parameters["Id"].Value = model.Id;
@@ -70,9 +80,9 @@ namespace FrontEnd.Data
                 var guidId = AddNamedParameter(command, "$GuidId");
                 var tenantUserAdminId = AddNamedParameter(command, "$TenantUserAdminId");
                 var weatherServiceQueryURL = AddNamedParameter(command, "$WeatherServiceQueryURL");
-                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedBy) " +
+                command.CommandText = $"INSERT or REPLACE INTO Tenants (Id,GuidId,Name,TenantUserAdminId, Deleted,EntityModifiedOn,ModifiedBy,WeatherServiceQueryURL) " +
                     $"Values ({baseParameters["Id"].ParameterName},{guidId.ParameterName},{name.ParameterName},{tenantUserAdminId.ParameterName},{baseParameters["Deleted"].ParameterName}," +
-                    $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName})";
+                    $"{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName},{weatherServiceQueryURL.ParameterName})";
                 foreach (var model in returned.Item2)
                 {
                     if (model is null) continue;
@@ -80,7 +90,7 @@ namespace FrontEnd.Data
                     name.Value = model.Name;
                     guidId.Value = model.GuidId;
                     tenantUserAdminId.Value = model.TenantUserAdminId;
-                    //weatherServiceQueryURL.Value =model.WeatherServiceQueryURL;
+                    weatherServiceQueryURL.Value =string.IsNullOrEmpty(model.WeatherServiceQueryURL)? DBNull.Value : model.WeatherServiceQueryURL;
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -1140,7 +1150,117 @@ namespace FrontEnd.Data
                 await command.ExecuteNonQueryAsync();
             }
         }
-        
-       
+
+        public static async Task<Tuple<long, ICollection<T?>>?> ParseTheJSON<T>(HttpResponseMessage result) where T : class
+        {
+            Console.WriteLine("Parsing the JSON");
+            
+            if(typeof(T)==typeof(BreedingRecordModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<BreedingRecordDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(DutyModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<DutyDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(EventModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<EventDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(FarmLocationModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<FarmDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(LandPlotModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<LandPlotDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(LivestockAnimalModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<LivestockAnimalDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(LivestockBreedModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<LivestockBreedDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(LivestockStatusModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<LivestockStatusDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(LivestockModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<LivestockDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(MeasureModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<MeasureDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(MeasurementModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<MeasurementDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(MilestoneModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<MilestoneDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(RegistrarModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<RegistrarDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(RegistrationModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<RegistrationDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(ScheduledDutyModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<ScheduledDutyDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(TenantModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<TenantDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(TreatmentModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<TreatmentDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(TreatmentRecordModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<TreatmentRecordDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(UnitModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<UnitDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(DutyEvent))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<DutyEventDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(DutyMilestone))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<DutyMilestoneDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            return null;
+        }
     }
 }

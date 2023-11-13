@@ -50,8 +50,15 @@ namespace FrontEnd.Components.Treatment
         {
             var model = args as TreatmentModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Treatments.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editTreatment = null;
             await Submitted.InvokeAsync(await FindTreatment(model.Id));

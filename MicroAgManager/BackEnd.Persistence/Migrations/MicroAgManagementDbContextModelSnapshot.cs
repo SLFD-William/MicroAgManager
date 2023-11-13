@@ -163,6 +163,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("MaleId");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("BreedingRecords");
                 });
 
@@ -233,6 +237,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("Duties");
                 });
 
@@ -282,6 +290,10 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Events");
                 });
@@ -346,6 +358,10 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Farms");
                 });
@@ -413,7 +429,11 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("FarmLocationId");
 
+                    b.HasIndex("ModifiedOn");
+
                     b.HasIndex("ParentPlotId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Plots");
                 });
@@ -522,9 +542,13 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LocationId");
 
+                    b.HasIndex("ModifiedOn");
+
                     b.HasIndex("MotherId");
 
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Livestocks");
                 });
@@ -585,8 +609,12 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ModifiedOn");
+
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LivestockAnimals");
                 });
@@ -642,6 +670,10 @@ namespace BackEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LivestockAnimalId");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LivestockBreeds");
                 });
@@ -721,6 +753,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockAnimalId");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("LivestockFeeds");
                 });
 
@@ -782,6 +818,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedId");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("LivestockFeedAnalyses");
                 });
 
@@ -839,6 +879,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("LivestockFeedAnalysisParameters");
                 });
 
@@ -889,7 +933,11 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("AnalysisId");
 
+                    b.HasIndex("ModifiedOn");
+
                     b.HasIndex("ParameterId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LivestockFeedAnalysisResults");
                 });
@@ -945,6 +993,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("LivestockFeedId");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("LivestockFeedDistributions");
                 });
 
@@ -996,6 +1048,10 @@ namespace BackEnd.Persistence.Migrations
                     b.HasIndex("LivestockFeedId");
 
                     b.HasIndex("LivestockStatusId");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LivestockFeedServings");
                 });
@@ -1068,6 +1124,10 @@ namespace BackEnd.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LivestockAnimalId");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LivestockStatuses");
                 });
@@ -1151,6 +1211,10 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("UnitId");
 
                     b.ToTable("Measures");
@@ -1219,6 +1283,12 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("MeasurementUnitId");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("RecipientType", "RecipientTypeId");
+
                     b.ToTable("Measurements");
                 });
 
@@ -1273,6 +1343,12 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("RecipientType", "RecipientTypeId");
 
                     b.ToTable("Milestones");
                 });
@@ -1329,6 +1405,10 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Registrars");
                 });
@@ -1389,7 +1469,13 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ModifiedOn");
+
                     b.HasIndex("RegistrarId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("RecipientType", "RecipientTypeId");
 
                     b.ToTable("Registrations");
                 });
@@ -1440,7 +1526,7 @@ namespace BackEnd.Persistence.Migrations
 
                     b.Property<string>("Recipient")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<long>("RecipientId")
                         .HasColumnType("bigint");
@@ -1464,6 +1550,12 @@ namespace BackEnd.Persistence.Migrations
                     b.HasIndex("DutyId");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("Recipient", "RecipientId");
 
                     b.ToTable("ScheduledDuties");
                 });
@@ -1511,10 +1603,13 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WeatherServiceQueryURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GuidId");
+
+                    b.HasIndex("ModifiedOn");
 
                     b.ToTable("Tenants");
                 });
@@ -1606,7 +1701,11 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("FrequencyUnitId");
 
+                    b.HasIndex("ModifiedOn");
+
                     b.HasIndex("RecipientMassUnitId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Treatments");
                 });
@@ -1676,7 +1775,13 @@ namespace BackEnd.Persistence.Migrations
 
                     b.HasIndex("DosageUnitId");
 
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("TreatmentId");
+
+                    b.HasIndex("RecipientType", "RecipientTypeId");
 
                     b.ToTable("TreatmentRecords");
                 });
@@ -1729,6 +1834,10 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModifiedOn");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Units");
                 });

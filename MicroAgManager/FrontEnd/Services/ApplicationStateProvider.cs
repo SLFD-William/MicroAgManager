@@ -20,7 +20,6 @@ namespace FrontEnd.Services
         private FrontEndAuthenticationStateProvider _authentication;
         private NavigationManager _navigation;
         private string _statusMessage = "Initializing Application";
-        public string StatusMessage { get { return _statusMessage; } set { _statusMessage = value; OnStatusChanged?.Invoke(); }} 
 
         private static HubConnection? _hubConnection;
         private static FrontEndDbContext _dbContext;
@@ -29,7 +28,6 @@ namespace FrontEnd.Services
         private static ILogger _log;
         private readonly IConfiguration _config;
 
-        public event Action? OnStatusChanged;
         public Dictionary<string,List<object>> RowDetailsShowing { get; set; } = new Dictionary<string, List<object>>();
         public Dictionary<string, TabPage?> SelectedTabs { get; set; } = new Dictionary<string, TabPage?>();
 
@@ -47,7 +45,7 @@ namespace FrontEnd.Services
             _api = api;
             _authentication = authentication;
             _navigation = navigation;
-            StatusMessage = "Importing JavaScripts";
+            Console.WriteLine("Importing JavaScripts");
             Task.Run(async() => await ImportScripts(js));
             _dbSynchonizer = new DataSynchronizer(js, dbContextFactory, _api);
             _authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
@@ -64,16 +62,16 @@ namespace FrontEnd.Services
         {
             try { 
 
-            StatusMessage = "Creating dbContext";
+            Console.WriteLine("Creating dbContext");
             _dbContext = await _dbSynchonizer.GetPreparedDbContextAsync();
-            StatusMessage = "Creating Log";
+            Console.WriteLine("Creating Log");
             _log = new DatabaseLoggingProvider(_dbContext, config).CreateLogger("ClientLogging");
-            StatusMessage = "Refreshing Token";
+            Console.WriteLine("Refreshing Token");
             await _authentication.RefreshToken();
             }
             catch (Exception e)
             {
-                StatusMessage = e.Message + e.StackTrace;
+                Console.WriteLine(e.Message + e.StackTrace);
             }
         }
         private async Task HandleAuthenticationChange()
@@ -82,16 +80,16 @@ namespace FrontEnd.Services
             {
                 try
                 {
-                    StatusMessage = "Initializing SignalR";
+                    Console.WriteLine("Initializing SignalR");
                     await InitializeNotificationHub();
                 }
                 catch (Exception e)
                 {
-                    StatusMessage = e.Message + e.StackTrace;
+                    Console.WriteLine(e.Message + e.StackTrace);
                 }
-                StatusMessage = "Synchronizing DB";
+                Console.WriteLine("Synchronizing DB");
                 await _dbSynchonizer.SynchronizeInBackground();
-                StatusMessage = "Synchronized DB";
+                Console.WriteLine("Synchronized DB");
             }
             else
                 await DisposeAsync();
@@ -99,10 +97,10 @@ namespace FrontEnd.Services
         private void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task) => Task.Run(HandleAuthenticationChange);
         private async Task InitializeNotificationHub()
         {
-            StatusMessage = "Entering Hub Initialization";
+            Console.WriteLine("Entering Hub Initialization");
             if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected) return;
             var address = _navigation.ToAbsoluteUri("/notificationhub");
-            StatusMessage = $"Hub Address {address.AbsoluteUri}";
+            Console.WriteLine($"Hub Address {address.AbsoluteUri}");
             _hubConnection = new HubConnectionBuilder()
                 //.WithUrl(address)
                 .WithUrl(address,
@@ -126,19 +124,19 @@ namespace FrontEnd.Services
             _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",
                 async (notifications) =>
                 {
-                    StatusMessage = "Server Data Updated";
+                    Console.WriteLine("Server Data Updated");
                     await _dbSynchonizer.HandleModifiedEntities(_authentication?.UserId() ?? Guid.NewGuid(), notifications);
                 });
             try
             {
-                StatusMessage = "Starting Signalr Listener";
+                Console.WriteLine("Starting Signalr Listener");
                 await _hubConnection.StartAsync();
                 var foo = _hubConnection.State;
-                StatusMessage = $"Hub Listener State {foo}";
+                Console.WriteLine($"Hub Listener State {foo}");
                 await _hubConnection.InvokeAsync("JoinGroup", _authentication?.TenantId() ?? Guid.NewGuid());
             }
             catch (Exception ex) {
-                StatusMessage = ex.Message;
+                Console.WriteLine(ex.Message);
                 Console.WriteLine(ex);
                 throw;
             }

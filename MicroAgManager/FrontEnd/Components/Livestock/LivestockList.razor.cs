@@ -50,8 +50,15 @@ namespace FrontEnd.Components.Livestock
         {
             var model = args as LivestockModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Livestocks.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editLivestock = null;
             await Submitted.InvokeAsync(await FindLivestock(model.Id));

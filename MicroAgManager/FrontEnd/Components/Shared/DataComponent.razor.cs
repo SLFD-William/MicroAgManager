@@ -23,9 +23,9 @@ namespace FrontEnd.Components.Shared
         {
             var initialized = app.dbSynchonizer is not null;
             while (app.dbSynchonizer is null)
-                await Task.Delay(100);
+                await Task.Delay(1000);
             while (app.dbContext is null)
-                await Task.Delay(100);
+                await Task.Delay(1000);
             if (!initialized)
                 app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
             if (Modal && !Show) return;

@@ -19,7 +19,6 @@ namespace BackEnd.BusinessLogic.Treatment
             if (BrandName != null) query = query.Where(_ => _.BrandName == BrandName);
             if (Reason != null) query = query.Where(_ => _.Reason == Reason);
             if (LabelMethod != null) query = query.Where(_ => _.LabelMethod == LabelMethod);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
             
         }

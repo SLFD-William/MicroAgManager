@@ -48,8 +48,15 @@ namespace FrontEnd.Components.TreatmentRecord
         {
             var model = args as TreatmentRecordModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.TreatmentRecords.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editTreatmentRecord = null;
             await Submitted.InvokeAsync(await FindTreatmentRecord(model.Id));

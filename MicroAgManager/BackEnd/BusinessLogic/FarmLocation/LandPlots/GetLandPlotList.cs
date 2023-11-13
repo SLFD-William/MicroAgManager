@@ -7,19 +7,19 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 {
-    public class GetLandPlotList : LandPlotQueries, IRequest<Tuple<long, ICollection<LandPlotModel?>>>
+    public class GetLandPlotList : LandPlotQueries, IRequest<LandPlotDto>
     {
-        public class Handler : BaseRequestHandler<GetLandPlotList>, IRequestHandler<GetLandPlotList, Tuple<long, ICollection<LandPlotModel?>>>
+        public class Handler : BaseRequestHandler<GetLandPlotList>, IRequestHandler<GetLandPlotList, LandPlotDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<LandPlotModel?>>> Handle(GetLandPlotList request, CancellationToken cancellationToken)
+            public async Task<LandPlotDto> Handle(GetLandPlotList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.LandPlot>(_context);
 
-                return new Tuple<long, ICollection<LandPlotModel?>>
+                return new LandPlotDto
                     (await query.LongCountAsync(cancellationToken),
                      await query.Select(f => LandPlotModel.Create(f)).ToListAsync(cancellationToken)
                     );

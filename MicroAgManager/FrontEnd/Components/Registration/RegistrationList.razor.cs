@@ -48,8 +48,15 @@ namespace FrontEnd.Components.Registration
         {
             var model = args as RegistrationModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Registrations.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editRegistration = null;
             await Submitted.InvokeAsync(await FindRegistration(model.Id));

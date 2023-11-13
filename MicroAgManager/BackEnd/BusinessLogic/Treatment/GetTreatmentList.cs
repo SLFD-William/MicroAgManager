@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Treatment
 {
-    public class GetTreatmentList:TreatmentQueries, IRequest<Tuple<long, ICollection<TreatmentModel?>>>
+    public class GetTreatmentList:TreatmentQueries, IRequest<TreatmentDto>
     {
-        public class Handler : BaseRequestHandler<GetTreatmentList>, IRequestHandler<GetTreatmentList, Tuple<long, ICollection<TreatmentModel?>>>
+        public class Handler : BaseRequestHandler<GetTreatmentList>, IRequestHandler<GetTreatmentList, TreatmentDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<TreatmentModel?>>> Handle(GetTreatmentList request, CancellationToken cancellationToken)
+            public async Task<TreatmentDto> Handle(GetTreatmentList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.Treatment>(_context);
-                return new Tuple<long, ICollection<TreatmentModel?>>
+                return new TreatmentDto
                     (await query.LongCountAsync(cancellationToken),
                      await query.Select(f => TreatmentModel.Create(f)).ToListAsync(cancellationToken));
             }

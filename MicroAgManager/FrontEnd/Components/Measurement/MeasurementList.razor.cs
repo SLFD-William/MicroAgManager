@@ -48,8 +48,15 @@ namespace FrontEnd.Components.Measurement
         {
             var model = args as MeasurementModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Measurements.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editMeasurement = null;
             await Submitted.InvokeAsync(await FindMeasurement(model.Id));

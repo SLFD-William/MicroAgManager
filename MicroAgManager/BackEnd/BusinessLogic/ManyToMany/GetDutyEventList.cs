@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.ManyToMany
 {
-    public class GetDutyEventList : BaseQuery, IRequest<Tuple<long, ICollection<DutyEvent?>>>
+    public class GetDutyEventList : BaseQuery, IRequest<DutyEventDto>
     {
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
@@ -16,29 +16,37 @@ namespace BackEnd.BusinessLogic.ManyToMany
 
         private IQueryable<DutyEvent> GetDutyEvents(IMicroAgManagementDbContext context)
         {
-            var query = context.Events.Where(m => m.TenantId == TenantId)
-                .SelectMany(d => d.Duties.OrderByDescending(d => d.ModifiedOn).Select(s => new DutyEvent(s.Id, d.Id,d.ModifiedOn)));
+            var query = context.Events.Include(d=>d.Duties).Where(m => m.TenantId == TenantId)
+                .SelectMany(e => e.Duties.Select(d => new DutyEvent(d.Id, e.Id, new[] { d.ModifiedOn, e.ModifiedOn }.Max())))
+                .OrderByDescending(_ => _.ModifiedOn).AsQueryable();
 
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
+
             if (query is null) throw new ArgumentNullException(nameof(query));
             return query;
         }
 
-        public class Handler : BaseRequestHandler<GetDutyEventList>, IRequestHandler<GetDutyEventList, Tuple<long, ICollection<DutyEvent?>>>
+        public class Handler : BaseRequestHandler<GetDutyEventList>, IRequestHandler<GetDutyEventList, DutyEventDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<DutyEvent?>>> Handle(GetDutyEventList request, CancellationToken cancellationToken)
+            public async Task<DutyEventDto> Handle(GetDutyEventList request, CancellationToken cancellationToken)
             {
                 var query = request.GetDutyEvents(_context);
-                return new Tuple<long, ICollection<DutyEvent?>>
-                    (await query.LongCountAsync(cancellationToken),
-                    await query.ToListAsync(cancellationToken));
+                try
+                {
+                    var count = await query.LongCountAsync(cancellationToken);
+                    var models = await query.ToListAsync(cancellationToken);
+                    return new DutyEventDto(count, models);
+                }
+                catch
+                {
+                    return new DutyEventDto(0, new List<DutyEvent>());
+                }
             }
         }
     }

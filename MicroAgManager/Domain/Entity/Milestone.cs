@@ -1,8 +1,12 @@
 ﻿using Domain.Abstracts;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
+    [Index(nameof(RecipientType), nameof(RecipientTypeId))]
     public class Milestone : BaseEntity
     {
         public Milestone(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

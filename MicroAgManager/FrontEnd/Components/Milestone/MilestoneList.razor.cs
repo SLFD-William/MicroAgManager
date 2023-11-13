@@ -52,8 +52,15 @@ namespace FrontEnd.Components.Milestone
         {
             var model=args as MilestoneModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Milestones.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editMilestone = null;
             await Submitted.InvokeAsync(await FindMilestone(model.Id));

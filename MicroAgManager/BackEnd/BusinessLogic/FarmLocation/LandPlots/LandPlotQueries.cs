@@ -24,8 +24,6 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
             if (!string.IsNullOrEmpty(Description)) query = query.Where(_ => _.Description != null && _.Description.Contains(Description));
             if (ParentPlotId.HasValue) query = query.Where(_ => _.ParentPlotId == ParentPlotId);
             if (!string.IsNullOrEmpty(Usage)) query = query.Where(_ => _.Usage == Usage);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
-
             return (IQueryable<T>)query;
         }
     }

@@ -29,6 +29,7 @@ namespace BackEnd.BusinessLogic.Livestock
                 var dams = _context.Livestocks.Where(f => request.DamIds.Contains(f.Id)).ToList();
                 //await LivestockLogic.VerifyNoOpenBreedingRecord(dams.Select(d=>d.Id).ToList(),request.TenantId,_context,cancellationToken);
                 var modified = new List<Domain.Entity.BreedingRecord>();
+
                 foreach (var dam in dams)
                 {
                     var service = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId)
@@ -38,10 +39,9 @@ namespace BackEnd.BusinessLogic.Livestock
                         ServiceDate=request.ServiceDate,
                         Notes=request.Notes ?? string.Empty
                     };
-                    _context.BreedingRecords.Add(service);
                     modified.Add(service);
                 }
-
+                _context.BreedingRecords.AddRange(modified);
                 try
                 {
                     await _context.SaveChangesAsync(cancellationToken);
@@ -51,7 +51,7 @@ namespace BackEnd.BusinessLogic.Livestock
 
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b=> new ModifiedEntity(b.Id.ToString(), b.GetType().Name,"Created",b.ModifiedBy)).ToList()), cancellationToken);
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Service Livestock"); }
+                catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                 return 0;
             }
         }

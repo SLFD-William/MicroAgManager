@@ -7,19 +7,19 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Registrar
 {
-    public class GetRegistrarList : RegistrarQueries, IRequest<Tuple<long, ICollection<RegistrarModel>>>
+    public class GetRegistrarList : RegistrarQueries, IRequest<RegistrarDto>
     {
-        public class Handler : BaseRequestHandler<GetRegistrarList>, IRequestHandler<GetRegistrarList, Tuple<long, ICollection<RegistrarModel>>>
+        public class Handler : BaseRequestHandler<GetRegistrarList>, IRequestHandler<GetRegistrarList, RegistrarDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<RegistrarModel>>> Handle(GetRegistrarList request, CancellationToken cancellationToken)
+            public async Task<RegistrarDto> Handle(GetRegistrarList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.Registrar>(_context);
 
-                return new Tuple<long, ICollection<RegistrarModel>>
+                return new RegistrarDto
                     (await query.LongCountAsync(cancellationToken),
                      await query.Select(f => RegistrarModel.Create(f)).ToListAsync(cancellationToken)
                 );

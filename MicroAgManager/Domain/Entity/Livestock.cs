@@ -1,10 +1,13 @@
 ﻿using Domain.Abstracts;
 using Domain.Extensions;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
     public class Livestock : BaseEntity
     {
         public Livestock(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

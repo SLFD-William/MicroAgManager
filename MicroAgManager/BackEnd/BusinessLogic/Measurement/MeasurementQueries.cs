@@ -23,7 +23,6 @@ namespace BackEnd.BusinessLogic.Measurement
             if (RecipientId != null) query = query.Where(_ => _.RecipientId == RecipientId);
             if (MeasurementUnitId != null) query = query.Where(_ => _.MeasurementUnitId == MeasurementUnitId);
             if (DatePerformed != null) query = query.Where(_ => _.DatePerformed == DatePerformed);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
 
 

@@ -21,7 +21,6 @@ namespace BackEnd.BusinessLogic.Unit
             if (Category != null) query = query.Where(_ => _.Category == Category);
             if (Symbol != null) query = query.Where(_ => _.Symbol == Symbol);
             if (ConversionFactorToSIUnit != null) query = query.Where(_ => _.ConversionFactorToSIUnit == ConversionFactorToSIUnit);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
     }

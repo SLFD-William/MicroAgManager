@@ -7,18 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Duty
 {
-    public class GetDutyList:DutyQueries, IRequest<Tuple<long, ICollection<DutyModel?>>>
+    public class GetDutyList:DutyQueries, IRequest<DutyDto>
     {
-        public class Handler : BaseRequestHandler<GetDutyList>, IRequestHandler<GetDutyList, Tuple<long, ICollection<DutyModel?>>>
+        public class Handler : BaseRequestHandler<GetDutyList>, IRequestHandler<GetDutyList, DutyDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<DutyModel?>>> Handle(GetDutyList request, CancellationToken cancellationToken)
+            public async Task<DutyDto> Handle(GetDutyList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.Duty>(_context);
-                return new Tuple<long, ICollection<DutyModel?>>
+                return new DutyDto
                     (await query.LongCountAsync(cancellationToken),
                     await query.Select(f => DutyModel.Create(f)).ToListAsync(cancellationToken));
             }

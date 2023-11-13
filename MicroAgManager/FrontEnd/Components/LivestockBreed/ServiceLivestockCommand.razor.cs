@@ -23,6 +23,7 @@ namespace FrontEnd.Components.LivestockBreed
                 await app.api.ProcessCommand<LivestockBreedModel, ServiceLivestock>("api/ServiceLivestock", serviceLivestock);
                 await Submitted.InvokeAsync();
                 _commandButton.HideModal();
+                serviceLivestock = new ServiceLivestock { ServiceDate = DateTime.Today, DamIds = new() };
                 StateHasChanged();
             }
             catch (Exception ex)

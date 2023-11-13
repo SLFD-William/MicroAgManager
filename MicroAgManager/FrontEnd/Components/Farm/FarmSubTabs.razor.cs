@@ -36,8 +36,12 @@ namespace FrontEnd.Components.Farm
         protected TabPage _registrarsTab;
         protected TabPage _measuresTab;
         protected TabPage _treatmentsTab;
-        
 
+        private async Task TabUpdated()
+        {
+            await Submitted.InvokeAsync();
+            StateHasChanged();
+        }
         protected override void OnInitialized()=>
             _tabControl?.ActivatePage(app.SelectedTabs[nameof(FarmSubTabs)] ?? _tabControl?.ActivePage ?? _plotTab);
         

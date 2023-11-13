@@ -31,8 +31,6 @@ namespace BackEnd.BusinessLogic.Livestock.Animals
             if (!string.IsNullOrEmpty(Breed)) query = query.Where(_ => _.Breeds.Any(b => b.Name.Contains(Breed)));
             if (!string.IsNullOrEmpty(Status)) query = query.Where(_ => _.Statuses.Any(b => b.Status.Contains(Status)));
             if (!string.IsNullOrEmpty(Feed)) query = query.Where(_ => _.Feeds.Any(b => b.Name.Contains(Feed) || b.Source.Contains(Feed)));
-
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
 

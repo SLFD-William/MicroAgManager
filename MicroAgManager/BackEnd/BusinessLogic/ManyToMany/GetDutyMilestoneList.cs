@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.ManyToMany
 {
-    public class GetDutyMilestoneList: BaseQuery, IRequest<Tuple<long, ICollection<DutyMilestone?>>>
+    public class GetDutyMilestoneList: BaseQuery, IRequest<DutyMilestoneDto>
     {
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
@@ -16,30 +16,34 @@ namespace BackEnd.BusinessLogic.ManyToMany
 
         private IQueryable<DutyMilestone> GetDutyMilestones(IMicroAgManagementDbContext context)
         {
-            var query = context.Milestones.Where(m => m.TenantId == TenantId)
-                .SelectMany(d => d.Duties.OrderByDescending(d => d.ModifiedOn).Select(s => new DutyMilestone(s.Id, d.Id,d.ModifiedOn)));
-        
+            var query = context.Milestones.Include(m => m.Duties).Where(m => m.TenantId == TenantId)
+            .SelectMany(m => m.Duties.Select(d => new DutyMilestone(d.Id, m.Id, new[] { d.ModifiedOn, m.ModifiedOn }.Max())))
+            .OrderByDescending(_ => _.ModifiedOn).AsQueryable();
 
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
 
-            if (query is null) throw new ArgumentNullException(nameof(query));
             return query;
         }
 
-        public class Handler : BaseRequestHandler<GetDutyMilestoneList>, IRequestHandler<GetDutyMilestoneList, Tuple<long, ICollection<DutyMilestone?>>>
+        public class Handler : BaseRequestHandler<GetDutyMilestoneList>, IRequestHandler<GetDutyMilestoneList, DutyMilestoneDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<DutyMilestone?>>> Handle(GetDutyMilestoneList request, CancellationToken cancellationToken)
+            public async Task<DutyMilestoneDto> Handle(GetDutyMilestoneList request, CancellationToken cancellationToken)
             {
                 var query = request.GetDutyMilestones(_context);
-                return new Tuple<long, ICollection<DutyMilestone?>>
-                    (await query.LongCountAsync(cancellationToken),
-                    await query.ToListAsync(cancellationToken));
+                try
+                { 
+                    var count = await query.LongCountAsync(cancellationToken);
+                    var models= await query.ToListAsync(cancellationToken);
+                    return new DutyMilestoneDto(count,models);
+                }
+                catch { 
+                    return new DutyMilestoneDto(0, new List<DutyMilestone>() );
+                }
             }
         }
     }

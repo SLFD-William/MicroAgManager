@@ -1,16 +1,13 @@
 ﻿using BackEnd.Abstracts;
-using BackEnd.BusinessLogic.FarmLocation;
-using BackEnd.BusinessLogic.Tenant;
-using BackEnd.BusinessLogic.Unit;
 using Domain.Abstracts;
 using Domain.Models;
+using FrontEnd.Data;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace FrontEnd.Services
 {
@@ -80,34 +77,9 @@ namespace FrontEnd.Services
             var result = await SendTheRequest(HttpMethod.Post, address, queryString);
             if (result.StatusCode == HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
             result.EnsureSuccessStatusCode();
-            return await ParseTheJSON<T>(result);
+            return await DomainFetcher.ParseTheJSON<T>(result);
         }
-        private async Task<Tuple<long, ICollection<T?>>?> ParseTheJSON<T>(HttpResponseMessage result) where T : class
-        {
-            Console.WriteLine("Parsing the JSON");
-            var options = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                PropertyNameCaseInsensitive = true,
-                IncludeFields = true
-            };
-            if (typeof(T) == typeof(TenantModel))
-            { 
-                var returnVal = await result.Content.ReadFromJsonAsync<TenantDto>(options);
-                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
-            }
-            if (typeof(T) == typeof(FarmLocationModel))
-            {
-                var returnVal = await result.Content.ReadFromJsonAsync<FarmDto>(options);
-                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
-            }
-            if(typeof(T)==typeof(UnitModel))
-            {
-                var returnVal = await result.Content.ReadFromJsonAsync<UnitDto>(options);
-                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
-            }
-            return null;
-        }
+
         private async Task<HttpResponseMessage> SendTheRequest(HttpMethod method, string address, StringContent? content)
         {
             HttpResponseMessage response = new HttpResponseMessage() { StatusCode = HttpStatusCode.Forbidden };

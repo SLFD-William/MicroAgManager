@@ -54,8 +54,15 @@ namespace FrontEnd.Components.LivestockStatus
             var model=args as LivestockStatusModel;
 
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.LivestockStatuses.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             _editStatus = null;
             await Submitted.InvokeAsync(await FindStatus(model.Id));

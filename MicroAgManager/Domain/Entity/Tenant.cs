@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entity
 {
+    [Index(nameof(GuidId))]
+    [Index(nameof(ModifiedOn))]
     public class Tenant
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,13 +26,13 @@ namespace Domain.Entity
         public Guid? DeletedBy { get; set; }
         [Required]
         [MaxLength(40)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } 
         [Required]
         public Guid TenantUserAdminId { get; set; }
         [Required]
         [MaxLength(50)]
         public string AccessLevel { get; set; }
-        public string WeatherServiceQueryURL { get; set; } = string.Empty;
+        public string? WeatherServiceQueryURL { get; set; }
         public Tenant(Guid createdBy)
         {
             Created = DateTime.Now;

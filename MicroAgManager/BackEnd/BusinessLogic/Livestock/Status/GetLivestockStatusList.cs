@@ -7,19 +7,19 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.Livestock.Status
 {
-    public class GetLivestockStatusList : LivestockStatusQueries, IRequest<Tuple<long, ICollection<LivestockStatusModel?>>>
+    public class GetLivestockStatusList : LivestockStatusQueries, IRequest<LivestockStatusDto>
     {
-        public class Handler : BaseRequestHandler<GetLivestockStatusList>, IRequestHandler<GetLivestockStatusList, Tuple<long, ICollection<LivestockStatusModel?>>>
+        public class Handler : BaseRequestHandler<GetLivestockStatusList>, IRequestHandler<GetLivestockStatusList, LivestockStatusDto>
         {
             public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
             {
             }
 
-            public async Task<Tuple<long, ICollection<LivestockStatusModel?>>> Handle(GetLivestockStatusList request, CancellationToken cancellationToken)
+            public async Task<LivestockStatusDto> Handle(GetLivestockStatusList request, CancellationToken cancellationToken)
             {
                 var query = request.GetQuery<Domain.Entity.LivestockStatus>(_context);
 
-                return new Tuple<long, ICollection<LivestockStatusModel?>>
+                return new LivestockStatusDto
                     (await query.LongCountAsync(cancellationToken),
                      await query.Select(f => LivestockStatusModel.Create(f)).ToListAsync(cancellationToken)
                     );

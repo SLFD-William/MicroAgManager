@@ -35,8 +35,15 @@ namespace FrontEnd.Components.LivestockAnimal
         {
             var model = args as LivestockAnimalModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.LivestockAnimals.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
             _editAnimal = null;
             await Submitted.InvokeAsync(await FindAnimal(model.Id));
         }
@@ -52,8 +59,13 @@ namespace FrontEnd.Components.LivestockAnimal
         public override async Task FreshenData()
         {
             if (_listComponent is null) return;
+            var start = DateTime.Now;
             while (!app.dbContext.LivestockAnimals.Any())
-                await Task.Delay(100);
+            {
+                await Task.Delay(1000);
+                if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                    break;
+            }
             if (Items is null)
                 Items = app.dbContext.LivestockAnimals.OrderBy(f => f.Name).Select(f=> new LivestockAnimalSummary(f,app.dbContext)).AsEnumerable() ?? new List<LivestockAnimalSummary>();
             

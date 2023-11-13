@@ -76,7 +76,7 @@ namespace FrontEnd.Data
         {
             if (_isSynchronizing)
                 while (_isSynchronizing)
-                    await Task.Delay(100);
+                    await Task.Delay(1000);
             try
             {
                 _isSynchronizing = true;
@@ -96,31 +96,27 @@ namespace FrontEnd.Data
                     // Begin fetching any updates to the dataset from the backend server
                     await DomainFetcher.BulkUpdateTenants(entityModels, db, connection, _api);
                     await DomainFetcher.BulkUpdateUnits(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateMeasures(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateTreatments(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateRegistrars(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateMeasures(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateTreatments(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateRegistrars(entityModels, db, connection, _api);
 
-                    //await DomainFetcher.BulkUpdateFarmLocations(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateLandPlots(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateLivestockAnimals(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateLivestockBreeds(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateLivestockStatuses(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateLivestocks(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateMilestones(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);
-                    
-                    //await DomainFetcher.BulkUpdateRegistrations(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateMeasurements(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateTreatmentRecords(entityModels, db, connection, _api);
-                    
+                    await DomainFetcher.BulkUpdateFarmLocations(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateLandPlots(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateLivestockAnimals(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateLivestockBreeds(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateLivestockStatuses(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateLivestocks(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateMilestones(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);
 
+                    await DomainFetcher.BulkUpdateRegistrations(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateMeasurements(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateTreatmentRecords(entityModels, db, connection, _api);
 
-
-
-                    //await DomainFetcher.BulkUpdateDutyMilestone(entityModels, db, connection, _api);
-                    //await DomainFetcher.BulkUpdateDutyEvent(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateDutyMilestone(entityModels, db, connection, _api);
+                    await DomainFetcher.BulkUpdateDutyEvent(entityModels, db, connection, _api);
                     Console.WriteLine("Ready to Commit");
                     transaction.Commit();
                 }
@@ -128,8 +124,7 @@ namespace FrontEnd.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                // TODO: use logger also
+                Console.WriteLine($"{ex.Message} {ex.StackTrace}");
                 OnError?.Invoke(ex);
             }
             finally

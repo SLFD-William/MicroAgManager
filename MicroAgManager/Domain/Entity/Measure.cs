@@ -1,10 +1,13 @@
 ﻿using Domain.Abstracts;
 using Domain.Constants;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
     public class Measure : BaseEntity
     {
         public Measure(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

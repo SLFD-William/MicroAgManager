@@ -26,7 +26,6 @@ namespace BackEnd.BusinessLogic.Registration
             if (RecipientId.HasValue) query = query.Where(_ => _.RecipientId == RecipientId);
             if (!string.IsNullOrEmpty(Identifier)) query = query.Where(_ => _.Identifier != null && _.Identifier.Contains(Identifier));
             if (DefaultIdentification.HasValue) query = query.Where(_ => _.DefaultIdentification == DefaultIdentification);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
             
         }

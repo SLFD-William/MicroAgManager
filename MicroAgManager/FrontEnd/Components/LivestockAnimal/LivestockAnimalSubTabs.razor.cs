@@ -45,25 +45,45 @@ namespace FrontEnd.Components.LivestockAnimal
         private async Task LivestockStatusUpdated(LivestockStatusModel args)
         {
             if (args.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.LivestockStatuses.Any(t => t.Id == args.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             await FreshenData();
         }
         private async Task LivestockBreedUpdated(LivestockBreedModel args)
         {
             if (args.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.LivestockBreeds.Any(t => t.Id == args.Id))
-                    await Task.Delay(100);
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
 
             await FreshenData();
         }
         private async Task MilestoneUpdated(MilestoneModel args)
         {
             if (args.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.Milestones.Any(t => t.Id == args.Id))
-                    await Task.Delay(100);
-
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
             await FreshenData();
         }
     }

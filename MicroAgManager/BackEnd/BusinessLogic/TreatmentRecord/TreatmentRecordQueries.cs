@@ -18,7 +18,6 @@ namespace BackEnd.BusinessLogic.TreatmentRecord
             if (TreatmentName != null) query = query.Where(_ => _.Treatment.Name == TreatmentName);
             if (RecipientType != null) query = query.Where(_ => _.RecipientType == RecipientType);
             if (AppliedMethod != null) query = query.Where(_ => _.AppliedMethod == AppliedMethod);
-            query = query.OrderByDescending(_ => _.ModifiedOn);
             return (IQueryable<T>)query;
         }
     }

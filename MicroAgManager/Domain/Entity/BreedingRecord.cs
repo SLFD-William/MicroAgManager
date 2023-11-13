@@ -1,9 +1,13 @@
 ﻿using Domain.Abstracts;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
     public class BreedingRecord : BaseEntity
     {
         public BreedingRecord(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

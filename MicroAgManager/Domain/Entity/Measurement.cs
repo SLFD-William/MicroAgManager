@@ -6,6 +6,9 @@ using Domain.Interfaces;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
+    [Index(nameof(RecipientType), nameof(RecipientTypeId))]
     public class Measurement : BaseEntity, IHasRecipient
     {
         public Measurement(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

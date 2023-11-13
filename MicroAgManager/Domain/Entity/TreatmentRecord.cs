@@ -7,6 +7,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
+    [Index(nameof(RecipientType), nameof(RecipientTypeId))]
     public class TreatmentRecord : BaseEntity, IHasRecipient
     {
         public TreatmentRecord(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)

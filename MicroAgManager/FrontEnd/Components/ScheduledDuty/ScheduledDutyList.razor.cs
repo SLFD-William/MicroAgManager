@@ -45,9 +45,16 @@ namespace FrontEnd.Components.ScheduledDuty
         {
             var model = args as ScheduledDutyModel;
             if (model?.Id > 0)
+            {
+                var start = DateTime.Now;
                 while (!app.dbContext.ScheduledDuties.Any(t => t.Id == model.Id))
-                    await Task.Delay(100);
-
+                {
+                    await Task.Delay(1000);
+                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
+                        break;
+                }
+            }
+            
             _editScheduledDuty = null;
             await Submitted.InvokeAsync(await FindScheduledDuty(model.Id));
         }

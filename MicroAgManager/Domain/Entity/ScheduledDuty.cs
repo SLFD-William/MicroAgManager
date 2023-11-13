@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    [Index(nameof(TenantId))]
+    [Index(nameof(ModifiedOn))]
+    [Index(nameof(Recipient), nameof(RecipientId))]
     public class ScheduledDuty : BaseEntity
     {
         public ScheduledDuty(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
