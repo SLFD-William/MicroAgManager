@@ -11,16 +11,17 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
     {
         public class Handler : BaseRequestHandler<GetScheduledDutyList>, IRequestHandler<GetScheduledDutyList, ScheduledDutyDto>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<ScheduledDutyDto> Handle(GetScheduledDutyList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery<Domain.Entity.ScheduledDuty>(_context);
-                return new ScheduledDutyDto
-                    (await query.LongCountAsync(cancellationToken),
-                    await query.Select(f => ScheduledDutyModel.Create(f)).ToListAsync(cancellationToken));
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var query = request.GetQuery<Domain.Entity.ScheduledDuty>(context);
+                    return new ScheduledDutyDto(await query.LongCountAsync(cancellationToken), await query.Select(f => ScheduledDutyModel.Create(f)).ToListAsync(cancellationToken));
+                }
             }
         }
     }

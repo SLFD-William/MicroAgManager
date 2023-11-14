@@ -17,20 +17,22 @@ namespace BackEnd.BusinessLogic.Livestock.Feed
         //create a handler class implementing BaseCommandHandler<CreateLivestockFeed>
         public class Handler : BaseCommandHandler<CreateLivestockFeed>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateLivestockFeed request, CancellationToken cancellationToken)
             {
                 var livestockFeed = request.LivestockFeed.Map(new LivestockFeed(request.ModifiedBy, request.TenantId)) as LivestockFeed;
-                _context.LivestockFeeds.Add(livestockFeed);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
+                    context.LivestockFeeds.Add(livestockFeed);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Livestock Feed"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Livestock Feed"); }
-
                 return livestockFeed.Id;
             }
         }

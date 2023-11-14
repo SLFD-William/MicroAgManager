@@ -12,16 +12,19 @@ namespace BackEnd.BusinessLogic.Unit
 
         public class Handler:BaseCommandHandler<UpdateUnit>,IRequestHandler<UpdateUnit, long>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async override Task<long> Handle(UpdateUnit request, CancellationToken cancellationToken)
             {
-                var unit = request.Unit.Map(await _context.Units.FindAsync(request.Unit.Id)) as Domain.Entity.Unit;
-                _context.Units.Update(unit);
-                await _context.SaveChangesAsync(cancellationToken);
-                return unit.Id;
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var unit = request.Unit.Map(await context.Units.FindAsync(request.Unit.Id)) as Domain.Entity.Unit;
+                    context.Units.Update(unit);
+                    await context.SaveChangesAsync(cancellationToken);
+                    return unit.Id;
+                }
             }
         }
     }

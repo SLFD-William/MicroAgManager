@@ -8,16 +8,18 @@ namespace BackEnd.BusinessLogic
 {
     public static class LivestockAnimalLogic
     {
-        public async static Task<List<ModifiedEntity>> OnLivestockAnimalCreated(IMicroAgManagementDbContext context,long id, CancellationToken cancellationToken, bool save = true)
+        public async static Task<List<ModifiedEntity>> OnLivestockAnimalCreated(IMicroAgManagementDbContext context,long id, CancellationToken cancellationToken)
         {
             var entitiesModified= new List<ModifiedEntity>();
-            var LivestockAnimal = await context.LivestockAnimals.FindAsync(id);
-            if (LivestockAnimal == null) throw new Exception("LivestockAnimal not found");
-            entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created",LivestockAnimal.ModifiedBy));
 
-            AddRequiredMilestones(LivestockAnimal, context);
-            entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));
-            if (save) await context.SaveChangesAsync(cancellationToken);
+                var LivestockAnimal = await context.LivestockAnimals.FindAsync(id);
+                if (LivestockAnimal == null) throw new Exception("LivestockAnimal not found");
+                entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created", LivestockAnimal.ModifiedBy));
+
+                AddRequiredMilestones(LivestockAnimal, context);
+                entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));
+                await context.SaveChangesAsync(cancellationToken);
+
             return entitiesModified;
         }
         private static void AddRequiredMilestones(LivestockAnimal animalType, IMicroAgManagementDbContext context)

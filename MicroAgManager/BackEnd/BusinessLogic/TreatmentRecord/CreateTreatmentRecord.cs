@@ -16,20 +16,23 @@ namespace BackEnd.BusinessLogic.TreatmentRecord
 
         public class Handler : BaseCommandHandler<CreateTreatmentRecord>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateTreatmentRecord request, CancellationToken cancellationToken)
             {
                 var treatmentRecord = request.TreatmentRecord.Map(new Domain.Entity.TreatmentRecord(request.ModifiedBy, request.TenantId)) as Domain.Entity.TreatmentRecord;
-                _context.TreatmentRecords.Add(treatmentRecord);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatmentRecord.Id.ToString(), treatmentRecord.GetType().Name, "Created", treatmentRecord.ModifiedBy) }), cancellationToken);
+                    context.TreatmentRecords.Add(treatmentRecord);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatmentRecord.Id.ToString(), treatmentRecord.GetType().Name, "Created", treatmentRecord.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create TreatmentRecord"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create TreatmentRecord"); }
                 return treatmentRecord.Id;
             }
         }

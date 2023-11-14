@@ -14,38 +14,31 @@ namespace BackEnd.BusinessLogic.ManyToMany
             throw new NotImplementedException();
         }
 
-        private IQueryable<DutyEvent> GetDutyEvents(IMicroAgManagementDbContext context)
+        private IQueryable<DutyEvent> GetDutyEvents(IMicroAgManagementDbContext context,out long count)
         {
-            var query = context.Events.Include(d=>d.Duties).Where(m => m.TenantId == TenantId)
+            var items =context.Events.Include(d => d.Duties).Where(m => m.TenantId == TenantId && m.Duties.Any())
                 .SelectMany(e => e.Duties.Select(d => new DutyEvent(d.Id, e.Id, new[] { d.ModifiedOn, e.ModifiedOn }.Max())))
-                .OrderByDescending(_ => _.ModifiedOn).AsQueryable();
-
-
+                .ToList();
+            count=items.Count;
+            var query = items.OrderByDescending(_ => _.ModifiedOn).AsQueryable();
             if (Skip.HasValue || Take.HasValue)
                 query = query.Skip(Skip ?? 0).Take(Take ?? 1000);
-
-            if (query is null) throw new ArgumentNullException(nameof(query));
             return query;
         }
 
         public class Handler : BaseRequestHandler<GetDutyEventList>, IRequestHandler<GetDutyEventList, DutyEventDto>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<DutyEventDto> Handle(GetDutyEventList request, CancellationToken cancellationToken)
             {
-                var query = request.GetDutyEvents(_context);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    var count = await query.LongCountAsync(cancellationToken);
-                    var models = await query.ToListAsync(cancellationToken);
+                    var query =request.GetDutyEvents(context, out var count);
+                    var models =await Task.FromResult( query.ToList());
                     return new DutyEventDto(count, models);
-                }
-                catch
-                {
-                    return new DutyEventDto(0, new List<DutyEvent>());
                 }
             }
         }

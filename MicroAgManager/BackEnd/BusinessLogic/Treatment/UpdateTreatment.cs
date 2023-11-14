@@ -13,23 +13,26 @@ namespace BackEnd.BusinessLogic.Treatment
         public required TreatmentModel Treatment { get; set; }
 public class Handler: BaseCommandHandler<UpdateTreatment>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(UpdateTreatment request, CancellationToken cancellationToken)
             {
-                var treatment = request.Treatment.Map(await _context.Treatments.FindAsync(request.Treatment.Id)) as Domain.Entity.Treatment;
-                treatment.ModifiedBy = request.ModifiedBy;
-               
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Modified", treatment.ModifiedBy) }), cancellationToken);
-                }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Update Treatment"); }
+                    var treatment = request.Treatment.Map(await context.Treatments.FindAsync(request.Treatment.Id)) as Domain.Entity.Treatment;
+                    treatment.ModifiedBy = request.ModifiedBy;
 
-                return treatment.Id;
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Modified", treatment.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Update Treatment"); }
+
+                    return treatment.Id;
+                }
             }
         }
     }

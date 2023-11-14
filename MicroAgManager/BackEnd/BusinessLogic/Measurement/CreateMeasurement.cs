@@ -16,20 +16,23 @@ namespace BackEnd.BusinessLogic.Measurement
 
         public class Handler:BaseCommandHandler<CreateMeasurement>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateMeasurement request, CancellationToken cancellationToken)
             {
                 var measurement = request.Measurement.Map(new Domain.Entity.Measurement(request.ModifiedBy, request.TenantId)) as Domain.Entity.Measurement;
-                _context.Measurements.Add(measurement);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measurement.Id.ToString(), measurement.GetType().Name, "Created", measurement.ModifiedBy) }), cancellationToken);
+                    context.Measurements.Add(measurement);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measurement.Id.ToString(), measurement.GetType().Name, "Created", measurement.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Measurement"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Measurement"); }
                 return measurement.Id;
             }
         }

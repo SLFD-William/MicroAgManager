@@ -11,16 +11,17 @@ namespace BackEnd.BusinessLogic.Treatment
     {
         public class Handler : BaseRequestHandler<GetTreatmentList>, IRequestHandler<GetTreatmentList, TreatmentDto>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<TreatmentDto> Handle(GetTreatmentList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery<Domain.Entity.Treatment>(_context);
-                return new TreatmentDto
-                    (await query.LongCountAsync(cancellationToken),
-                     await query.Select(f => TreatmentModel.Create(f)).ToListAsync(cancellationToken));
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var query = request.GetQuery<Domain.Entity.Treatment>(context);
+                    return new TreatmentDto(await query.LongCountAsync(cancellationToken), await query.Select(f => TreatmentModel.Create(f)).ToListAsync(cancellationToken));
+                }
             }
         }
     }

@@ -16,7 +16,7 @@ public class CreateDuty : BaseCommand, ICreateCommand
 
     public class Handler:BaseCommandHandler<CreateDuty>
     {
-        public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+        public Handler(IMediator mediator, ILogger log) : base(mediator, log)
         {
         }
 
@@ -27,14 +27,17 @@ public class CreateDuty : BaseCommand, ICreateCommand
             duty.CreatedOn = DateTime.Now;
             duty.ModifiedBy = duty.CreatedBy = request.ModifiedBy;
             duty.TenantId = request.TenantId;
-            _context.Duties.Add(duty);
-            try
+            using (var context = new DbContextFactory().CreateDbContext())
             {
-                await _context.SaveChangesAsync(cancellationToken);
-                await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, 
-                    new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy) }), cancellationToken);
+                context.Duties.Add(duty);
+                try
+                {
+                    await context.SaveChangesAsync(cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId,
+                        new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy) }), cancellationToken);
+                }
+                catch (Exception ex) { _log.LogError(ex, "error creating Duty"); }
             }
-            catch (Exception ex) { _log.LogError(ex, "error creating Duty"); }
             return duty.Id;
         }
     }

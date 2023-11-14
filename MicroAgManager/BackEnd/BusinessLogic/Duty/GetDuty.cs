@@ -11,12 +11,17 @@ namespace BackEnd.BusinessLogic.Duty
     {
         public class Handler : BaseRequestHandler<GetDuty>, IRequestHandler<GetDuty, DutyModel?>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
-            public async Task<DutyModel?> Handle(GetDuty request, CancellationToken cancellationToken) =>
-                DutyModel.Create(await request.GetQuery<Domain.Entity.Duty>(_context).FirstOrDefaultAsync(cancellationToken));
+            public async Task<DutyModel?> Handle(GetDuty request, CancellationToken cancellationToken)
+            {
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    return DutyModel.Create(await request.GetQuery<Domain.Entity.Duty>(context).FirstOrDefaultAsync(cancellationToken));
+                }
+            }
         }
     }
 }

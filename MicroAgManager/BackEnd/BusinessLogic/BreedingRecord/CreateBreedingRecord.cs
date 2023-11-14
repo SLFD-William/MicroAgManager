@@ -15,7 +15,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
         [Required] public BreedingRecordModel BreedingRecord { get; set; }
         public class Handler : BaseCommandHandler<CreateBreedingRecord>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
@@ -24,17 +24,23 @@ namespace BackEnd.BusinessLogic.BreedingRecord
                 var breedingRecord = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId) 
                 { FemaleId =request.BreedingRecord.FemaleId};
                 breedingRecord = request.BreedingRecord.Map(breedingRecord) as Domain.Entity.BreedingRecord;
-                _context.BreedingRecords.Add(breedingRecord);
-                var resolutionNewleyChanged = !string.IsNullOrEmpty(breedingRecord.Resolution) && breedingRecord.ResolutionDate.HasValue;
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    if (resolutionNewleyChanged)
-                        await _mediator.Publish(new BreedingRecordResolved { EntityName = breedingRecord.GetType().Name, Id = breedingRecord.Id, ModifiedBy = breedingRecord.ModifiedBy, TenantId = breedingRecord.TenantId }, cancellationToken);
-
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy) }), cancellationToken);
+                    context.BreedingRecords.Add(breedingRecord);
+                    var resolutionNewleyChanged = !string.IsNullOrEmpty(breedingRecord.Resolution) && breedingRecord.ResolutionDate.HasValue;
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        if (resolutionNewleyChanged)
+                        {
+                            var createLivestocks = await LivestockLogic.OnBreedingRecordResolved(context, breedingRecord.Id);
+                            foreach (var livestock in createLivestocks)
+                                await _mediator.Send(livestock, cancellationToken);
+                        }
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create BreedingRecord"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create BreedingRecord"); }
                 return breedingRecord.Id;
             }
         }

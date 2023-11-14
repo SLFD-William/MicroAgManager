@@ -11,18 +11,18 @@ namespace BackEnd.BusinessLogic.Registrar
     {
         public class Handler : BaseRequestHandler<GetRegistrarList>, IRequestHandler<GetRegistrarList, RegistrarDto>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<RegistrarDto> Handle(GetRegistrarList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery<Domain.Entity.Registrar>(_context);
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var query = request.GetQuery<Domain.Entity.Registrar>(context);
 
-                return new RegistrarDto
-                    (await query.LongCountAsync(cancellationToken),
-                     await query.Select(f => RegistrarModel.Create(f)).ToListAsync(cancellationToken)
-                );
+                    return new RegistrarDto(await query.LongCountAsync(cancellationToken), await query.Select(f => RegistrarModel.Create(f)).ToListAsync(cancellationToken));
+                }
             }
         }
     }

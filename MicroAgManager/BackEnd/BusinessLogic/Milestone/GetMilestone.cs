@@ -11,12 +11,17 @@ namespace BackEnd.BusinessLogic.Milestone
     {
         public class Handler : BaseRequestHandler<GetMilestone>, IRequestHandler<GetMilestone, MilestoneModel?>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
-            public async Task<MilestoneModel?> Handle(GetMilestone request, CancellationToken cancellationToken) =>
-                MilestoneModel.Create(await request.GetQuery<Domain.Entity.Milestone>(_context).FirstOrDefaultAsync(cancellationToken));
+            public async Task<MilestoneModel?> Handle(GetMilestone request, CancellationToken cancellationToken)
+            {
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    return MilestoneModel.Create(await request.GetQuery<Domain.Entity.Milestone>(context).FirstOrDefaultAsync(cancellationToken));
+                }
+            }
         }
     }
 }

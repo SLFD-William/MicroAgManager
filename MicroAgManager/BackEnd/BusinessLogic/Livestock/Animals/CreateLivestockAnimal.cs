@@ -1,4 +1,5 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Infrastructure;
 using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
@@ -14,20 +15,24 @@ namespace BackEnd.BusinessLogic.Livestock.Animals
         [Required] public LivestockAnimalModel LivestockAnimal { get; set; }
         public class Handler : BaseCommandHandler<CreateLivestockAnimal>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateLivestockAnimal request, CancellationToken cancellationToken)
             {
                 var livestockAnimal = request.LivestockAnimal.Map(new LivestockAnimal(request.ModifiedBy, request.TenantId)) as LivestockAnimal;
-                _context.LivestockAnimals.Add(livestockAnimal);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new LivestockAnimalCreated { EntityName=livestockAnimal.GetType().Name, Id= livestockAnimal.Id, ModifiedBy= livestockAnimal.ModifiedBy,TenantId= livestockAnimal.TenantId }, cancellationToken);
+                    context.LivestockAnimals.Add(livestockAnimal);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        var modifiedNotice = await LivestockAnimalLogic.OnLivestockAnimalCreated(context, livestockAnimal.Id, cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 return livestockAnimal.Id;
             }
         }

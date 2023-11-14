@@ -16,7 +16,7 @@ namespace BackEnd.BusinessLogic.Livestock
         public string CreationMode { get; set; } = "Create";
         public class Handler : BaseCommandHandler<CreateLivestock>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base( mediator, log)
             {
             }
 
@@ -24,16 +24,22 @@ namespace BackEnd.BusinessLogic.Livestock
             {
                 var livestock = new Domain.Entity.Livestock(request.ModifiedBy, request.TenantId);
                 livestock = request.Livestock.Map(livestock) as Domain.Entity.Livestock;
-                _context.Livestocks.Add(livestock);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    if(request.CreationMode=="Birth")
-                        await _mediator.Publish(new LivestockBorn { EntityName = livestock.GetType().Name, Id = livestock.Id, ModifiedBy = request.ModifiedBy, TenantId = request.TenantId }, cancellationToken);
-                    else
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy) }), cancellationToken);
+                    context.Livestocks.Add(livestock);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        if (request.CreationMode == "Birth")
+                        {
+                            var modifiedNotice = await LivestockLogic.OnLivestockBorn(context, livestock.Id, cancellationToken);
+                            await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
+                        }
+                        else
+                            await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 return livestock.Id;
             }
         }

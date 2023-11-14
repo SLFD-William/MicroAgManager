@@ -11,18 +11,18 @@ namespace BackEnd.BusinessLogic.Livestock.Status
     {
         public class Handler : BaseRequestHandler<GetLivestockStatusList>, IRequestHandler<GetLivestockStatusList, LivestockStatusDto>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<LivestockStatusDto> Handle(GetLivestockStatusList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery<Domain.Entity.LivestockStatus>(_context);
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var query = request.GetQuery<Domain.Entity.LivestockStatus>(context);
 
-                return new LivestockStatusDto
-                    (await query.LongCountAsync(cancellationToken),
-                     await query.Select(f => LivestockStatusModel.Create(f)).ToListAsync(cancellationToken)
-                    );
+                    return new LivestockStatusDto(await query.LongCountAsync(cancellationToken), await query.Select(f => LivestockStatusModel.Create(f)).ToListAsync(cancellationToken));
+                }
             }
         }
     }

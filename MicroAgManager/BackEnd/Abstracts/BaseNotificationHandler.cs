@@ -6,7 +6,7 @@ namespace BackEnd.Abstracts
 {
     public abstract class BaseNotificationHandler<T> : Base, INotificationHandler<T> where T : BaseNotification
     {
-        protected BaseNotificationHandler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+        protected BaseNotificationHandler(IMediator mediator, ILogger log) : base(mediator, log)
         {
         }
 

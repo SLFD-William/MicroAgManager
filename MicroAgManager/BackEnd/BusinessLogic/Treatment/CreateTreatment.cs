@@ -15,20 +15,23 @@ namespace BackEnd.BusinessLogic.Treatment
         [Required] required public TreatmentModel Treatment { get; set; }
         public class Handler : BaseCommandHandler<CreateTreatment>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateTreatment request, CancellationToken cancellationToken)
             {
                 var treatment = request.Treatment.Map(new Domain.Entity.Treatment(request.ModifiedBy, request.TenantId)) as Domain.Entity.Treatment;
-                _context.Treatments.Add(treatment);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Created", treatment.ModifiedBy) }), cancellationToken);
+                    context.Treatments.Add(treatment);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Created", treatment.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Treatment"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Treatment"); }
                 return treatment.Id;
             }
     

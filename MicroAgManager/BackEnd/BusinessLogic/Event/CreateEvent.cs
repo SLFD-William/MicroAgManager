@@ -16,7 +16,7 @@ namespace BackEnd.BusinessLogic.Event
 
         public class Handler:BaseCommandHandler<CreateEvent>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
@@ -26,14 +26,17 @@ namespace BackEnd.BusinessLogic.Event
                 eventEntity = request.Event.Map(eventEntity) as Domain.Entity.Event;
                 eventEntity.ModifiedBy = eventEntity.CreatedBy = request.ModifiedBy;
                 eventEntity.TenantId = request.TenantId;
-                _context.Events.Add(eventEntity);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, 
-                        new() { new ModifiedEntity(eventEntity.Id.ToString(),eventEntity.GetType().Name, "Created", eventEntity.ModifiedBy) }), cancellationToken);
+                    context.Events.Add(eventEntity);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId,
+                            new() { new ModifiedEntity(eventEntity.Id.ToString(), eventEntity.GetType().Name, "Created", eventEntity.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Event"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Event"); }
                 return eventEntity.Id;
             }
         }

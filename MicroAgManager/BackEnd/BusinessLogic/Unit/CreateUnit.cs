@@ -16,20 +16,23 @@ namespace BackEnd.BusinessLogic.Unit
 
         public class Handler:BaseCommandHandler<CreateUnit>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateUnit request, CancellationToken cancellationToken)
             {
                 var unit = request.Unit.Map(new Domain.Entity.Unit(request.ModifiedBy, request.TenantId) { ConversionFactorToSIUnit = 1 }) as Domain.Entity.Unit;
-                _context.Units.Add(unit);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(unit.Id.ToString(), unit.GetType().Name, "Created", unit.ModifiedBy) }), cancellationToken);
+                    context.Units.Add(unit);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(unit.Id.ToString(), unit.GetType().Name, "Created", unit.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Unit"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Unit"); }
                 return unit.Id;
             }
         }

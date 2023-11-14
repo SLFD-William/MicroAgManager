@@ -13,12 +13,17 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
 
         public class Handler : BaseRequestHandler<GetLandPlot>, IRequestHandler<GetLandPlot, LandPlotModel?>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
-            public async Task<LandPlotModel?> Handle(GetLandPlot request, CancellationToken cancellationToken) =>
-                LandPlotModel.Create(await request.GetQuery<LandPlot>(_context).FirstOrDefaultAsync(cancellationToken));
+            public async Task<LandPlotModel?> Handle(GetLandPlot request, CancellationToken cancellationToken)
+            {
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    return LandPlotModel.Create(await request.GetQuery<LandPlot>(context).FirstOrDefaultAsync(cancellationToken));
+                }
+            }
         }
     }
 }

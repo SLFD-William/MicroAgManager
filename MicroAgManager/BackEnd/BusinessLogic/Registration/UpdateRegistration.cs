@@ -13,23 +13,26 @@ namespace BackEnd.BusinessLogic.Registration
         public RegistrationModel Registration { get; set; }
         public class Handler : BaseCommandHandler<UpdateRegistration>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(UpdateRegistration request, CancellationToken cancellationToken)
             {
-                var registration = await _context.Registrations.FindAsync(request.Registration.Id);
-                if (registration is null) throw new KeyNotFoundException($"Registration {request.Registration.Id} not found.");
-                registration = request.Registration.Map(registration) as Domain.Entity.Registration;
-                _context.Registrations.Update(registration);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registration.Id.ToString(), registration.GetType().Name, "Updated", registration.ModifiedBy) }), cancellationToken);
+                    var registration = await context.Registrations.FindAsync(request.Registration.Id);
+                    if (registration is null) throw new KeyNotFoundException($"Registration {request.Registration.Id} not found.");
+                    registration = request.Registration.Map(registration) as Domain.Entity.Registration;
+                    context.Registrations.Update(registration);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registration.Id.ToString(), registration.GetType().Name, "Updated", registration.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                    return registration.Id;
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                return registration.Id;
             }
         }
     }

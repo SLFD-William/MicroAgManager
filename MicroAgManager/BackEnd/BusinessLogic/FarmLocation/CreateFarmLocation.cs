@@ -1,7 +1,9 @@
 ﻿using BackEnd.Abstracts;
+using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,7 +16,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
         [Required]public FarmLocationModel Farm { get; set; }
         public class Handler : BaseCommandHandler<CreateFarmLocation>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
@@ -22,16 +24,19 @@ namespace BackEnd.BusinessLogic.FarmLocation
             {
 
                 var farm = request.Farm.Map(new Domain.Entity.FarmLocation(request.ModifiedBy, request.TenantId)) as Domain.Entity.FarmLocation;
-                _context.Farms.Add(farm);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new FarmLocationCreated { EntityName = farm.GetType().Name, Id = farm.Id, ModifiedBy = farm.ModifiedBy, TenantId = farm.TenantId }, cancellationToken);
+                    context.Farms.Add(farm);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        var modifiedNotice = await FarmLocationLogic.OnFarmLocationCreated(context, farm.Id, cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Farm Location"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Farm Location"); }
                 return farm.Id;
             }
         }
-
     }
 }

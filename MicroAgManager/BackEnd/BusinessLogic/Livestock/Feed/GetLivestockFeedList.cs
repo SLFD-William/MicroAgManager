@@ -11,17 +11,17 @@ namespace BackEnd.BusinessLogic.Livestock.Feed
     {
         public class Handler : BaseRequestHandler<GetLivestockFeedList>, IRequestHandler<GetLivestockFeedList, Tuple<long, ICollection<LivestockFeedModel?>>>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<Tuple<long, ICollection<LivestockFeedModel?>>> Handle(GetLivestockFeedList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery<Domain.Entity.LivestockFeed>(_context);
-                return new Tuple<long, ICollection<LivestockFeedModel?>>
-                    (await query.LongCountAsync(cancellationToken),
-                                        await query.Select(f => LivestockFeedModel.Create(f)).ToListAsync(cancellationToken)
-                                                           );
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var query = request.GetQuery<Domain.Entity.LivestockFeed>(context);
+                    return new Tuple<long, ICollection<LivestockFeedModel?>>(await query.LongCountAsync(cancellationToken), await query.Select(f => LivestockFeedModel.Create(f)).ToListAsync(cancellationToken));
+                }
             }
         }
     }

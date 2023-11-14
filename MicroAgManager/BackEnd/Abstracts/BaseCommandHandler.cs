@@ -6,7 +6,7 @@ namespace BackEnd.Abstracts
 {
     public abstract class BaseCommandHandler<T> :Base, IRequestHandler<T, long> where T : BaseCommand
     {
-        protected BaseCommandHandler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+        protected BaseCommandHandler(IMediator mediator, ILogger log) : base(mediator, log)
         {
         }
 

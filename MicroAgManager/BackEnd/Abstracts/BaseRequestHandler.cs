@@ -6,7 +6,7 @@ namespace BackEnd.Abstracts
 {
     public abstract class BaseRequestHandler<T> : Base where T : BaseQuery
     {
-        protected BaseRequestHandler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+        protected BaseRequestHandler(IMediator mediator, ILogger log) : base(mediator, log)
         {
         }
     }

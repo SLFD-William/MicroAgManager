@@ -20,8 +20,8 @@ namespace Host
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDbContext<IMicroAgManagementDbContext, MicroAgManagementDbContext>(options =>
-                options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            services.AddDbContext<IMicroAgManagementDbContext, MicroAgManagementDbContext>(options => options.UseSqlServer(connectionString));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -71,7 +71,10 @@ this IServiceCollection services)
         {
             //// Add MediatR
             ///
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            });
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
 //            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehaviour<,>));
 

@@ -11,12 +11,17 @@ namespace BackEnd.BusinessLogic.Event
     {
         public class Handler : BaseRequestHandler<GetEvent>, IRequestHandler<GetEvent, EventModel?>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
-            public async Task<EventModel?> Handle(GetEvent request, CancellationToken cancellationToken) =>
-                EventModel.Create(await request.GetQuery<Domain.Entity.Event>(_context).FirstOrDefaultAsync(cancellationToken));
+            public async Task<EventModel?> Handle(GetEvent request, CancellationToken cancellationToken)
+            {
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    return EventModel.Create(await request.GetQuery<Domain.Entity.Event>(context).FirstOrDefaultAsync(cancellationToken));
+                }
+            }
         }
     }
 }

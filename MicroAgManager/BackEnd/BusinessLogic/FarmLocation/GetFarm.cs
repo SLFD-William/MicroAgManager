@@ -12,12 +12,17 @@ namespace BackEnd.BusinessLogic.FarmLocation
 
         public class Handler : BaseRequestHandler<GetFarm>, IRequestHandler<GetFarm, FarmLocationModel?>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
-            public async Task<FarmLocationModel?> Handle(GetFarm request, CancellationToken cancellationToken)=>
-                FarmLocationModel.Create(await request.GetQuery<Domain.Entity.FarmLocation>(_context).FirstOrDefaultAsync(cancellationToken));
+            public async Task<FarmLocationModel?> Handle(GetFarm request, CancellationToken cancellationToken)
+            {
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    return FarmLocationModel.Create(await request.GetQuery<Domain.Entity.FarmLocation>(context).FirstOrDefaultAsync(cancellationToken));
+                }
+            }
         }
     }
 }

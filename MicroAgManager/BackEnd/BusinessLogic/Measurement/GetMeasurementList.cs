@@ -11,16 +11,17 @@ namespace BackEnd.BusinessLogic.Measurement
     {
         public class Handler : BaseRequestHandler<GetMeasurementList>, IRequestHandler<GetMeasurementList, MeasurementDto>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public async Task<MeasurementDto> Handle(GetMeasurementList request, CancellationToken cancellationToken)
             {
-                var query = request.GetQuery<Domain.Entity.Measurement>(_context);
-                return new MeasurementDto
-                    (await query.LongCountAsync(cancellationToken),
-                                       await query.Select(f => MeasurementModel.Create(f)).ToListAsync(cancellationToken));
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    var query = request.GetQuery<Domain.Entity.Measurement>(context);
+                    return new MeasurementDto(await query.LongCountAsync(cancellationToken), await query.Select(f => MeasurementModel.Create(f)).ToListAsync(cancellationToken));
+                }
             }
         }
 

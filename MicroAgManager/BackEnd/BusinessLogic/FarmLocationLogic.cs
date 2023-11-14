@@ -7,15 +7,17 @@ namespace BackEnd.BusinessLogic
 {
     public static class FarmLocationLogic
     {
-        public async static Task<List<ModifiedEntity>> OnFarmLocationCreated(IMicroAgManagementDbContext context, long id, CancellationToken cancellationToken, bool save = true)
+        public async static Task<List<ModifiedEntity>> OnFarmLocationCreated(IMicroAgManagementDbContext context,long id, CancellationToken cancellationToken)
         { 
             var entitiesModified = new List<ModifiedEntity>();
+            
             var farmLocation = await context.Farms.FindAsync(id);
             if (farmLocation == null) throw new Exception("FarmLocation not found");
             entitiesModified.Add(new ModifiedEntity(farmLocation.Id.ToString(), farmLocation.GetType().Name, "Created", farmLocation.ModifiedBy));
             AddAncilliaries(farmLocation, context);
             entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));
-            if (save) await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            
             return entitiesModified;
         }
         private static void AddAncilliaries(Domain.Entity.FarmLocation farm, IMicroAgManagementDbContext context)

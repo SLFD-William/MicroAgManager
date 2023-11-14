@@ -124,6 +124,7 @@ namespace FrontEnd.Services
             _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",
                 async (notifications) =>
                 {
+                    if (!notifications.EntitiesModified.Any()) return;
                     Console.WriteLine("Server Data Updated");
                     await _dbSynchonizer.HandleModifiedEntities(_authentication?.UserId() ?? Guid.NewGuid(), notifications);
                 });

@@ -14,20 +14,23 @@ namespace BackEnd.BusinessLogic.Registration
         public RegistrationModel Registration { get; set; }
         public class Handler : BaseCommandHandler<CreateRegistration>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateRegistration request, CancellationToken cancellationToken)
             {
                 var registration = request.Registration.Map(new Domain.Entity.Registration(request.ModifiedBy, request.TenantId)) as Domain.Entity.Registration;
-                _context.Registrations.Add(registration);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registration.Id.ToString(), registration.GetType().Name, "Created", registration.ModifiedBy) }), cancellationToken);
+                    context.Registrations.Add(registration);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registration.Id.ToString(), registration.GetType().Name, "Created", registration.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 return registration.Id;
             }
         }

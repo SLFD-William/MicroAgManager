@@ -17,20 +17,23 @@ namespace BackEnd.BusinessLogic.Measure
 
         public class Handler : BaseCommandHandler<CreateMeasure>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateMeasure request, CancellationToken cancellationToken)
             {
                 var measure = request.Measure.Map(new Domain.Entity.Measure(request.ModifiedBy, request.TenantId)) as Domain.Entity.Measure;
-                _context.Measures.Add(measure);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measure.Id.ToString(), measure.GetType().Name, "Created", measure.ModifiedBy) }), cancellationToken);
+                    context.Measures.Add(measure);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measure.Id.ToString(), measure.GetType().Name, "Created", measure.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { _log.LogError(ex, "Unable to Create Measure"); }
                 }
-                catch (Exception ex) { _log.LogError(ex, "Unable to Create Measure"); }
                 return measure.Id;
             }
         }

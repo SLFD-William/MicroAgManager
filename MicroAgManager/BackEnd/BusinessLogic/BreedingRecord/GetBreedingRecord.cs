@@ -11,11 +11,16 @@ namespace BackEnd.BusinessLogic.BreedingRecord
     {
         public class Handler : BaseRequestHandler<GetBreedingRecord>, IRequestHandler<GetBreedingRecord, BreedingRecordModel?>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
-            public async Task<BreedingRecordModel?> Handle(GetBreedingRecord request, CancellationToken cancellationToken) =>
-                BreedingRecordModel.Create(await request.GetQuery<Domain.Entity.BreedingRecord>(_context).FirstOrDefaultAsync(cancellationToken));
+            public async Task<BreedingRecordModel?> Handle(GetBreedingRecord request, CancellationToken cancellationToken)
+            {
+                using (var context = new DbContextFactory().CreateDbContext())
+                {
+                    return BreedingRecordModel.Create(await request.GetQuery<Domain.Entity.BreedingRecord>(context).FirstOrDefaultAsync(cancellationToken));
+                }
+            }
         }
     }
 }

@@ -15,20 +15,23 @@ namespace BackEnd.BusinessLogic.Registrar
         [Required]public RegistrarModel Registrar { get; set; }
         public class Handler : BaseCommandHandler<CreateRegistrar>
         {
-            public Handler(IMicroAgManagementDbContext context, IMediator mediator, ILogger log) : base(context, mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 
             public override async Task<long> Handle(CreateRegistrar request, CancellationToken cancellationToken)
             {
                 var registrar = request.Registrar.Map(new Domain.Entity.Registrar(request.ModifiedBy, request.TenantId)) as Domain.Entity.Registrar;
-                _context.Registrars.Add(registrar);
-                try
+                using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    await _context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registrar.Id.ToString(), registrar.GetType().Name, "Created", registrar.ModifiedBy) }), cancellationToken);
+                    context.Registrars.Add(registrar);
+                    try
+                    {
+                        await context.SaveChangesAsync(cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registrar.Id.ToString(), registrar.GetType().Name, "Created", registrar.ModifiedBy) }), cancellationToken);
+                    }
+                    catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 return registrar.Id;
             }
         }
