@@ -15,6 +15,8 @@ body {
     --color-validation-required: blue;
     --color-active: white;
     --background-color-active: blue;
+    --female-color: hotpink;
+    --male-color: royalblue;
     /*    @media (prefers-color-scheme: dark) {
         --color-validation-validmodified: white;
         --background-color-validation-validmodified: green;
@@ -28,6 +30,7 @@ body {
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
+    word-break: normal;
 }
 *:focus {
     outline: none;
@@ -76,12 +79,12 @@ form {
     width: 100%;
     container-type: size;
 }
-.female {
-    color: hotpink;
+i.female {
+    color: var(--female-color);
     -webkit-text-stroke: 1px black;
 }
-.male {
-    color: royalblue;
+i.male {
+    color:var(--male-color);
     -webkit-text-stroke: 1px black;
 }
 .fa-ban {

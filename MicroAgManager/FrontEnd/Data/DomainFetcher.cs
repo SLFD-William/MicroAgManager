@@ -72,7 +72,7 @@ namespace FrontEnd.Data
                 Console.WriteLine("Calling the API for the Tenants");
                 var returned = await api.ProcessQuery<TenantModel, GetTenantList>("api/GetTenants", new GetTenantList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 Console.WriteLine("Received the Tenants from the API");
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -104,7 +104,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<FarmLocationModel, GetFarmList>("api/GetFarms", new GetFarmList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -151,7 +151,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LivestockAnimalModel, GetLivestockAnimalList>("api/GetLivestockAnimals", new GetLivestockAnimalList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -188,7 +188,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LandPlotModel, GetLandPlotList>("api/GetLandPlots", new GetLandPlotList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -229,7 +229,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LivestockBreedModel, GetLivestockBreedList>("api/GetLivestockBreeds", new GetLivestockBreedList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -264,7 +264,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LivestockModel, GetLivestockList>("api/GetLivestocks", new GetLivestockList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -330,7 +330,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<LivestockStatusModel, GetLivestockStatusList>("api/GetLivestockStatuses", new GetLivestockStatusList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -371,7 +371,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<MilestoneModel, GetMilestoneList>("api/GetMilestones", new GetMilestoneList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -407,7 +407,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<DutyModel, GetDutyList>("api/GetDuties", new GetDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -451,7 +451,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<BreedingRecordModel, GetBreedingRecordList>("api/GetBreedingRecords", new GetBreedingRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -497,7 +497,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<ScheduledDutyModel, GetScheduledDutyList>("api/GetScheduledDuties", new GetScheduledDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -545,7 +545,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<RegistrarModel, GetRegistrarList>("api/GetRegistrars", new GetRegistrarList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -581,7 +581,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<RegistrationModel, GetRegistrationList>("api/GetRegistrations", new GetRegistrationList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -621,7 +621,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedModel, GetLivestockFeedList>("api/GetLivestockFeeds", new GetLivestockFeedList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -667,7 +667,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedServingModel, GetLivestockFeedServingList>("api/GetLivestockFeedServings", new GetLivestockFeedServingList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -700,7 +700,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedDistributionModel, GetLivestockFeedDistributionList>("api/GetLivestockFeedDistributions", new GetLivestockFeedDistributionList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -735,7 +735,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedAnalysisParameterModel, GetLivestockFeedAnalysisParameterList>("api/GetLivestockFeedAnalysisParameters", new GetLivestockFeedAnalysisParameterList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -771,7 +771,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedAnalysisModel, GetLivestockFeedAnalysisList>("api/GetLivestockFeedAnalyses", new GetLivestockFeedAnalysisList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -812,7 +812,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedAnalysisResultModel, GetLivestockFeedAnalysisResultList>("api/GetLivestockFeedAnalysisResults", new GetLivestockFeedAnalysisResultList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -847,7 +847,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<EventModel, GetEventList>("api/GetEvents", new GetEventList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0) break;
+        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -882,7 +882,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<UnitModel, GetUnitList>("api/GetUnits", new GetUnitList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -917,7 +917,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<MeasureModel, GetMeasureList>("api/GetMeasures", new GetMeasureList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -949,7 +949,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<MeasurementModel, GetMeasurementList>("api/GetMeasurements", new GetMeasurementList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -994,7 +994,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<TreatmentModel, GetTreatmentList>("api/GetTreatments", new GetTreatmentList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -1053,7 +1053,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<TreatmentRecordModel, GetTreatmentRecordList>("api/GetTreatmentRecords", new GetTreatmentRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -1100,7 +1100,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<DutyEvent, GetDutyEventList>("api/GetDutyEventList", new GetDutyEventList { Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 dataReceived.AddRange(returned.Item2);
             }
@@ -1129,7 +1129,7 @@ namespace FrontEnd.Data
             while (true)
             {
                 var returned = await api.ProcessQuery<DutyMilestone, GetDutyMilestoneList>("api/GetDutyMilestoneList", new GetDutyMilestoneList { Skip = (int)totalCount });
-                if (returned.Item2.Count == 0) break;
+                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
                 dataReceived.AddRange(returned.Item2);
             }

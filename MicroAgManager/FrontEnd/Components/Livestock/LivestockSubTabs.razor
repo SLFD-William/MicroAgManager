@@ -54,18 +54,20 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            @if (livestockMom is not null)
-            { 
-            <CascadingValue Value="livestockMom">
-                <LivestockAncestry></LivestockAncestry>
-            </CascadingValue>
-            }
-            @if (livestockDad is not null)
-            {
-                <CascadingValue Value="livestockDad">
+            <div class="ancestry">
+                @if (livestockMom is not null)
+                { 
+                <CascadingValue Value="livestockMom">
                     <LivestockAncestry></LivestockAncestry>
                 </CascadingValue>
-            }
+                }
+                @if (livestockDad is not null)
+                {
+                    <CascadingValue Value="livestockDad">
+                        <LivestockAncestry></LivestockAncestry>
+                    </CascadingValue>
+                }
+            </div>
         </ChildContent>
     </TabPage>
 </TabControl>

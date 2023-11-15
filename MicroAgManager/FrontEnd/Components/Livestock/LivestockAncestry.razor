@@ -2,8 +2,8 @@
 @using Domain.Models;
 @inherits DataComponent<LivestockModel>
 @if (livestock is not null)
-{ 
-    <div class="LivestockAncestry">
+{
+    <div class="LivestockAncestry @GenderClass()">
         <CascadingValue Value="livestock">
             <LivestockBadge ShowEmoji=false></LivestockBadge>
         </CascadingValue>

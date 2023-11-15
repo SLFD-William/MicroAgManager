@@ -1,1 +1,1 @@
-﻿.LivestockAncestry{display:grid;grid-template-columns:max-content max-content;gap:.25rem;padding:.25rem .5rem;}.LivestockAncestry>::deep .LivestockBadge{grid-row:span 2;align-self:center;}
+﻿.LivestockAncestry{width:100%;display:grid;grid-template-columns:16rem 16rem;gap:.25rem;padding:.25rem .5rem;}.LivestockAncestry.male{border:1px solid var(--male-color);background-color:#add8e6;}.LivestockAncestry.female{border:1px solid var(--female-color);background-color:#ffb6c1;}.LivestockAncestry>::deep .LivestockBadge{grid-row:span 2;align-self:center;}

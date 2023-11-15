@@ -15,8 +15,8 @@ namespace FrontEnd.Components.Livestock
         private LivestockModel livestockMom { get; set; } = new LivestockModel();
         private LivestockModel livestockDad { get; set; } = new LivestockModel();
         
+        private string GenderClass() => livestock.Gender == GenderConstants.Male ? "male" :"female";
 
-        private string GenderTitle() => livestock.Gender == GenderConstants.Male ? animal?.ParentMaleName : animal?.ParentFemaleName;
         public override async Task FreshenData()
         {
             if (Livestock is not null)
