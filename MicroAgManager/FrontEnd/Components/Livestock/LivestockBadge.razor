@@ -4,7 +4,7 @@
 @if (livestock is not null)
 {
     <div class="LivestockBadge" @attributes="InputAttributes">
-        <label onclick="@(async() => await OnClick.InvokeAsync())" class="@PointerClass()" style="@ButtonBackGround()">
+        <label onclick="@(async() => await OnClick.InvokeAsync())" class="@PointerClass()" style="@CustomButtonStyles()">
             @if (ShowEmoji)
             {
                 <span>@breed?.EmojiChar</span>
@@ -51,7 +51,7 @@
     [Parameter] public bool ShowGeneral { get; set; } = false;
     [Parameter] public bool ShowStatus { get; set; } = false;
     [Parameter] public bool ShowAge { get; set; } = false;
-    [Parameter] public string BackGroundColor { get; set; }
+    [Parameter] public string CustomButtonStyle { get; set; }
     private LivestockAnimalModel? animal { get; set; }
     private LivestockBreedModel? breed { get; set; }
     private LivestockModel? livestock { get; set; }
@@ -92,11 +92,11 @@
     private string PointerClass()
     {
         var styleClass = OnClick.HasDelegate ? "pointer" : string.Empty;
-        var colorClass= BackGroundColor is null ? string.Empty : " customColor";
+        var colorClass = CustomButtonStyle is null ? string.Empty : " customColor";
         
         return $"{styleClass} {colorClass}".Trim();
 
 
     } 
-    private string ButtonBackGround()   => BackGroundColor is null ? string.Empty: $"background-color:{BackGroundColor}";
+    private string CustomButtonStyles() => CustomButtonStyle is null ? string.Empty : CustomButtonStyle;
 }

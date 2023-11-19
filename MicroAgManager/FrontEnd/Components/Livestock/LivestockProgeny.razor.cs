@@ -19,37 +19,36 @@ namespace FrontEnd.Components.Livestock
         private List<LivestockModel> mates { get; set; } = new();
         private List<LivestockModel> offspring { get; set; } = new();
         private List<LivestockModel> selectedMates { get; set; } = new();
+        private Dictionary<long,string> MateColors=new();
+
         public void ToggleMate(LivestockModel mate)
-        { 
-            if (selectedMates.Contains(mate))
-                selectedMates.Remove(mate);
+        {
+            if (selectedMates.Any(m => m.Id == mate.Id))
+            {
+                var index = selectedMates.FindIndex(m => m.Id == mate.Id);
+                selectedMates.RemoveAt(index);
+            }
             else
                 selectedMates.Add(mate);
             StateHasChanged();
         }
+        private string SelectedMateColor(LivestockModel mate)
+        {
+            if (!selectedMates.Any(m=>m.Id==mate.Id)) return string.Empty;
+            return MateColors.ContainsKey(mate.Id) ? MateColors[mate.Id] : string.Empty;
+        }
         private bool ShowUnkownButton()=> livestock.Gender == GenderConstants.Male ?
                 offspring.Any(o => o.MotherId == null) :
                 offspring.Any(o => o.FatherId == null);
-        private string SelectedMateColor(LivestockModel mate)
-        {
-            if(!selectedMates.Contains(mate)) return string.Empty;
-            var index= mates.IndexOf(mate);
-            return index < 0 ? string.Empty :((KnownColor)index + 28).GetEnumDescription();
-        }
         private string ChildStyle(LivestockModel child)
         {
             if (!selectedMates.Any()) return string.Empty;
-            if (ShowUnkownButton() && selectedMates.Any(m => m.Id < 1))
-                return livestock.Gender == GenderConstants.Male ?
-                    (!child.MotherId.HasValue ? $"background-color:{SelectedMateColor(new())}" : string.Empty):
-                    (!child.FatherId.HasValue ? $"background-color:{SelectedMateColor(new())}" : string.Empty);
             
-            var thisMate= livestock.Gender == GenderConstants.Male ?
-                selectedMates.FirstOrDefault(m => m.Id == child.MotherId) :
-                selectedMates.FirstOrDefault(m => m.Id == child.FatherId);
-
-            return thisMate is null? "display:none;" : $"background-color:{SelectedMateColor(thisMate)}";
+            var mateId=livestock.Gender == GenderConstants.Male ? child.MotherId ?? 0 : child.FatherId ?? 0 ;
+            var thisMate = selectedMates.Find(m=>m.Id==mateId);
+            return thisMate is null? "display:none;" : SelectedMateColor(thisMate);
         }
+
         public override async Task FreshenData()
         {
             if (Livestock is not null)
@@ -66,15 +65,40 @@ namespace FrontEnd.Components.Livestock
                 await app.dbContext.Livestocks.Where(x => x.FatherId == livestock.Id).ToListAsync() :
                 await app.dbContext.Livestocks.Where(x => x.MotherId == livestock.Id).ToListAsync();
 
+          
             var mateIds = livestock.Gender == GenderConstants.Male ?
-                offspring.Where(o => o.FatherId == livestock.Id).Select(o => o.MotherId).Distinct().ToList() :
-                offspring.Where(o => o.MotherId == livestock.Id).Select(o => o.FatherId).Distinct().ToList();
+                offspring.Where(o =>o.FatherId == livestock.Id && o.MotherId.HasValue).Select(o=>o.MotherId).Distinct().ToList() :
+                offspring.Where(o =>o.MotherId == livestock.Id && o.FatherId.HasValue).Select(o => o.FatherId).Distinct().ToList();
 
             mates = await app.dbContext.Livestocks.Where(x => mateIds.Contains(x.Id)).OrderBy(x=>x.Id).ToListAsync();
-            if(!selectedMates.Any())
-                selectedMates.AddRange(mates);
+            if (ShowUnkownButton())
+            { 
+                var unknownMate = new LivestockModel
+                {
+                    Id = 0,
+                    Name = "Unknown",
+                    Gender = livestock.Gender == GenderConstants.Male ? GenderConstants.Female : GenderConstants.Male
+                };
+                mates.Add(unknownMate);
+            }
+            foreach (var mate in mates)
+            {
+                var index = mates.FindIndex(m => m.Id == mate.Id);
+                var bgColor= Color.FromName(((KnownColor)index + 28).GetEnumDescription());
+                var foreColor = PerceivedBrightness(bgColor) < 131 ? "white" : "black";
+                var bgHexString = $"#{bgColor.R:X2}{bgColor.G:X2}{bgColor.B:X2}";
+                MateColors.TryAdd(mate.Id, $"background-color:{bgHexString}; color:{foreColor};");
+            }
 
+            if (!selectedMates.Any())
+                selectedMates.AddRange(mates);
             StateHasChanged();
+        }
+        private int PerceivedBrightness(Color c)
+        {
+            return (int)Math.Sqrt(c.R * c.R * .299 +
+                                  c.G * c.G * .587 +
+                                  c.B * c.B * .114);
         }
     }
 }

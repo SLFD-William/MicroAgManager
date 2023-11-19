@@ -61,11 +61,30 @@
                     <LivestockAncestry></LivestockAncestry>
                 </CascadingValue>
                 }
+                else
+                {
+                    <div class="unknown female">
+                        <span class="fa-stack">
+                            <i class="fas fa-stack-1x fa-venus female"></i>
+                        </span>
+                        unknown
+                    </div>
+                }
                 @if (livestockDad is not null)
                 {
                     <CascadingValue Value="livestockDad">
                         <LivestockAncestry></LivestockAncestry>
                     </CascadingValue>
+                }
+                else
+                {
+                    
+                    <div class="unknown male">
+                        <span class="fa-stack">
+                            <i class="fas fa-stack-1x fa-mars male"></i>
+                        </span>
+                        unknown
+                    </div>
                 }
             </div>
         </ChildContent>

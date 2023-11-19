@@ -6,12 +6,8 @@
         @foreach(var mate in mates)
         {
             <CascadingValue  Value="mate">
-                <LivestockBadge ShowEmoji="false" BackGroundColor="@SelectedMateColor(mate)" OnClick="@(() => ToggleMate(mate))"></LivestockBadge>
+                <LivestockBadge ShowEmoji="false" CustomButtonStyle="@SelectedMateColor(mate)" OnClick="@(() => ToggleMate(mate))"></LivestockBadge>
             </CascadingValue>
-        }
-        @if (ShowUnkownButton())
-        {
-            <button type="button" @onclick=@(() => ToggleMate(new LivestockModel()) )>Unknown</button>
         }
     </nav>
     <section>

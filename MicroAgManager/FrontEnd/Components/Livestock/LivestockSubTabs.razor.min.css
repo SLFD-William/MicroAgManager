@@ -1,1 +1,1 @@
-﻿.ancestry{width:100%;overflow:auto;}
+﻿.ancestry{width:100%;overflow:auto;}.ancestry ::deep .unknown.female{width:100%;border:1px solid var(--female-bo-color);background-color:var(--female-color);padding:.25rem .5rem;}.ancestry ::deep .unknown.male{width:100%;border:1px solid var(--male-bo-color);background-color:var(--male-color);padding:.25rem .5rem;}

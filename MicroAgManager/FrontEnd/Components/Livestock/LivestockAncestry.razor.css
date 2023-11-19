@@ -1,9 +1,21 @@
 ﻿.LivestockAncestry {
   width: 100%;
   display: grid;
-  grid-template-columns: 10rem 10rem;
+  grid-template-columns: 9rem 9rem;
   gap: 0.25rem;
   padding: 0.25rem 0.5rem;
+}
+.LivestockAncestry .unknown {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+}
+.LivestockAncestry .unknown.male {
+  border: 1px solid var(--male-bo-color);
+  background-color: var(--male-color);
+}
+.LivestockAncestry .unknown.female {
+  border: 1px solid var(--female-bo-color);
+  background-color: var(--female-color);
 }
 .LivestockAncestry.male {
   border: 1px solid var(--male-bo-color);
