@@ -1,4 +1,5 @@
 ﻿using BackEnd.BusinessLogic.Livestock;
+using Domain.Constants;
 using Domain.Models;
 using FrontEnd.Components.LivestockAnimal;
 using FrontEnd.Components.Shared;
@@ -31,11 +32,30 @@ namespace FrontEnd.Components.LivestockBreed
 
             }
         }
-        void FemaleSelected(ChangeEventArgs e)
+
+        private string FemaleName { get => string.Empty; set => FemaleSelected(value); }
+        void FemaleSelected(string value)
         {
-            serviceLivestock.DamIds.Add(long.Parse(e.Value.ToString()));
+            var fem = app.dbContext.Livestocks.FirstOrDefault(f => f.Name == value && f.Gender==GenderConstants.Female);
+            if (fem !=null)
+                serviceLivestock.DamIds.Add(fem.Id);
             editContext = new EditContext(serviceLivestock);
             StateHasChanged();
+        }
+        private void RemoveFemale(long id)
+        {
+            serviceLivestock.DamIds.Remove(id);
+            editContext = new EditContext(serviceLivestock);
+            StateHasChanged();
+        }
+        private string StudName { get
+            {
+               return app.dbContext.Livestocks.Find(serviceLivestock.StudId)?.Name ?? string.Empty;
+            }
+            set {
+                    var stud= app.dbContext.Livestocks.FirstOrDefault(f => f.Name == value);
+                    serviceLivestock.StudId = stud?.Id ?? 0;
+                 } 
         }
         private async Task Cancel()
         {

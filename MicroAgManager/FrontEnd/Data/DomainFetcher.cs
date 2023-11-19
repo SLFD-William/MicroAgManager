@@ -70,12 +70,11 @@ namespace FrontEnd.Data
             long expectedCount = 1;
             while (totalCount < expectedCount)
             {
-                
-                Console.WriteLine("Calling the API for the Tenants");
                 var returned = await api.ProcessQuery<TenantModel, GetTenantList>("api/GetTenants", new GetTenantList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                Console.WriteLine("Received the Tenants from the API");
                 totalCount += returned.Item2.Count;
-                expectedCount= returned.Item1;  
+                expectedCount= returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Tenants from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -109,6 +108,8 @@ namespace FrontEnd.Data
                     var returned = await api.ProcessQuery<FarmLocationModel, GetFarmList>("api/GetFarms", new GetFarmList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 totalCount += returned.Item2.Count;
                     expectedCount = returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Farm Locations from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
 
@@ -158,6 +159,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<LivestockAnimalModel, GetLivestockAnimalList>("api/GetLivestockAnimals", new GetLivestockAnimalList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
               expectedCount = returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} LivestockAnimals from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -196,6 +199,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<LandPlotModel, GetLandPlotList>("api/GetLandPlots", new GetLandPlotList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount = returned.Item1;                  
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Land Plots from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
 
@@ -239,6 +244,8 @@ namespace FrontEnd.Data
                  
                 totalCount += returned.Item2.Count;
                 expectedCount = returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Livestock Breeds from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
@@ -274,7 +281,9 @@ namespace FrontEnd.Data
             {
                 var returned = await api.ProcessQuery<LivestockModel, GetLivestockList>("api/GetLivestocks", new GetLivestockList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 totalCount += returned.Item2.Count;
-                expectedCount = returned.Item1;                
+                expectedCount = returned.Item1;  
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Livestocks from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var motherId = AddNamedParameter(command, "$MotherId");
@@ -344,6 +353,8 @@ namespace FrontEnd.Data
 
                 totalCount += returned.Item2.Count;
                 expectedCount = returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Livestock Statuses from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
@@ -386,6 +397,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<MilestoneModel, GetMilestoneList>("api/GetMilestones", new GetMilestoneList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount = returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Milestones from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -425,6 +438,8 @@ namespace FrontEnd.Data
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 expectedCount = returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Duties from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -436,10 +451,14 @@ namespace FrontEnd.Data
                 var systemRequired = AddNamedParameter(command, "$SystemRequired");
                 var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
                 var recipientType = AddNamedParameter(command, "$RecipientType");
+                var procedureLink = AddNamedParameter(command, "$ProcedureLink");
 
-                command.CommandText = $"INSERT or REPLACE INTO Duties (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,DaysDue,Command,CommandId,Relationship,Gender,SystemRequired,RecipientTypeId,RecipientType) " +
-                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                $"{name.ParameterName},{daysDue.ParameterName},{dutyType.ParameterName},{dutyTypeId.ParameterName},{relationship.ParameterName},{gender.ParameterName},{systemRequired.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName})";
+                command.CommandText = $"INSERT or REPLACE INTO Duties (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,DaysDue,Command,CommandId,Relationship,Gender,SystemRequired," +
+                    $"RecipientTypeId,RecipientType,ProcedureLink) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName}," +
+                $"{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{name.ParameterName},{daysDue.ParameterName},{dutyType.ParameterName},{dutyTypeId.ParameterName},{relationship.ParameterName},{gender.ParameterName}," +
+                $"{systemRequired.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName},{procedureLink.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -451,6 +470,7 @@ namespace FrontEnd.Data
                     dutyTypeId.Value = model.CommandId;
                     relationship.Value = model.Relationship;
                     gender.Value = model.Gender ?? string.Empty;
+                    procedureLink.Value = model.ProcedureLink ?? string.Empty;
                     systemRequired.Value = model.SystemRequired;
                     recipientTypeId.Value = model.RecipientTypeId;
                     recipientType.Value = model.RecipientType;
@@ -470,6 +490,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<BreedingRecordModel, GetBreedingRecordList>("api/GetBreedingRecords", new GetBreedingRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Breeding Records from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var femaleId = AddNamedParameter(command, "$FemaleId");
@@ -517,6 +539,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<ScheduledDutyModel, GetScheduledDutyList>("api/GetScheduledDuties", new GetScheduledDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Scheduled Duties from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var dutyId = AddNamedParameter(command, "$DutyId");
@@ -553,7 +577,6 @@ namespace FrontEnd.Data
 
             }
         }
-
         public async static Task BulkUpdateRegistrars(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(RegistrarModel))) return;
@@ -566,6 +589,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<RegistrarModel, GetRegistrarList>("api/GetRegistrars", new GetRegistrarList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Registrars from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -603,6 +628,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<RegistrationModel, GetRegistrationList>("api/GetRegistrations", new GetRegistrationList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Registrations from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var registarId= AddNamedParameter(command, "$RegistrarId");
@@ -897,7 +924,7 @@ namespace FrontEnd.Data
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(UnitModel))) return;
             var existingAccountIds = new HashSet<long>(db.Units.Select(t => t.Id));
-            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var mostRecentUpdate = db.Units.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             long expectedCount = 1;
             while (totalCount < expectedCount)
@@ -905,6 +932,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<UnitModel, GetUnitList>("api/GetUnits", new GetUnitList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Units from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -928,12 +957,11 @@ namespace FrontEnd.Data
                 }
             }
         }
-
         public async static Task BulkUpdateMeasures(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(MeasureModel))) return;
             var existingAccountIds = new HashSet<long>(db.Measures.Select(t => t.Id));
-            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var mostRecentUpdate = db.Measures.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             long expectedCount = 1;
             while (totalCount < expectedCount)
@@ -941,6 +969,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<MeasureModel, GetMeasureList>("api/GetMeasures", new GetMeasureList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Measures from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -966,7 +996,7 @@ namespace FrontEnd.Data
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(MeasurementModel))) return;
             var existingAccountIds = new HashSet<long>(db.Measurements.Select(t => t.Id));
-            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var mostRecentUpdate = db.Measurements.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             long expectedCount = 1;
             while (totalCount < expectedCount)
@@ -974,6 +1004,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<MeasurementModel, GetMeasurementList>("api/GetMeasurements", new GetMeasurementList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Measurements from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var measureId = AddNamedParameter(command, "$MeasureId");
@@ -1012,7 +1044,7 @@ namespace FrontEnd.Data
 
             if (!ShouldEntityBeUpdated(entityModels, nameof(TreatmentModel))) return;
             var existingAccountIds = new HashSet<long>(db.Treatments.Select(t => t.Id));
-            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var mostRecentUpdate = db.Treatments.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             long expectedCount = 1;
             while (totalCount < expectedCount)
@@ -1020,6 +1052,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<TreatmentModel, GetTreatmentList>("api/GetTreatments", new GetTreatmentList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Treatments from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -1072,7 +1106,7 @@ namespace FrontEnd.Data
         {
             if (!ShouldEntityBeUpdated(entityModels,nameof(TreatmentRecordModel))) return;
             var existingAccountIds = new HashSet<long>(db.TreatmentRecords.Select(t => t.Id));
-            var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            var mostRecentUpdate = db.TreatmentRecords.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
             long expectedCount = 1;
             while (totalCount < expectedCount)
@@ -1080,6 +1114,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<TreatmentRecordModel, GetTreatmentRecordList>("api/GetTreatmentRecords", new GetTreatmentRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} TreatmentRecords from the API");
+                if (expectedCount == 0) break;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var treatmentId = AddNamedParameter(command, "$TreatmentId");
@@ -1128,6 +1164,9 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<DutyEvent, GetDutyEventList>("api/GetDutyEventList", new GetDutyEventList { Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Duty to Event joins from the API");
+                if (expectedCount == 0) break;
+
                 dataReceived.AddRange(returned.Item2);
             }
             var command = connection.CreateCommand();
@@ -1158,6 +1197,8 @@ namespace FrontEnd.Data
                 var returned = await api.ProcessQuery<DutyMilestone, GetDutyMilestoneList>("api/GetDutyMilestoneList", new GetDutyMilestoneList { Skip = (int)totalCount });
                 expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Duty to Milestone joins from the API");
+                if (expectedCount == 0) break;
                 dataReceived.AddRange(returned.Item2);
             }
             var command = connection.CreateCommand();

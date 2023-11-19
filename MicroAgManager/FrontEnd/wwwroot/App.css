@@ -10288,8 +10288,10 @@ readers do not read off random characters that represent icons */
   --color-validation-required: blue;
   --color-active: white;
   --background-color-active: blue;
-  --female-color: hotpink;
-  --male-color: royalblue;
+  --female-color: lightpink;
+  --male-color: lightblue;
+  --female-bo-color: hotpink;
+  --male-bo-color: dodgerblue;
   /*    @media (prefers-color-scheme: dark) {
       --color-validation-validmodified: white;
       --background-color-validation-validmodified: green;
@@ -10325,7 +10327,7 @@ form {
 form .dataSection {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(25ch, 1fr));
   grid-gap: 0.25em;
   justify-items: center;
 }
@@ -10361,12 +10363,12 @@ body, #app {
 
 i.female {
   color: var(--female-color);
-  -webkit-text-stroke: 1px black;
+  -webkit-text-stroke: 1px var(--female-bo-color);
 }
 
 i.male {
   color: var(--male-color);
-  -webkit-text-stroke: 1px black;
+  -webkit-text-stroke: 1px var(--male-bo-color);
 }
 
 .fa-ban {
@@ -10403,6 +10405,10 @@ i.male {
 
 .firstColumn {
   grid-column: 1;
+}
+
+.secondColumn {
+  grid-column: 2;
 }
 
 .fullWidth {

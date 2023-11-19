@@ -12,7 +12,6 @@ namespace Domain.Models
         [Required] public string Name { get; set; }
         [Required] public Guid TenantUserAdminId { get; set; }
         public string? WeatherServiceQueryURL { get; set; }
-        public new DateTime EntityModifiedOn { get; private set; } = DateTime.MinValue;
         public static TenantModel Create(Tenant tenant)
         {
             if (tenant == null) throw new ArgumentNullException(nameof(tenant));

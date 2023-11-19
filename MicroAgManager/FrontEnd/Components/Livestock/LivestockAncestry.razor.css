@@ -1,17 +1,17 @@
 ﻿.LivestockAncestry {
   width: 100%;
   display: grid;
-  grid-template-columns: 16rem 16rem;
+  grid-template-columns: 10rem 10rem;
   gap: 0.25rem;
   padding: 0.25rem 0.5rem;
 }
 .LivestockAncestry.male {
-  border: 1px solid var(--male-color);
-  background-color: lightblue;
+  border: 1px solid var(--male-bo-color);
+  background-color: var(--male-color);
 }
 .LivestockAncestry.female {
-  border: 1px solid var(--female-color);
-  background-color: lightpink;
+  border: 1px solid var(--female-bo-color);
+  background-color: var(--female-color);
 }
 .LivestockAncestry > ::deep .LivestockBadge {
   grid-row: span 2;

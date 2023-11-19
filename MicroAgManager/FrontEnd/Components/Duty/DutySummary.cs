@@ -47,6 +47,8 @@ namespace FrontEnd.Components.Duty
         public int DaysDue => _dutyModel.DaysDue;
         public string Command => _dutyModel.Command;
         public string CommandInstance { get; private set; }
+        public string Procedure => _dutyModel.ProcedureLink;
+
         public string RecipientType => _dutyModel.RecipientType;
         public string RecipientInstance { get; private set; }
         public string Relationship => _dutyModel.Relationship;

@@ -1,4 +1,5 @@
-﻿@using Domain.Models;
+﻿@using Domain
+@using Domain.Models;
 @inherits DataComponent<DutyModel>
 @if (app != null)
 {
@@ -24,8 +25,17 @@
                     }
                 </Template>
             </Column>
+            
             <Column TableItem="DutySummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="DutySummary" Field="@(x => x.Command)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="DutySummary" Field="@(x => x.Procedure)" Sortable="true">
+                <Template Context="e">
+                    @if (Utilities.IsUrlValid(e.Procedure))
+                    { 
+                        <NavLink href="@e.Procedure" target="_blank" skip-router="true">Procedure</NavLink>
+                    }
+                </Template>
+            </Column>
+             <Column TableItem="DutySummary" Field="@(x => x.Command)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="DutySummary" Field="@(x => x.CommandInstance)" Title="Command Instance" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="DutySummary" Field="@(x => x.RecipientType)" Title="Recipient" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="DutySummary" Field="@(x => x.RecipientInstance)" Title="Recipient Instance" Sortable="true" Filterable="true" UseInSuperSearch="true" />

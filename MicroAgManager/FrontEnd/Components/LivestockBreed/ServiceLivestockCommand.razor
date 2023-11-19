@@ -15,28 +15,28 @@
                 <InputDate @bind-Value="@serviceLivestock.ServiceDate" />
             </ValidatedField>
             <ValidatedField CssClass="firstColumn" Legend="Male" ValidationMessageFor="@(() => serviceLivestock.StudId)">
-                <InputSelect @bind-Value="@serviceLivestock.StudId">
-                    <option value="">Select Male ...</option>
-                    @foreach (var g in app.dbContext.Livestocks.Where(l => l.LivestockBreedId == LivestockBreed.Id && !l.Sterile && l.Gender == GenderConstants.Male).OrderBy(m=>m.Name))
+                <InputText placeholder="Select Male..." @bind-Value="@StudName" list="studList" autocomplete="on" />
+                <datalist id="studList">
+                    @foreach (var g in app.dbContext.Livestocks.Where(l => l.LivestockBreedId == LivestockBreed.Id && !l.Sterile && l.Gender == GenderConstants.Male).OrderBy(m => m.Name))
                     {
-                        <option value="@g.Id">@g.Name</option>
+                        <option value="@g.Name" />
                     }
-                </InputSelect>
+                </datalist>
             </ValidatedField>
-            <ValidatedField Legend="Females" ValidationMessageFor="@(() => serviceLivestock.DamIds)">
+            <ValidatedField CssClass="secondColumn" Legend="Females" ValidationMessageFor="@(() => serviceLivestock.DamIds)">
                 <ul>
                     @foreach(var g in app.dbContext.Livestocks.Where(l => serviceLivestock.DamIds.Contains(l.Id)).OrderBy(f=>f.Name))
                     {
-                        <li>@g.Name</li>
+                        <li onclick="@(()=>RemoveFemale(g.Id))">@g.Name</li>
                     }
                 </ul>
-                <select @onchange="FemaleSelected">
-                    <option value="">Select Female ...</option>
+                <InputText placeholder="Select Female..." @bind-Value="@FemaleName" list="femaleList" autocomplete="on" />
+                <datalist id="femaleList">
                     @foreach (var g in app.dbContext.Livestocks.Where(l => l.LivestockBreedId == LivestockBreed.Id && !l.Sterile && l.Gender == GenderConstants.Female && !serviceLivestock.DamIds.Contains(l.Id)).OrderBy(f => f.Name))
                     {
-                        <option value="@g.Id">@g.Name</option>
+                        <option value="@g.Name" />
                     }
-                </select>
+                </datalist>
             </ValidatedField>
             <ValidatedField CssClass="fullWidth" Legend="Notes" ValidationMessageFor="@(() => serviceLivestock.Notes)">
                 <InputTextArea @bind-Value="@serviceLivestock.Notes" />

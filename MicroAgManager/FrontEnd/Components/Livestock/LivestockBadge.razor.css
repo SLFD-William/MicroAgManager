@@ -4,7 +4,7 @@
   align-items: center;
   padding: 0.25rem;
 }
-.LivestockBadge > h1.pointer {
+.LivestockBadge > label.pointer {
   cursor: default;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -16,8 +16,9 @@
   border: 1px solid #000;
   color: black;
   text-decoration: none;
+  font-weight: 600;
 }
-.LivestockBadge > h1.pointer.customColor {
+.LivestockBadge > label.pointer.customColor {
   background-image: unset;
 }
 .LivestockBadge > p {

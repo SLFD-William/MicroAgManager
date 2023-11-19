@@ -1,4 +1,5 @@
-﻿@using Domain.Constants;
+﻿@using Domain;
+@using Domain.Constants;
 @using Domain.Models;
 @using FrontEnd.Components.Registrar;
 @using FrontEnd.Components.Measure;
@@ -17,6 +18,13 @@
         <DataContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((DutyModel)working).Name)">
                 <InputText @bind-Value="((DutyModel)working).Name"></InputText>
+            </ValidatedField>
+            <ValidatedField Legend="Procedure" ValidationMessageFor="@(() => ((DutyModel)working).ProcedureLink)">
+                <InputText @bind-Value="((DutyModel)working).ProcedureLink"></InputText>
+                @if (Utilities.IsUrlValid(((DutyModel)working).ProcedureLink))
+                {
+                    <NavLink href="@(((DutyModel)working).ProcedureLink)" target="_blank" skip-router="true">Procedure</NavLink>
+                }
             </ValidatedField>
             <ValidatedField Legend="Command" ValidationMessageFor="@(() => ((DutyModel)working).Command)">
                 <InputSelect @bind-Value="@Command">

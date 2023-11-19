@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.Tenant
                 query = query.Where(_ => _.TenantUserAdminId== TenantUserAdminId);
 
             if (LastModified.HasValue)
-                query = query.Where(_ => _.ModifiedOn >= LastModified);
+                query = query.Where(_ => _.ModifiedOn > LastModified);
 
             return query;
         }

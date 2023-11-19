@@ -18,6 +18,7 @@ namespace Domain.Models
         [Required][MaxLength(20)] public string Relationship { get; set; }
         [MaxLength(1)] public string? Gender { get; set; }
         [Required] public bool SystemRequired { get; set; }
+        [MaxLength(255)] public string ProcedureLink { get; set; }
 
 
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
@@ -38,6 +39,7 @@ namespace Domain.Models
                 Relationship = duty.Relationship,
                 Gender = duty.Gender,
                 SystemRequired = duty.SystemRequired,
+                ProcedureLink = duty.ProcedureLink,
                 Milestones=duty.Milestones.Select(MilestoneModel.Create).ToList() ?? new List<MilestoneModel?>(),
                 ScheduledDuties=duty.ScheduledDuties.Select(ScheduledDutyModel.Create).ToList() ?? new List<ScheduledDutyModel?>(),
                 Events =duty.Events.Select(EventModel.Create).ToList() ?? new List<EventModel?>()
@@ -55,6 +57,7 @@ namespace Domain.Models
             ((DutyModel)duty).DaysDue = DaysDue;
             ((DutyModel)duty).Relationship = Relationship;
             ((DutyModel)duty).Gender = Gender;
+            ((DutyModel)duty).ProcedureLink =ProcedureLink;
             ((DutyModel)duty).SystemRequired = SystemRequired;
             return duty;
         }
@@ -71,7 +74,7 @@ namespace Domain.Models
             ((Duty)duty).Relationship = Relationship;
             ((Duty)duty).Gender = Gender;
             ((Duty)duty).SystemRequired = SystemRequired;
-
+            ((Duty)duty).ProcedureLink = ProcedureLink;
             duty.ModifiedOn = DateTime.UtcNow;
             return duty;
         }

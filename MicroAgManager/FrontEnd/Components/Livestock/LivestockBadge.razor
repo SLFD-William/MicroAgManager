@@ -4,7 +4,7 @@
 @if (livestock is not null)
 {
     <div class="LivestockBadge" @attributes="InputAttributes">
-        <h1 onclick="@(async() => await OnClick.InvokeAsync())" class="@PointerClass()" style="@ButtonBackGround()">
+        <label onclick="@(async() => await OnClick.InvokeAsync())" class="@PointerClass()" style="@ButtonBackGround()">
             @if (ShowEmoji)
             {
                 <span>@breed?.EmojiChar</span>
@@ -20,7 +20,7 @@
                 </span>
             }
             @livestock.Name
-        </h1>
+        </label>
         @if (ShowGeneral)
         {
             <p>@breed?.Name</p>

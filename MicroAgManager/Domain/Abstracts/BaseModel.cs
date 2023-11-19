@@ -6,7 +6,7 @@ namespace Domain.Abstracts
     public abstract class BaseModel : ICloneable
     {
         [Required] public long Id { get; set; }
-        [Required] public DateTime EntityModifiedOn { get; private set; } = DateTime.MinValue;
+        [Required] public DateTime EntityModifiedOn { get; set; }
         [Required] public Guid ModifiedBy { get; set; }
         public bool Deleted { get; set; }
 

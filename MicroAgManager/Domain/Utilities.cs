@@ -81,5 +81,11 @@ namespace Domain
                     .Invoke(null, new object[] { source, lambda });
             return (IOrderedQueryable<T>)result;
         }
+        public static bool IsUrlValid(string url)
+        {
+            if (string.IsNullOrEmpty(url)) return false;
+            return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
+                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        }
     }
 }
