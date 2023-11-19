@@ -20,7 +20,7 @@ namespace FrontEnd.Components.BreedingRecord
         [Parameter] public long? livestockBreedId { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         
-        protected new BreedingRecordModel working { get => base.working as BreedingRecordModel; set { base.working = value; } }
+        //protected new BreedingRecordModel working { get => base.working as BreedingRecordModel; set { base.working = value; } }
 
         public override async Task FreshenData()
         {
@@ -38,8 +38,8 @@ namespace FrontEnd.Components.BreedingRecord
             if (BreedingRecord is null && breedingRecordId > 0)
                 working = await app.dbContext.BreedingRecords.FirstOrDefaultAsync(b=>b.Id==breedingRecordId);
 
-            if(working?.FemaleId >0 )
-                livestockBreedId=(await app.dbContext.Livestocks.FindAsync(working.FemaleId))?.LivestockBreedId;
+            if(((BreedingRecordModel)working)?.FemaleId >0 )
+                livestockBreedId=(await app.dbContext.Livestocks.FindAsync(((BreedingRecordModel)working).FemaleId))?.LivestockBreedId;
 
             if (livestockBreedId.HasValue && (Breed is null || Breed.Id!=livestockBreedId))
                 Breed = new LivestockBreedSummary(await app.dbContext.LivestockBreeds.FindAsync(livestockBreedId), app.dbContext);
@@ -49,12 +49,12 @@ namespace FrontEnd.Components.BreedingRecord
             if (livestockAnimalId.HasValue && (LivestockAnimal is null || LivestockAnimal.Id!=livestockAnimalId))
                 LivestockAnimal = new LivestockAnimalSummary(await app.dbContext.LivestockAnimals.FindAsync(livestockAnimalId), app.dbContext);
 
-            SetEditContext(working);
+            SetEditContext((BreedingRecordModel)working);
         }
         private async Task Cancel()
         {
             working =original.Clone() as BreedingRecordModel;
-            SetEditContext(working);
+            SetEditContext((BreedingRecordModel)working);
             await Cancelled.InvokeAsync(working);
         }
         public async Task OnSubmit()
@@ -62,13 +62,13 @@ namespace FrontEnd.Components.BreedingRecord
             try
             {
                 var id = (working.Id <= 0) ?
-                    await app.api.ProcessCommand<BreedingRecordModel, CreateBreedingRecord>("api/CreateBreedingRecord", new CreateBreedingRecord { BreedingRecord = working }) :
-                    await app.api.ProcessCommand<BreedingRecordModel, UpdateBreedingRecord>("api/UpdateBreedingRecord", new UpdateBreedingRecord { BreedingRecord = working });
+                    await app.api.ProcessCommand<BreedingRecordModel, CreateBreedingRecord>("api/CreateBreedingRecord", new CreateBreedingRecord { BreedingRecord = (BreedingRecordModel)working }) :
+                    await app.api.ProcessCommand<BreedingRecordModel, UpdateBreedingRecord>("api/UpdateBreedingRecord", new UpdateBreedingRecord { BreedingRecord = (BreedingRecordModel)working });
 
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");
                 working.Id = id;
-                SetEditContext(working);
+                SetEditContext((BreedingRecordModel)working);
                 await Submitted.InvokeAsync(working);
             }
             catch (Exception ex)

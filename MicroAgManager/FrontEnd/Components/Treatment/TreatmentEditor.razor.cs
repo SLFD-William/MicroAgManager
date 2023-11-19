@@ -13,7 +13,6 @@ namespace FrontEnd.Components.Treatment
         [Parameter] public long? TreatmentId { get; set; }
         private ValidatedForm _validatedForm;
 
-        protected new TreatmentModel working { get => base.working as TreatmentModel; set { base.working = value; } }
         private UnitEditor _unitEditor;
         private bool showUnitModal = false;
         private void ShowUnitEditor()
@@ -25,7 +24,7 @@ namespace FrontEnd.Components.Treatment
         {
             var model = e as UnitModel;
             showUnitModal = false;
-            working.DosageUnitId = model.Id;
+            ((TreatmentModel)working).DosageUnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -38,7 +37,7 @@ namespace FrontEnd.Components.Treatment
         {
             var model = e as UnitModel;
             showUnitModal = false;
-            working.DurationUnitId = model.Id;
+            ((TreatmentModel)working).DurationUnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -51,7 +50,7 @@ namespace FrontEnd.Components.Treatment
         {
             var model = e as UnitModel;
             showUnitModal = false;
-            working.FrequencyUnitId = model.Id;
+            ((TreatmentModel)working).FrequencyUnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -64,7 +63,7 @@ namespace FrontEnd.Components.Treatment
         {
             var model = e as UnitModel;
             showUnitModal = false;
-            working.RecipientMassUnitId = model.Id;
+            ((TreatmentModel)working).RecipientMassUnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -84,21 +83,21 @@ namespace FrontEnd.Components.Treatment
             if (Treatment is null && TreatmentId > 0)
                 working = await app.dbContext.Treatments.FindAsync(TreatmentId);
 
-            SetEditContext(working);
+            SetEditContext((TreatmentModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
-                long id = (working.Id <= 0) ?
-                     working.Id = await app.api.ProcessCommand<TreatmentModel, CreateTreatment>("api/CreateTreatment", new CreateTreatment { Treatment = working }) :
-                     working.Id = await app.api.ProcessCommand<TreatmentModel, UpdateTreatment>("api/UpdateTreatment", new UpdateTreatment { Treatment = working });
+                long id = (((TreatmentModel)working).Id <= 0) ?
+                     ((TreatmentModel)working).Id = await app.api.ProcessCommand<TreatmentModel, CreateTreatment>("api/CreateTreatment", new CreateTreatment { Treatment = (TreatmentModel)working }) :
+                     ((TreatmentModel)working).Id = await app.api.ProcessCommand<TreatmentModel, UpdateTreatment>("api/UpdateTreatment", new UpdateTreatment { Treatment = (TreatmentModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Status");
 
-                working.Id = id;
-                original = working.Clone() as TreatmentModel;
+                ((TreatmentModel)working).Id = id;
+                original = ((TreatmentModel)working).Clone() as TreatmentModel;
                 editContext = new EditContext(working);
                 await Submitted.InvokeAsync(working);
                 StateHasChanged();
@@ -111,8 +110,8 @@ namespace FrontEnd.Components.Treatment
 
         private async Task Cancel()
         {
-            working = ((TreatmentModel)original).Map(working) as TreatmentModel;
-            SetEditContext(working);
+            working = original.Map((TreatmentModel)working);
+            SetEditContext((TreatmentModel)working);
             await Cancelled.InvokeAsync(working);
 
         }

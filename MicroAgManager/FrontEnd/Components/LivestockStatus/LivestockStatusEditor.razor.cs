@@ -20,7 +20,7 @@ namespace FrontEnd.Components.LivestockStatus
         [Parameter] public long? livestockAnimalId { get; set; }
         [Parameter] public long? livestockStatusId { get; set; }
         private ValidatedForm _validatedForm;
-        protected new LivestockStatusModel working { get => base.working as LivestockStatusModel; set { base.working = value; } }
+
         public override async Task FreshenData()
         {
             if (LivestockAnimal is not null)
@@ -43,21 +43,21 @@ namespace FrontEnd.Components.LivestockStatus
             if (LivestockStatus is null && livestockStatusId > 0)
                 working = await app.dbContext.LivestockStatuses.FindAsync(livestockStatusId);
 
-            SetEditContext(working);
+            SetEditContext((LivestockStatusModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
-                long id=(working.Id <= 0)?
-                    await app.api.ProcessCommand<LivestockStatusModel, CreateLivestockStatus>("api/CreateLivestockStatus", new CreateLivestockStatus { LivestockStatus = working }): 
-                    await app.api.ProcessCommand<LivestockStatusModel, UpdateLivestockStatus>("api/UpdateLivestockStatus", new UpdateLivestockStatus { LivestockStatus = working });
+                long id=(((LivestockStatusModel)working).Id <= 0)?
+                    await app.api.ProcessCommand<LivestockStatusModel, CreateLivestockStatus>("api/CreateLivestockStatus", new CreateLivestockStatus { LivestockStatus = (LivestockStatusModel)working }): 
+                    await app.api.ProcessCommand<LivestockStatusModel, UpdateLivestockStatus>("api/UpdateLivestockStatus", new UpdateLivestockStatus { LivestockStatus = (LivestockStatusModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Status");
 
-                working.Id = id;
-                SetEditContext(working);
+                ((LivestockStatusModel)working).Id = id;
+                SetEditContext((LivestockStatusModel)working);
                 await Submitted.InvokeAsync(working);
             }
             catch (Exception ex)
@@ -67,8 +67,8 @@ namespace FrontEnd.Components.LivestockStatus
         }
         private void Cancel()
         {
-            working = original.Map(working) as LivestockStatusModel;
-            SetEditContext(working);
+            working = original.Map((LivestockStatusModel)working);
+            SetEditContext((LivestockStatusModel)working);
             Task.Run(Cancelled.InvokeAsync);
         }
     }

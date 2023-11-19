@@ -12,20 +12,20 @@
                    Show="Show"
                     @ref=_validatedForm>
             <DataContent>
-                <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => working.Name)">
-                    <InputText placeholder="Registrar Name" @bind-Value="@working.Name" />
+                <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => ((RegistrarModel)working).Name)">
+                    <InputText placeholder="Registrar Name" @bind-Value="@(((RegistrarModel)working).Name)" />
                 </ValidatedField>
-            <ValidatedField Legend="Farm Number" ValidationMessageFor="@(() => working.RegistrarFarmID)">
-                <InputText placeholder="Farm Number" @bind-Value="@working.RegistrarFarmID" />
+            <ValidatedField Legend="Farm Number" ValidationMessageFor="@(() => ((RegistrarModel)working).RegistrarFarmID)">
+                <InputText placeholder="Farm Number" @bind-Value="@(((RegistrarModel)working).RegistrarFarmID)" />
             </ValidatedField>
-                <ValidatedField Legend="Email" ValidationMessageFor="@(() => working.Email)">
-                    <InputText placeholder="Email" @bind-Value="@working.Email" />
+                <ValidatedField Legend="Email" ValidationMessageFor="@(() => ((RegistrarModel)working).Email)">
+                    <InputText placeholder="Email" @bind-Value="@(((RegistrarModel)working).Email)" />
                 </ValidatedField>
-                <ValidatedField Legend="Website" ValidationMessageFor="@(() => working.Website)">
-                    <InputText placeholder="Website" @bind-Value="@working.Website" />
+                <ValidatedField Legend="Website" ValidationMessageFor="@(() => ((RegistrarModel)working).Website)">
+                    <InputText placeholder="Website" @bind-Value="@(((RegistrarModel)working).Website)" />
                 </ValidatedField>
-                <ValidatedField Legend="API" ValidationMessageFor="@(() => working.API)">
-                    <InputText placeholder="API" @bind-Value="@working.API" />
+                <ValidatedField Legend="API" ValidationMessageFor="@(() => ((RegistrarModel)working).API)">
+                    <InputText placeholder="API" @bind-Value="@(((RegistrarModel)working).API)" />
                 </ValidatedField>
             </DataContent>
         </ValidatedForm>

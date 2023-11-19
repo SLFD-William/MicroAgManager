@@ -9,13 +9,13 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(working.Id<1)"
+                   createOnly="@(((LandPlotModel)working).Id<1)"
                    Modal="Modal"
                     Show="Show"
                     @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => working.Usage)">
-                <InputSelect @bind-Value="@working.Usage">
+            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => ((LandPlotModel)working).Usage)">
+                <InputSelect @bind-Value="@(((LandPlotModel)working).Usage)">
                     <option value="">Select Use ...</option>
                     <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
                     <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
@@ -23,16 +23,16 @@
                     <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
-                <InputText placeholder="Name" @bind-Value="@working.Name" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((LandPlotModel)working).Name)">
+                <InputText  placeholder="Name" @bind-Value="@(((LandPlotModel)working).Name)" />
             </ValidatedField>
-            <ValidatedField Legend="Description" ValidationMessageFor="@(() => working.Description)">
-                <InputText placeholder="Description" @bind-Value="@working.Description" />
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => ((LandPlotModel)working).Description)">
+                <InputText placeholder="Description" @bind-Value="@(((LandPlotModel)working).Description)" />
             </ValidatedField>
-            <ValidatedField Legend="Area" ValidationMessageFor="@(() => working.Area)">
-                <InputNumber placeholder="0" @bind-Value="@working.Area" />
+            <ValidatedField Legend="Area" ValidationMessageFor="@(() => ((LandPlotModel)working).Area)">
+                <InputNumber placeholder="0" @bind-Value="@(((LandPlotModel)working).Area)" />
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => working.AreaUnitId)">
+            <ValidatedField ValidationMessageFor="@(() => ((LandPlotModel)working).AreaUnitId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Area Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
@@ -40,7 +40,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@working.AreaUnitId">
+                    <InputSelect @bind-Value="@(((LandPlotModel)working).AreaUnitId)">
                         <option value="">Select Units ...</option>
                         @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
                         {

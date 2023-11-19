@@ -11,7 +11,6 @@ namespace FrontEnd.Components.LivestockFeed
         [Parameter] public long? livestockFeedId { get; set; }
         [Parameter] public LivestockFeedModel livestockFeed { get; set; }
         private ValidatedForm _validatedForm;
-        protected new LivestockFeedModel working { get => base.working as LivestockFeedModel; set { base.working = value; } }
         [Parameter] public bool Modal { get; set; }
         public override Task FreshenData()
         {

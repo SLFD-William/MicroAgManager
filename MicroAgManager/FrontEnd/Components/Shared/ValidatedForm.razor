@@ -6,7 +6,7 @@
         {
             <div class="modalContainer">
                 <dialog open="true">
-                    <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit">
+                    <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit" class="@CssClass">
                         <DataAnnotationsValidator />
                         <section class="dataSection">
                             @DataContent
@@ -30,9 +30,9 @@
         }
     }
     else
-    { 
+    {
 
-    <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit" >
+        <EditForm EditContext="@editContext" OnValidSubmit="OnValidSubmit" class="@CssClass">
         <DataAnnotationsValidator />
         <section class="dataSection">
             @DataContent

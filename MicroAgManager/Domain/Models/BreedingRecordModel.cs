@@ -69,6 +69,7 @@ namespace Domain.Models
             ((BreedingRecord)breedingRecord).BornFemales = BornFemales;
             ((BreedingRecord)breedingRecord).Resolution = Resolution;
             breedingRecord.ModifiedOn = DateTime.UtcNow;
+            if (((BreedingRecord)breedingRecord).MaleId == 0) ((BreedingRecord)breedingRecord).MaleId = null;
             return breedingRecord;
         }
     }

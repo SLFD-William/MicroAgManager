@@ -13,7 +13,7 @@
 
         protected static bool NotEqualOperator(ValueObject left, ValueObject right)
         {
-            return !(EqualOperator(left, right));
+            return !EqualOperator(left, right);
         }
 
         protected abstract IEnumerable<object> GetEqualityComponents();

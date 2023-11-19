@@ -3,25 +3,24 @@
 @inherits DataComponent<BreedingRecordModel>
 @if (editContext is not null)
 {
-        <ValidatedForm editContext="editContext" 
+    <ValidatedForm editContext="editContext" 
         FreshenData="FreshenData"
         OnValidSubmit="OnSubmit" 
         Cancel="Cancel"
         showUpdateCancelButtons="showUpdateCancelButtons"
-        createOnly="@(working.Id<1)"
         Modal="Modal"
         Show="Show"
         @ref=_validatedForm>
             <DataContent>
-                <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => working.ServiceDate)">
-                    <InputDate @bind-Value="@working.ServiceDate" />
+                <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => ((BreedingRecordModel)working).ServiceDate)">
+                    <InputDate @bind-Value="@(((BreedingRecordModel)working).ServiceDate)" />
                 </ValidatedField>
-                <ValidatedField ValidationMessageFor="@(() => working.FemaleId)">
+                <ValidatedField ValidationMessageFor="@(() => ((BreedingRecordModel)working).FemaleId)">
                         <LegendContent>
                             @LivestockAnimal.ParentFemaleName
                         </LegendContent>
                         <ChildContent>
-                            <InputSelect @bind-Value="@working.FemaleId">
+                            <InputSelect @bind-Value="@(((BreedingRecordModel)working).FemaleId)">
                                 <option value="0">Select @LivestockAnimal.ParentFemaleName ...</option>
                                 @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == livestockBreedId && s.Gender == GenderConstants.Female && !s.Sterile))
                                 {
@@ -30,12 +29,12 @@
                             </InputSelect>
                         </ChildContent>
                     </ValidatedField>
-                <ValidatedField Legend="Male" ValidationMessageFor="@(() => working.MaleId)">
+                <ValidatedField Legend="Male" ValidationMessageFor="@(() => ((BreedingRecordModel)working).MaleId)">
                         <LegendContent>
                             @LivestockAnimal.ParentMaleName
                         </LegendContent>
                         <ChildContent>
-                            <InputSelect @bind-Value="@working.MaleId">
+                            <InputSelect @bind-Value="@(((BreedingRecordModel)working).MaleId)">
                                 <option value="0">Select @LivestockAnimal.ParentMaleName ...</option>
                                 @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId==livestockBreedId && s.Gender == GenderConstants.Male && !s.Sterile))
                                 {
@@ -44,36 +43,36 @@
                             </InputSelect>
                         </ChildContent>
                     </ValidatedField>
-            <ValidatedField Legend="Resolution" ValidationMessageFor="@(() => working.Resolution)">
-                <InputSelect @bind-Value="@working.Resolution">
+            <ValidatedField Legend="Resolution" ValidationMessageFor="@(() => ((BreedingRecordModel)working).Resolution)">
+                <InputSelect @bind-Value="@(((BreedingRecordModel)working).Resolution)">
                     <option value="">Select Resolution ...</option>
                     <option value="@BreedingResolutionConstants.Success">@BreedingResolutionConstants.Success</option>
                     <option value="@BreedingResolutionConstants.NotImpregnated">@BreedingResolutionConstants.NotImpregnated</option>
                 </InputSelect>
             </ValidatedField>
-            @if (!string.IsNullOrEmpty(working.Resolution))
+            @if (!string.IsNullOrEmpty(((BreedingRecordModel)working).Resolution))
             {
-                <ValidatedField Legend="Resolution Date" ValidationMessageFor="@(() => working.ResolutionDate)">
-                    <InputDate @bind-Value="@working.ResolutionDate" />
+                <ValidatedField Legend="Resolution Date" ValidationMessageFor="@(() => ((BreedingRecordModel)working).ResolutionDate)">
+                    <InputDate @bind-Value="@(((BreedingRecordModel)working).ResolutionDate)" />
                 </ValidatedField>
-                @if (working.Resolution == BreedingResolutionConstants.Success)
+                @if (((BreedingRecordModel)working).Resolution == BreedingResolutionConstants.Success)
                 {
-                    <ValidatedField Legend="Males Born" ValidationMessageFor="@(() => working.BornMales)">
-                        <InputNumber @bind-Value="@working.BornMales" />
+                    <ValidatedField CssClass="firstColumn" Legend="Males Born" ValidationMessageFor="@(() => ((BreedingRecordModel)working).BornMales)">
+                        <InputNumber @bind-Value="@(((BreedingRecordModel)working).BornMales)" />
                     </ValidatedField>
-                    <ValidatedField Legend="Females Born" ValidationMessageFor="@(() => working.BornFemales)">
-                        <InputNumber @bind-Value="@working.BornFemales" />
+                    <ValidatedField Legend="Stillborn Males" ValidationMessageFor="@(() => ((BreedingRecordModel)working).StillbornMales)">
+                        <InputNumber @bind-Value="@(((BreedingRecordModel)working).StillbornMales)" />
                     </ValidatedField>
-                    <ValidatedField Legend="Stillborn Males" ValidationMessageFor="@(() => working.StillbornMales)">
-                        <InputNumber @bind-Value="@working.StillbornMales" />
+                    <ValidatedField CssClass="firstColumn" Legend="Females Born" ValidationMessageFor="@(() => ((BreedingRecordModel)working).BornFemales)">
+                        <InputNumber @bind-Value="@(((BreedingRecordModel)working).BornFemales)" />
                     </ValidatedField>
-                    <ValidatedField Legend="Stillborn Females" ValidationMessageFor="@(() => working.StillbornFemales)">
-                        <InputNumber @bind-Value="@working.StillbornFemales" />
+                    <ValidatedField Legend="Stillborn Females" ValidationMessageFor="@(() => ((BreedingRecordModel)working).StillbornFemales)">
+                        <InputNumber @bind-Value="@(((BreedingRecordModel)working).StillbornFemales)" />
                     </ValidatedField>
                 }
             }
-            <ValidatedField Legend="Notes" ValidationMessageFor="@(() => working.Notes)">
-                    <InputTextArea @bind-Value="working.Notes"></InputTextArea>
+            <ValidatedField CssClass="fullWidth" Legend="Notes" ValidationMessageFor="@(() => ((BreedingRecordModel)working).Notes)">
+                    <InputTextArea @bind-Value="((BreedingRecordModel)working).Notes"></InputTextArea>
                 </ValidatedField>
             </DataContent>
         </ValidatedForm>

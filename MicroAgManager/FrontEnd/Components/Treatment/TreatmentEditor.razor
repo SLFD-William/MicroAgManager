@@ -9,22 +9,22 @@
         OnValidSubmit="OnSubmit"
         Cancel="Cancel"
         showUpdateCancelButtons="true"
-        createOnly="@(working.Id<1)"
+        createOnly="@(((TreatmentModel)working).Id<1)"
         Modal="Modal"
         Show="Show"
         @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Treatment" ValidationMessageFor="@(() => working.Name)">
-                <InputText placeholder="Treatment" @bind-Value="@working.Name" />
+            <ValidatedField Legend="Treatment" ValidationMessageFor="@(() => ((TreatmentModel)working).Name)">
+                <InputText placeholder="Treatment" @bind-Value="@(((TreatmentModel)working).Name)" />
             </ValidatedField>
-            <ValidatedField Legend="Brand Name" ValidationMessageFor="@(() => working.BrandName)">
-                <InputText placeholder="Brand Name" @bind-Value="@working.BrandName" />
+            <ValidatedField Legend="Brand Name" ValidationMessageFor="@(() => ((TreatmentModel)working).BrandName)">
+                <InputText placeholder="Brand Name" @bind-Value="@(((TreatmentModel)working).BrandName)" />
             </ValidatedField>
-            <ValidatedField Legend="Reason" ValidationMessageFor="@(() => working.Reason)">
-                <InputTextArea placeholder="Reason" @bind-Value="@working.Reason" />
+            <ValidatedField Legend="Reason" ValidationMessageFor="@(() => ((TreatmentModel)working).Reason)">
+                <InputTextArea placeholder="Reason" @bind-Value="@(((TreatmentModel)working).Reason)" />
             </ValidatedField>
-            <ValidatedField Legend="Label Method" ValidationMessageFor="@(() => working.LabelMethod)">
-                <InputSelect @bind-Value="@working.LabelMethod">
+            <ValidatedField Legend="Label Method" ValidationMessageFor="@(() => ((TreatmentModel)working).LabelMethod)">
+                <InputSelect @bind-Value="@(((TreatmentModel)working).LabelMethod)">
                     <option value="">Select Method ...</option>
                     <option value="@TreatmentConstants.Grooming">@TreatmentConstants.Grooming</option>
                     <option value="@TreatmentConstants.Intramuscular">@TreatmentConstants.Intramuscular</option>
@@ -35,12 +35,12 @@
                     <option value="@TreatmentConstants.Topical">@TreatmentConstants.Topical</option>
                 </InputSelect>
             </ValidatedField>
-            @if (!string.IsNullOrEmpty(working.LabelMethod) && !TreatmentConstants.NonWithdrawalTreatments.Contains(working.LabelMethod))
+            @if (!string.IsNullOrEmpty(((TreatmentModel)working).LabelMethod) && !TreatmentConstants.NonWithdrawalTreatments.Contains(((TreatmentModel)working).LabelMethod))
             {
-               <ValidatedField Legend="Dosage Amount" ValidationMessageFor="@(() => working.DosageAmount)">
-                    <InputNumber placeholder="Dosage Amount" @bind-Value="@working.DosageAmount" />
+               <ValidatedField Legend="Dosage Amount" ValidationMessageFor="@(() => ((TreatmentModel)working).DosageAmount)">
+                    <InputNumber placeholder="Dosage Amount" @bind-Value="@(((TreatmentModel)working).DosageAmount)" />
                 </ValidatedField>
-                <ValidatedField ValidationMessageFor="@(() => working.DosageUnitId)">
+                <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).DosageUnitId)">
                     <LegendContent>
                         <div style="display:inline-flex">
                             <span>Dosage Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
@@ -48,7 +48,7 @@
                         </div>
                     </LegendContent>
                     <ChildContent>
-                        <InputSelect @bind-Value="@working.DosageUnitId">
+                        <InputSelect @bind-Value="@(((TreatmentModel)working).DosageUnitId)">
                             <option value="">Select Dosage Unit ...</option>
                             @foreach (var unit in app.dbContext.Units.Where(u=> UnitCategoryConstants.DosageUnits.Keys.Contains(u.Category)).OrderBy(u=>u.Category).ThenBy(u=>u.Name))
                             {
@@ -57,10 +57,10 @@
                         </InputSelect>
                     </ChildContent>
                 </ValidatedField>
-                <ValidatedField Legend="Recipient Mass" ValidationMessageFor="@(() => working.RecipientMass)">
-                    <InputNumber @bind-Value="@working.RecipientMass" />
+                <ValidatedField Legend="Recipient Mass" ValidationMessageFor="@(() => ((TreatmentModel)working).RecipientMass)">
+                    <InputNumber @bind-Value="@(((TreatmentModel)working).RecipientMass)" />
                 </ValidatedField>
-                <ValidatedField ValidationMessageFor="@(() => working.RecipientMassUnitId)">
+                <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).RecipientMassUnitId)">
                     <LegendContent>
                         <div style="display:inline-flex">
                             <span>Mass Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
@@ -68,7 +68,7 @@
                         </div>
                     </LegendContent>
                     <ChildContent>
-                        <InputSelect @bind-Value="@working.RecipientMassUnitId">
+                        <InputSelect @bind-Value="@(((TreatmentModel)working).RecipientMassUnitId)">
                             <option value="">Select Mass Unit ...</option>
                             @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Mass.Key).OrderBy(u => u.Name))
                             {
@@ -77,17 +77,17 @@
                         </InputSelect>
                     </ChildContent>
                 </ValidatedField>
-                <ValidatedField Legend="Meat Withdrawal (Days)" ValidationMessageFor="@(() => working.MeatWithdrawal)">
-                    <InputNumber @bind-Value="@working.MeatWithdrawal" />
+                <ValidatedField Legend="Meat Withdrawal (Days)" ValidationMessageFor="@(() => ((TreatmentModel)working).MeatWithdrawal)">
+                    <InputNumber @bind-Value="@(((TreatmentModel)working).MeatWithdrawal)" />
                 </ValidatedField>
-                <ValidatedField Legend="Milk Withdrawal (Days)" ValidationMessageFor="@(() => working.MilkWithdrawal)">
-                    <InputNumber @bind-Value="@working.MilkWithdrawal" />
+                <ValidatedField Legend="Milk Withdrawal (Days)" ValidationMessageFor="@(() => ((TreatmentModel)working).MilkWithdrawal)">
+                    <InputNumber @bind-Value="@(((TreatmentModel)working).MilkWithdrawal)" />
                 </ValidatedField>
             }
-            <ValidatedField Legend="Frequency" ValidationMessageFor="@(() => working.Frequency)">
-                <InputNumber @bind-Value="@working.Frequency" />
+            <ValidatedField Legend="Frequency" ValidationMessageFor="@(() => ((TreatmentModel)working).Frequency)">
+                <InputNumber @bind-Value="@(((TreatmentModel)working).Frequency)" />
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => working.FrequencyUnitId)">
+            <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).FrequencyUnitId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Frequency Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
@@ -95,7 +95,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@working.FrequencyUnitId">
+                    <InputSelect @bind-Value="@(((TreatmentModel)working).FrequencyUnitId)">
                         <option value="">Select Frequency Unit ...</option>
                         @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Time.Key).OrderBy(u => u.Name))
                         {
@@ -104,10 +104,10 @@
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
-            <ValidatedField Legend="Duration" ValidationMessageFor="@(() => working.Duration)">
-                <InputNumber @bind-Value="@working.Duration" />
+            <ValidatedField Legend="Duration" ValidationMessageFor="@(() => ((TreatmentModel)working).Duration)">
+                <InputNumber @bind-Value="@(((TreatmentModel)working).Duration)" />
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => working.DurationUnitId)">
+            <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).DurationUnitId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Duration Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
@@ -115,7 +115,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@working.DurationUnitId">
+                    <InputSelect @bind-Value="@(((TreatmentModel)working).DurationUnitId)">
                         <option value="">Select Duration Unit ...</option>
                         @foreach (var unit in app.dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Time.Key).OrderBy(u => u.Name))
                         {

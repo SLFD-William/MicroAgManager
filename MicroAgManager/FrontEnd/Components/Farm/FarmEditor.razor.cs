@@ -16,47 +16,46 @@ namespace FrontEnd.Components.Farm
         [Inject] protected IGeolocationService GeoLoc { get; set; }
         [Inject] private IFrontEndApiServices api { get; set; }
         private ValidatedForm _validatedForm;
-        protected new FarmLocationModel working { get => base.working as FarmLocationModel; set { base.working = value; } }
         bool locationEnabled { get; set; } = true;
        
         protected override void OnAfterRender(bool firstRender)
         {
-            if (working is null) return;
-            if (firstRender && !(working.Longitude.HasValue || working.Latitude.HasValue)) 
+            if (((FarmLocationModel)working) is null) return;
+            if (firstRender && !(((FarmLocationModel)working).Longitude.HasValue || ((FarmLocationModel)working).Latitude.HasValue)) 
                 GeoLoc.GetCurrentPosition(this, nameof(OnCoordinatesPermitted), nameof(OnErrorRequestingCoordinates));
         }
         [JSInvokable]
         public void OnCoordinatesPermitted(GeolocationPosition position)  
         {
             locationEnabled = true;
-            var locChanged = working.Latitude != position.Coords.Latitude || working.Longitude != position.Coords.Longitude;
+            var locChanged = ((FarmLocationModel)working).Latitude != position.Coords.Latitude || ((FarmLocationModel)working).Longitude != position.Coords.Longitude;
             if(!locChanged) return;
-            working.Latitude = position.Coords.Latitude;
-            working.Longitude = position.Coords.Longitude;
+            ((FarmLocationModel)working).Latitude = position.Coords.Latitude;
+            ((FarmLocationModel)working).Longitude = position.Coords.Longitude;
 
             Task.Run(OnCoordinateChange);
             StateHasChanged();
         }
         private async Task OnCoordinateChange()     
         {
-            var geoLoc = await api.GetClosestAddress(working.Latitude.Value, working.Longitude.Value);
+            var geoLoc = await api.GetClosestAddress(((FarmLocationModel)working).Latitude.Value, ((FarmLocationModel)working).Longitude.Value);
             var address=geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Address;
             if (address == null) return;
 
-            working.StreetAddress = address.AddressLine;
-            working.City = address.Locality;
-            working.State = address.AdminDistrict;
-            working.Country = address.CountryRegion;
-            working.Zip = address.PostalCode;
+            ((FarmLocationModel)working).StreetAddress = address.AddressLine;
+            ((FarmLocationModel)working).City = address.Locality;
+            ((FarmLocationModel)working).State = address.AdminDistrict;
+            ((FarmLocationModel)working).Country = address.CountryRegion;
+            ((FarmLocationModel)working).Zip = address.PostalCode;
             StateHasChanged();
         }
         private async Task GetGeoLocation()
         {
-            var geoLoc = await app.api.GetClosestGeoLocation(working    );
+            var geoLoc = await app.api.GetClosestGeoLocation((FarmLocationModel)working    );
             var point = geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Point;
             if (point == null) return;
-            working.Latitude = point.Coordinates[0];
-            working.Longitude = point.Coordinates[1];
+            ((FarmLocationModel)working).Latitude = point.Coordinates[0];
+            ((FarmLocationModel)working).Longitude = point.Coordinates[1];
             StateHasChanged();
         }
         [JSInvokable]
@@ -75,30 +74,30 @@ namespace FrontEnd.Components.Farm
             if (Farm is null && farmId.HasValue)
                 working = await app.dbContext.Farms.FindAsync(farmId);
 
-            SetEditContext(working);
+            SetEditContext((FarmLocationModel)working);
         }
         private async Task Cancel()
         {
-            working =original.Map(working) as FarmLocationModel;
-            SetEditContext(working);
-            await Cancelled.InvokeAsync(working);
+            working =original.Map((FarmLocationModel)working);
+            SetEditContext((FarmLocationModel)working);
+            await Cancelled.InvokeAsync((FarmLocationModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
-                if (!(working.Latitude.HasValue || working.Longitude.HasValue))
+                if (!(((FarmLocationModel)working).Latitude.HasValue || ((FarmLocationModel)working).Longitude.HasValue))
                     await GetGeoLocation();
 
-                var id=(working.Id <= 0)?
-                    await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=working }):
-                    await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = working });
+                var id=(((FarmLocationModel)working).Id <= 0)?
+                    await app.api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm=(FarmLocationModel)working }):
+                    await app.api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = (FarmLocationModel)working });
 
                 if (id <= 0)
                     throw new Exception("Unable to save farm location");
-                working.Id = id;
-                SetEditContext(working);
-                await Submitted.InvokeAsync(working);
+                ((FarmLocationModel)working).Id = id;
+                SetEditContext((FarmLocationModel)working);
+                await Submitted.InvokeAsync((FarmLocationModel)working);
             }
             catch (Exception ex)
             {

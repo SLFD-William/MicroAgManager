@@ -10275,7 +10275,7 @@ readers do not read off random characters that represent icons */
   content: "\f3f6";
 }
 
-body {
+:root {
   padding-inline: 1rem;
   margin: auto;
   --font-stack: Tahoma, Geneva, sans-serif;
@@ -10297,7 +10297,6 @@ body {
       --background-color-validation-invalid: red;
       --color-action-primary: lightblue;
   }*/
-  width: 100%;
 }
 
 *, *::before, *::after {
@@ -10316,22 +10315,27 @@ body {
 form {
   margin: auto;
   padding: 0.5em;
-  width: fit-content;
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
   align-items: center;
   justify-content: center;
 }
-form .TabControl {
-  width: 100%;
-}
 form .dataSection {
   width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20ch, 1fr));
+  grid-gap: 0.25em;
+  justify-items: center;
+}
+form.flexDataSection > .dataSection {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25em;
-  justify-items: center;
+  gap: 1em;
+}
+form .TabControl {
+  width: 100%;
 }
 form .secondaryContent {
   width: 100%;
@@ -10346,9 +10350,12 @@ form .updateCancelButtons {
   justify-items: center;
 }
 
-#app {
+body, #app {
   height: 100vh;
   width: 100%;
+}
+
+#app {
   container-type: size;
 }
 
@@ -10392,4 +10399,12 @@ i.male {
   border-radius: 1em;
   box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-width: calc(100% - 1em);
+}
+
+.firstColumn {
+  grid-column: 1;
+}
+
+.fullWidth {
+  grid-column: 1/-1;
 }

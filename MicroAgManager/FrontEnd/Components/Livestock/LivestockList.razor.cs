@@ -37,7 +37,7 @@ namespace FrontEnd.Components.Livestock
         {
             if (_listComponent is null) return;
             if (Items is null)
-                Items = app.dbContext.Livestocks.Where(f => f.LivestockBreedId == LivestockBreed.Id).OrderBy(f => f.Name).Select(s=>new LivestockSummary(s,app.dbContext)).AsEnumerable() ?? new List<LivestockSummary>();
+                Items = app.dbContext.Livestocks.Where(f => f.LivestockBreedId == LivestockBreed.Id).OrderByDescending(f => f.Id).Select(s=>new LivestockSummary(s,app.dbContext)).AsEnumerable() ?? new List<LivestockSummary>();
             
             _listComponent.Update();
         }

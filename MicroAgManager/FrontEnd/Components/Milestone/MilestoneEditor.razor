@@ -9,17 +9,17 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(working.Id<1)"
+                   createOnly="@(((MilestoneModel)working).Id<1)"
                    Modal="Modal"
 Show="Show"
 
     @ref=_validatedForm>
         <DataContent>
-            @if (working.RecipientTypeId <= 0)
+            @if (((MilestoneModel)working).RecipientTypeId <= 0)
             {
-                <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => working.RecipientTypeId)">
-                    <InputSelect @bind-Value="@working.RecipientTypeId">
-                        @if (working.RecipientType == RecipientTypeConstants.LivestockAnimal)
+                <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => ((MilestoneModel)working).RecipientTypeId)">
+                    <InputSelect @bind-Value="@(((MilestoneModel)working).RecipientTypeId)">
+                        @if (((MilestoneModel)working).RecipientType == RecipientTypeConstants.LivestockAnimal)
                         {
                             <option value="0">Select Livestock Type ...</option>
                             @foreach (var state in app.dbContext.LivestockAnimals.OrderBy(a => a.Name))
@@ -30,13 +30,13 @@ Show="Show"
                     </InputSelect>
                 </ValidatedField>
             }
-            <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => working.Name)">
-                <InputText placeholder="Milestone" @bind-Value="@working.Name" />
+            <ValidatedField Legend="Milestone" ValidationMessageFor="@(() => ((MilestoneModel)working).Name)">
+                <InputText placeholder="Milestone" @bind-Value="@(((MilestoneModel)working).Name)" />
             </ValidatedField>
-            <ValidatedField Legend="Description" ValidationMessageFor="@(() => working.Description)">
-                <InputTextArea placeholder="Description" @bind-Value="@working.Description" />
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => ((MilestoneModel)working).Description)">
+                <InputTextArea placeholder="Description" @bind-Value="@(((MilestoneModel)working).Description)" />
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => working.Duties)">
+            <ValidatedField ValidationMessageFor="@(() => ((MilestoneModel)working).Duties)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Duties</span><button type="button" @onclick=ShowDutyEditor>+</button>
@@ -48,14 +48,14 @@ Show="Show"
                 
                 <ChildContent>
                     <ul>
-                        @foreach (var g in app.dbContext.Duties.Where(l => working.Duties.Contains(l)))
+                        @foreach (var g in app.dbContext.Duties.Where(l => ((MilestoneModel)working).Duties.Contains(l)))
                         {
                             <li><button type="button" @onclick=@(()=> DutyRemoved(g))>-</button> @g.Name</li>
                         }
                     </ul>
                     <select @onchange="DutySelected">
                         <option value="">Select Duty ...</option>
-                        @foreach (var g in app.dbContext.Duties.Where(l => !working.Duties.Contains(l)))
+                        @foreach (var g in app.dbContext.Duties.Where(l => !((MilestoneModel)working).Duties.Contains(l)))
                         {
                             <option value="@g.Id">@g.Name</option>
                         }

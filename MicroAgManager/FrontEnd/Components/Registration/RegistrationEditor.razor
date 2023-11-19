@@ -17,14 +17,14 @@
         <DataContent>
             @if (ShowRecipient)
             {
-                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => working.RecipientType)">
-                    <InputSelect @bind-Value="@working.RecipientType">
+                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => ((RegistrationModel)working).RecipientType)">
+                    <InputSelect @bind-Value="@(((RegistrationModel)working).RecipientType)">
                         <option value="0">Select Recipient Type ...</option>
                         <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => working.RecipientTypeId)">
-                    <InputSelect @bind-Value="@working.RecipientTypeId">
+                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => ((RegistrationModel)working).RecipientTypeId)">
+                    <InputSelect @bind-Value="@(((RegistrationModel)working).RecipientTypeId)">
                         <option value="0">Select Recipient Type Instance ...</option>
                         @foreach (var recipient in recipientTypeIds())
                         {
@@ -32,8 +32,8 @@
                         }
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => working.RecipientId)">
-                    <InputSelect @bind-Value="@working.RecipientId">
+                <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => ((RegistrationModel)working).RecipientId)">
+                    <InputSelect @bind-Value="@(((RegistrationModel)working).RecipientId)">
                         <option value="0">Select Recipient Instance ...</option>
                         @foreach (var recipient in recipientIds())
                         {
@@ -42,7 +42,7 @@
                     </InputSelect>
                 </ValidatedField>
             }
-            <ValidatedField ValidationMessageFor="@(() => working.RegistrarId)">
+            <ValidatedField ValidationMessageFor="@(() => ((RegistrationModel)working).RegistrarId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Registrar</span><button type="button" @onclick=ShowRegistrarEditor>+</button>
@@ -50,7 +50,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@working.RegistrarId">
+                    <InputSelect @bind-Value="@(((RegistrationModel)working).RegistrarId)">
                         <option value="0">Select Registrar ...</option>
                         @foreach (var registrar in app.dbContext.Registrars.OrderBy(m => m.Name))
                         {
@@ -59,14 +59,14 @@
                     </InputSelect>
                 </ChildContent>
                 </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => working.Identifier)">
-                <InputText @bind-Value="@working.Identifier"></InputText>
+            <ValidatedField ValidationMessageFor="@(() => ((RegistrationModel)working).Identifier)">
+                <InputText @bind-Value="@(((RegistrationModel)working).Identifier)"></InputText>
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => working.DefaultIdentification)">
-                <InputCheckbox @bind-Value="@working.DefaultIdentification"></InputCheckbox>
+            <ValidatedField ValidationMessageFor="@(() => ((RegistrationModel)working).DefaultIdentification)">
+                <InputCheckbox @bind-Value="@(((RegistrationModel)working).DefaultIdentification)"></InputCheckbox>
             </ValidatedField>
-            <ValidatedField Legend="Registration Date" ValidationMessageFor="@(() => working.RegistrationDate)">
-                <InputDate @bind-Value="@working.RegistrationDate"></InputDate>
+            <ValidatedField Legend="Registration Date" ValidationMessageFor="@(() => ((RegistrationModel)working).RegistrationDate)">
+                <InputDate @bind-Value="@(((RegistrationModel)working).RegistrationDate)"></InputDate>
             </ValidatedField>
         </DataContent>
     </ValidatedForm>

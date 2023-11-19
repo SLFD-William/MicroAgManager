@@ -14,7 +14,7 @@
             <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => serviceLivestock.ServiceDate)">
                 <InputDate @bind-Value="@serviceLivestock.ServiceDate" />
             </ValidatedField>
-            <ValidatedField Legend="Male" ValidationMessageFor="@(() => serviceLivestock.StudId)">
+            <ValidatedField CssClass="firstColumn" Legend="Male" ValidationMessageFor="@(() => serviceLivestock.StudId)">
                 <InputSelect @bind-Value="@serviceLivestock.StudId">
                     <option value="">Select Male ...</option>
                     @foreach (var g in app.dbContext.Livestocks.Where(l => l.LivestockBreedId == LivestockBreed.Id && !l.Sterile && l.Gender == GenderConstants.Male).OrderBy(m=>m.Name))
@@ -38,7 +38,7 @@
                     }
                 </select>
             </ValidatedField>
-            <ValidatedField Legend="Notes" ValidationMessageFor="@(() => serviceLivestock.Notes)">
+            <ValidatedField CssClass="fullWidth" Legend="Notes" ValidationMessageFor="@(() => serviceLivestock.Notes)">
                 <InputTextArea @bind-Value="@serviceLivestock.Notes" />
             </ValidatedField>
         </DataContent>

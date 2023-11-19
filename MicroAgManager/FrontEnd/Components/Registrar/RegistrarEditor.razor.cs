@@ -11,7 +11,6 @@ namespace FrontEnd.Components.Registrar
         [Parameter] public long? registrarId { get; set; }
         
         private ValidatedForm _validatedForm;
-        protected new RegistrarModel working { get => base.working as RegistrarModel; set { base.working = value; } }
         public override async Task FreshenData()
         {
             working = new RegistrarModel();
@@ -21,21 +20,21 @@ namespace FrontEnd.Components.Registrar
             if (Registrar is null && registrarId.HasValue)
                 working = await app.dbContext.Registrars.FindAsync(registrarId);
 
-            SetEditContext(working);
+            SetEditContext((RegistrarModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
-                long id = (working.Id <= 0) ?
-                    await app.api.ProcessCommand<RegistrarModel, CreateRegistrar>("api/CreateRegistrar", new CreateRegistrar { Registrar = working }) :
-                    await app.api.ProcessCommand<RegistrarModel, UpdateRegistrar>("api/UpdateRegistrar", new UpdateRegistrar { Registrar = working });
+                long id = (((RegistrarModel)working).Id <= 0) ?
+                    await app.api.ProcessCommand<RegistrarModel, CreateRegistrar>("api/CreateRegistrar", new CreateRegistrar { Registrar = (RegistrarModel)working }) :
+                    await app.api.ProcessCommand<RegistrarModel, UpdateRegistrar>("api/UpdateRegistrar", new UpdateRegistrar { Registrar = (RegistrarModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save Registrar");
-                working.Id = id;
-                SetEditContext(working);
-                await Submitted.InvokeAsync(working);
+                ((RegistrarModel)working).Id = id;
+                SetEditContext((RegistrarModel)working);
+                await Submitted.InvokeAsync((RegistrarModel)working);
             }
             catch (Exception ex)
             {
@@ -44,9 +43,9 @@ namespace FrontEnd.Components.Registrar
         }
         private async Task Cancel()
         {
-            working =original.Map(working) as RegistrarModel;
-            SetEditContext(working);
-            await Cancelled.InvokeAsync(working);
+            working =original.Map((RegistrarModel)working);
+            SetEditContext((RegistrarModel)working);
+            await Cancelled.InvokeAsync((RegistrarModel)working);
             
         }
     }

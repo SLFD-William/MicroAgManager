@@ -19,14 +19,14 @@ namespace FrontEnd.Components.Duty
         private RegistrarEditor _registrarEditor;
         private MeasureEditor _measureEditor;
         private TreatmentEditor _treatmentEditor;
-        protected new DutyModel working { get => base.working as DutyModel; set { base.working = value; } }
-        private string Command { get=>working.Command;
-            set { working.Command = value;
-                if (working.Command == DutyCommandConstants.Complete)
+        private string Command { get=>((DutyModel)working).Command;
+            set {
+                ((DutyModel)working).Command = value;
+                if (((DutyModel)working).Command == DutyCommandConstants.Complete)
                 {
-                    working.RecipientType = nameof(RecipientTypeConstants.None);
-                    working.RecipientTypeId = 0;
-                    working.Relationship = nameof(DutyRelationshipConstants.Self);
+                    ((DutyModel)working).RecipientType = nameof(RecipientTypeConstants.None);
+                    ((DutyModel)working).RecipientTypeId = 0;
+                    ((DutyModel)working).Relationship = nameof(DutyRelationshipConstants.Self);
                 }
             } }
         
@@ -41,30 +41,30 @@ namespace FrontEnd.Components.Duty
             if (working is null)
                 working = new DutyModel();
 
-            SetEditContext(working);
+            SetEditContext((DutyModel)working);
         }
         public async Task OnSubmit()
         {
                 long id = (working.Id <= 0) ?
-                    await app.api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = working }) :
-                    await app.api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = working });
+                    await app.api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = (DutyModel)working }) :
+                    await app.api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = (DutyModel)working });
 
-                if (id <= 0)
+                if (id <= 0)        
                     throw new Exception("Failed to save Duty");
 
                 working.Id = id;
-                SetEditContext(working);
-                await Submitted.InvokeAsync(working);
+                SetEditContext((DutyModel)working);
+                await Submitted.InvokeAsync((DutyModel)working);
         }
         private async Task Cancel()
         {
-            working =original.Map(working) as DutyModel;
-            SetEditContext(working);
-            await Cancelled.InvokeAsync(working);
+            working =original.Map((DutyModel)working);
+            SetEditContext((DutyModel)working);
+            await Cancelled.InvokeAsync((DutyModel)working);
         }
         private List<KeyValuePair<long, string>> recipientTypeIds()
         {
-            switch (working.RecipientType)
+            switch (((DutyModel)working).RecipientType)
             {
                 case nameof(RecipientTypeConstants.LivestockAnimal):
                     return app.dbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
@@ -74,7 +74,7 @@ namespace FrontEnd.Components.Duty
         }
         private List<KeyValuePair<long, string>> commandIds()
         {
-            switch (working.Command)
+            switch (((DutyModel)working).Command)
             {
                 case nameof(DutyCommandConstants.Registration):
                     return app.dbContext.Registrars.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
@@ -88,7 +88,7 @@ namespace FrontEnd.Components.Duty
         }
         private bool showCommandId()
         {
-            switch (working.Command)
+            switch (((DutyModel)working).Command)
             {
                 case "":
                 case null:
@@ -104,7 +104,7 @@ namespace FrontEnd.Components.Duty
         }
         private string commandLabel()
         {
-            switch (working.Command)
+            switch (((DutyModel)working).Command)
             {
                 case nameof(DutyCommandConstants.Registration):
                     return "Registrar";
@@ -127,7 +127,7 @@ namespace FrontEnd.Components.Duty
         }
         private void CommandCanceled()
         {
-            working.CommandId = ((DutyModel)original).CommandId;
+            ((DutyModel)working).CommandId = ((DutyModel)original).CommandId;
             showCommandModal = false;
             StateHasChanged();
         }
@@ -135,7 +135,7 @@ namespace FrontEnd.Components.Duty
         {
             var status = e as BaseModel;
             showCommandModal = false;
-            working.CommandId = status?.Id ?? 0;
+            ((DutyModel)working).CommandId = status?.Id ?? 0;
             StateHasChanged();
         }
     }

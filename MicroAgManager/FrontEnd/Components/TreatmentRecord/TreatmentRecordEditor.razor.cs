@@ -15,7 +15,6 @@ namespace FrontEnd.Components.TreatmentRecord
         [Parameter] public required long treatmentId { get; set; }
         private ValidatedForm _validatedForm;
 
-        protected new TreatmentRecordModel working { get => base.working as TreatmentRecordModel; set { base.working = value; } }
         #region Unit
         private UnitEditor _unitEditor;
         private bool showUnitModal = false;
@@ -28,7 +27,7 @@ namespace FrontEnd.Components.TreatmentRecord
         {
             var model = e as UnitModel;
             showUnitModal = false;
-           // working.UnitId = model.Id;
+           // ((TreatmentRecordModel)working).UnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -50,7 +49,7 @@ namespace FrontEnd.Components.TreatmentRecord
         {
             var model = e as TreatmentModel;
             showTreatmentModal = false;
-            working.TreatmentId = model.Id;
+            ((TreatmentRecordModel)working).TreatmentId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -85,22 +84,22 @@ namespace FrontEnd.Components.TreatmentRecord
                 };
             }
 
-            SetEditContext(working);
+            SetEditContext((TreatmentRecordModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
 
-                long id = (working.Id <= 0) ?
-                     working.Id = await app.api.ProcessCommand<TreatmentRecordModel, CreateTreatmentRecord>("api/CreateTreatmentRecord", new CreateTreatmentRecord { TreatmentRecord = working }) :
-                     working.Id = await app.api.ProcessCommand<TreatmentRecordModel, UpdateTreatmentRecord>("api/UpdateTreatmentRecord", new UpdateTreatmentRecord { TreatmentRecord = working });
+                long id = (((TreatmentRecordModel)working).Id <= 0) ?
+                     ((TreatmentRecordModel)working).Id = await app.api.ProcessCommand<TreatmentRecordModel, CreateTreatmentRecord>("api/CreateTreatmentRecord", new CreateTreatmentRecord { TreatmentRecord = (TreatmentRecordModel)working }) :
+                     ((TreatmentRecordModel)working).Id = await app.api.ProcessCommand<TreatmentRecordModel, UpdateTreatmentRecord>("api/UpdateTreatmentRecord", new UpdateTreatmentRecord { TreatmentRecord = (TreatmentRecordModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Status");
 
-                working.Id = id;
-                SetEditContext(working);
+                ((TreatmentRecordModel)working).Id = id;
+                SetEditContext((TreatmentRecordModel)working);
                 await Submitted.InvokeAsync(working);
             }
             catch (Exception ex)
@@ -110,8 +109,8 @@ namespace FrontEnd.Components.TreatmentRecord
         }
         private async Task Cancel()
         {
-            working = original.Map(working) as TreatmentRecordModel;
-            SetEditContext(working);
+            working = original.Map((TreatmentRecordModel)working) ;
+            SetEditContext((TreatmentRecordModel)working);
             await Cancelled.InvokeAsync(working);
 
         }

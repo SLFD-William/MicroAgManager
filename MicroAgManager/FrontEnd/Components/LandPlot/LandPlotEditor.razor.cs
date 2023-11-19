@@ -15,7 +15,6 @@ namespace FrontEnd.Components.LandPlot
         [Parameter] public long? landPlotId { get; set; }
         [Parameter] public long? parentPlotId { get; set; }
 
-        protected new LandPlotModel working { get => base.working as LandPlotModel; set { base.working = value; } }
         private ValidatedForm _validatedForm;
         private UnitEditor _unitEditor;
         private bool showUnitModal = false;
@@ -28,7 +27,7 @@ namespace FrontEnd.Components.LandPlot
         {
             var model = e as UnitModel;
             showUnitModal = false;
-            working.AreaUnitId = model.Id;
+            ((LandPlotModel)working).AreaUnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -39,20 +38,20 @@ namespace FrontEnd.Components.LandPlot
         }
         private void Cancel()
         {
-            working = original.Map(working) as LandPlotModel;
-            SetEditContext(working);
+            working = original.Map((LandPlotModel)working);
+            SetEditContext((LandPlotModel)working);
             Task.Run(Cancelled.InvokeAsync);
         }
         public async Task OnSubmit()
         {
             var id = (working?.Id <=0)?
-                await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = working }):
-                await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = working });
+                await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = (LandPlotModel)working }):
+                await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = (LandPlotModel)working });
 
             if (id <= 0)
                 throw new Exception("Unable to save plot");
-            working.Id= id;
-            SetEditContext(working);
+            ((LandPlotModel)working).Id= id;
+            SetEditContext((LandPlotModel)working);
             await Submitted.InvokeAsync(working);
         }
         public override async Task FreshenData()    
@@ -64,7 +63,7 @@ namespace FrontEnd.Components.LandPlot
             if (Plot is null && landPlotId.HasValue)
                 working = await app.dbContext.LandPlots.FindAsync(landPlotId);
             
-            SetEditContext(working);
+            SetEditContext((LandPlotModel)working);
             
         }
     }

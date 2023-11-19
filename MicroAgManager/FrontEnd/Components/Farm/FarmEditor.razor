@@ -7,36 +7,36 @@
         OnValidSubmit="OnSubmit" 
         Cancel="Cancel"
         showUpdateCancelButtons="true"
-        createOnly="@(working.Id<1)"
+        createOnly="@(((FarmLocationModel)working).Id<1)"
         Modal="Modal"
 Show="Show"
         @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
-                <InputText placeholder="Name" @bind-Value="@working.Name" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((FarmLocationModel)working).Name)">
+                <InputText placeholder="Name" @bind-Value="@(((FarmLocationModel)working).Name)" />
             </ValidatedField>
-            <ValidatedField Legend="Address" ValidationMessageFor="@(() => working.StreetAddress)">
-                <InputText placeholder="Street Address" @bind-Value="@working.StreetAddress" />
+            <ValidatedField Legend="Address" ValidationMessageFor="@(() => ((FarmLocationModel)working).StreetAddress)">
+                <InputText placeholder="Street Address" @bind-Value="@(((FarmLocationModel)working).StreetAddress)" />
             </ValidatedField>
-            <ValidatedField Legend="City" ValidationMessageFor="@(() => working.City)">
-                <InputText placeholder="City" @bind-Value="@working.City" />
+            <ValidatedField Legend="City" ValidationMessageFor="@(() => ((FarmLocationModel)working).City)">
+                <InputText placeholder="City" @bind-Value="@(((FarmLocationModel)working).City)" />
             </ValidatedField>
-            <ValidatedField Legend="State" ValidationMessageFor="@(() => working.State)">
-                <InputText placeholder="State" @bind-Value="@working.State" />
+            <ValidatedField Legend="State" ValidationMessageFor="@(() => ((FarmLocationModel)working).State)">
+                <InputText placeholder="State" @bind-Value="@(((FarmLocationModel)working).State)" />
             </ValidatedField>
-            <ValidatedField Legend="Zip" ValidationMessageFor="@(() => working.Zip)">
-                <InputText placeholder="Zip" @bind-Value="@working.Zip" />
+            <ValidatedField Legend="Zip" ValidationMessageFor="@(() => ((FarmLocationModel)working).Zip)">
+                <InputText placeholder="Zip" @bind-Value="@(((FarmLocationModel)working).Zip)" />
             </ValidatedField>
-            <ValidatedField Legend="Country" ValidationMessageFor="@(() => working.Country)">
-                <InputText placeholder="Country" @bind-Value="@working.Country" />
+            <ValidatedField Legend="Country" ValidationMessageFor="@(() => ((FarmLocationModel)working).Country)">
+                <InputText placeholder="Country" @bind-Value="@(((FarmLocationModel)working).Country)" />
             </ValidatedField>
             @if (locationEnabled)
             {
-                <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => working.Latitude)">
-                    <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@working.Latitude" />
+                <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => ((FarmLocationModel)working).Latitude)">
+                    <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@(((FarmLocationModel)working).Latitude)" />
                 </ValidatedField>
-                <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => working.Longitude)">
-                    <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@working.Longitude" />
+                <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => ((FarmLocationModel)working).Longitude)">
+                    <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@(((FarmLocationModel)working).Longitude)" />
                 </ValidatedField>
 
             }
@@ -49,7 +49,7 @@ Show="Show"
                     <button type="button" @onclick="OnCoordinateChange">Look up address</button>
                 }
             </section>
-@*             @if(working.Id>0)
+@*             @if(((FarmLocationModel)working).Id>0)
             {
                 <CascadingValue Value="working">
                     <FarmSubTabs></FarmSubTabs>

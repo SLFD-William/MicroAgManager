@@ -67,13 +67,15 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<Guid>(db.Tenants.Select(t => t.GuidId));
             var mostRecentUpdate = db.Tenants.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
+                
                 Console.WriteLine("Calling the API for the Tenants");
                 var returned = await api.ProcessQuery<TenantModel, GetTenantList>("api/GetTenants", new GetTenantList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 Console.WriteLine("Received the Tenants from the API");
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
+                expectedCount= returned.Item1;  
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -100,12 +102,13 @@ namespace FrontEnd.Data
             if (!ShouldEntityBeUpdated(entityModels, nameof(FarmLocationModel))) return;
             var existingAccountIds = new HashSet<long>(db.Farms.Select(t => t.Id));
             var mostRecentUpdate = db.Farms.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
-            long totalCount = 0;
-            while (true)
-            {
-                var returned = await api.ProcessQuery<FarmLocationModel, GetFarmList>("api/GetFarms", new GetFarmList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                long totalCount = 0;
+                long expectedCount = 1;
+                while (totalCount < expectedCount)
+                {
+                    var returned = await api.ProcessQuery<FarmLocationModel, GetFarmList>("api/GetFarms", new GetFarmList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
                 totalCount += returned.Item2.Count;
+                    expectedCount = returned.Item1;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
 
@@ -147,11 +150,13 @@ namespace FrontEnd.Data
             if (!ShouldEntityBeUpdated(entityModels, nameof(LivestockAnimalModel))) return;
             var existingAccountIds = new HashSet<long>(db.LivestockAnimals.Select(t => t.Id));
             var mostRecentUpdate = db.LivestockAnimals.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
-            long totalCount = 0;
-            while (true)
-            {
+                long totalCount = 0;
+                long expectedCount = 1;
+                while (totalCount < expectedCount)
+                {
+         
                 var returned = await api.ProcessQuery<LivestockAnimalModel, GetLivestockAnimalList>("api/GetLivestockAnimals", new GetLivestockAnimalList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+              expectedCount = returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -185,10 +190,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.LandPlots.Select(t => t.Id));
             var mostRecentUpdate = db.LandPlots.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<LandPlotModel, GetLandPlotList>("api/GetLandPlots", new GetLandPlotList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount = returned.Item1;                  
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -226,11 +232,13 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.LivestockBreeds.Select(t => t.Id));
             var mostRecentUpdate = db.LivestockBreeds.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<LivestockBreedModel, GetLivestockBreedList>("api/GetLivestockBreeds", new GetLivestockBreedList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                 
                 totalCount += returned.Item2.Count;
+                expectedCount = returned.Item1;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
@@ -261,11 +269,12 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Livestocks.Select(t => t.Id));
             var mostRecentUpdate = db.Livestocks.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<LivestockModel, GetLivestockList>("api/GetLivestocks", new GetLivestockList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
                 totalCount += returned.Item2.Count;
+                expectedCount = returned.Item1;                
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var motherId = AddNamedParameter(command, "$MotherId");
@@ -319,6 +328,7 @@ namespace FrontEnd.Data
                     birthDate.Value = model.Birthdate;
                     await command.ExecuteNonQueryAsync();
                 }
+                
             }
         }
         public async static Task BulkUpdateLivestockStatuses(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
@@ -327,11 +337,13 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.LivestockStatuses.Select(t => t.Id));
             var mostRecentUpdate = db.LivestockStatuses.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<LivestockStatusModel, GetLivestockStatusList>("api/GetLivestockStatuses", new GetLivestockStatusList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+
                 totalCount += returned.Item2.Count;
+                expectedCount = returned.Item1;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var LivestockAnimalId = AddNamedParameter(command, "$LivestockAnimalId");
@@ -368,10 +380,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Milestones.Select(t => t.Id));
             var mostRecentUpdate = db.Milestones.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount< expectedCount)
             {
                 var returned = await api.ProcessQuery<MilestoneModel, GetMilestoneList>("api/GetMilestones", new GetMilestoneList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount = returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -396,6 +409,7 @@ namespace FrontEnd.Data
                     recipientType.Value = model.RecipientType;
                     await command.ExecuteNonQueryAsync();
                 }
+                
             }
         }
         public async static Task BulkUpdateDuties(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
@@ -404,11 +418,13 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Duties.Select(t => t.Id));
             var mostRecentUpdate = db.Duties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<DutyModel, GetDutyList>("api/GetDuties", new GetDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
+                expectedCount = returned.Item1;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
                 var name = AddNamedParameter(command, "$Name");
@@ -448,10 +464,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.BreedingRecords.Select(t => t.Id));
             var mostRecentUpdate = db.BreedingRecords.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<BreedingRecordModel, GetBreedingRecordList>("api/GetBreedingRecords", new GetBreedingRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -494,10 +511,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.ScheduledDuties.Select(t => t.Id));
             var mostRecentUpdate = db.ScheduledDuties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<ScheduledDutyModel, GetScheduledDutyList>("api/GetScheduledDuties", new GetScheduledDutyList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -542,10 +560,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Registrars.Select(t => t.Id));
             var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<RegistrarModel, GetRegistrarList>("api/GetRegistrars", new GetRegistrarList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -578,10 +597,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Registrations.Select(t => t.Id));
             var mostRecentUpdate = db.Registrations.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<RegistrationModel, GetRegistrationList>("api/GetRegistrations", new GetRegistrationList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -621,7 +641,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedModel, GetLivestockFeedList>("api/GetLivestockFeeds", new GetLivestockFeedList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -667,7 +687,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedServingModel, GetLivestockFeedServingList>("api/GetLivestockFeedServings", new GetLivestockFeedServingList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -700,7 +720,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedDistributionModel, GetLivestockFeedDistributionList>("api/GetLivestockFeedDistributions", new GetLivestockFeedDistributionList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -735,7 +755,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedAnalysisParameterModel, GetLivestockFeedAnalysisParameterList>("api/GetLivestockFeedAnalysisParameters", new GetLivestockFeedAnalysisParameterList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -771,7 +791,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedAnalysisModel, GetLivestockFeedAnalysisList>("api/GetLivestockFeedAnalyses", new GetLivestockFeedAnalysisList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -812,7 +832,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<LivestockFeedAnalysisResultModel, GetLivestockFeedAnalysisResultList>("api/GetLivestockFeedAnalysisResults", new GetLivestockFeedAnalysisResultList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -847,7 +867,7 @@ namespace FrontEnd.Data
         //    while (true)
         //    {
         //        var returned = await api.ProcessQuery<EventModel, GetEventList>("api/GetEvents", new GetEventList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-        //        if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+        //        expectedCount=returned.Item1;
         //        totalCount += returned.Item2.Count;
         //        var command = connection.CreateCommand();
         //        var baseParameters = GetBaseModelParameters(command);
@@ -879,10 +899,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Units.Select(t => t.Id));
             var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<UnitModel, GetUnitList>("api/GetUnits", new GetUnitList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -914,10 +935,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Measures.Select(t => t.Id));
             var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<MeasureModel, GetMeasureList>("api/GetMeasures", new GetMeasureList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -946,10 +968,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Measurements.Select(t => t.Id));
             var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<MeasurementModel, GetMeasurementList>("api/GetMeasurements", new GetMeasurementList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -991,10 +1014,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.Treatments.Select(t => t.Id));
             var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<TreatmentModel, GetTreatmentList>("api/GetTreatments", new GetTreatmentList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -1050,10 +1074,11 @@ namespace FrontEnd.Data
             var existingAccountIds = new HashSet<long>(db.TreatmentRecords.Select(t => t.Id));
             var mostRecentUpdate = db.Registrars.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
             long totalCount = 0;
-            while (true)
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<TreatmentRecordModel, GetTreatmentRecordList>("api/GetTreatmentRecords", new GetTreatmentRecordList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 var command = connection.CreateCommand();
                 var baseParameters = GetBaseModelParameters(command);
@@ -1095,12 +1120,13 @@ namespace FrontEnd.Data
         public async static Task BulkUpdateDutyEvent(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
-            long totalCount = 0;
             var dataReceived = new List<DutyEvent>();
-            while (true)
+            long totalCount = 0;
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<DutyEvent, GetDutyEventList>("api/GetDutyEventList", new GetDutyEventList { Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 dataReceived.AddRange(returned.Item2);
             }
@@ -1124,12 +1150,13 @@ namespace FrontEnd.Data
         public async static Task BulkUpdateDutyMilestone(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IFrontEndApiServices api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
-            long totalCount = 0;
             var dataReceived=new List<DutyMilestone>();
-            while (true)
+            long totalCount = 0;
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
             {
                 var returned = await api.ProcessQuery<DutyMilestone, GetDutyMilestoneList>("api/GetDutyMilestoneList", new GetDutyMilestoneList { Skip = (int)totalCount });
-                if (returned.Item2.Count == 0 || returned.Item1==returned.Item2.Count) break;
+                expectedCount=returned.Item1;
                 totalCount += returned.Item2.Count;
                 dataReceived.AddRange(returned.Item2);
             }

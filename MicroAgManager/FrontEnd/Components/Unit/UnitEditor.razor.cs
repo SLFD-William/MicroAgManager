@@ -13,7 +13,6 @@ namespace FrontEnd.Components.Unit
         [Parameter] public long? unitId { get; set; }
         [Parameter] public string? category { get; set; }
         private ValidatedForm _validatedForm;
-        protected new UnitModel working { get => base.working as UnitModel; set { base.working = value; } }
         public override async Task FreshenData()
         {
             working = new UnitModel() { Category = category ?? UnitCategoryConstants.Mass.Key, Name="Unit",Symbol="Symbol", ConversionFactorToSIUnit=0 };
@@ -24,19 +23,19 @@ namespace FrontEnd.Components.Unit
             if (Unit is null && unitId > 0)
                 working = await app.dbContext.Units.FindAsync(unitId);
 
-            editContext = new EditContext(working);
+            editContext = new EditContext((UnitModel)working);
         }
         public async Task OnSubmit()
         {
-            long id= (working.Id <= 0)?
-                working.Id = await app.api.ProcessCommand<UnitModel, CreateUnit>("api/CreateUnit", new CreateUnit { Unit = working }):
-                working.Id = await app.api.ProcessCommand<UnitModel, UpdateUnit>("api/UpdateUnit", new UpdateUnit { Unit = working });
+            long id= (((UnitModel)working).Id <= 0)?
+                ((UnitModel)working).Id = await app.api.ProcessCommand<UnitModel, CreateUnit>("api/CreateUnit", new CreateUnit { Unit = (UnitModel)working }):
+                ((UnitModel)working).Id = await app.api.ProcessCommand<UnitModel, UpdateUnit>("api/UpdateUnit", new UpdateUnit { Unit = (UnitModel)working });
 
             if (id <= 0)
                 throw new Exception("Failed to save Unit");
-            working.Id = id;
-            original = working.Clone() as UnitModel;
-            editContext = new EditContext(working);
+            ((UnitModel)working).Id = id;
+            original = (UnitModel)working.Clone();
+            editContext = new EditContext((UnitModel)working);
             await Submitted.InvokeAsync(working);
             StateHasChanged();
             

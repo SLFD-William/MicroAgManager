@@ -13,7 +13,6 @@ namespace FrontEnd.Components.Measure
         [Parameter] public long? measureId { get; set; }
         private ValidatedForm _validatedForm;
 
-        protected new MeasureModel working { get => base.working as MeasureModel; set { base.working = value; } }
         private UnitEditor _unitEditor;
         private bool showUnitModal = false;
         private void ShowUnitEditor()
@@ -25,7 +24,7 @@ namespace FrontEnd.Components.Measure
         {
             var model = e as UnitModel;
             showUnitModal = false;
-            working.UnitId = model.Id;
+            ((MeasureModel)working).UnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -43,22 +42,22 @@ namespace FrontEnd.Components.Measure
             if (Measure is null && measureId > 0)
                 working = await app.dbContext.Measures.FindAsync(measureId);
 
-            SetEditContext(working);
+            SetEditContext((MeasureModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
 
-                long id = (working.Id <= 0) ?
-                     await app.api.ProcessCommand<MeasureModel, CreateMeasure>("api/CreateMeasure", new CreateMeasure { Measure = working }):
-                     await app.api.ProcessCommand<MeasureModel, UpdateMeasure>("api/UpdateMeasure", new UpdateMeasure { Measure = working });
+                long id = (((MeasureModel)working).Id <= 0) ?
+                     await app.api.ProcessCommand<MeasureModel, CreateMeasure>("api/CreateMeasure", new CreateMeasure { Measure = (MeasureModel)working }):
+                     await app.api.ProcessCommand<MeasureModel, UpdateMeasure>("api/UpdateMeasure", new UpdateMeasure { Measure = (MeasureModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Status");
 
-                working.Id = id;
-                SetEditContext(working);
+                ((MeasureModel)working).Id = id;
+                SetEditContext((MeasureModel)working);
                 await Submitted.InvokeAsync(working);
             }
             catch (Exception ex)
@@ -69,8 +68,8 @@ namespace FrontEnd.Components.Measure
 
         private async Task Cancel()
         {
-            working = original.Map(working) as MeasureModel;
-            SetEditContext(working);
+            working = original.Map((MeasureModel)working);
+            SetEditContext((MeasureModel)working);
             await Cancelled.InvokeAsync(working);
 
         }

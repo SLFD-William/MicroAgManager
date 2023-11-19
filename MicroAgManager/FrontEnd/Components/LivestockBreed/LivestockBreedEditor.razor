@@ -7,26 +7,26 @@
                    OnValidSubmit="OnSubmit" 
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(working.Id<1)"
+                   createOnly="@(((LivestockBreedModel)working).Id<1)"
                    Modal="Modal"
 Show="Show"
     @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => working.Name)">
-                <InputText placeholder="Name" @bind-Value="@working.Name" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((LivestockBreedModel)working).Name)">
+                <InputText placeholder="Name" @bind-Value="@(((LivestockBreedModel)working).Name)" />
             </ValidatedField>
-            <ValidatedField Legend="Emoji" ValidationMessageFor="@(() => working.EmojiChar)">
-                <InputText placeholder="Emoji" @bind-Value="@working.EmojiChar" />
+            <ValidatedField Legend="Emoji" ValidationMessageFor="@(() => ((LivestockBreedModel)working).EmojiChar)">
+                <InputText placeholder="Emoji" @bind-Value="@(((LivestockBreedModel)working).EmojiChar)" />
             </ValidatedField>
-            <ValidatedField Legend="Gestation Period (days)" ValidationMessageFor="@(() => working.GestationPeriod)">
-                <InputNumber placeholder="150" @bind-Value="@working.GestationPeriod" />
+            <ValidatedField Legend="Gestation Period (days)" ValidationMessageFor="@(() => ((LivestockBreedModel)working).GestationPeriod)">
+                <InputNumber placeholder="150" @bind-Value="@(((LivestockBreedModel)working).GestationPeriod)" />
             </ValidatedField>
-            <ValidatedField Legend="Heat Period (days)" ValidationMessageFor="@(() => working.HeatPeriod)">
-                <InputNumber placeholder="30" @bind-Value="@working.HeatPeriod" />
+            <ValidatedField Legend="Heat Period (days)" ValidationMessageFor="@(() => ((LivestockBreedModel)working).HeatPeriod)">
+                <InputNumber placeholder="30" @bind-Value="@(((LivestockBreedModel)working).HeatPeriod)" />
             </ValidatedField>
         </DataContent>
 @*          <SecondaryContent>
-            @if (working.Id > 0)
+            @if (((LivestockBreedModel)working).Id > 0)
             {
                 <CascadingValue Value="working">
                     <LivestockBreedSubTabs></LivestockBreedSubTabs>

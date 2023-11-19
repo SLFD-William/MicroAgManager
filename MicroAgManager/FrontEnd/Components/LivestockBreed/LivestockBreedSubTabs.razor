@@ -10,7 +10,7 @@
         <ChildContent>
             @if (app?.dbContext?.Livestocks.Any(s => s.LivestockBreedId == livestockBreed.Id) ?? false)
             {
-                <LivestockList @ref="_livestockList" Submitted="StateHasChanged" Items="app.dbContext.Livestocks.Where(s=>s.LivestockBreedId==livestockBreed.Id).OrderBy(a=>a.Name).Select(l=>new Livestock.LivestockSummary(l,app.dbContext))"></LivestockList>
+                <LivestockList @ref="_livestockList" Submitted="StateHasChanged" Items="app.dbContext.Livestocks.Where(s=>s.LivestockBreedId==livestockBreed.Id).OrderByDescending(a=>a.Id).Select(l=>new Livestock.LivestockSummary(l,app.dbContext))"></LivestockList>
             }
             else
             {

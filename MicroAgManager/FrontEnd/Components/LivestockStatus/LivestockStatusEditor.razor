@@ -7,15 +7,15 @@
         OnValidSubmit="OnSubmit" 
         Cancel="Cancel"
         showUpdateCancelButtons="true"
-        createOnly="@(working.Id<1)"
+        createOnly="@(((LivestockStatusModel)working).Id<1)"
         Modal="Modal"
         Show="Show"
         @ref=_validatedForm>
         <DataContent>
-                @if (working.LivestockAnimalId <= 0)
+                @if (((LivestockStatusModel)working).LivestockAnimalId <= 0)
                 {
-                    <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => working.LivestockAnimalId)">
-                        <InputSelect @bind-Value="@working.LivestockAnimalId">
+                    <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => ((LivestockStatusModel)working).LivestockAnimalId)">
+                        <InputSelect @bind-Value="@(((LivestockStatusModel)working).LivestockAnimalId)">
                             <option value="0">Select Livestock Type ...</option>
                             @foreach (var state in app.dbContext.LivestockAnimals.OrderBy(a => a.Name))
                             {
@@ -24,46 +24,46 @@
                         </InputSelect>
                     </ValidatedField>
                 }
-                <ValidatedField Legend="Status" ValidationMessageFor="@(() => working.Status)">
-                    <InputText placeholder="Status" @bind-Value="@working.Status" />
+                <ValidatedField Legend="Status" ValidationMessageFor="@(() => ((LivestockStatusModel)working).Status)">
+                    <InputText placeholder="Status" @bind-Value="@(((LivestockStatusModel)working).Status)" />
                 </ValidatedField>
-                <ValidatedField Legend="Default Status" ValidationMessageFor="@(() => working.DefaultStatus)">
-                    <InputCheckbox @bind-Value="@working.DefaultStatus" />
+                <ValidatedField Legend="Default Status" ValidationMessageFor="@(() => ((LivestockStatusModel)working).DefaultStatus)">
+                    <InputCheckbox @bind-Value="@(((LivestockStatusModel)working).DefaultStatus)" />
                 </ValidatedField>
-                <ValidatedField Legend="Being Managed" ValidationMessageFor="@(() => working.BeingManaged)">
-                    <InputSelect @bind-Value="@working.BeingManaged">
+                <ValidatedField Legend="Being Managed" ValidationMessageFor="@(() => ((LivestockStatusModel)working).BeingManaged)">
+                    <InputSelect @bind-Value="@(((LivestockStatusModel)working).BeingManaged)">
                         @foreach (var state in StatusModes)
                         {
                             <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
                         }
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => working.Sterile)">
-                    <InputSelect @bind-Value="@working.Sterile">
+                <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => ((LivestockStatusModel)working).Sterile)">
+                    <InputSelect @bind-Value="@(((LivestockStatusModel)working).Sterile)">
                         @foreach (var state in StatusModes)
                         {
                             <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
                         }
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => working.InMilk)">
-                    <InputSelect @bind-Value="@working.InMilk">
+                <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => ((LivestockStatusModel)working).InMilk)">
+                    <InputSelect @bind-Value="@(((LivestockStatusModel)working).InMilk)">
                         @foreach (var state in StatusModes)
                         {
                             <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
                         }
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="Bottle Fed" ValidationMessageFor="@(() => working.BottleFed)">
-                    <InputSelect @bind-Value="@working.BottleFed">
+                <ValidatedField Legend="Bottle Fed" ValidationMessageFor="@(() => ((LivestockStatusModel)working).BottleFed)">
+                    <InputSelect @bind-Value="@(((LivestockStatusModel)working).BottleFed)">
                         @foreach (var state in StatusModes)
                         {
                             <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
                         }
                     </InputSelect>
                 </ValidatedField>
-                <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => working.ForSale)">
-                    <InputSelect @bind-Value="@working.ForSale">
+                <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => ((LivestockStatusModel)working).ForSale)">
+                    <InputSelect @bind-Value="@(((LivestockStatusModel)working).ForSale)">
                         @foreach (var state in StatusModes)
                         {
                             <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>

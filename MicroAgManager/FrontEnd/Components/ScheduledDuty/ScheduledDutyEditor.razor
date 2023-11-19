@@ -13,37 +13,38 @@
                    showUpdateCancelButtons="false"
                    Modal="Modal"
                    Show="Show"
-    @ref=_validatedForm>
+                   CssClass="flexDataSection"
+                   @ref=_validatedForm>
         <DataContent>
-            @if (working.Record == "BreedingRecord")
+            @if (((ScheduledDutyModel)working).Record == "BreedingRecord")
             {
-                <BreedingRecordEditor @ref=_breedingRecordEditor showUpdateCancelButtons="false"  breedingRecordId="@working.RecordId" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
+                <BreedingRecordEditor @ref=_breedingRecordEditor showUpdateCancelButtons="false"  breedingRecordId="@(((ScheduledDutyModel)working).RecordId)" Cancelled="Cancel" Submitted="BreedingRecordSubmitted"></BreedingRecordEditor>
             }
-            @if (working.Record == "Measurement")
+            @if (((ScheduledDutyModel)working).Record == "Measurement")
             {
                 <MeasurementEditor @ref=_measurementEditor showUpdateCancelButtons="false" 
-                    measurementId="@working.RecordId"
-                    RecipientId="@working.RecipientId"
+                    measurementId="@(((ScheduledDutyModel)working).RecordId)"
+                    RecipientId="@(((ScheduledDutyModel)working).RecipientId)"
                     RecipientType="@_duty.RecipientType"
                     RecipientTypeId="@_duty.RecipientTypeId"
                     measureId="@_duty.CommandId"
                     Cancelled="Cancel" Submitted="MeasurementSubmitted"></MeasurementEditor>
             }
-            @if (working.Record == "TreatmentRecord")
+            @if (((ScheduledDutyModel)working).Record == "TreatmentRecord")
             {
                 <TreatmentRecordEditor @ref=_treatmentRecordEditor showUpdateCancelButtons="false" 
-                    treatmentRecordId="@working.RecordId"
-                    RecipientId="@working.RecipientId"
+                    treatmentRecordId="@(((ScheduledDutyModel)working).RecordId)"
+                    RecipientId="@(((ScheduledDutyModel)working).RecipientId)"
                     RecipientType="@_duty.RecipientType"
                     RecipientTypeId="@_duty.RecipientTypeId"
                     treatmentId="@_duty.CommandId"
                     Cancelled="Cancel" Submitted="TreatmentRecordSubmitted"></TreatmentRecordEditor>
             }
-            @if (working.Record == "Registration")
+            @if (((ScheduledDutyModel)working).Record == "Registration")
             {
                 <RegistrationEditor @ref=_registrationEditor showUpdateCancelButtons="false"
-                                       registrationId="@working.RecordId"
-                                       RecipientId="@working.RecipientId"
+                                       registrationId="@(((ScheduledDutyModel)working).RecordId)"
+                                       RecipientId="@(((ScheduledDutyModel)working).RecipientId)"
                                        RecipientType="@_duty.RecipientType"
                                        RecipientTypeId="@_duty.RecipientTypeId"
                                        registrarId="@_duty.CommandId"
@@ -51,7 +52,7 @@
             }
         </DataContent>
         <SecondaryContent>
-            @if (working.Id > 0)
+            @if (((ScheduledDutyModel)working).Id > 0)
             {
                 <section class="updateCancelButtons">
                     <button type="button" @onclick="Submit">Update</button>

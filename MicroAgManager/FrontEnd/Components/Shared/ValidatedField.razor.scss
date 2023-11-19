@@ -1,12 +1,9 @@
 ﻿.ValidatedField {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     width: inherit;
     border-radius: 0.5em;
     position: relative;
     border-color: transparent;
-    flex-basis: fit-content;
-
     & legend {
         padding: 0.2em;
         border-radius: 1em;
@@ -54,8 +51,7 @@
 
 
     & ::deep .validation-message {
-        position: absolute;
-        bottom: -0.2em;
+
         color: var(--background-color-validation-invalid);
     }
 
@@ -66,7 +62,6 @@
         &:focus-visible {
             outline: none;
             border-bottom: 1px solid var(--color-action-primary);
-            ;
         }
     }
 

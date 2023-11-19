@@ -90,51 +90,60 @@ namespace BackEnd.BusinessLogic
         {
             var entitiesModified = new List<ModifiedEntity>();
 
-                var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == livestockId);
-                if (livestock == null) throw new Exception("Livestock not found");
+            var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == livestockId);
+            if (livestock == null) throw new Exception("Livestock not found");
+            if (!livestock.StatusId.HasValue)
+            { 
+                var status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == livestock.Breed.LivestockAnimalId && l.DefaultStatus);
+                livestock.StatusId = status?.Id;
+                livestock.InMilk = status?.InMilk == LivestockStatusModeConstants.True;
+                livestock.BeingManaged = status?.BeingManaged == LivestockStatusModeConstants.True;
+                livestock.BottleFed = status?.BottleFed == LivestockStatusModeConstants.True;
+                livestock.ForSale = status?.ForSale == LivestockStatusModeConstants.True;
+                livestock.Sterile = status?.Sterile == LivestockStatusModeConstants.True;
+            }
+            var birthMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Birth).SelectMany(m => m.Duties).ToListAsync();
+            foreach (var duty in birthMilestoneDuties.Where(d => (d.Gender is null || d.Gender == livestock.Gender) && d.Relationship == DutyRelationshipConstants.Self))
+            {
+                var record = DutyLogic.GetRecordTypeFromCommand(duty);
+                if (await context.ScheduledDuties.AnyAsync(s => s.Duty == duty && s.RecipientId == livestock.Id
+                        && s.Recipient == livestock.GetType().Name && !s.CompletedOn.HasValue))
+                    continue;
 
-                var birthMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Birth).SelectMany(m => m.Duties).ToListAsync();
-                foreach (var duty in birthMilestoneDuties.Where(d => (d.Gender is null || d.Gender == livestock.Gender) && d.Relationship == DutyRelationshipConstants.Self))
+                var scheduledDuty = new Domain.Entity.ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
                 {
-                    var record = DutyLogic.GetRecordTypeFromCommand(duty);
-                    if (await context.ScheduledDuties.AnyAsync(s => s.Duty == duty && s.RecipientId == livestock.Id
-                            && s.Recipient == livestock.GetType().Name && !s.CompletedOn.HasValue))
-                        continue;
+                    Duty = duty,
+                    DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
+                    Record = record,
+                    RecipientId = livestock.Id,
+                    Recipient = livestock.GetType().Name,
+                };
+                context.ScheduledDuties.Add(scheduledDuty);
+                entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
+            }
 
-                    var scheduledDuty = new Domain.Entity.ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
-                    {
-                        Duty = duty,
-                        DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
-                        Record = record,
-                        RecipientId = livestock.Id,
-                        Recipient = livestock.GetType().Name,
-                    };
-                    context.ScheduledDuties.Add(scheduledDuty);
-                    entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
-                }
+            var mother = await context.Livestocks.FindAsync(livestock.MotherId);
+            if (mother == null) throw new Exception("Livestock mother not found");
+            var parturitionMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Parturition).SelectMany(m => m.Duties).ToListAsync();
+            foreach (var duty in parturitionMilestoneDuties.Where(d => (d.Gender is null || d.Gender == mother.Gender) && d.Relationship == DutyRelationshipConstants.Self))
+            {
+                var record = DutyLogic.GetRecordTypeFromCommand(duty);
+                if (await context.ScheduledDuties.AnyAsync(s => s.Duty == duty && s.RecipientId == mother.Id
+                        && s.Recipient == mother.GetType().Name && !s.CompletedOn.HasValue))
+                    continue;
 
-                var mother = await context.Livestocks.FindAsync(livestock.MotherId);
-                if (mother == null) throw new Exception("Livestock mother not found");
-                var parturitionMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Parturition).SelectMany(m => m.Duties).ToListAsync();
-                foreach (var duty in parturitionMilestoneDuties.Where(d => (d.Gender is null || d.Gender == mother.Gender) && d.Relationship == DutyRelationshipConstants.Self))
+                var scheduledDuty = new Domain.Entity.ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
                 {
-                    var record = DutyLogic.GetRecordTypeFromCommand(duty);
-                    if (await context.ScheduledDuties.AnyAsync(s => s.Duty == duty && s.RecipientId == mother.Id
-                            && s.Recipient == mother.GetType().Name && !s.CompletedOn.HasValue))
-                        continue;
-
-                    var scheduledDuty = new Domain.Entity.ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
-                    {
-                        Duty = duty,
-                        DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
-                        Record = record,
-                        RecipientId = mother.Id,
-                        Recipient = mother.GetType().Name,
-                    };
-                    context.ScheduledDuties.Add(scheduledDuty);
-                    entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
-                }
-                await context.SaveChangesAsync(cancellationToken);
+                    Duty = duty,
+                    DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
+                    Record = record,
+                    RecipientId = mother.Id,
+                    Recipient = mother.GetType().Name,
+                };
+                context.ScheduledDuties.Add(scheduledDuty);
+                entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
+            }
+            await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
         }
         private static LivestockModel CreateBirthModel(int count, Domain.Entity.BreedingRecord breedingRecord, Domain.Entity.Livestock female, LivestockStatus status, string gender)

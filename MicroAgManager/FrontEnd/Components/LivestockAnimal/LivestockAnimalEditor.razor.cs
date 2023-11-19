@@ -11,17 +11,16 @@ namespace FrontEnd.Components.LivestockAnimal
         [CascadingParameter] public LivestockAnimalModel LivestockAnimal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
         private ValidatedForm _validatedForm;
-        protected new LivestockAnimalModel working { get => base.working as LivestockAnimalModel; set { base.working = value; } }
         protected LivestockAnimalSubTabs _tabControl;
 
-        public string Name { get => working.Name;
+        public string Name { get => ((LivestockAnimalModel)working).Name;
              set
-                { if(!CheckNameExists(value).Result) working.Name = value; } }
+                { if(!CheckNameExists(value).Result) ((LivestockAnimalModel)working).Name = value; } }
        
         private async Task<bool> CheckNameExists(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return false;
-            if (!app.dbContext.LivestockAnimals.Any(l => l.Name == working.Name && l.Id != working.Id)) return false;
+            if (!app.dbContext.LivestockAnimals.Any(l => l.Name == ((LivestockAnimalModel)working).Name && l.Id != ((LivestockAnimalModel)working).Id)) return false;
             var check= await app.dbContext.LivestockAnimals.FirstOrDefaultAsync(l => l.Name == name);
             if (check is null) return false;
             working = check;
@@ -39,21 +38,21 @@ namespace FrontEnd.Components.LivestockAnimal
             if (LivestockAnimal is null && livestockAnimalId.HasValue)
                 working = await app.dbContext.LivestockAnimals.FindAsync(livestockAnimalId);
 
-            SetEditContext(working);
+            SetEditContext((LivestockAnimalModel)working);
         }
         public  async Task OnSubmit()
         {
             try
             {
                 var id = (working?.Id <= 0) ?
-                    await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = working }):
-                    await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = working });
+                    await app.api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal { LivestockAnimal = (LivestockAnimalModel)working }):
+                    await app.api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = (LivestockAnimalModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock type");
 
-                working.Id = id;
-                SetEditContext(working);
+                ((LivestockAnimalModel)working).Id = id;
+                SetEditContext((LivestockAnimalModel)working);
                 await Submitted.InvokeAsync(working);
             }
             catch (Exception ex)
@@ -61,8 +60,8 @@ namespace FrontEnd.Components.LivestockAnimal
         }
         private void Cancel()
         {
-            working = original.Map(working) as LivestockAnimalModel;
-            SetEditContext(working);
+            working = original.Map((LivestockAnimalModel)working);
+            SetEditContext((LivestockAnimalModel)working);
             Task.Run(Cancelled.InvokeAsync);
         }
     }

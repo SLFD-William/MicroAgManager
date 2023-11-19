@@ -9,13 +9,13 @@
                    OnValidSubmit="OnSubmit"
                    Cancel="Cancel"
                    showUpdateCancelButtons="true"
-                   createOnly="@(working.Id<1)"
+                   createOnly="@(((UnitModel)working).Id<1)"
                    Modal="Modal"
                    Show="Show"
                    @ref=_validatedForm>
         <DataContent>
-            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => working.Category)">
-                <InputSelect @bind-Value="@working.Category">
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)working).Category)">
+                <InputSelect @bind-Value="@(((UnitModel)working).Category)">
                     <option value="">Select Category ...</option>
                     @foreach (var category in UnitCategoryConstants.Units.Keys.Order().ToList())
                     {
@@ -23,14 +23,14 @@
                     }
                  </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => working.Name)">
-                    <InputText placeholder="Unit" @bind-Value="@working.Name" />
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)working).Name)">
+                    <InputText placeholder="Unit" @bind-Value="@(((UnitModel)working).Name)" />
             </ValidatedField>
-            <ValidatedField Legend="Symbol" ValidationMessageFor="@(() => working.Symbol)">
-                <InputText placeholder="Unit" @bind-Value="@working.Symbol" />
+            <ValidatedField Legend="Symbol" ValidationMessageFor="@(() => ((UnitModel)working).Symbol)">
+                <InputText placeholder="Unit" @bind-Value="@(((UnitModel)working).Symbol)" />
             </ValidatedField>
-            <ValidatedField Legend=@($"Conversion to SI {UnitCategoryConstants.Units[working.Category]}") ValidationMessageFor="@(() => working.ConversionFactorToSIUnit)">
-                <InputNumber placeholder="0" @bind-Value="@working.ConversionFactorToSIUnit" />
+            <ValidatedField Legend=@($"Conversion to SI {UnitCategoryConstants.Units[((UnitModel)working).Category]}") ValidationMessageFor="@(() => ((UnitModel)working).ConversionFactorToSIUnit)">
+                <InputNumber placeholder="0" @bind-Value="@(((UnitModel)working).ConversionFactorToSIUnit)" />
             </ValidatedField>
         </DataContent>
             

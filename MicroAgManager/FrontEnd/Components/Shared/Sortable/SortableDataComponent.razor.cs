@@ -296,18 +296,18 @@ namespace FrontEnd.Components.Shared.Sortable
             var fieldName = sortColumn.Field.GetPropertyMemberInfo()?.Name;
             var nullable = propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
             if (nullable)
-                ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, $"{fieldName}.HasValue", (sortColumn.SortOrder <= 1 ? "OrderByDescending" : "ThenByDescending"));
+                ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, $"{fieldName}.HasValue", sortColumn.SortOrder <= 1 ? "OrderByDescending" : "ThenByDescending");
 
             if (sortColumn.SortDescending)
                 if (nullable)
                     ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, fieldName, "ThenByDescending");
                 else
-                    ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, fieldName, (sortColumn.SortOrder <= 1 ? "OrderByDescending" : "ThenByDescending"));
+                    ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, fieldName, sortColumn.SortOrder <= 1 ? "OrderByDescending" : "ThenByDescending");
             else
                 if (nullable)
                 ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, fieldName, "ThenBy");
             else
-                ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, fieldName, (sortColumn.SortOrder <= 1 ? "OrderBy" : "ThenBy"));
+                ItemsQueryable = Utilities.ApplyOrder(ItemsQueryable, fieldName, sortColumn.SortOrder <= 1 ? "OrderBy" : "ThenBy");
         }
 
         [Parameter] public Action AddItemClicked { get; set; }

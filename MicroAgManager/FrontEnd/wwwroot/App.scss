@@ -2,7 +2,7 @@
 @import "./fontawesome/scss/fontawesome.scss";
 @import "./fontawesome/scss/solid.scss";
 @import "./fontawesome/scss/brands.scss";
-body {
+:root {
     padding-inline: 1rem;
     margin: auto;
     --font-stack: Tahoma, Geneva, sans-serif;
@@ -24,8 +24,6 @@ body {
         --background-color-validation-invalid: red;
         --color-action-primary: lightblue;
     }*/
-
-    width: 100%;
 }
 *, *::before, *::after {
     box-sizing: border-box;
@@ -38,27 +36,36 @@ body {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
 form {
     margin: auto;
     padding: 0.5em;
-    width: fit-content;
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 1em;
     align-items: center;
     justify-content: center;
 
+    & .dataSection {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20ch,1fr));
+        grid-gap: 0.25em;
+        justify-items: center;
+    }
+
+    &.flexDataSection > .dataSection {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1em;
+    }
+
     & .TabControl {
         width: 100%;
     }
 
-    & .dataSection {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.25em;
-        justify-items: center;
-    }
+
 
     & .secondaryContent {
         width: 100%;
@@ -74,9 +81,12 @@ form {
         justify-items: center;
     }
 }
-#app {
+body, #app {
     height: 100vh;
     width: 100%;
+    
+}
+#app {
     container-type: size;
 }
 i.female {
@@ -119,4 +129,9 @@ i.male {
         max-width: calc(100% - 1em);
     }
 }
-
+.firstColumn{
+    grid-column:1;
+}
+.fullWidth {
+    grid-column: 1/-1;
+}

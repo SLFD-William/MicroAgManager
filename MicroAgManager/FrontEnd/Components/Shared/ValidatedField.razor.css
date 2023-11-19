@@ -1,12 +1,10 @@
 ﻿@charset "UTF-8";
 .ValidatedField {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   width: inherit;
   border-radius: 0.5em;
   position: relative;
   border-color: transparent;
-  flex-basis: fit-content;
 }
 .ValidatedField legend {
   padding: 0.2em;
@@ -37,8 +35,6 @@
   color: var(--color-validation-invalid);
 }
 .ValidatedField ::deep .validation-message {
-  position: absolute;
-  bottom: -0.2em;
   color: var(--background-color-validation-invalid);
 }
 .ValidatedField ::deep input {

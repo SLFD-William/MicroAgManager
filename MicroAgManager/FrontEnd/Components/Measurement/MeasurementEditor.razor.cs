@@ -18,7 +18,6 @@ namespace FrontEnd.Components.Measurement
 
         private ValidatedForm _validatedForm;
  
-        protected new MeasurementModel working { get => base.working as MeasurementModel; set { base.working = value; } }
         #region Unit
         private UnitEditor _unitEditor;
         private bool showUnitModal = false;
@@ -31,7 +30,7 @@ namespace FrontEnd.Components.Measurement
         {
             var model = e as UnitModel;
             showUnitModal = false;
-           // working.UnitId = model.Id;
+           // ((MeasurementModel)working).UnitId = model.Id;
             editContext = new EditContext(working);
             StateHasChanged();
         }
@@ -51,7 +50,7 @@ namespace FrontEnd.Components.Measurement
         }
         private void MeasureCanceled()
         {
-            working.MeasureId = ((MeasurementModel)original).MeasureId;
+            ((MeasurementModel)working).MeasureId = ((MeasurementModel)original).MeasureId;
             showMeasureModal = false;
             StateHasChanged();
         }
@@ -59,7 +58,7 @@ namespace FrontEnd.Components.Measurement
         {
             var status = e as BaseModel;
             showMeasureModal = false;
-            working.MeasureId = status?.Id ?? 0;
+            ((MeasurementModel)working).MeasureId = status?.Id ?? 0;
             StateHasChanged();
         }
         #endregion
@@ -84,22 +83,22 @@ namespace FrontEnd.Components.Measurement
                     DatePerformed = DateTime.Now,
                 };
             }
-            SetEditContext(working);
+            SetEditContext((MeasurementModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
 
-                long id = (working.Id <= 0) ?
-                     await app.api.ProcessCommand<MeasurementModel, CreateMeasurement>("api/CreateMeasurement", new CreateMeasurement { Measurement = working }) :
-                     await app.api.ProcessCommand<MeasurementModel, UpdateMeasurement>("api/UpdateMeasurement", new UpdateMeasurement { Measurement = working });
+                long id = (((MeasurementModel)working).Id <= 0) ?
+                     await app.api.ProcessCommand<MeasurementModel, CreateMeasurement>("api/CreateMeasurement", new CreateMeasurement { Measurement = (MeasurementModel)working }) :
+                     await app.api.ProcessCommand<MeasurementModel, UpdateMeasurement>("api/UpdateMeasurement", new UpdateMeasurement { Measurement = (MeasurementModel)working });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Status");
 
-                working.Id = id;
-                SetEditContext(working);
+                ((MeasurementModel)working).Id = id;
+                SetEditContext((MeasurementModel)working);
                 await Submitted.InvokeAsync(working);
             }
             catch (Exception ex)
@@ -110,8 +109,8 @@ namespace FrontEnd.Components.Measurement
 
         private async Task Cancel()
         {
-            working = original.Map(working) as MeasurementModel;
-            SetEditContext(working);
+            working = original.Map((MeasurementModel)working);
+            SetEditContext((MeasurementModel)working);
             await Cancelled.InvokeAsync(working);
 
         }

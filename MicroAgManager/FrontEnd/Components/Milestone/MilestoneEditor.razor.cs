@@ -14,7 +14,6 @@ namespace FrontEnd.Components.Milestone
         [Parameter] public long? milestoneId { get; set; }
         private ValidatedForm _validatedForm;
 
-        protected new MilestoneModel working { get => base.working as MilestoneModel; set { base.working = value; } }
         public override async Task FreshenData()
         {
             var recipientType=string.Empty;
@@ -34,23 +33,23 @@ namespace FrontEnd.Components.Milestone
             if (Milestone is null && milestoneId > 0)
                 working = await app.dbContext.Milestones.FindAsync(milestoneId);
 
-            SetEditContext(working);
+            SetEditContext((MilestoneModel)working);
         }
         public async Task OnSubmit()
         {
             try
             {
 
-               long id = (working.Id <= 0)?
-                    working.Id = await app.api.ProcessCommand<MilestoneModel, CreateMilestone>("api/CreateMilestone", new CreateMilestone { Milestone = working }):
-                    working.Id = await app.api.ProcessCommand<MilestoneModel, UpdateMilestone>("api/UpdateMilestone", new UpdateMilestone { Milestone = working  });
+               long id = (((MilestoneModel)working).Id <= 0)?
+                    ((MilestoneModel)working).Id = await app.api.ProcessCommand<MilestoneModel, CreateMilestone>("api/CreateMilestone", new CreateMilestone { Milestone = (MilestoneModel)working }):
+                    ((MilestoneModel)working).Id = await app.api.ProcessCommand<MilestoneModel, UpdateMilestone>("api/UpdateMilestone", new UpdateMilestone { Milestone = (MilestoneModel)working  });
 
                 if (id <= 0)
                     throw new Exception("Failed to save livestock Status");
 
-                working.Id = id;
-                SetEditContext(working);
-                await Submitted.InvokeAsync(working);
+                ((MilestoneModel)working).Id = id;
+                SetEditContext((MilestoneModel)working);
+                await Submitted.InvokeAsync((MilestoneModel)working);
             }
             catch (Exception ex)
             {
@@ -72,7 +71,7 @@ namespace FrontEnd.Components.Milestone
         {
             var model = e as DutyModel;
             showDutyModal = false;
-            working.Duties.Add(model);
+            ((MilestoneModel)working).Duties.Add(model);
             _editDuty = null;
             StateHasChanged();
         }
@@ -84,20 +83,20 @@ namespace FrontEnd.Components.Milestone
         }
         void DutySelected(ChangeEventArgs e)
         {
-            working.Duties.Add(app.dbContext.Duties.Find(long.Parse(e.Value.ToString())));
+            ((MilestoneModel)working).Duties.Add(app.dbContext.Duties.Find(long.Parse(e.Value.ToString())));
             StateHasChanged();
         }
 
         void DutyRemoved(DutyModel duty)
         {
-            working.Duties.Remove(duty);
+            ((MilestoneModel)working).Duties.Remove(duty);
             StateHasChanged();
         }
 
         private async Task Cancel()
         {
-            working=((MilestoneModel)original).Map(working) as MilestoneModel;
-            SetEditContext(working);
+            working=((MilestoneModel)original).Map((MilestoneModel)working) ;
+            SetEditContext((MilestoneModel)working);
             await Cancelled.InvokeAsync(working);
 
         }

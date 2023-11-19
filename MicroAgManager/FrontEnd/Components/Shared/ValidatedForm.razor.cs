@@ -16,7 +16,7 @@ namespace FrontEnd.Components.Shared
         [Parameter] public EventCallback FreshenData{ get; set; }
         [Parameter] public EventCallback Cancel { get; set; }
         [Parameter] public bool Show { get; set; } = false;
-
+        [Parameter] public string CssClass { get; set; }
         [Parameter] public bool createOnly { get; set; }
 
 
