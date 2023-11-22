@@ -15,7 +15,7 @@
         @if (livestock.Id > 0)
         {
             <CascadingValue Value="@livestock">
-                <LivestockSubTabs></LivestockSubTabs>
+                <LivestockSubTabs Submitted="StateHasChanged"></LivestockSubTabs>
             </CascadingValue>
         }
     }

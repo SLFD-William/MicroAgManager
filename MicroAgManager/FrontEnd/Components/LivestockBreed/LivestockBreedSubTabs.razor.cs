@@ -16,10 +16,13 @@ namespace FrontEnd.Components.LivestockBreed
 
         private LivestockEditor? _livestockEditor;
         protected LivestockList _livestockList;
-        protected override void OnInitialized()
+
+        protected override void OnParametersSet()
         {
-            _tabControl?.ActivatePage(app.SelectedTabs[nameof(LivestockBreedSubTabs)] ?? _tabControl?.ActivePage ?? _livestockTab);
+            app.SelectedTabs.TryGetValue(nameof(LivestockBreedSubTabs), out var selected);
+            _tabControl?.ActivatePage(selected ?? _tabControl?.ActivePage ?? _livestockTab);
         }
+        
         public override async Task FreshenData()
         {
             if (LivestockBreed is not null)

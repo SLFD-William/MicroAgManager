@@ -28,7 +28,8 @@ namespace FrontEnd.Components.Farm
         protected TreatmentList _treatmentList;
 
         private FarmLocationModel farm { get; set; } = new FarmLocationModel();
-    
+
+        protected TabPage _closeTab;
         protected TabPage _plotTab;
         protected TabPage _livestockTab;
         protected TabPage _scheduledDutyTab;
@@ -42,8 +43,11 @@ namespace FrontEnd.Components.Farm
             await Submitted.InvokeAsync();
             StateHasChanged();
         }
-        protected override void OnInitialized()=>
-            _tabControl?.ActivatePage(app.SelectedTabs[nameof(FarmSubTabs)] ?? _tabControl?.ActivePage ?? _plotTab);
+        protected override void OnParametersSet() {
+            app.SelectedTabs.TryGetValue(nameof(FarmSubTabs), out var selected);
+            if (_tabControl != null)
+                _tabControl?.ActivatePage(selected ?? _tabControl?.ActivePage ?? _closeTab);
+           }
         
         private string GetPlotCount(string plotUsage)
         {

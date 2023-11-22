@@ -18,11 +18,14 @@ namespace FrontEnd.Components.Shared
                 Pages.Insert(tabLocation-1,tabPage);
             StateHasChanged();
         }
-        public string GetButtonClass(TabPage page) => page == ActivePage ? "active" : string.Empty;
+        public string GetButtonClass(TabPage page)
+        {
+            return page == ActivePage ? "active" : string.Empty;
+        }
 
         public void ActivatePage(TabPage page)
         {
-            ActivePage = ActivePage == page ? null : page;
+            ActivePage = page;
             TabSelected?.Invoke();
             SelectedTab[SelectedTabPageKey]=ActivePage;
             StateHasChanged();

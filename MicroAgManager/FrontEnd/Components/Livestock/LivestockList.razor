@@ -38,7 +38,7 @@
         </ColumnContent>
         <TableRowTemplate>
             <CascadingValue Value="@(app.dbContext.Livestocks.Find(context.Id))">
-                <LivestockViewer  ></LivestockViewer>
+                <LivestockViewer Submitted="StateHasChanged"  ></LivestockViewer>
             </CascadingValue>
         </TableRowTemplate>
     </TableTemplate>

@@ -8,6 +8,9 @@
 
 
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockSubTabs)" >
+    <TabPage @ref="_closeTab" Text="x">
+
+    </TabPage>
     <TabPage @ref="_registrationTab">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_registrationTab)" @onclick="@(() =>_tabControl.ActivatePage(_registrationTab))">

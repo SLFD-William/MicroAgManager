@@ -9,6 +9,9 @@
 @using FrontEnd.Components.Treatment;
 @inherits DataComponent<FarmLocationModel>
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(FarmSubTabs)" >
+    <TabPage @ref="_closeTab" Text="x">
+
+    </TabPage>
     <TabPage @ref="_plotTab">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_plotTab)" @onclick="@(() =>_tabControl.ActivatePage(_plotTab))">
@@ -27,7 +30,6 @@
             </LandPlotList>
         </ChildContent>
     </TabPage>
-
     <TabPage @ref="_livestockTab" Text="Livestock">
         <ButtonContent>
             <button type="button" class="@_tabControl.GetButtonClass(_livestockTab)" @onclick="@(() =>_tabControl.ActivatePage(_livestockTab))">Livestock</button>

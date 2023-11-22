@@ -1,4 +1,6 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.Farm;
+using FrontEnd.Components.Livestock;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockStatus;
 using FrontEnd.Components.Milestone;
@@ -9,28 +11,41 @@ namespace FrontEnd.Components.LivestockAnimal
 {
     public partial class LivestockAnimalSubTabs : DataComponent<LivestockAnimalModel>
     {
+        [CascadingParameter] public LivestockAnimalModel? Animal { get; set; }
         [Parameter] public long? livestockAnimalId { get; set; }
-        private LivestockAnimalSummary livestockAnimal { get; set; }
+        
         protected TabControl _tabControl;
+        protected TabPage _closeTab;
         protected TabPage _breedsTab;
-        protected LivestockBreedList _livestockBreedList;
         protected TabPage _statusTab;
-        protected LivestockStatusList _livestockStatusList;
         protected TabPage _milestoneTab;
+
+
+        private LivestockAnimalModel animal { get; set; } = new LivestockAnimalModel();
+
         protected MilestoneList _milestoneList;
-        protected async override Task OnParametersSetAsync()
+        protected LivestockBreedList _livestockBreedList;
+        protected LivestockStatusList _livestockStatusList;
+        private async Task TabUpdated()
         {
-            _tabControl?.ActivatePage(app.SelectedTabs["LivestockAnimalSubTabs"] ?? _tabControl?.ActivePage ?? _breedsTab);
-            await FreshenData();
+            await Submitted.InvokeAsync();
+            StateHasChanged();
         }
+        protected override void OnParametersSet()
+        {
+            app.SelectedTabs.TryGetValue(nameof(LivestockAnimalSubTabs), out var selected);
+            if (_tabControl != null)
+                _tabControl?.ActivatePage(selected ?? _tabControl?.ActivePage ?? _closeTab);
+        }
+
         private IEnumerable<MilestoneSummary> milestoneSummaries =>
-            app.dbContext.Milestones.Where(s => s.RecipientTypeId == livestockAnimal.Id && s.RecipientType == livestockAnimal.EntityName)
+            app.dbContext.Milestones.Where(s => s.RecipientTypeId == animal.Id && s.RecipientType == animal.GetEntityName())
                 .OrderBy(a => a.Name).Select(s => new MilestoneSummary(s, app.dbContext));
 
         public override async Task FreshenData()
         {
-            if (livestockAnimal is null && livestockAnimalId > 0)
-                livestockAnimal = new LivestockAnimalSummary(app.dbContext?.LivestockAnimals.Find(livestockAnimalId), app.dbContext);
+            animal=Animal is not null ? Animal : 
+                await app.dbContext.LivestockAnimals.FindAsync(livestockAnimalId.Value);
 
             if (_livestockStatusList is not null)
                 await _livestockStatusList.FreshenData();
@@ -40,51 +55,6 @@ namespace FrontEnd.Components.LivestockAnimal
 
             if (_milestoneList is not null)
                 await _milestoneList.FreshenData();
-            StateHasChanged();
-        }
-        private async Task LivestockStatusUpdated(LivestockStatusModel args)
-        {
-            if (args.Id > 0)
-            {
-                var start = DateTime.Now;
-                while (!app.dbContext.LivestockStatuses.Any(t => t.Id == args.Id))
-                {
-                    await Task.Delay(1000);
-                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
-                        break;
-                }
-            }
-
-            await FreshenData();
-        }
-        private async Task LivestockBreedUpdated(LivestockBreedModel args)
-        {
-            if (args.Id > 0)
-            {
-                var start = DateTime.Now;
-                while (!app.dbContext.LivestockBreeds.Any(t => t.Id == args.Id))
-                {
-                    await Task.Delay(1000);
-                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
-                        break;
-                }
-            }
-
-            await FreshenData();
-        }
-        private async Task MilestoneUpdated(MilestoneModel args)
-        {
-            if (args.Id > 0)
-            {
-                var start = DateTime.Now;
-                while (!app.dbContext.Milestones.Any(t => t.Id == args.Id))
-                {
-                    await Task.Delay(1000);
-                    if (DateTime.Now.Subtract(start).TotalSeconds > 10)
-                        break;
-                }
-            }
-            await FreshenData();
         }
     }
 }

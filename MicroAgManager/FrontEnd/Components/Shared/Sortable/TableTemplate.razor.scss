@@ -56,7 +56,7 @@
             }
         }
 
-        @media(max-width:650px) {
+        @container(max-width:650px) {
             th {
                 display: none;
             }

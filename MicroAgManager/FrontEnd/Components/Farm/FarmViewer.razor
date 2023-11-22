@@ -4,11 +4,12 @@
 @using FrontEnd.Components.Weather
 @inherits DataComponent<FarmLocationModel>
 <div class="FarmViewer">
+    <CascadingValue Value="farm">
     @if (_editting)
     {
-        <CascadingValue Value="farm">
+        
             <FarmEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></FarmEditor>
-        </CascadingValue>
+        
     }
     else{
         <section class="address">
@@ -23,4 +24,5 @@
         <Weather @ref=_weather Latitude="@farm.Latitude" Longitude="@farm.Longitude"></Weather>
         <FarmSubTabs Submitted="StateHasChanged" ></FarmSubTabs>
     }
+    </CascadingValue>
 </div>

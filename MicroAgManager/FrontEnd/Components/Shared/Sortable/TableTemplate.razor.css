@@ -49,7 +49,7 @@
 .TableTemplate__Table > table tr.selected {
   background: pink;
 }
-@media (max-width: 650px) {
+@container (max-width:650px) {
   .TableTemplate__Table th {
     display: none;
   }

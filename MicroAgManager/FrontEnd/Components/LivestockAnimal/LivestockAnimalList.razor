@@ -40,7 +40,7 @@
             <Column TableItem="LivestockAnimalSummary" Field="@(x => x.FeedsCount)" Sortable="true" Filterable="true" UseInSuperSearch="true" Title="Number of Feeds" />
         </ColumnContent>
         <TableRowDetailTemplate >
-            <LivestockAnimalSubTabs livestockAnimalId="@context.Id"></LivestockAnimalSubTabs>
+            <LivestockAnimalSubTabs Submitted="StateHasChanged" livestockAnimalId="@context.Id"></LivestockAnimalSubTabs>
         </TableRowDetailTemplate>
     </TableTemplate>
 }

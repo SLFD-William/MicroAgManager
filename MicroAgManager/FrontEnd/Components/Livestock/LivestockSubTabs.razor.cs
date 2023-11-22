@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using FrontEnd.Components.Farm;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
@@ -14,6 +15,7 @@ namespace FrontEnd.Components.Livestock
         private LivestockModel livestockDad { get; set; } = new LivestockModel();
         private LivestockBreedModel breed { get; set; }
 
+        protected TabPage _closeTab;
         protected TabPage _registrationTab;
         protected ScheduledDutyList _registrationList;
         protected TabPage _treatmentRecordTab;
@@ -40,8 +42,11 @@ namespace FrontEnd.Components.Livestock
             if (_measurementList is not null)
                 await _measurementList.FreshenData();
         }
-        protected override void OnInitialized() =>
-            _tabControl?.ActivatePage(app.SelectedTabs[nameof(LivestockSubTabs)] ?? _tabControl?.ActivePage);
-
+        protected override void OnParametersSet()
+        {
+            app.SelectedTabs.TryGetValue(nameof(LivestockSubTabs), out var selected);
+            _tabControl?.ActivatePage(selected ?? _tabControl?.ActivePage ?? _closeTab);
+        }
+       
     }
 }

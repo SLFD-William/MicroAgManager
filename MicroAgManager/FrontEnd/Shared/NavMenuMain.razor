@@ -4,6 +4,12 @@
 @using FrontEnd.Components.User
 
 <nav class="NavMenuMain">
+    <NavLink href="" Match="NavLinkMatch.All" class="">
+        Home
+    </NavLink>
+    <NavLink href="livestock" Match="NavLinkMatch.Prefix">
+        Livestock
+    </NavLink>
     <LoginDisplay />
     @*<input type="image" @onclick="@(()=>showNavMenu=!showNavMenu)" name="imgbtn" src="StaticContent/SLFDOH/logo.svg" alt="Tool Tip">*@
     @*

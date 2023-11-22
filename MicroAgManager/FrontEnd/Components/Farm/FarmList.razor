@@ -36,7 +36,7 @@
         </ColumnContent>
         <TableRowTemplate>
             <CascadingValue Value="@(app.dbContext.Farms.Find(context.Id))">
-                <FarmViewer  ></FarmViewer>
+                <FarmViewer Submitted="StateHasChanged"></FarmViewer>
             </CascadingValue>
         </TableRowTemplate>
 

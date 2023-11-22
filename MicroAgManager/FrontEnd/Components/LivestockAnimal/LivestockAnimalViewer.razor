@@ -4,11 +4,10 @@
 @using FrontEnd.Components.LivestockAnimal;
 @inherits DataComponent<LivestockAnimalModel>
 <div class="LivestockAnimalViewer">
+    <CascadingValue Value="livestockAnimal">
     @if (_editting)
     {
-        <CascadingValue Value="livestockAnimal">
-            <LivestockAnimalEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></LivestockAnimalEditor>
-        </CascadingValue>
+        <LivestockAnimalEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></LivestockAnimalEditor>
     }
     else{
         <section class="dataSection">
@@ -18,6 +17,7 @@
             <p>@livestockAnimal.ParentFemaleName</p>
             <p>@livestockAnimal.ParentMaleName</p>
         </section>
-        <LivestockAnimalSubTabs></LivestockAnimalSubTabs>
+        <LivestockAnimalSubTabs Submitted="StateHasChanged"></LivestockAnimalSubTabs>
     }
+    </CascadingValue>
 </div>
