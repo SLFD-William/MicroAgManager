@@ -50,7 +50,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <ScheduledDutyList @ref="_scheduledDutyList" Submitted="TabUpdated" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext))"></ScheduledDutyList>
+            <ScheduledDutyList @ref="_scheduledDutyList" Submitted="TabUpdated" Items="app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn)"></ScheduledDutyList>
         </ChildContent>
     </TabPage>
     <TabPage @ref="_dutyTab" Text="Duties" >

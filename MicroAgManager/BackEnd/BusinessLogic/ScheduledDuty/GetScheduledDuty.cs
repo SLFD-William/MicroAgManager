@@ -19,7 +19,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    return ScheduledDutyModel.Create(await request.GetQuery<Domain.Entity.ScheduledDuty>(context).FirstOrDefaultAsync(cancellationToken));
+                    return ScheduledDutyModel.Create(await request.GetQuery<Domain.Entity.ScheduledDuty>(context).FirstOrDefaultAsync(cancellationToken),context);
                 }
             }
         }

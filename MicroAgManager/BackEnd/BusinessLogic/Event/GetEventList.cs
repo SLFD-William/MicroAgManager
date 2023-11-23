@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic.Event
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     var query = request.GetQuery<Domain.Entity.Event>(context);
-                    return new EventDto(await query.LongCountAsync(cancellationToken), await query.Select(f => EventModel.Create(f)).ToListAsync(cancellationToken));
+                    return new EventDto(await query.LongCountAsync(cancellationToken), await query.Select(f => EventModel.Create(f, context)).ToListAsync(cancellationToken));
                 }
             }
         }

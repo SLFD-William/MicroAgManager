@@ -5,7 +5,7 @@
     <CascadingValue Value="_editScheduledDuty">
         <ScheduledDutyEditor Show=@(_editScheduledDuty is not null) @ref="_scheduledDutyEditor" Modal="true" Submitted="@ScheduledDutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></ScheduledDutyEditor>
     </CascadingValue>
-    <TableTemplate @ref="_listComponent" PageSize="0" TItem="ScheduledDutySummary"
+    <TableTemplate @ref="_listComponent" PageSize="0" TItem="ScheduledDutyModel"
                    Items="@Items"
                    MultiSelect="@Multiselect"
                    Selectable="@Selectable"
@@ -13,17 +13,19 @@
                    RowDetailsShowing="@app.RowDetailsShowing["ScheduledDutyList"]"
                    >
         <ColumnContent>
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.Id)" Title="ControlColumn">
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.Id)" Title="ControlColumn">
                 <Template Context="e">
-                    <button type="button" onclick="@(()=> EditScheduledDuty(e.Id))">Edit</button>
+                    <CascadingValue Value="e">
+                        <ScheduledDutyCommand Cancelled="EditCancelled" Submitted="ScheduledDutyUpdated"></ScheduledDutyCommand>
+                    </CascadingValue>
                 </Template>
             </Column>
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.Duty)" Title="Duty" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.DueOn)" Title="Due On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.Recipient)" Title="Recipient" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.Record)" Title="Record" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.Dismissed)" Title="Dismissed" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutySummary" Field="@(x => x.Completed)" Title="Completed On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.DutyName)" Title="Duty" Sortable="true" Filterable="true" UseInSuperSearch="true" ></Column>
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.DueOn)" Title="Due On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.RecipientName)" Title="Recipient" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.RecordName)" Title="Record" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.Dismissed)" Title="Dismissed" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.CompletedOn)" Title="Completed On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
         </ColumnContent>
     </TableTemplate>
 }

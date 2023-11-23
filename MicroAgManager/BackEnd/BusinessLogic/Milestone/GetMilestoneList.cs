@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic.Milestone
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     var query = request.GetQuery<Domain.Entity.Milestone>(context);
-                    return new MilestoneDto(await query.LongCountAsync(cancellationToken), await query.Select(f => MilestoneModel.Create(f)).ToListAsync(cancellationToken));
+                    return new MilestoneDto(await query.LongCountAsync(cancellationToken), await query.Select(f => MilestoneModel.Create(f, context)).ToListAsync(cancellationToken));
                 }
             }
         }

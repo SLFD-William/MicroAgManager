@@ -3,6 +3,7 @@ using System;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    partial class FrontEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231123013815_dutyName2")]
+    partial class dutyName2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -1114,10 +1117,6 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.Property<long?>("RecordId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("RecordName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("ReminderDays")
                         .HasPrecision(18, 3)

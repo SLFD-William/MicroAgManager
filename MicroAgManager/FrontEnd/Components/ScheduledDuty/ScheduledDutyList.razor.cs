@@ -8,8 +8,8 @@ namespace FrontEnd.Components.ScheduledDuty
 {
     public partial class ScheduledDutyList : DataComponent<ScheduledDutyModel>
     {
-        public TableTemplate<ScheduledDutySummary> _listComponent;
-        [Parameter] public IEnumerable<ScheduledDutySummary>? Items { get; set; }
+        public TableTemplate<ScheduledDutyModel> _listComponent;
+        [Parameter] public IEnumerable<ScheduledDutyModel>? Items { get; set; }
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<ScheduledDutyModel>? ScheduledDutySelected { get; set; }
 
@@ -32,7 +32,7 @@ namespace FrontEnd.Components.ScheduledDuty
             if (_listComponent is null) return;
 
             if (Items is null)
-                Items = await app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).Select(s => new ScheduledDutySummary(s, app.dbContext)).ToListAsync();
+                Items = await app.dbContext.ScheduledDuties.OrderByDescending(f => f.DueOn).ToListAsync();
 
             _listComponent.Update();
         }
@@ -54,13 +54,8 @@ namespace FrontEnd.Components.ScheduledDuty
                         break;
                 }
             }
-            
             _editScheduledDuty = null;
             await Submitted.InvokeAsync(await FindScheduledDuty(model.Id));
-        }
-        private async Task EditScheduledDuty(long id)
-        {
-            _editScheduledDuty = id > 0 ? await FindScheduledDuty(id) : new ScheduledDutyModel();
             StateHasChanged();
         }
     }

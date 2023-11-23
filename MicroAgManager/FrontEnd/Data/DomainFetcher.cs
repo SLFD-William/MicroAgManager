@@ -553,10 +553,15 @@ namespace FrontEnd.Data
                 var record = AddNamedParameter(command, "$Record");
                 var recipientId = AddNamedParameter(command, "$RecipientId");
                 var recipient = AddNamedParameter(command, "$Recipient");
+                var dutyName = AddNamedParameter(command, "$DutyName");
+                var recipientName = AddNamedParameter(command, "$RecipientName");
+                var recordName = AddNamedParameter(command, "$RecordName");
 
-                command.CommandText = $"INSERT or REPLACE INTO ScheduledDuties (Id,Deleted,EntityModifiedOn,ModifiedBy,DutyId,Dismissed,DueOn,ReminderDays,CompletedOn,CompletedBy,RecordId,Record,RecipientId,Recipient) " +
+                command.CommandText = $"INSERT or REPLACE INTO ScheduledDuties (Id,Deleted,EntityModifiedOn,ModifiedBy,DutyId,Dismissed,DueOn,ReminderDays,CompletedOn,CompletedBy,RecordId,Record,RecordName," +
+                    $"RecipientId,RecipientName,Recipient,DutyName) " +
                     $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName},{baseParameters["ModifiedBy"].ParameterName}," +
-                    $"{dutyId.ParameterName},{dismissed.ParameterName},{dueOn.ParameterName},{reminderDays.ParameterName},{completedOn.ParameterName},{completedBy.ParameterName},{recordId.ParameterName},{record.ParameterName},{recipientId.ParameterName},{recipient.ParameterName})";
+                    $"{dutyId.ParameterName},{dismissed.ParameterName},{dueOn.ParameterName},{reminderDays.ParameterName},{completedOn.ParameterName},{completedBy.ParameterName},{recordId.ParameterName}," +
+                    $"{record.ParameterName},{recordName.ParameterName},{recipientId.ParameterName},{recipientName.ParameterName},{recipient.ParameterName},{dutyName.ParameterName})";
 
                 foreach (var model in returned.Item2)
                 {
@@ -572,6 +577,9 @@ namespace FrontEnd.Data
                     record.Value = model.Record;
                     recipientId.Value = model.RecipientId;
                     recipient.Value = model.Recipient;
+                    dutyName.Value = model.DutyName;
+                    recipientName.Value = model.RecipientName;
+                    recordName.Value = model.RecordName;
                     await command.ExecuteNonQueryAsync();
                 }
 

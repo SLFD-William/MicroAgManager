@@ -19,7 +19,7 @@ namespace BackEnd.BusinessLogic.Event
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    return EventModel.Create(await request.GetQuery<Domain.Entity.Event>(context).FirstOrDefaultAsync(cancellationToken));
+                    return EventModel.Create(await request.GetQuery<Domain.Entity.Event>(context).FirstOrDefaultAsync(cancellationToken), context);
                 }
             }
         }
