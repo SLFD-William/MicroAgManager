@@ -1,0 +1,60 @@
+﻿@layout MainLayout
+@inject ApplicationStateProvider app
+@inject NavigationManager nm
+@using Domain.Models
+@using FrontEnd.Components.Livestock
+@using Microsoft.EntityFrameworkCore
+@page "/Livestock"
+@page "/Livestock/{livestockId}"
+
+@if(livestock !=null)
+{
+    <CascadingValue Value="livestock">
+        <LivestockViewer></LivestockViewer>
+    </CascadingValue>
+}
+@if (app?.dbContext is not null && livestock == null)
+{
+    <LivestockList Submitted="StateHasChanged" Items="Items"></LivestockList>
+}
+@code {
+    [Parameter] public string livestockId { get; set; }
+    public IEnumerable<LivestockModel> Items { get; set; } = new List<LivestockModel>();
+    private LivestockModel livestock;
+    private long? _livestockId;
+    protected virtual void DbSync_OnUpdate() => InvokeAsync(RefreshLivestock);
+    protected override void OnInitialized()
+    {
+        nm.LocationChanged += HandleLocationChanged;
+        app.dbSynchonizer.OnUpdate += DbSync_OnUpdate;
+        InvokeAsync(RefreshLivestock);
+    }
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)=>InvokeAsync(RefreshLivestock);
+    private async Task RefreshLivestock()
+    {
+
+        if (long.TryParse(livestockId, out var id))
+            _livestockId = id;
+        livestock = null;
+        if(_livestockId.HasValue)
+            livestock =await app.dbContext.Livestocks.Include(p => p.Status)
+                   .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                   .Include(p => p.Mother).Include(p => p.Father)
+                       .FirstOrDefaultAsync(i => i.Id == _livestockId.Value);
+        else
+            Items = await app.dbContext.Livestocks.Include(p => p.Status)
+                    .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                    .Include(p => p.Mother)
+                    .Include(p => p.Father)
+                    .OrderByDescending(a => a.EntityModifiedOn).ToListAsync();
+
+        StateHasChanged();
+    }
+
+    public virtual ValueTask DisposeAsync()
+    {
+        nm.LocationChanged -= HandleLocationChanged;
+        app.dbSynchonizer.OnUpdate -= DbSync_OnUpdate;
+        return ValueTask.CompletedTask;
+    }
+}

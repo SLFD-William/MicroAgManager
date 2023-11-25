@@ -1,10 +1,4 @@
-﻿.LivestockBadge {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: 0.25rem;
-}
-.LivestockBadge > label.pointer {
+﻿.LivestockButton.pointer {
   cursor: default;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -14,13 +8,9 @@
   background-image: linear-gradient(to top, rgb(207, 207, 207) 16%, rgb(252, 252, 252) 79%);
   padding: 0.25rem;
   border: 1px solid #000;
-  color: black;
+  color: inherit;
   text-decoration: none;
-  font-weight: 600;
 }
-.LivestockBadge > label.pointer.customColor {
+.LivestockButton.customColor {
   background-image: unset;
-}
-.LivestockBadge > p {
-  padding: 1rem;
 }

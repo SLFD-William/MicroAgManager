@@ -58,5 +58,17 @@
   {
     "outputFile": "Components/Livestock/LivestockSubTabs.razor.css",
     "inputFile": "Components/Livestock/LivestockSubTabs.razor.scss"
+  },
+  {
+    "outputFile": "Components/Farm/FarmBadge.razor.css",
+    "inputFile": "Components/Farm/FarmBadge.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockButton.razor.css",
+    "inputFile": "Components/Livestock/LivestockButton.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockNameplate.razor.css",
+    "inputFile": "Components/Livestock/LivestockNameplate.razor.scss"
   }
 ]

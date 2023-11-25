@@ -1,22 +1,15 @@
-﻿@using Domain.Models;
-@inherits DataComponent<LivestockModel>
-<div class="LivestockViewer">
+﻿<div class="LivestockViewer">
+    <CascadingValue Value="Livestock">
     @if (_editting)
     {
-        <CascadingValue Value="livestock">
-            <LivestockEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></LivestockEditor>
-        </CascadingValue>
+        <LivestockEditor Cancelled="@(()=>EditComplete())" Submitted="@(()=>EditComplete(true))"></LivestockEditor>
     }
     else{
-        <CascadingValue Value="livestock">
-            <LivestockBadge OnClick="@(()=> ShowEditor())" ShowAge="true" ShowGeneral="true" ShowStatus="true" ></LivestockBadge>
-        </CascadingValue>
-        
-        @if (livestock.Id > 0)
+        <LivestockButton ShowAge=false ShowEmoji=true ShowGender=true ShowGeneral=false ShowParents=false ShowStatus=false OnClick="@(()=> ShowEditor())"></LivestockButton>
+        @if (Livestock?.Id > 0)
         {
-            <CascadingValue Value="@livestock">
-                <LivestockSubTabs Submitted="StateHasChanged"></LivestockSubTabs>
-            </CascadingValue>
+            <LivestockSubTabs Submitted="StateHasChanged"></LivestockSubTabs>
         }
     }
+    </CascadingValue>
 </div>

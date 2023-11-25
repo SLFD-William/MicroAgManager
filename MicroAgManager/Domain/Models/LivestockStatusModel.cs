@@ -8,8 +8,9 @@ namespace Domain.Models
     public class LivestockStatusModel : BaseModel
     {
         [Required]
-        [ForeignKey(nameof(LivestockAnimalModel))]
+        [ForeignKey(nameof(Animal))]
         public long LivestockAnimalId { get; set; }
+        public virtual LivestockAnimalModel Animal { get; set; }
         [Required] [MaxLength(40)]public string Status { get; set; }
         [Required] public bool DefaultStatus { get; set; }
         [Required][MaxLength(10)] public string BeingManaged { get; set; }

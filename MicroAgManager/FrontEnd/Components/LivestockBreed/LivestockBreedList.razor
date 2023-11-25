@@ -1,5 +1,6 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
+@using Microsoft.EntityFrameworkCore;
 @inherits DataComponent<LivestockBreedModel>
 @if (app != null)
 {
@@ -43,7 +44,7 @@
         </ColumnContent>
         <TableRowDetailTemplate>
             <CascadingValue Value="@(context as LivestockBreedSummary)">
-                <LivestockList Items="@app.dbContext.Livestocks.Where(s => s.LivestockBreedId == context.Id).Select(l=>new Livestock.LivestockSummary(l,app.dbContext))"></LivestockList>
+                <LivestockList Items="@app.dbContext.Livestocks.Include(p => p.Status).Include(p => p.Breed).ThenInclude(p => p.Animal).Include(p=>p.Mother).Include(p => p.Father).Where(s => s.LivestockBreedId == context.Id)"></LivestockList>
             </CascadingValue>
         </TableRowDetailTemplate>
     </TableTemplate>

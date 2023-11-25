@@ -30,6 +30,19 @@ namespace BackEnd.BusinessLogic
                 && e.RecipientTypeId == animalType.Id);
             if (parturition == null)
             {
+                var serviceDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
+                {
+                    Gender = GenderConstants.Male,
+                    RecipientType = animalType.GetType().Name,
+                    RecipientTypeId = animalType.Id,
+                    DaysDue = 0,
+                    Relationship = DutyRelationshipConstants.Self,
+                    SystemRequired = true,
+                    Name = "Service",
+                    CommandId = 0,
+                    Command = DutyCommandConstants.Service
+                };
+                context.Duties.Add(serviceDuty);
                 var birthDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,

@@ -1,0 +1,55 @@
+﻿@using Domain.Constants;
+@using Domain.Models;
+@using Microsoft.EntityFrameworkCore
+@if (Livestock is not null)
+{
+    <button onclick="@(async() => await OnClick.InvokeAsync())" class="LivestockButton @ButtonCss" @attributes="ContainerAttributes">
+        <CascadingValue Value="Livestock">
+            <LivestockNameplate 
+                ShowEmoji=ShowEmoji 
+                ShowGender=ShowGender
+                ShowStatus=ShowStatus
+                ShowAge=ShowAge
+                ShowGeneral=ShowGeneral 
+                ShowParents=ShowParents 
+                ShowFather=ShowFather
+                ShowMother=ShowMother
+                ></LivestockNameplate>
+        </CascadingValue>
+    </button>
+}
+
+@code{
+    [CascadingParameter] public LivestockModel? Livestock { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? ContainerAttributes { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public bool ShowGender { get; set; } = true;
+    [Parameter] public bool ShowEmoji { get; set; } = true;
+    [Parameter] public bool ShowGeneral { get; set; } = false;
+    [Parameter] public bool ShowStatus { get; set; } = false;
+    [Parameter] public bool ShowAge { get; set; } = false;
+    [Parameter] public bool ShowParents { get; set; } = false;
+    [Parameter] public bool ShowFather { get; set; } = true;
+    [Parameter] public bool ShowMother { get; set; } = true;
+    [Parameter] public string ButtonCss { get; set; }
+    private string Age()
+    {
+        if (Livestock is null)
+            return "";
+
+        var age=DateTime.Now.Subtract(Livestock.Birthdate);
+        switch (age.Days)
+        {
+            case var d when d < 1:
+                return $"{age.Hours} hours old";
+            case var d when d < 90:
+                return $"{age.Days} days old";
+            case var d when d < 548:
+                return $"{age.Days / 30} months old";
+            default:
+                return $"{age.Days / 365} years old";
+        }
+    }
+    
+}

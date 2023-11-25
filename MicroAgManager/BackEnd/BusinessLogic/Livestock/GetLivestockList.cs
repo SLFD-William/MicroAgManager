@@ -20,8 +20,8 @@ namespace BackEnd.BusinessLogic.Livestock
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     var query = request.GetQuery<Domain.Entity.Livestock>(context);
-
-                    return new LivestockDto(await query.LongCountAsync(cancellationToken), await query.Select(f => LivestockModel.Create(f)).ToListAsync(cancellationToken));
+                    var data= new LivestockDto(await query.LongCountAsync(cancellationToken), await query.Select(f => LivestockModel.Create(f)).ToListAsync(cancellationToken));
+                    return data;
                 }
             }
         }

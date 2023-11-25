@@ -58,9 +58,9 @@
         </ButtonContent>
         <ChildContent>
             <div class="ancestry">
-                @if (livestockMom is not null)
+                @if (livestock.Mother is not null)
                 { 
-                <CascadingValue Value="livestockMom">
+                    <CascadingValue Value="livestock.Mother">
                     <LivestockAncestry></LivestockAncestry>
                 </CascadingValue>
                 }
@@ -73,9 +73,9 @@
                         unknown
                     </div>
                 }
-                @if (livestockDad is not null)
+                @if (livestock.Father is not null)
                 {
-                    <CascadingValue Value="livestockDad">
+                    <CascadingValue Value="livestock.Father">
                         <LivestockAncestry></LivestockAncestry>
                     </CascadingValue>
                 }

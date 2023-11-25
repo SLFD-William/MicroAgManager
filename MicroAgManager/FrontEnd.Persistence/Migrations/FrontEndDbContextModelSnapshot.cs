@@ -381,9 +381,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("LivestockAnimalModelId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -394,7 +391,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockAnimalModelId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("LivestockBreeds");
                 });
@@ -736,12 +733,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long>("LivestockBreedId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("LivestockBreedModelId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long?>("LivestockStatusModelId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long?>("LocationId")
                         .HasColumnType("INTEGER");
 
@@ -770,11 +761,15 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FatherId");
+
                     b.HasIndex("LandPlotModelId");
 
-                    b.HasIndex("LivestockBreedModelId");
+                    b.HasIndex("LivestockBreedId");
 
-                    b.HasIndex("LivestockStatusModelId");
+                    b.HasIndex("MotherId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Livestocks");
                 });
@@ -817,9 +812,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long>("LivestockAnimalId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("LivestockAnimalModelId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -835,7 +827,7 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LivestockAnimalModelId");
+                    b.HasIndex("LivestockAnimalId");
 
                     b.ToTable("LivestockStatuses");
                 });
@@ -1084,10 +1076,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long?>("DutyModelId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("DutyName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("EntityModifiedOn")
                         .HasColumnType("TEXT");
 
@@ -1104,20 +1092,12 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<long>("RecipientId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("RecipientName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Record")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<long?>("RecordId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("RecordName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("ReminderDays")
                         .HasPrecision(18, 3)
@@ -1409,9 +1389,13 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LivestockBreedModel", b =>
                 {
-                    b.HasOne("Domain.Models.LivestockAnimalModel", null)
+                    b.HasOne("Domain.Models.LivestockAnimalModel", "Animal")
                         .WithMany("Breeds")
-                        .HasForeignKey("LivestockAnimalModelId");
+                        .HasForeignKey("LivestockAnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockFeedAnalysisResultModel", b =>
@@ -1444,24 +1428,48 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LivestockModel", b =>
                 {
+                    b.HasOne("Domain.Models.LivestockModel", "Father")
+                        .WithMany()
+                        .HasForeignKey("FatherId");
+
                     b.HasOne("Domain.Models.LandPlotModel", null)
                         .WithMany("Livestocks")
                         .HasForeignKey("LandPlotModelId");
 
-                    b.HasOne("Domain.Models.LivestockBreedModel", null)
+                    b.HasOne("Domain.Models.LivestockBreedModel", "Breed")
                         .WithMany("Livestocks")
-                        .HasForeignKey("LivestockBreedModelId");
+                        .HasForeignKey("LivestockBreedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Domain.Models.LivestockStatusModel", null)
+                    b.HasOne("Domain.Models.LivestockModel", "Mother")
+                        .WithMany()
+                        .HasForeignKey("MotherId");
+
+                    b.HasOne("Domain.Models.LivestockStatusModel", "Status")
                         .WithMany("Livestocks")
-                        .HasForeignKey("LivestockStatusModelId");
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Breed");
+
+                    b.Navigation("Father");
+
+                    b.Navigation("Mother");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Domain.Models.LivestockStatusModel", b =>
                 {
-                    b.HasOne("Domain.Models.LivestockAnimalModel", null)
+                    b.HasOne("Domain.Models.LivestockAnimalModel", "Animal")
                         .WithMany("Statuses")
-                        .HasForeignKey("LivestockAnimalModelId");
+                        .HasForeignKey("LivestockAnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
                 });
 
             modelBuilder.Entity("Domain.Models.MeasureModel", b =>

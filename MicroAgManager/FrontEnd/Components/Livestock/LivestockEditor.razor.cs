@@ -6,13 +6,12 @@ using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockAnimal;
 using Domain.Constants;
 using FrontEnd.Components.LivestockStatus;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Livestock
 {
     public partial class LivestockEditor : DataComponent<LivestockModel>
     {
-        [CascadingParameter] public LivestockAnimalSummary LivestockAnimal { get; set; }
-        [CascadingParameter] public LivestockBreedSummary LivestockBreed { get; set; }
         [CascadingParameter] public LivestockModel Livestock { get; set; }
         
         [Parameter] public long? livestockId { get; set; }
@@ -41,17 +40,12 @@ namespace FrontEnd.Components.Livestock
 
             if (Livestock is not null)
                 working = Livestock;
-            
-            if (LivestockBreed is null && livestockBreedId.HasValue)
-                LivestockBreed = new LivestockBreedSummary(await app.dbContext.LivestockBreeds.FindAsync(livestockBreedId.Value),app.dbContext);
-
-            livestockBreedId = LivestockBreed?.Id;
-
-            if (LivestockAnimal is null)
-                LivestockAnimal = new LivestockAnimalSummary( await app.dbContext.LivestockAnimals.FindAsync(LivestockBreed.LivestockAnimalId),app.dbContext);
 
             if (Livestock is null && livestockId.HasValue)
-                working = await app.dbContext.Livestocks.FindAsync(livestockId);
+                working = await app.dbContext.Livestocks.Include(p => p.Status)
+                    .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                    .Include(p => p.Mother).Include(p => p.Father)
+                    .FirstOrDefaultAsync(i => i.Id == livestockId);
 
             SetEditContext((LivestockModel)working);
         }

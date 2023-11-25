@@ -14,12 +14,12 @@
                    @ref=_validatedForm>
         <DataContent>
             <ValidatedField Legend="Breed" ValidationMessageFor="@(() => ((LivestockModel)working).LivestockBreedId)">
-                @LivestockBreed.Name
+                @(((LivestockModel)working).Breed?.Name)
             </ValidatedField>
             <ValidatedField Legend="Variety" ValidationMessageFor="@(() => ((LivestockModel)working).Variety)">
                 <InputText placeholder="Variety" @bind-Value="@(((LivestockModel)working).Variety)" list="varietyList" />
                 <datalist id="varietyList">
-                    @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == LivestockBreed.Id).Select(a => a.Variety).Distinct().OrderBy(a => a))
+                    @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == ((LivestockModel)working).LivestockBreedId).Select(a => a.Variety).Distinct().OrderBy(a => a))
                     {
                         <option value="@g" />
                     }
@@ -41,13 +41,13 @@
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Status</span><button type="button" @onclick=ShowStatusEditor>+</button>
-                        <LivestockStatusEditor Show=showStatusModal livestockAnimalId="LivestockBreed.LivestockAnimalId" @ref=_livestockStatusEditor Modal="true" Submitted="StatusCreated" Cancelled="StatusCanceled"></LivestockStatusEditor>
+                        <LivestockStatusEditor Show=showStatusModal livestockAnimalId="((LivestockModel)working).Breed?.LivestockAnimalId" @ref=_livestockStatusEditor Modal="true" Submitted="StatusCreated" Cancelled="StatusCanceled"></LivestockStatusEditor>
                     </div>
                 </LegendContent>
                 <ChildContent>
                     <InputSelect @bind-Value="@StatusId">
                         <option value="0">Select Status ...</option>
-                        @foreach (var g in app.dbContext.LivestockStatuses.Where(s => s.LivestockAnimalId == LivestockBreed.LivestockAnimalId).OrderBy(a => a.Status))
+                        @foreach (var g in app.dbContext.LivestockStatuses.Where(s => s.LivestockAnimalId == ((LivestockModel)working).Breed.LivestockAnimalId).OrderBy(a => a.Status))
                         {
                             <option value="@g.Id" >@g.Status</option>
                         }
@@ -96,10 +96,10 @@
             <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => ((LivestockModel)working).ForSale)">
                 <InputCheckbox @bind-Value="@(((LivestockModel)working).ForSale)" />
             </ValidatedField>
-            <ValidatedField Legend="@LivestockAnimal.ParentFemaleName" ValidationMessageFor="@(() => ((LivestockModel)working).MotherId)">
+            <ValidatedField Legend="@(((LivestockModel)working).Breed?.Animal?.ParentFemaleName)" ValidationMessageFor="@(() => ((LivestockModel)working).MotherId)">
                 <InputSelect @bind-Value="@(((LivestockModel)working).MotherId)">
-                    <option value="0">Select @LivestockAnimal.ParentFemaleName ...</option>
-                    @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == LivestockBreed.Id 
+                    <option value="0">Select @(((LivestockModel)working).Breed?.Animal?.ParentFemaleName) ...</option>
+                    @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == ((LivestockModel)working).Breed.Id 
                         && s.Gender == GenderConstants.Female
                         && s.Id != ((LivestockModel)working).Id).OrderBy(a => a.Name))
                     {
@@ -107,10 +107,10 @@
                     }
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="@LivestockAnimal.ParentMaleName" ValidationMessageFor="@(() => ((LivestockModel)working).FatherId)">
+            <ValidatedField Legend="@(((LivestockModel)working).Breed?.Animal?.ParentMaleName)" ValidationMessageFor="@(() => ((LivestockModel)working).FatherId)">
                 <InputSelect @bind-Value="@(((LivestockModel)working).FatherId)">
-                    <option value="0">Select @LivestockAnimal.ParentMaleName ...</option>
-                    @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == LivestockBreed.Id
+                    <option value="0">Select @(((LivestockModel)working).Breed?.Animal?.ParentMaleName) ...</option>
+                    @foreach (var g in app.dbContext.Livestocks.Where(s => s.LivestockBreedId == ((LivestockModel)working).Breed.Id
                         && s.Gender == GenderConstants.Male
                         && s.Id != ((LivestockModel)working).Id).OrderBy(a => a.Name))
                     {

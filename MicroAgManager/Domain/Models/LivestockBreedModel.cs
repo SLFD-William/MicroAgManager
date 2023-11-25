@@ -2,19 +2,23 @@
 using Domain.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 
 namespace Domain.Models
 {
     public class LivestockBreedModel : BaseModel
     {
         [Required]
-        [ForeignKey(nameof(LivestockAnimalModel))]
+        [ForeignKey(nameof(Animal))]
         public long LivestockAnimalId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [MaxLength(2)] public string EmojiChar { get; set; }
         [Required] public int GestationPeriod { get; set; }
         [Required] public int HeatPeriod { get; set; }
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
+        
+        public virtual LivestockAnimalModel Animal { get; set; }
+
         public static LivestockBreedModel Create(LivestockBreed livestockBreed)
         {
             var model = PopulateBaseModel(livestockBreed, new LivestockBreedModel

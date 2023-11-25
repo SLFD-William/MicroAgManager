@@ -13,7 +13,7 @@ namespace Domain.Entity
         public ScheduledDuty(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        [Required][ForeignKey("Duty")]public long DutyId { get; set; }
+        [Required][ForeignKey(nameof(Duty))]public long DutyId { get; set; }
 
         public long? RecordId { get; set; }
         [Required] public string Record { get; set; }

@@ -1,0 +1,97 @@
+﻿.LivestockNameplate {
+  padding: unset;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-template-areas: "nameplate variety" "nameplate breed" "age parents" "status parents";
+  align-items: center;
+  grid-gap: 0 0.25rem;
+  justify-items: baseline;
+}
+.LivestockNameplate .emoji {
+  grid-area: emoji;
+  font-size: 1.5em;
+}
+.LivestockNameplate .emoji > p {
+  font-size: 0.5em;
+}
+.LivestockNameplate .nameplate {
+  display: flex;
+  align-items: center;
+  gap: 0 0.25em;
+}
+.LivestockNameplate .parents {
+  grid-area: parents;
+  display: grid;
+  grid-template-columns: max-content;
+}
+.LivestockNameplate .parents .LivestockNameplate .emoji {
+  font-size: 0.75em;
+}
+.LivestockNameplate .parents .LivestockNameplate .emoji > p {
+  display: none;
+}
+.LivestockNameplate .parents .LivestockNameplate .gender {
+  width: 0.75em;
+  font-size: 0.75em;
+  height: 0.75em;
+  line-height: 0.75em;
+}
+.LivestockNameplate .parents .LivestockNameplate .name {
+  font-size: 0.75em;
+  font-weight: bold;
+}
+.LivestockNameplate .parents .LivestockNameplate .variety {
+  font-size: 0.5em;
+  font-weight: bold;
+  align-self: end;
+}
+.LivestockNameplate .parents .LivestockNameplate .breed {
+  font-size: 0.5em;
+  font-weight: bold;
+  align-self: baseline;
+}
+.LivestockNameplate .parents .LivestockNameplate .animal {
+  font-size: 0.75em;
+}
+.LivestockNameplate .parents .LivestockNameplate .status {
+  font-size: 0.75em;
+}
+.LivestockNameplate .parents .LivestockNameplate .age {
+  font-size: 0.75em;
+}
+.LivestockNameplate .gender {
+  width: 1.5em;
+  font-size: 1.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+  grid-area: gender;
+}
+.LivestockNameplate .name {
+  grid-area: name;
+  font-size: 1.5em;
+  font-weight: 600;
+}
+.LivestockNameplate .variety {
+  grid-area: variety;
+  font-size: 0.75em;
+  font-weight: bold;
+  align-self: end;
+}
+.LivestockNameplate .breed {
+  grid-area: breed;
+  font-size: 0.75em;
+  font-weight: bold;
+  align-self: baseline;
+}
+.LivestockNameplate .animal {
+  grid-area: animal;
+  font-size: 1em;
+}
+.LivestockNameplate .status {
+  grid-area: status;
+  font-size: 1em;
+}
+.LivestockNameplate .age {
+  grid-area: age;
+  font-size: 1em;
+}

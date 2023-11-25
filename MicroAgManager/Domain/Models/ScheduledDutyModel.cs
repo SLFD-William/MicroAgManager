@@ -15,21 +15,52 @@ namespace Domain.Models
         private const string NO_RECIPIENT = "No Recipient";
         private const string NO_RECORD = "No Record";
 
-        [Required][ForeignKey(nameof(DutyModel))] public long DutyId { get; set; }
-        public string DutyName { get; set; }
+        [Required][ForeignKey(nameof(Duty))] public long DutyId { get; set; }
+        public virtual DutyModel Duty { get; set; }
+
         public bool Dismissed { get; set; }
         public DateTime DueOn { get; set; }
         public long? RecordId { get; set; }
         [Required] public string Record { get; set; }
-        public string RecordName { get; set; }
         [Required] public long RecipientId { get; set; }
         [Required] public string Recipient { get; set; }
-        public string RecipientName { get; set; }
         [Precision(18,3)] public decimal ReminderDays { get; set; }
         public DateTime? CompletedOn { get; set; }
         public Guid? CompletedBy { get; set; }
 
-        public static ScheduledDutyModel? Create(ScheduledDuty? duty,IMicroAgManagementDbContext db)
+
+        //[NotMapped]
+        //public virtual DutyModel Duty { get; set; }
+        //[NotMapped]
+        //public virtual BreedingRecordModel? BreedingRecord { get; set; }
+        //[NotMapped]        
+        //[ForeignKey(nameof(BreedingRecord))]
+        //public long? BreedingRecordId => Record == nameof(Entity.BreedingRecord) ? RecordId : null;
+        //[NotMapped]
+        //public virtual MeasurementModel? Measurement { get; set; }
+
+        //[NotMapped]
+        //[ForeignKey(nameof(Measurement))]
+        //public long? MeasurementId => Record == nameof(Entity.Measurement) ? RecordId : null;
+        //[NotMapped]
+        //public virtual TreatmentRecordModel? TreatmentRecord { get; set; }
+        //[NotMapped]
+        //[ForeignKey(nameof(TreatmentRecord))]
+        //public long? TreatmentRecordId => Record == nameof(Entity.TreatmentRecord) ? RecordId : null;
+        //[NotMapped]
+        //public virtual RegistrationModel? Registration { get; set; }
+        //[NotMapped]
+        //[ForeignKey(nameof(Registration))]
+        //public long? RegistrationId => Record == nameof(Entity.Registration) ? RecordId : null;
+        //[NotMapped]
+        //public virtual LivestockModel? Livestock { get; set; }
+
+        //[NotMapped]
+        //[ForeignKey(nameof(Livestock))]
+        //public long? LivestockId => Recipient==nameof(Entity.Livestock) ? RecipientId : null;
+
+
+        public static ScheduledDutyModel? Create(ScheduledDuty? duty)
         {
             if (duty == null) return null;
             var model = PopulateBaseModel(duty, new ScheduledDutyModel
@@ -41,12 +72,9 @@ namespace Domain.Models
                 ReminderDays = duty.ReminderDays,
                 DutyId = duty.DutyId,
                 Record = duty.Record,
-                RecordName = getRecord(duty, db),
                 RecordId = duty.RecordId,
                 Recipient = duty.Recipient,
-                RecipientName = getRecipient(duty, db),
                 RecipientId = duty.RecipientId,
-                DutyName = string.IsNullOrEmpty(duty.Duty?.Name) ? db.Duties.Find(duty.DutyId)?.Name ?? "Unknown" : duty.Duty.Name,
             }) as ScheduledDutyModel;
             return model;
         }

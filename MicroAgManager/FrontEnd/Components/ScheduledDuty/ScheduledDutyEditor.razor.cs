@@ -7,6 +7,7 @@ using FrontEnd.Components.BreedingRecord;
 using FrontEnd.Components.Measurement;
 using FrontEnd.Components.TreatmentRecord;
 using FrontEnd.Components.Registration;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.ScheduledDuty
 {
@@ -126,9 +127,10 @@ namespace FrontEnd.Components.ScheduledDuty
                 var breedingRecord = await app.dbContext.BreedingRecords.FindAsync(((ScheduledDutyModel)working).RecordId);
                 if (breedingRecord is not null)
                 {
-                    var animal = await app.dbContext.Livestocks.FindAsync(breedingRecord.FemaleId);
-                    var breed = await app.dbContext.LivestockBreeds.FindAsync(animal?.LivestockBreedId);
-                    double.TryParse(breed?.GestationPeriod.ToString(), out var days);
+                    var animal = await app.dbContext.Livestocks
+                        .Include(p => p.Breed)
+                        .FirstOrDefaultAsync(i => i.Id == breedingRecord.FemaleId);
+                    double.TryParse(animal?.Breed?.GestationPeriod.ToString(), out var days);
                     SuggestedSnooze = breedingRecord.ServiceDate.AddDays(days);
                 }
             }

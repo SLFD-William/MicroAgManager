@@ -20,7 +20,7 @@ namespace BackEnd.BusinessLogic.Duty
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     var query = request.GetQuery<Domain.Entity.Duty>(context);
-                    return new DutyDto(await query.LongCountAsync(cancellationToken), await query.Select(f => DutyModel.Create(f, context)).ToListAsync(cancellationToken));
+                    return new DutyDto(await query.LongCountAsync(cancellationToken), await query.Select(f => DutyModel.Create(f)).ToListAsync(cancellationToken));
                 }
             }
         }

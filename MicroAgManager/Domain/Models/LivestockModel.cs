@@ -7,11 +7,11 @@ namespace Domain.Models
 {
     public class LivestockModel : BaseModel
     {
-        [ForeignKey(nameof(LivestockModel))] public long? MotherId { get; set; }
-        [ForeignKey(nameof(LivestockModel))] public long? FatherId { get; set; }
-        [Required][ForeignKey(nameof(LivestockStatusModel))] public long? StatusId { get; set; }
+        [ForeignKey(nameof(Mother))] public long? MotherId { get; set; }
+        [ForeignKey(nameof(Father))] public long? FatherId { get; set; }
+        [Required][ForeignKey(nameof(Status))] public long? StatusId { get; set; }
         [ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
-        [Required][ForeignKey(nameof(LivestockBreedModel))]  public long LivestockBreedId { get; set; }
+        [Required][ForeignKey(nameof(Breed))]  public long LivestockBreedId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }
         [Required] public DateTime Birthdate { get; set; }
@@ -26,8 +26,12 @@ namespace Domain.Models
         public bool InMilk { get; set; } = false;
         public bool BottleFed { get; set; } = false;
         public bool ForSale { get; set; } = true;
+        public virtual LivestockModel? Mother { get; set; }
+        public virtual LivestockModel? Father { get; set; }
+        public virtual LivestockStatusModel? Status { get; set; }
+        public virtual LivestockBreedModel Breed { get; set; }
 
-
+        [NotMapped]public string CurrentStatus => (StatusId.HasValue &&  Status!=null) ? Status.Status:string.Empty;
         public static LivestockModel Create(Livestock livestock)
         {
             var model = PopulateBaseModel(livestock, new LivestockModel
@@ -47,7 +51,7 @@ namespace Domain.Models
                 Variety = livestock.Variety,
                 Sterile = livestock.Sterile,
                 Name = livestock.Name,
-                BatchNumber=livestock.BatchNumber,
+                BatchNumber = livestock.BatchNumber,
                 StatusId = livestock.StatusId,
                 LocationId = livestock.LocationId
             }) as LivestockModel;

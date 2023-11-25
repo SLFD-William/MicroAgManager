@@ -15,7 +15,7 @@ namespace Domain.Models
         [Range(1, long.MaxValue)] public long RecipientTypeId { get; set; }
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
-        public static MilestoneModel? Create(Milestone? milestone,IMicroAgManagementDbContext db)
+        public static MilestoneModel? Create(Milestone? milestone)
         {
             if (milestone == null) return null;
             var model = PopulateBaseModel(milestone, new MilestoneModel
@@ -25,8 +25,8 @@ namespace Domain.Models
                 Name = milestone.Name,
                 Description=milestone.Description,
                 SystemRequired = milestone.SystemRequired,
-                Events= milestone.Events?.Select(d => EventModel.Create(d, db)).ToList() ?? new List<EventModel?>(),
-                Duties= milestone.Duties?.Select(d => DutyModel.Create(d, db)).ToList() ?? new List<DutyModel?>()
+                Events= milestone.Events?.Select(d => EventModel.Create(d)).ToList() ?? new List<EventModel?>(),
+                Duties= milestone.Duties?.Select(d => DutyModel.Create(d)).ToList() ?? new List<DutyModel?>()
             }) as MilestoneModel;
             return model;
         }

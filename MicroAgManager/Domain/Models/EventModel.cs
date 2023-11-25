@@ -15,7 +15,7 @@ namespace Domain.Models
         public virtual ICollection<MilestoneModel?> Milestones { get; set; } = new List<MilestoneModel?>();
         public virtual ICollection<ScheduledDutyModel?> ScheduledDuties { get; set; } = new List<ScheduledDutyModel?>();
 
-        public static EventModel? Create(Event? duty, IMicroAgManagementDbContext db)
+        public static EventModel? Create(Event? duty)
         {
             if (duty == null) return null;
             var model = PopulateBaseModel(duty, new EventModel
@@ -24,9 +24,9 @@ namespace Domain.Models
                 Color = duty.Color,
                 StartDate = duty.StartDate,
                 EndDate = duty.EndDate,
-                Duties = duty.Duties?.Select(d=>DutyModel.Create(d,db)).ToList() ?? new List<DutyModel?>(),
-                Milestones = duty.Milestones?.Select(d => MilestoneModel.Create(d, db)).ToList() ?? new List<MilestoneModel?>(),
-                ScheduledDuties = duty.ScheduledDuties?.Select(d => ScheduledDutyModel.Create(d, db)).ToList() ?? new List<ScheduledDutyModel?>()
+                Duties = duty.Duties?.Select(d=>DutyModel.Create(d)).ToList() ?? new List<DutyModel?>(),
+                Milestones = duty.Milestones?.Select(d => MilestoneModel.Create(d)).ToList() ?? new List<MilestoneModel?>(),
+                ScheduledDuties = duty.ScheduledDuties?.Select(d => ScheduledDutyModel.Create(d)).ToList() ?? new List<ScheduledDutyModel?>()
             }) as EventModel;
             return model;
         }

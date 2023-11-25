@@ -37,5 +37,16 @@ namespace Domain.Entity
         public virtual Livestock? Father { get; set; }
         public virtual LivestockStatus? Status { get; set; }
         public virtual LandPlot? Location { get; set; }
+
+        [NotMapped]
+        public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new HashSet<ScheduledDuty>();
+
+        [NotMapped]
+        [ForeignKey("ScheduledDuties"), Column(nameof(Recipient))]
+        public string Recipient => nameof(Livestock);
+
+        [NotMapped]
+        [ForeignKey("ScheduledDuties"), Column(nameof(RecipientId))]
+        public long RecipientId => Id;
     }
 }

@@ -18,7 +18,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
 
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
-            var query = PopulateBaseQuery(context.ScheduledDuties.Include(d=>d.Duty).AsQueryable());
+            var query = PopulateBaseQuery(context.ScheduledDuties.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
             if (DueOn.HasValue) query = query.Where(_ => _.DueOn == DueOn);
             if (CompletedOn.HasValue) query = query.Where(_ => _.CompletedOn == CompletedOn);

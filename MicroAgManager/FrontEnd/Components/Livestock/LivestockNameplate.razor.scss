@@ -1,0 +1,113 @@
+.LivestockNameplate {
+    padding: unset;
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-template-areas:
+        'nameplate variety' 'nameplate breed' 'age parents' 'status parents';
+    align-items: center;
+    grid-gap: 0 0.25rem;
+    justify-items: baseline;
+
+    & .emoji {
+        grid-area: emoji;
+        font-size: 1.5em;
+
+        & > p {
+            font-size: 0.5em;
+        }
+    }
+
+    & .nameplate {
+        display: flex;
+        align-items: center;
+        gap: 0 0.25em;
+    }
+
+    & .parents {
+        grid-area: parents;
+        display: grid;
+        grid-template-columns: max-content;
+
+        & .LivestockNameplate {
+            & .emoji {
+                font-size: .75em;
+
+                & > p {
+                    display: none;
+                }
+            }
+            & .gender {
+                width: .75em;
+                font-size: .75em;
+                height: .75em;
+                line-height: .75em;
+            }
+            & .name {
+                font-size: .75em;
+                font-weight: bold;
+            }
+            & .variety {
+                font-size: .5em;
+                font-weight: bold;
+                align-self: end;
+            }
+            & .breed {
+                font-size: .5em;
+                font-weight: bold;
+                align-self: baseline;
+            }
+            & .animal {
+                font-size: .75em;
+            }
+            & .status {
+                font-size: .75em;
+            }
+            & .age {
+                font-size: .75em;
+            }
+        }
+    }
+
+    & .gender {
+        width: 1.5em;
+        font-size: 1.5em;
+        height: 1.5em;
+        line-height: 1.5em;
+        grid-area: gender;
+    }
+
+    & .name {
+        grid-area: name;
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+
+    & .variety {
+        grid-area: variety;
+        font-size: 0.75em;
+        font-weight: bold;
+        align-self: end;
+    }
+
+    & .breed {
+        grid-area: breed;
+        font-size: 0.75em;
+        font-weight: bold;
+        align-self: baseline;
+    }
+
+    & .animal {
+        grid-area: animal;
+        font-size: 1.0em;
+    }
+
+    & .status {
+        grid-area: status;
+        font-size: 1.0em;
+    }
+
+    & .age {
+        grid-area: age;
+        font-size: 1.0em;
+    }
+}

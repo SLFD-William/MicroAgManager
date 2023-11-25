@@ -19,7 +19,7 @@ namespace BackEnd.BusinessLogic.Milestone
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    return MilestoneModel.Create(await request.GetQuery<Domain.Entity.Milestone>(context).FirstOrDefaultAsync(cancellationToken), context);
+                    return MilestoneModel.Create(await request.GetQuery<Domain.Entity.Milestone>(context).FirstOrDefaultAsync(cancellationToken));
                 }
             }
         }

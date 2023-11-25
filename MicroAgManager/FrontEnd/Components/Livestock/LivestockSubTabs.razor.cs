@@ -3,6 +3,7 @@ using FrontEnd.Components.Farm;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Livestock
 {
@@ -11,9 +12,6 @@ namespace FrontEnd.Components.Livestock
         [CascadingParameter] public LivestockModel? Livestock { get; set; }
         [Parameter] public long? livestockId { get; set; }
         private LivestockModel livestock { get; set; } = new LivestockModel();
-        private LivestockModel livestockMom { get; set; } = new LivestockModel();
-        private LivestockModel livestockDad { get; set; } = new LivestockModel();
-        private LivestockBreedModel breed { get; set; }
 
         protected TabPage _closeTab;
         protected TabPage _registrationTab;
@@ -29,11 +27,11 @@ namespace FrontEnd.Components.Livestock
         public override async Task FreshenData()
         {
             livestock = Livestock is not null ? Livestock :
-               await app.dbContext.Livestocks.FindAsync(livestockId.Value);
-
-            breed = await app.dbContext.LivestockBreeds.FindAsync(livestock?.LivestockBreedId);
-            livestockMom = await app.dbContext.Livestocks.FindAsync(livestock?.MotherId);
-            livestockDad = await app.dbContext.Livestocks.FindAsync(livestock?.FatherId);
+               await app.dbContext.Livestocks
+                .Include(p => p.Status)
+                .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                .Include(p => p.Mother).Include(p => p.Father)
+                .FirstOrDefaultAsync(i => i.Id == livestockId); 
 
             if (_registrationList is not null)
                 await _registrationList.FreshenData();

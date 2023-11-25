@@ -1,16 +1,16 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
-@inherits DataComponent<LivestockModel>
-@if (livestock is not null)
+@inject NavigationManager nm
+@if (Livestock is not null)
 {
     <div class="LivestockAncestry @GenderClass()">
-        <CascadingValue Value="livestock">
-            <LivestockBadge ShowEmoji=false></LivestockBadge>
+        <CascadingValue Value="Livestock">
+            <LivestockButton OnClick=@(() => nm.NavigateTo($"/Livestock/{Livestock.Id}")) ShowEmoji=false ShowAge=false ShowGeneral=false ShowStatus=false ButtonCss="@GenderClass()"></LivestockButton>
         </CascadingValue>
-        @if (livestockMom is not null)
+        @if (Livestock.Mother is not null)
         {
-            <CascadingValue Value="livestockMom">
-                <LivestockAncestry></LivestockAncestry>
+            <CascadingValue Value="Livestock.Mother">
+                <LivestockAncestry ></LivestockAncestry>
             </CascadingValue>
         }
         else
@@ -22,10 +22,10 @@
             Unknown
         </div>
         }
-        @if (livestockDad is not null)
+        @if (Livestock?.Father is not null)
         {
-            <CascadingValue Value="livestockDad">
-                <LivestockAncestry></LivestockAncestry>
+            <CascadingValue Value="Livestock?.Father">
+                <LivestockAncestry ></LivestockAncestry>
             </CascadingValue>
         }
         else
@@ -39,4 +39,9 @@
             </div>
         }
     </div>
+}
+@code{
+    [CascadingParameter] public LivestockModel? Livestock { get; set; }
+    private string GenderClass() => Livestock?.Gender == GenderConstants.Male ? "male" : "female";
+    
 }

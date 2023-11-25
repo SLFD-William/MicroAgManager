@@ -20,7 +20,8 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     var query = request.GetQuery<Domain.Entity.ScheduledDuty>(context);
-                    return new ScheduledDutyDto(await query.LongCountAsync(cancellationToken), await query.Select(f => ScheduledDutyModel.Create(f,context)).ToListAsync(cancellationToken));
+                    var data= new ScheduledDutyDto(await query.LongCountAsync(cancellationToken), await query.Select(f => ScheduledDutyModel.Create(f)).ToListAsync(cancellationToken));
+                    return data;
                 }
             }
         }

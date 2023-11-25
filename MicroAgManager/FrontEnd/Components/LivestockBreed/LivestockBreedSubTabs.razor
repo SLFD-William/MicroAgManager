@@ -1,5 +1,6 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
+@using Microsoft.EntityFrameworkCore
 
 @inherits DataComponent<LivestockBreedModel>
 <TabControl @ref="_tabControl" TabSelected="@(async() => await FreshenData())" SelectedTab="@app.SelectedTabs" SelectedTabPageKey="@nameof(LivestockBreedSubTabs)">
@@ -10,7 +11,12 @@
         <ChildContent>
             @if (app?.dbContext?.Livestocks.Any(s => s.LivestockBreedId == livestockBreed.Id) ?? false)
             {
-                <LivestockList @ref="_livestockList" Submitted="StateHasChanged" Items="app.dbContext.Livestocks.Where(s=>s.LivestockBreedId==livestockBreed.Id).OrderByDescending(a=>a.Id).Select(l=>new Livestock.LivestockSummary(l,app.dbContext))"></LivestockList>
+                <LivestockList @ref="_livestockList" Submitted="StateHasChanged" Items="app.dbContext.Livestocks
+                    .Include(p => p.Status)
+                    .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                    .Include(p=>p.Mother)
+                    .Include(p => p.Father)
+                .Where(s=>s.LivestockBreedId==livestockBreed.Id).OrderByDescending(a=>a.Id)"></LivestockList>
             }
             else
             {

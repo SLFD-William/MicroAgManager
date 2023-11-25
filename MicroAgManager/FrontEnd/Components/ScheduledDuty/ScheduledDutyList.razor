@@ -20,10 +20,10 @@
                     </CascadingValue>
                 </Template>
             </Column>
-            <Column TableItem="ScheduledDutyModel" Field="@(x => x.DutyName)" Title="Duty" Sortable="true" Filterable="true" UseInSuperSearch="true" ></Column>
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.DutyId)" Title="Duty" Sortable="true" Filterable="true" UseInSuperSearch="true" ></Column>
             <Column TableItem="ScheduledDutyModel" Field="@(x => x.DueOn)" Title="Due On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutyModel" Field="@(x => x.RecipientName)" Title="Recipient" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="ScheduledDutyModel" Field="@(x => x.RecordName)" Title="Record" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.Recipient)" Title="Recipient" Sortable="true" Filterable="true" UseInSuperSearch="true" />
+            <Column TableItem="ScheduledDutyModel" Field="@(x => x.Record)" Title="Record" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="ScheduledDutyModel" Field="@(x => x.Dismissed)" Title="Dismissed" Sortable="true" Filterable="true" UseInSuperSearch="true" />
             <Column TableItem="ScheduledDutyModel" Field="@(x => x.CompletedOn)" Title="Completed On" Format="MM/dd/yyyy" Sortable="true" Filterable="true" UseInSuperSearch="true" />
         </ColumnContent>

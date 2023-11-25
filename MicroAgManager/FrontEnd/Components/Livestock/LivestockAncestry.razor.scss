@@ -2,12 +2,10 @@
     width: 100%;
     display: grid;
     grid-template-columns: 9rem 9rem;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
 
     & .unknown {
-        width: 100%;
-        padding: 0.25rem 0.5rem;
+        width: 9rem;
+        height: 100%;
 
         &.male {
             border: 1px solid var(--male-bo-color);
@@ -21,17 +19,74 @@
     }
 
     &.male {
-        border: 1px solid var(--male-bo-color);
         background-color: var(--male-color);
     }
 
     &.female {
-        border: 1px solid var(--female-bo-color);
         background-color: var(--female-color);
     }
 
-    & > ::deep .LivestockBadge {
+    & > ::deep .LivestockButton {
         grid-row: span 2;
-        align-self: center;
+        width: 9rem;
+        height: 100%;
+        padding: 0;
+
+        &.male {
+            border: 1px solid var(--male-bo-color);
+            background-color: var(--male-color);
+        }
+
+        &.female {
+            background-color: var(--female-color);
+            border: 1px solid var(--female-bo-color);
+        }
+
+        & .LivestockNameplate {
+            padding: 0em 0em 0em 1em;
+            & .emoji {
+                font-size: 1em;
+
+                & > p {
+                    display: none;
+                }
+            }
+
+            & .gender {
+                width: 1em;
+                font-size: 1em;
+                height: 1em;
+                line-height: 1em;
+            }
+
+            & .name {
+                font-size: 1em;
+                font-weight: bold;
+            }
+
+            & .variety {
+                font-size: 1em;
+                font-weight: bold;
+                align-self: end;
+            }
+
+            & .breed {
+                font-size: 1em;
+                font-weight: bold;
+                align-self: baseline;
+            }
+
+            & .animal {
+                font-size: 1em;
+            }
+
+            & .status {
+                font-size: .75em;
+            }
+
+            & .age {
+                font-size: .75em;
+            }
+        }
     }
 }

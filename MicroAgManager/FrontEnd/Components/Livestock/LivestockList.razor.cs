@@ -3,14 +3,15 @@ using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.Shared;
 using FrontEnd.Components.Shared.Sortable;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Livestock
 {
     public partial class LivestockList : DataComponent<LivestockModel>
     {
         [CascadingParameter] LivestockBreedSummary LivestockBreed { get; set; }
-        public TableTemplate<LivestockSummary> _listComponent;
-        [Parameter] public IEnumerable<LivestockSummary> Items { get; set; } = new List<LivestockSummary>();
+        public TableTemplate<LivestockModel> _listComponent;
+        [Parameter] public IEnumerable<LivestockModel> Items { get; set; } = new List<LivestockModel>();
 
         [Parameter] public bool Multiselect { get; set; } = false;
         [Parameter] public Action<LivestockModel>? LivestockSelected { get; set; }
@@ -21,11 +22,16 @@ namespace FrontEnd.Components.Livestock
             if (!app.RowDetailsShowing.ContainsKey("LivestockList"))
                 app.RowDetailsShowing.Add("LivestockList", new List<object>());
         }
-        private async Task<LivestockModel?> FindLivestock(long id)=> await app.dbContext.Livestocks.FindAsync(id);
+        private async Task<LivestockModel?> FindLivestock(long id)=> await app.dbContext.Livestocks
+            .Include(p => p.Status)
+            .Include(p => p.Breed)
+            .ThenInclude(p => p.Animal)
+            .Include(p=>p.Mother).Include(p => p.Father)
+            .FirstOrDefaultAsync(i => i.Id == id);
         
         private async Task EditLivestock(long id)
         {
-            _editLivestock = id > 0 ? await FindLivestock(id) : new LivestockModel {LivestockBreedId=LivestockBreed.Id};
+            _editLivestock = id > 0 ? await FindLivestock(id) : (LivestockBreed != null) ? new LivestockModel {LivestockBreedId=LivestockBreed.Id}:null;
             StateHasChanged();
         }
         private void TableItemSelected()
@@ -37,10 +43,18 @@ namespace FrontEnd.Components.Livestock
         {
             if (_listComponent is null) return;
             if (Items is null)
-                Items = app.dbContext.Livestocks.Where(f => f.LivestockBreedId == LivestockBreed.Id).OrderByDescending(f => f.Id).Select(s=>new LivestockSummary(s,app.dbContext)).AsEnumerable() ?? new List<LivestockSummary>();
+            {
+                var query = app.dbContext.Livestocks.AsQueryable();
+                if (LivestockBreed is not null)
+                    query = query.Where(f => f.LivestockBreedId == LivestockBreed.Id);
+                Items = await query.OrderByDescending(f => f.Id).ToListAsync();
+            }
+               
             
             _listComponent.Update();
         }
+        private string NewItemName() => LivestockBreed?.Name ?? "Livestock";
+        
         private async Task EditCancelled()
         {
             _editLivestock = null;

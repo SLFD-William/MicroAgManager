@@ -10,11 +10,10 @@ namespace FrontEnd.Components.Livestock
 {
     public partial class LivestockProgeny : DataComponent<LivestockModel>
     {
+        [Inject] public NavigationManager nm { get; set; }
         [CascadingParameter] public LivestockModel? Livestock { get; set; }
         [Parameter] public long? livestockId { get; set; }
 
-        private static LivestockAnimalModel animal { get; set; }
-        private static LivestockBreedModel breed { get; set; }
         private LivestockModel livestock { get; set; }
         private List<LivestockModel> mates { get; set; } = new();
         private List<LivestockModel> offspring { get; set; } = new();
@@ -54,13 +53,13 @@ namespace FrontEnd.Components.Livestock
             if (Livestock is not null)
                 livestock = Livestock;
             if (Livestock is null && livestockId.HasValue)
-                livestock = await app.dbContext.Livestocks.FindAsync(livestockId);
+                livestock = await app.dbContext.Livestocks
+                    .Include(p => p.Status)
+                    .Include(p => p.Breed)
+                    .ThenInclude(p => p.Animal)
+                    .FirstOrDefaultAsync(i => i.Id == livestockId);
 
-            if(breed is null)
-                breed = await app.dbContext.LivestockBreeds.FindAsync(livestock?.LivestockBreedId);
-            if (animal is null)
-                animal = await app.dbContext.LivestockAnimals.FindAsync(breed?.LivestockAnimalId);
-
+            
             offspring = livestock.Gender == GenderConstants.Male ?
                 await app.dbContext.Livestocks.Where(x => x.FatherId == livestock.Id).ToListAsync() :
                 await app.dbContext.Livestocks.Where(x => x.MotherId == livestock.Id).ToListAsync();

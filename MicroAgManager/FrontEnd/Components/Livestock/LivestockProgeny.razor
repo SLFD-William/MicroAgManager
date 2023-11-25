@@ -1,20 +1,21 @@
 ﻿@using Domain.Constants;
 @using Domain.Models;
+
 @inherits DataComponent<LivestockModel>
 <div class="LivestockProgeny">
-      <nav role="group">
+@*       <nav role="group">
         @foreach(var mate in mates)
         {
             <CascadingValue  Value="mate">
-                <LivestockBadge ShowEmoji="false" CustomButtonStyle="@SelectedMateColor(mate)" OnClick="@(() => ToggleMate(mate))"></LivestockBadge>
+                <LivestockButton ShowEmoji="false" CustomButtonStyle="@SelectedMateColor(mate)" OnClick="@(() => ToggleMate(mate))"></LivestockButton>
             </CascadingValue>
         }
-    </nav>
+    </nav> *@
     <section>
         @foreach (var child in offspring.OrderBy(c => c.MotherId).ThenBy(c => c.FatherId).ThenBy(o => o.Birthdate))
         {
             <CascadingValue Value="child">
-                <LivestockBadge ShowAge="true" ShowEmoji="false" style="@ChildStyle(child)"></LivestockBadge>
+                <LivestockButton OnClick="@(() => nm.NavigateTo($"/Livestock/{child.Id}"))" ShowEmoji="false" ShowAge="true" ShowParents=true ShowFather=@(Livestock?.Gender==GenderConstants.Female) ShowMother=@(Livestock?.Gender==GenderConstants.Male) style="@ChildStyle(child)"></LivestockButton>
             </CascadingValue>
         }
     </section>
