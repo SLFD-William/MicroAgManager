@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 
@@ -27,6 +28,11 @@ namespace FrontEnd.Services
         private static IFrontEndApiServices _api;
         private static ILogger _log;
         private readonly IConfiguration _config;
+
+
+
+        public Dictionary<string, List<FluentTreeItem>> ExpandedTreeNodes { get; set; } = new Dictionary<string, List<FluentTreeItem>>();
+        public Dictionary<string, List<FluentTreeItem>> SelectedTreeNodes { get; set; } = new Dictionary<string, List<FluentTreeItem>>();
 
         public Dictionary<string,List<object>> RowDetailsShowing { get; set; } = new Dictionary<string, List<object>>();
         public Dictionary<string, TabPage?> SelectedTabs { get; set; } = new Dictionary<string, TabPage?>();

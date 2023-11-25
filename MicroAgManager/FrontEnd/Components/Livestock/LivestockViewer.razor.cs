@@ -1,7 +1,5 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Components.Livestock
 {

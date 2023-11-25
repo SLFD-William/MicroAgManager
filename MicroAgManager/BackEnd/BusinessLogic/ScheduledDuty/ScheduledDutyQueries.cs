@@ -1,7 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using Domain.Interfaces;
 using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.BusinessLogic.ScheduledDuty
 {

@@ -1,6 +1,5 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
-using Domain.Interfaces;
 using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

@@ -1,6 +1,4 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.Farm;
-using FrontEnd.Components.Livestock;
 using FrontEnd.Components.LivestockBreed;
 using FrontEnd.Components.LivestockStatus;
 using FrontEnd.Components.Milestone;

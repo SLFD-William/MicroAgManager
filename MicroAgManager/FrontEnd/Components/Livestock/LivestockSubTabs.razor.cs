@@ -1,5 +1,4 @@
 ﻿using Domain.Models;
-using FrontEnd.Components.Farm;
 using FrontEnd.Components.ScheduledDuty;
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;

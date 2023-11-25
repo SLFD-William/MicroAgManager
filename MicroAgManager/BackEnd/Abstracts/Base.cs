@@ -1,5 +1,4 @@
-﻿using Domain.Interfaces;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace BackEnd.Abstracts

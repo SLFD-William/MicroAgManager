@@ -1,6 +1,5 @@
 ﻿using Domain.Abstracts;
 using Domain.Entity;
-using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models

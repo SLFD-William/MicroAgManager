@@ -2,7 +2,6 @@
 using Domain.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
 
 namespace Domain.Models
 {

@@ -2,8 +2,6 @@
 using FrontEnd.Components.Shared;
 using Microsoft.AspNetCore.Components;
 using BackEnd.BusinessLogic.Livestock;
-using FrontEnd.Components.LivestockBreed;
-using FrontEnd.Components.LivestockAnimal;
 using Domain.Constants;
 using FrontEnd.Components.LivestockStatus;
 using Microsoft.EntityFrameworkCore;

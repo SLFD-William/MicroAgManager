@@ -11,6 +11,7 @@ namespace FrontEnd
     {
         public static void AddMicroAgManagementFrontEndServices(this IServiceCollection serviceCollection)
         {
+            serviceCollection.AddDataGridEntityFrameworkAdapter();
             serviceCollection.AddScoped<FrontEndAuthenticationStateProvider>();
             serviceCollection.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<FrontEndAuthenticationStateProvider>());
 
