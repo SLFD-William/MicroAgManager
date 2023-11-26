@@ -21,7 +21,7 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
 
             public override async Task<long> Handle(CreateLivestockBreed request, CancellationToken cancellationToken)
             {
-                var livestockBreed = request.LivestockBreed.Map(new Domain.Entity.LivestockBreed(request.ModifiedBy, request.TenantId)) as LivestockBreed;
+                var livestockBreed = request.LivestockBreed.Map(new LivestockBreed(request.ModifiedBy, request.TenantId)) as LivestockBreed;
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     if (livestockBreed.LivestockAnimal is null)
