@@ -1,5 +1,9 @@
-.LivestockPage{
-    display:grid;
+.LivestockPage {
+    display: grid;
     grid-template-columns: min-content 1fr;
-    grid-gap:0.5em;
+    grid-gap: 0.5em;
+    height: 100%;
+    & ::deep fluent-tree-view{
+        overflow: auto;
+    }
 }

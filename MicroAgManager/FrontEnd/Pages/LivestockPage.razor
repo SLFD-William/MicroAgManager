@@ -14,35 +14,41 @@
 }
 @if (app?.dbContext is not null && livestock == null)
 {
-    <section class="LivestockPage">
-  <FluentTreeView OnExpandedChange="HandleOnExpandedChanged" OnSelectedChange="HandleOnSelectedChanged">
-        @foreach(var animal in app.dbContext.LivestockAnimals.Include(a=>a.Breeds).OrderBy(a=>a.Name))
-        {
-            <FluentTreeItem Text="@animal.Name" Id="@($"{animal.GetEntityName()}:{animal.Id}")" Selected=@IsSelected($"{animal.GetEntityName()}:{animal.Id}")>
-                    <FluentTreeItem Text="Breeds" Id="Breeds:0">
-                    @foreach(var breed in animal.Breeds.OrderBy(b=>b.Name))
-                    {
-                        <FluentTreeItem Text="@breed.Name" Id="@($"{breed.GetEntityName()}:{breed.Id}")">
-                                <FluentTreeItem Text="Varieties" Id="Varieties:0">
-                            @foreach(var variety in breed.Livestocks.Select(v=>v.Variety).Distinct().OrderBy(l=>l))
-                            {
-                                    <FluentTreeItem Text="@variety" Id="@($"Variety:{breed.Id}")" />
-                            }
-                                </FluentTreeItem>
-                                <FluentTreeItem Text="Status" Id="Status:0">
-                                    @foreach (var variety in breed.Livestocks.Select(v => v.CurrentStatus).Distinct().OrderBy(l => l))
-                                    {
-                                        <FluentTreeItem Text="@variety" Id="@($"Status:{breed.Id}")" />
-                                    }
-                                </FluentTreeItem>
-                        </FluentTreeItem>
-                    }
+<section class="LivestockPage">
+    <FluentTreeView OnExpandedChange="HandleOnExpandedChanged" OnSelectedChange="HandleOnSelectedChanged">
+          <FluentTreeItem Text="Animals" Id="Animals:0">
+            @foreach(var animal in app.dbContext.LivestockAnimals.Include(a=>a.Breeds).OrderBy(a=>a.Name))
+            {
+                <FluentTreeItem Text="@animal.Name" Id="@($"{animal.GetEntityName()}:{animal.Id}")" Selected=@IsSelected($"{animal.GetEntityName()}:{animal.Id}")>
+                        <FluentTreeItem Text="Breeds" Id="Breeds:0">
+                        @foreach(var breed in animal.Breeds.OrderBy(b=>b.Name))
+                        {
+                                <FluentTreeItem Text="@($"{breed.EmojiChar} {breed.Name}")" Id="@($"{breed.GetEntityName()}:{breed.Id}")">
+                                    <FluentTreeItem Text="Varieties" Id="Varieties:0">
+                                @foreach(var variety in breed.Livestocks.Select(v=>v.Variety).Distinct().OrderBy(l=>l))
+                                {
+                                        <FluentTreeItem Text="@variety" Id="@($"Variety:{breed.Id}")" />
+                                }
+                                    </FluentTreeItem>
+                                    <FluentTreeItem Text="Status" Id="Status:0">
+                                        @foreach (var variety in breed.Livestocks.Select(v => v.CurrentStatus).Distinct().OrderBy(l => l))
+                                        {
+                                            <FluentTreeItem Text="@variety" Id="@($"Status:{breed.Id}")" />
+                                        }
+                                    </FluentTreeItem>
+                                    <FluentTreeItem Text="Batch Number" Id="BatchNumber:0">
+                                        @foreach (var variety in breed.Livestocks.Select(v => v.BatchNumber).Distinct().OrderBy(l => l))
+                                        {
+                                            <FluentTreeItem Text="@variety" Id="@($"BatchNumber:{breed.Id}")" />
+                                        }
+                                    </FluentTreeItem>
+                            </FluentTreeItem>
+                        }
+                    </FluentTreeItem>
+             </FluentTreeItem>
+            }
                 </FluentTreeItem>
-         </FluentTreeItem>
-        } 
-</FluentTreeView>
-
-
+    </FluentTreeView>
     <FluentDataGrid @ref=livestockGrid TGridItem=LivestockModel Virtualize=true Items="@filteredLivestockQuery()">
         @if(IsColumnVisible(nameof(LivestockAnimalModel).Replace("Model", string.Empty)))
         {
@@ -82,13 +88,19 @@
             </ColumnOptions>
         </PropertyColumn>
         }
-        <PropertyColumn Property="@(p => p.BatchNumber)" Title="Batch Number" Sortable="true">
-            <ColumnOptions>
+            @if (IsColumnVisible("BatchNumber"))
+            {
+                <PropertyColumn Property
+                ="@(p => p.BatchNumber)" Title
+                ="Batch Number" Sortable
+                ="true">
+                    <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="batchNumberFilter" @bind:event="oninput" placeholder="Batch Number..." />
                 </div>
             </ColumnOptions>
         </PropertyColumn>
+        }
         <PropertyColumn Property="@(p => p.Gender)" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
@@ -124,7 +136,7 @@
         <PropertyColumn Property="@(p => p.BornDefective)" Sortable="true" />
         <PropertyColumn Property="@(p => p.BirthDefect)" Title="Defect Description" Sortable="true" />
     </FluentDataGrid>
-    </section>
+</section>
 }
 @code {
     @inject ApplicationStateProvider app
@@ -198,10 +210,8 @@
         InvokeAsync(RefreshLivestock);
     }
 
-    
     private LivestockModel livestock;
     private long? _livestockId;
-
     protected virtual void DbSync_OnUpdate() => InvokeAsync(RefreshLivestock);
     protected override void OnInitialized()
     {
@@ -238,7 +248,9 @@
         var filteredStatus = TreeFilteredColumns("Status", true);
         if (filteredStatus.Any())
             query = query.Where(p => filteredStatus.Contains(p.Status.Status));
-
+        var filteredBatchNumber = TreeFilteredColumns("BatchNumber", true);
+        if (filteredBatchNumber.Any())
+            query = query.Where(p => filteredBatchNumber.Contains(p.BatchNumber));
         if(!string.IsNullOrEmpty(animalNameFilter))
             query = query.Where(p => p.Breed.Animal.Name.Contains(animalNameFilter));
         if (!string.IsNullOrEmpty(breedNameFilter))
@@ -259,9 +271,6 @@
         return query;
         
     }
-
-    
-
     private async Task RefreshLivestock()
     {
 
@@ -275,7 +284,6 @@
 
         StateHasChanged();
     }
-
     public virtual ValueTask DisposeAsync()
     {
         //nm.LocationChanged -= HandleLocationChanged;

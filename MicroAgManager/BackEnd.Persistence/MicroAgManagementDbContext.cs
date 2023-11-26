@@ -1,17 +1,15 @@
 ﻿using Domain.Entity;
 using Domain.Interfaces;
-using Duende.IdentityServer.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Persistence
 {
-    public class MicroAgManagementDbContext : ApiAuthorizationDbContext<ApplicationUser>, IMicroAgManagementDbContext
+    public class MicroAgManagementDbContext : IdentityDbContext<ApplicationUser>, IMicroAgManagementDbContext
     {
         private DbContextOptions<MicroAgManagementDbContext> options;
 
-        public MicroAgManagementDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
+        public MicroAgManagementDbContext(DbContextOptions options) : base(options)
         {
         }
         public DbSet<Tenant> Tenants { get; set; }
