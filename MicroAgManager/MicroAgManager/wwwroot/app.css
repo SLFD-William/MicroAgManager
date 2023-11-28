@@ -10278,16 +10278,17 @@ readers do not read off random characters that represent icons */
 :root {
   --media-max-width: 640.98px;
   --media-min-width: 641px;
-  --dark-brown: #453822;
-  --light-brown: #997D4D;
+  --dark-brand: #463923;
+  --medium-brand: #997D4D;
+  --light-brand: #FFF6E5;
   --green: #5CBA49;
   --red: #BA4036;
   --yellow: #E9FF57;
-  --typography-primary-color: #292114;
+  --typography-primary-color: #1A150C;
   --typography-primary-bg-color: #F7FDFF;
   --typography-secondary-color: #F7FDFF;
-  --nav-bg-color: var(--light-brown);
-  --logo-bg-color: var(--dark-brown);
+  --nav-bg-color: var(--medium-brand);
+  --logo-bg-color: var(--medium-brand);
 }
 
 html, body {
