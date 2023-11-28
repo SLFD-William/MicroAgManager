@@ -1,3 +1,5 @@
+using Domain.Entity;
+using Domain.Interfaces;
 using Domain.ValueObjects;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -15,6 +17,7 @@ namespace MicroAgManager.Components.Account
     {
         private readonly PersistentComponentState state;
         private readonly IdentityOptions options;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly PersistingComponentStateSubscription subscription;
 
@@ -22,11 +25,11 @@ namespace MicroAgManager.Components.Account
 
         public PersistingServerAuthenticationStateProvider(
             PersistentComponentState persistentComponentState,
-            IOptions<IdentityOptions> optionsAccessor)
+            IOptions<IdentityOptions> optionsAccessor, UserManager<ApplicationUser> userManager)
         {
             state = persistentComponentState;
             options = optionsAccessor.Value;
-
+            _userManager = userManager;
             AuthenticationStateChanged += OnAuthenticationStateChanged;
             subscription = state.RegisterOnPersisting(OnPersistingAsync, RenderMode.InteractiveWebAssembly);
         }
@@ -50,9 +53,9 @@ namespace MicroAgManager.Components.Account
             {
                 var userId = principal.FindFirst(options.ClaimsIdentity.UserIdClaimType)?.Value;
                 var email = principal.FindFirst(options.ClaimsIdentity.EmailClaimType)?.Value;
-                var tenantId = principal.FindFirst("TenantId")?.Value;
+                var tenantId =(await _userManager.FindByIdAsync(userId))?.TenantId.ToString();
 
-                if (userId != null && email != null)
+                if (userId != null && email != null && tenantId != null)
                 {
                     state.PersistAsJson(nameof(UserInfo), new UserInfo
                     {

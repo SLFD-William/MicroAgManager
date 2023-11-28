@@ -9,7 +9,7 @@ namespace Persistence
     {
         private DbContextOptions<MicroAgManagementDbContext> options;
 
-        public MicroAgManagementDbContext(DbContextOptions options) : base(options)
+        public MicroAgManagementDbContext(DbContextOptions<MicroAgManagementDbContext> options) : base(options)
         {
         }
         public DbSet<Tenant> Tenants { get; set; }

@@ -14,5 +14,6 @@ namespace Domain.Entity
         public virtual ICollection<IdentityUserToken<string>>? Tokens { get; set; }
         public virtual ICollection<IdentityUserRole<string>>? UserRoles { get; set; }
         [Required]public Guid TenantId { get; set ; }
+
     }
 }

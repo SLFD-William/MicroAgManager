@@ -10,7 +10,7 @@ namespace Domain.Models
         [ForeignKey(nameof(Mother))] public long? MotherId { get; set; }
         [ForeignKey(nameof(Father))] public long? FatherId { get; set; }
         [Required][ForeignKey(nameof(Status))] public long? StatusId { get; set; }
-        [ForeignKey(nameof(LandPlotModel))] public long? LocationId { get; set; }
+        [ForeignKey(nameof(Location))] public long? LocationId { get; set; }
         [Required][ForeignKey(nameof(Breed))]  public long LivestockBreedId { get; set; }
         [Required] [MaxLength(40)]public string Name { get; set; }
         [Required][MaxLength(40)] public string BatchNumber { get; set; }
@@ -30,6 +30,7 @@ namespace Domain.Models
         public virtual LivestockModel? Father { get; set; }
         public virtual LivestockStatusModel? Status { get; set; }
         public virtual LivestockBreedModel Breed { get; set; }
+        public virtual LandPlotModel? Location { get; set; }
 
         [NotMapped]public string CurrentStatus => Status?.Status ?? string.Empty;
         [NotMapped]public string BreedName => Breed?.Name ?? string.Empty;

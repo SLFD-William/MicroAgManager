@@ -20,7 +20,7 @@ namespace BackEnd.Abstracts
             if (query is null)
                 throw new ArgumentNullException(nameof(query));
             
-            query = query.Where(t => t.TenantId == TenantId).OrderByDescending(_ => _.ModifiedOn);
+            query = query.Where(t => t.TenantId == TenantId).OrderBy(_ => _.CreatedOn);
 
             if (Id.HasValue)
             {

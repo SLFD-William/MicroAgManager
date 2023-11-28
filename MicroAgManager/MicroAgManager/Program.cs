@@ -1,5 +1,12 @@
+using BackEnd.Infrastructure;
 using Domain.Entity;
+using Domain.Interfaces;
+using Domain.Logging;
+using FrontEnd.Persistence;
+using MediatR;
 using MicroAgManager;
+using MicroAgManager.Client;
+using MicroAgManager.Client.Data;
 using MicroAgManager.Client.Pages;
 using MicroAgManager.Components;
 using MicroAgManager.Components.Account;
@@ -14,6 +21,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+});
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
+
+
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -25,17 +39,28 @@ builder.Services.AddAuthentication(options =>
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
+    .AddBearerToken()
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<MicroAgManagementDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddLogging(bu =>
+{
+    bu.AddConfiguration(builder.Configuration.GetSection("Logging"));
+    bu.AddProvider(new DatabaseLoggingProvider(builder.Services.BuildServiceProvider().GetService<MicroAgManagementDbContext>(), builder.Configuration));
+});
+builder.Services.AddSingleton(typeof(ILogger), typeof(Logger<Log>));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<MicroAgManagementDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
@@ -46,9 +71,11 @@ builder.Services.AddScoped(sp =>
     {
         BaseAddress = uri
     });
-
+builder.Services.AddDbContextFactory<FrontEndDbContext>(
+    options => options.UseSqlite($"Filename={DataSynchronizer.SqliteDbFilename}")
+    );
+builder.Services.AddScoped<ClientApplicationStateProvider>();
 #endregion
-
 
 var app = builder.Build();
 
@@ -77,4 +104,11 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 BusinessLogicAPI.MapTest(app);
+BusinessLogicAPI.MapAnciliary(app);
+BusinessLogicAPI.MapFarm(app);
+BusinessLogicAPI.MapJoins(app);
+BusinessLogicAPI.MapLivestock(app);
+BusinessLogicAPI.MapScheduling(app);
+
+
 app.Run();

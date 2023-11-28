@@ -34,7 +34,7 @@ namespace MicroAgManager
                 return Results.BadRequest();
             try
             {
-                query.TenantId = TenantId(request);
+                query.TenantId = Guid.Parse(request.HttpContext.User.FindFirst("TenantId")?.Value);
                 return Results.Ok(await mediator.Send(query));
             }
             catch (Exception ex)
@@ -48,8 +48,8 @@ namespace MicroAgManager
                 return Results.BadRequest();
             try
             {
-                command.TenantId = TenantId(request);
-                command.ModifiedBy = UserId(request);
+                command.TenantId = Guid.Parse(request.HttpContext.User.FindFirst("TenantId")?.Value);
+                command.ModifiedBy = Guid.Parse(request.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 return Results.Ok(await mediator.Send(command));
             }
             catch (Exception ex)
@@ -57,30 +57,13 @@ namespace MicroAgManager
                 return Results.BadRequest(ex);
             }
         }
-        private static Guid UserId(HttpRequest request)
-        {
-            var headerToken = ((string)request.Headers["Authorization"]).Replace("Bearer ", string.Empty);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(headerToken);
-            var user = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
-            return Guid.Parse(user.Claims.First(x => x.Type == "sub").Value);
-        }
-        private static Guid TenantId(HttpRequest request)
-        {
-            var headerToken = ((string)request.Headers["Authorization"]).Replace("Bearer ", string.Empty);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.ReadJwtToken(headerToken);
-            var user = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
-            return Guid.Parse(user.Claims.First(x => x.Type == "TenantId").Value);
-        }
-
         public static void MapTest(WebApplication app)
         {
             app.MapGet("/api/Test", () => "Hello World Test!").RequireAuthorization();
             
         }
 
-            public static void MapAnciliary(WebApplication app)
+        public static void MapAnciliary(WebApplication app)
         {
             app.MapPost("/api/GetRegistrars", async (GetRegistrarList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
             app.MapPost("/api/CreateRegistrar", async (CreateRegistrar command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();

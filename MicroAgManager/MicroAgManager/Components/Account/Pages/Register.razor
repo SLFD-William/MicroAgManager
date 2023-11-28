@@ -3,9 +3,11 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
+@using Domain.Interfaces
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using Domain.Entity
+@using System.Security.Claims
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
@@ -14,7 +16,8 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-
+@inject RoleManager<IdentityRole> RoleManager
+@inject IMicroAgManagementDbContext context
 <PageTitle>Register</PageTitle>
 
 <h1>Register</h1>
@@ -67,7 +70,18 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = CreateUser();
+        var newUser = Guid.NewGuid();
+        var newTenant = newUser;
+
+        ApplicationUser user = new()
+            {
+                Id = newUser.ToString().ToUpperInvariant(),
+                Email = Input.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = Input.Email,
+                TenantId = newTenant,
+            };
+        
 
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
@@ -81,6 +95,14 @@
         }
 
         Logger.LogInformation("User created a new account with password.");
+
+        if (!await RoleManager.RoleExistsAsync("TenantAdmin"))
+            await RoleManager.CreateAsync(new IdentityRole("TenantAdmin"));
+
+        var tenant = new Tenant(newTenant) { GuidId = newTenant, Name = Input.Email, TenantUserAdminId = newTenant };
+        context.Tenants.Add(tenant);
+        await UserManager.AddToRoleAsync(user, "TenantAdmin");
+
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
@@ -98,7 +120,8 @@
                 new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
         }
 
-        await SignInManager.SignInAsync(user, isPersistent: false);
+        var customClaims = new[] { new Claim("TenantId", user.TenantId.ToString()) };
+        await SignInManager.SignInWithClaimsAsync(user, isPersistent: false, customClaims);
         RedirectManager.RedirectTo(ReturnUrl);
     }
 

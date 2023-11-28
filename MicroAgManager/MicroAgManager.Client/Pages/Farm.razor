@@ -1,13 +1,18 @@
 ﻿@page "/farm"
+
+@inject ClientApplicationStateProvider app
 @rendermode InteractiveWebAssembly
-@attribute [Authorize]
+<PageTitle>Farm</PageTitle>
 
-@using Microsoft.AspNetCore.Authorization
-
-Farm Page
-
+<h1>Farm</h1>
 
 
 @code {
-
+    protected override void OnInitialized()
+    {
+        var test = app.IsDbInitialized;
+        if (test)
+        {
+            var i = 1;               }
+    }
 }

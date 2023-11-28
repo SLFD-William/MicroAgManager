@@ -1,6 +1,5 @@
 ﻿@page "/counter"
-@using System.Net.Http
-@inject HttpClient Http
+@inject ClientApplicationStateProvider app
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Counter</PageTitle>
@@ -8,21 +7,52 @@
 <h1>Counter</h1>
 
 <p role="status">Current count: @currentCount</p>
+<p role="status">API Response: @currentCall</p>
+<p role="status">App State: @app?.AppStaticInstanceName</p>
+<p role="status">App State: @app?.AppInstanceName</p>
+<p role="status">DB Created: @currentDb </p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 <button class="btn btn-primary" @onclick="CallApi">Call API</button>
+@if (_db != null)
+{
+    <button class="btn btn-primary" @onclick="GetDbContext">Get Db Context</button>
+}
+
 
 @code {
     private int currentCount = 0;
     private string currentCall="Nope";
-    private async void CallApi()
+    private string currentDb = "Nope";
+    private FrontEnd.Persistence.FrontEndDbContext _db;
+    private string haveApp = "Nope";
+    private string haveInstantiatedApp = "Nope";
+
+    private void CallApi() => InvokeAsync(UpdateResp);
+    private void GetDbContext() => InvokeAsync(GetDbContextAsync);
+    private async Task GetDbContextAsync()
     {
 
-        var resp = await Http.GetStringAsync("api/Test");
-        Console.WriteLine(resp);
+        currentDb = _db.Livestocks.Count().ToString();
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _db = await app.GetDbContextAsync();
+            StateHasChanged();
+        }
+    }
+    private async Task UpdateResp()
+    {
+
+        currentCall = await app.IsServerAlive();
+        currentCount++;
+        StateHasChanged();
     }
     private void IncrementCount()
     {
+        currentCall = "Nope";
         currentCount++;
     }
 }

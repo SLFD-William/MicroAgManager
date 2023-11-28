@@ -3,6 +3,7 @@ using System;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    partial class FrontEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128212627_Clean")]
+    partial class Clean
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -727,6 +730,9 @@ namespace FrontEnd.Persistence.Migrations
                     b.Property<bool>("InMilk")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long?>("LandPlotModelId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("LivestockBreedId")
                         .HasColumnType("INTEGER");
 
@@ -760,9 +766,9 @@ namespace FrontEnd.Persistence.Migrations
 
                     b.HasIndex("FatherId");
 
-                    b.HasIndex("LivestockBreedId");
+                    b.HasIndex("LandPlotModelId");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("LivestockBreedId");
 
                     b.HasIndex("MotherId");
 
@@ -1426,15 +1432,15 @@ namespace FrontEnd.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("FatherId");
 
+                    b.HasOne("Domain.Models.LandPlotModel", null)
+                        .WithMany("Livestocks")
+                        .HasForeignKey("LandPlotModelId");
+
                     b.HasOne("Domain.Models.LivestockBreedModel", "Breed")
                         .WithMany("Livestocks")
                         .HasForeignKey("LivestockBreedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Domain.Models.LandPlotModel", "Location")
-                        .WithMany("Livestocks")
-                        .HasForeignKey("LocationId");
 
                     b.HasOne("Domain.Models.LivestockModel", "Mother")
                         .WithMany()
@@ -1449,8 +1455,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.Navigation("Breed");
 
                     b.Navigation("Father");
-
-                    b.Navigation("Location");
 
                     b.Navigation("Mother");
 
