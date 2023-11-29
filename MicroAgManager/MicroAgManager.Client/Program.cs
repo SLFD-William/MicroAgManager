@@ -6,15 +6,12 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+builder.Services.AddHttpClient();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
-
-builder.Services.AddDbContextFactory<FrontEndDbContext>(
-    options => options.UseSqlite($"Filename={DataSynchronizer.SqliteDbFilename}")
-    );
-builder.Services.AddScoped<ClientApplicationStateProvider>();
+ClientServices.AddSharedClientServices(builder.Services);
 
 await builder.Build().RunAsync();

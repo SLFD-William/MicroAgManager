@@ -1,5 +1,6 @@
 ﻿@page "/counter"
 @inject ClientApplicationStateProvider app
+@inject IJSRuntime jsRuntime
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Counter</PageTitle>
@@ -39,7 +40,7 @@
     {
         if (firstRender)
         {
-            _db = await app.GetDbContextAsync();
+            _db = await app.InitializeDbContextAsync(jsRuntime);
             StateHasChanged();
         }
     }

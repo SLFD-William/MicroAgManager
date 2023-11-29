@@ -1,6 +1,5 @@
 using BackEnd.Infrastructure;
 using Domain.Entity;
-using Domain.Interfaces;
 using Domain.Logging;
 using FrontEnd.Persistence;
 using MediatR;
@@ -18,6 +17,9 @@ using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
+
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
@@ -39,7 +41,6 @@ builder.Services.AddAuthentication(options =>
         options.DefaultScheme = IdentityConstants.ApplicationScheme;
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
-    .AddBearerToken()
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -60,22 +61,9 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-
-
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-#region Client Services
-var uri = new Uri(builder.Configuration.GetValue<string>("BaseURL"));
-builder.Services.AddScoped(sp =>
-    new HttpClient
-    {
-        BaseAddress = uri
-    });
-builder.Services.AddDbContextFactory<FrontEndDbContext>(
-    options => options.UseSqlite($"Filename={DataSynchronizer.SqliteDbFilename}")
-    );
-builder.Services.AddScoped<ClientApplicationStateProvider>();
-#endregion
+ClientServices.AddSharedClientServices(builder.Services);
 
 var app = builder.Build();
 

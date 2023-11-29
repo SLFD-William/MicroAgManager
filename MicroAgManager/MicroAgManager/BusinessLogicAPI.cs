@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using BackEnd.Abstracts;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using BackEnd.BusinessLogic.Tenant;
 using BackEnd.BusinessLogic.FarmLocation;

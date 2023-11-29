@@ -20,19 +20,23 @@ namespace MicroAgManager.Client.Data
     }
     public class APIService: IAPIService
     {
-        IConfiguration _config;
-        private static HttpClient _http;
+        private readonly IConfiguration _config;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly Uri _baseURL;
         private Dictionary<string, Tuple<WeatherData, DateTime>> weatherTracking = new Dictionary<string, Tuple<WeatherData, DateTime>>();
+        
+        
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
             ReferenceHandler = ReferenceHandler.Preserve,
             PropertyNameCaseInsensitive = true,
             IncludeFields = true
         };
-        public APIService(HttpClient http, IConfiguration config)
+        public APIService(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
-            _http = http;
+            _httpClientFactory = httpClientFactory;
             _config = config;
+            _baseURL = new Uri(_config.GetValue<string>("BaseURL"));
         }
 
         public async Task<BingLocationResponse?> GetClosestGeoLocation(FarmLocationModel farm)
@@ -40,13 +44,13 @@ namespace MicroAgManager.Client.Data
             var key = _config["BingMapsAPIKey"];
             var queryURL = _config["BingMapsLocationQueryURL"];
             string url = string.Format(queryURL, farm.Country, farm.State, farm.Zip, farm.City, farm.StreetAddress, 1, key);
-            var response = await _http.GetAsync(url);
+            var response = await _httpClientFactory.CreateClient().GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true
             };
-            return System.Text.Json.JsonSerializer.Deserialize<BingLocationResponse>(json, options);
+            return JsonSerializer.Deserialize<BingLocationResponse>(json, options);
         }
 
         public async Task<BingLocationResponse?> GetClosestAddress(double latitude, double longitude)
@@ -55,13 +59,13 @@ namespace MicroAgManager.Client.Data
             var queryURL = _config["BingMapsLatLongQueryURL"];
             string url = string.Format(queryURL, latitude, longitude, key);
 
-            var response = await _http.GetAsync(url);
+            var response = await _httpClientFactory.CreateClient().GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true
             };
-            return System.Text.Json.JsonSerializer.Deserialize<BingLocationResponse>(json, options);
+            return JsonSerializer.Deserialize<BingLocationResponse>(json, options);
         }
         public async Task<WeatherData> GetWeather(double latitude, double longitude, bool force = false)
         {
@@ -75,13 +79,13 @@ namespace MicroAgManager.Client.Data
             var queryURL = _config["WeatherQueryURL"];
             string url = string.Format(queryURL, latitude, longitude, key);
 
-            var response = await _http.GetAsync(url);
+            var response = await _httpClientFactory.CreateClient().GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions()
             {
                 PropertyNameCaseInsensitive = true
             };
-            var currentWeather = new Tuple<WeatherData, DateTime>(System.Text.Json.JsonSerializer.Deserialize<WeatherData>(json, options), DateTime.Now);
+            var currentWeather = new Tuple<WeatherData, DateTime>(JsonSerializer.Deserialize<WeatherData>(json, options), DateTime.Now);
             if (!weatherTracking.ContainsKey(weatherKey)) weatherTracking.Add(weatherKey, currentWeather);
             weatherTracking[weatherKey] = currentWeather;
             return currentWeather.Item1;
@@ -127,7 +131,8 @@ namespace MicroAgManager.Client.Data
             requestMsg.Content = content;
             for (int i = 0; i < 2; i++)
             {
-                response = await _http.SendAsync(requestMsg);
+            
+                response = await httpClient().SendAsync(requestMsg);
                 
                 if (response.StatusCode == HttpStatusCode.OK) break;
                 if (response.StatusCode != HttpStatusCode.Unauthorized)
@@ -142,6 +147,12 @@ namespace MicroAgManager.Client.Data
             //}
             return response;
         }
-        public async Task<string> TestApiResult()=>await _http.GetStringAsync("api/Test");
+        private HttpClient httpClient()
+        {
+            var http = _httpClientFactory.CreateClient();
+                http.BaseAddress = _baseURL;
+            return http;
+        }
+        public async Task<string> TestApiResult()=> await httpClient().GetStringAsync("api/Test");
     }
 }
