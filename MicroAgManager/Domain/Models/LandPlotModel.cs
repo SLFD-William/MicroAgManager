@@ -10,8 +10,9 @@ namespace Domain.Models
     public class LandPlotModel : BaseModel
     {
         [Required]
-        [ForeignKey(nameof(FarmLocationModel))]
+        [ForeignKey(nameof(Farm))]
         public long FarmLocationId { get; set; }
+        public virtual FarmLocationModel Farm { get; set; }
         [Required] public string Name { get; set; }
         [Required] public string Description { get; set; }
         [Precision(18, 3)] public decimal Area { get; set; } = 0M;

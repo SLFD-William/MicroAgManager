@@ -1,6 +1,5 @@
 ﻿@page "/counter"
 @inject ClientApplicationStateProvider app
-@inject IJSRuntime jsRuntime
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Counter</PageTitle>
@@ -25,24 +24,20 @@
     private int currentCount = 0;
     private string currentCall="Nope";
     private string currentDb = "Nope";
-    private FrontEnd.Persistence.FrontEndDbContext _db;
+    private Domain.Context.FrontEndDbContext _db;
     private string haveApp = "Nope";
     private string haveInstantiatedApp = "Nope";
 
     private void CallApi() => InvokeAsync(UpdateResp);
     private void GetDbContext() => InvokeAsync(GetDbContextAsync);
+    protected async override Task OnInitializedAsync()
+    {
+        _db = await app.GetDbContextAsync();
+    }
     private async Task GetDbContextAsync()
     {
 
         currentDb = _db.Livestocks.Count().ToString();
-    }
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _db = await app.InitializeDbContextAsync(jsRuntime);
-            StateHasChanged();
-        }
     }
     private async Task UpdateResp()
     {

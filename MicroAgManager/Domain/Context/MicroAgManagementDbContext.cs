@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Persistence
+namespace Domain.Context
 {
     public class MicroAgManagementDbContext : IdentityDbContext<ApplicationUser>, IMicroAgManagementDbContext
     {

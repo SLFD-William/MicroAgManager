@@ -5,6 +5,12 @@
   grid-template-rows: min-content 1fr min-content;
 }
 
+main {
+  max-width: 650px;
+  width: fit-content;
+  margin-inline: auto;
+}
+
 /*.sidebar {
 
 }*/

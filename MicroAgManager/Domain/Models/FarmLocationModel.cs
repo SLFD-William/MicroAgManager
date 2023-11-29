@@ -17,6 +17,7 @@ namespace Domain.Models
         public string? Country { get; set; }
         [MaxLength(2)]
         public string? CountryCode { get; set; }
+        public virtual ICollection<LandPlotModel> Plots { get; set; } = new List<LandPlotModel>();
         public static FarmLocationModel? Create(FarmLocation? farm)
         {
             if (farm == null) return null;

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEnd.Persistence
 {

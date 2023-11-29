@@ -1,9 +1,6 @@
-using FrontEnd.Persistence;
 using MicroAgManager.Client;
-using MicroAgManager.Client.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

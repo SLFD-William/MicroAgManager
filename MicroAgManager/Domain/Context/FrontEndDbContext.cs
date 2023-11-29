@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FrontEnd.Persistence
+namespace Domain.Context
 {
     public class FrontEndDbContext : DbContext, IFrontEndDbContext
     {
@@ -35,10 +35,6 @@ namespace FrontEnd.Persistence
         public DbSet<MeasurementModel> Measurements { get; set; }
         public DbSet<TreatmentModel> Treatments { get; set; }
         public DbSet<TreatmentRecordModel> TreatmentRecords { get; set; }
-
-
-
-
         public DbSet<UnitModel> Units { get; set; }
     }
 }

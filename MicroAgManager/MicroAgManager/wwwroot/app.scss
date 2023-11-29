@@ -6,16 +6,24 @@
     --media-max-width: 640.98px;
     --media-min-width: 641px;
     --dark-brand: #463923;
-    --medium-brand: #997D4D;
-    --light-brand: #FFF6E5;
-    --green: #5CBA49;
-    --red: #BA4036;
-    --yellow: #E9FF57;
+    --medium-brand: #6B5C44;
+    --light-brand: #917D40;
+    --pale-brand: #E4D2B7;
+    --green: #698D69;
+    --red: #B24841;
+    --yellow: #D8CD5F;
+    --feminine: #F5DADF;
+    --masculine: #A4DBE8;
     --typography-primary-color: #1A150C;
-    --typography-primary-bg-color: #F7FDFF;
-    --typography-secondary-color: #F7FDFF;
+    --typography-primary-bg-color: #E6F4F1;
+    --typography-primary-alternate-bg-color: #DFE0DF;
+    --typography-secondary-color: var(--typography-primary-bg-color);
+    --typography-secondary-bg-color: var(--typography-primary-color);
+    --typography-secondary-alternate-bg-color: var(--dark-brand);
     --nav-bg-color: var(--medium-brand);
-    --logo-bg-color: var(--medium-brand);
+    --logo-bg-color: var(--dark-brand);
+    --nav-gradient-start-color: var(--light-brand);
+    --nav-gradient-end-color: var(--pale-brand);
 }
 
 
@@ -27,19 +35,39 @@ height: 100vh;
     background-color: var(--typography-primary-bg-color);
     color: var(--typography-primary-color);
 }
+form {
+    display: grid;
+    grid-gap: .5rem;
+
+    grid-template-columns: repeat( auto-fill, minmax(30ch, 1fr) );
+
+    & hr {
+        display: none;
+    }
+
+    & h2 {
+        grid-column: 1/-1;
+    }
+
+    & div:has(p) {
+        display:flex;
+        gap:1em;
+        grid-column: 1/-1;
+    }
+}
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--medium-brand);
 }
 
 .btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    color: var(--typography-secondary-color);
+    background-color: var(--medium-brand);
+    border-color: var(--dark-brand);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem var(--pale-brand), 0 0 0 0.25rem var(--dark-brand);
 }
 
 .content {

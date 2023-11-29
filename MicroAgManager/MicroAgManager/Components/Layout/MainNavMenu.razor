@@ -3,43 +3,61 @@
 @inject NavigationManager NavigationManager
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-<div class="MainNavMenu" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav>
-        <a class="brand" href="">MicroAgManager</a>
-        <div class="spanner"></div>
-        <AuthorizeView>
-            <Authorized>
-                <NavLink href="/Home" Match="NavLinkMatch.Prefix">
-                    @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Home
-                </NavLink>
-                <NavLink href="/Counter" Match="NavLinkMatch.Prefix">
-                    @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Counter
-                </NavLink>
-                <NavLink href="/Farm" Match="NavLinkMatch.Prefix">
-                    @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Farm
-                </NavLink>
-                <NavLink href="Account/Manage">
-                    @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ @context.User.Identity?.Name
-                </NavLink>
-                <form action="Account/Logout" method="post">
-                    <AntiforgeryToken />
-                    <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                    <button type="submit">
-                        @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Logout
-                    </button>
-                </form>
-            </Authorized>
-            <NotAuthorized>
-                <NavLink href="Account/Register">
-                    @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Register
-                </NavLink>
-                <NavLink href="Account/Login">
-                    @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Login
-                </NavLink>
-            </NotAuthorized>
-        </AuthorizeView>
+
+    <nav class="MainNavMenu" onclick="document.querySelector('.navbar-toggler').click()">
+        <ul>
+            <li>
+                <a class="brand" href="">MicroAgManager</a>
+            </li>
+        <li class="spanner"></li>
+            <AuthorizeView>
+                <Authorized>
+                    <li>
+                        <NavLink href="/Home" Match="NavLinkMatch.Prefix">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Home
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink href="/Counter" Match="NavLinkMatch.Prefix">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Counter
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink href="/Farm" Match="NavLinkMatch.Prefix">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Farm
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink href="Account/Manage">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ @context.User.Identity?.Name
+                        </NavLink>
+                    </li>
+                    <li>
+                        <form action="Account/Logout" method="post">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                            <button type="submit">
+                                @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Logout
+                            </button>
+                        </form>
+                    </li>
+                </Authorized>
+                <NotAuthorized>
+                    <li>
+                    <NavLink href="@(NavigationManager.GetUriWithQueryParameters("/Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = "/Home" }))">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Register
+                        </NavLink>
+                    </li>
+                    <li>
+                    <NavLink href="@(NavigationManager.GetUriWithQueryParameters("/Account/Login", new Dictionary<string, object?> { ["ReturnUrl"] = "/Home" }))">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Login
+                        </NavLink>
+                    </li>
+                </NotAuthorized>
+            </AuthorizeView>
+        </ul>
     </nav>
-</div>
+
 
 @code {
     private string? currentUrl;

@@ -1,18 +1,18 @@
 using BackEnd.Infrastructure;
+using Domain.Context;
 using Domain.Entity;
+using Domain.Interfaces;
 using Domain.Logging;
-using FrontEnd.Persistence;
 using MediatR;
 using MicroAgManager;
 using MicroAgManager.Client;
-using MicroAgManager.Client.Data;
 using MicroAgManager.Client.Pages;
 using MicroAgManager.Components;
 using MicroAgManager.Components.Account;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +44,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<MicroAgManagementDbContext>(options =>
+builder.Services.AddDbContext<IMicroAgManagementDbContext,MicroAgManagementDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddLogging(bu =>
@@ -57,12 +57,13 @@ builder.Services.AddSingleton(typeof(ILogger), typeof(Logger<Log>));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MicroAgManagementDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
+builder.Services.AddTransient<IClaimsTransformation, ApiClaimsTransformation>();
 ClientServices.AddSharedClientServices(builder.Services);
 
 var app = builder.Build();

@@ -1,52 +1,58 @@
 .MainNavMenu {
     width: 100%;
+    display: flex;
     padding-block: .25rem;
-    background-image: linear-gradient(90deg, var(--medium-brand) 0%, var(--light-brand) 100%);
+    background-image: linear-gradient(90deg, var(--nav-gradient-start-color) 0%, var(--nav-gradient-end-color) 100%);
 
 
-    & ::deep button {
-        background-color: transparent;
-        border: none;
-        padding: unset;
-        font: inherit;
-    }
-
-    & ::deep a, & ::deep button {
-        white-space: nowrap;
-        text-decoration: none;
-        color: var(--typography-primary-color);
-    }
-
-    & ::deep a:hover, & ::deep button:hover {
-        text-decoration: underline;
-    }
-
-    & ::deep a.active, & ::deep button.active {
-        text-decoration: underline;
-    }
-
-    & ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-decoration: none;
-        background-color: var(--logo-bg-color);
-        border-radius: 1rem;
-        font-size: 1.5rem;
-        padding: 0.5rem 1rem;
-    }
-
-    & > nav {
-        width: calc(100% - 1rem);
+    & > ul {
+        width: 100%;
+        padding-inline: 1rem;
         display: inline-flex;
         -webkit-justify-content: space-between;
         justify-content: space-between;
         -webkit-align-items: center;
         align-items: center;
         gap: 1rem;
-
+        list-style-type: none; /* Remove bullets */
+        margin: 0; /* Remove margins */
 
         & > .spanner {
             flex-grow: 1;
+        }
+
+        & ::deep button {
+            background-color: transparent;
+            border: none;
+            padding: unset;
+            font: inherit;
+        }
+
+        & ::deep li a, & ::deep li button {
+            white-space: nowrap;
+            text-decoration: none;
+            color: var(--typography-primary-color);
+        }
+
+        & ::deep li a:hover, & ::deep li button:hover {
+            text-decoration: underline;
+        }
+
+        & ::deep li a.active, & ::deep li button.active {
+            text-decoration: underline;
+        }
+
+        & ::deep li:first-child {
+            & a {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-decoration: none;
+                color: var(--typography-secondary-color);
+                background-color: var(--logo-bg-color);
+                border-radius: 1rem;
+                font-size: 1.5rem;
+                padding: 0.5rem 1rem;
+            }
         }
     }
 }
