@@ -3,3 +3,11 @@
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Home</PageTitle>
+@if (_app.Initialized)
+{
+    <span>Application Ready </span>
+}
+else
+{
+    <span>Initializing application </span>
+}

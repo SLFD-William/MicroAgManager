@@ -10307,6 +10307,31 @@ html, body {
   color: var(--typography-primary-color);
 }
 
+.quickgrid[theme=microagmanager] {
+  color: var(--typography-primary-color);
+  background-color: var(--light-brand);
+  width: 75vw;
+}
+.quickgrid[theme=microagmanager] button.col-title:hover, .quickgrid[theme=microagmanager] .col-options-button:hover {
+  background-color: var(--light-brand);
+}
+.quickgrid[theme=microagmanager] button.col-title:active, .quickgrid[theme=microagmanager] .col-options-button:active {
+  background-color: var(--dark-brand);
+}
+.quickgrid[theme=microagmanager] .col-title, .quickgrid[theme=microagmanager] .col-header-content > button {
+  color: var(--typography-secondary-color);
+  background-color: var(--medium-brand);
+}
+.quickgrid[theme=microagmanager] .col-title .sort-indicator, .quickgrid[theme=microagmanager] .col-header-content > button .sort-indicator {
+  color: var(--typography-secondary-color);
+}
+.quickgrid[theme=microagmanager] tr:nth-child(odd) {
+  background-color: var(--typography-primary-bg-color);
+}
+.quickgrid[theme=microagmanager] tr:nth-child(even) {
+  background-color: var(--typography-primary-alternate-bg-color);
+}
+
 .AccountLayout {
   max-width: 650px;
   margin-inline: auto;

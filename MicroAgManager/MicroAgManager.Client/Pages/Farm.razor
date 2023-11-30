@@ -9,7 +9,7 @@
 <PageTitle>Farm</PageTitle>
 @if (_app.Initialized)
 { 
-<QuickGrid @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true ItemsProvider="@LoadFarm">
+    <QuickGrid Theme="microagmanager" @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true ItemsProvider="@LoadFarm">
     <PropertyColumn Property="@(p => p.Name)" Title="Farm" Sortable="true">
         <ColumnOptions>
             <div class="search-box">

@@ -4,12 +4,12 @@
 @using Domain.Models
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
-
+<div class="Livestock">
 
 <PageTitle>Livestock</PageTitle>
 @if (_app.Initialized)
 {
-    <QuickGrid @ref=livestockGrid TGridItem=LivestockModel Virtualize=true ItemsProvider="@LoadLivestock">
+        <QuickGrid Theme="microagmanager" @ref=livestockGrid TGridItem=LivestockModel Items="@filteredLivestockQuery()">
         <PropertyColumn Property="@(p => p.Breed.Animal.Name)" Title="Name" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
@@ -84,7 +84,7 @@ else
 {
     <span>Initializing application </span>
 }
-
+</div>
 
 @code {
     [Parameter] public string livestockId { get; set; }
@@ -100,10 +100,12 @@ else
 
     private async ValueTask<GridItemsProviderResult<LivestockModel>> LoadLivestock(GridItemsProviderRequest<LivestockModel> request)
     {
-        var totalLivestock = await filteredLivestockQuery().CountAsync();
-        
-        var numLivestock = Math.Min(request.Count ?? 100, totalLivestock - request.StartIndex);
-        var livestock = await filteredLivestockQuery().OrderBy(l => l.Id).Skip(request.StartIndex).Take(numLivestock).ToListAsync(request.CancellationToken);
+        var query = filteredLivestockQuery();
+        var totalLivestock = await query.CountAsync();
+        var ordering = request.GetSortByProperties();
+
+        var numLivestock = Math.Min(request.Count.HasValue ? request.Count.Value : totalLivestock, totalLivestock - request.StartIndex);
+        var livestock = await query.Skip(request.StartIndex).Take(numLivestock).ToListAsync(request.CancellationToken);
         return new GridItemsProviderResult<LivestockModel>
             {
                 Items = livestock,
