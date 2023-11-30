@@ -17,16 +17,17 @@
                             @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Home
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink href="/Counter" Match="NavLinkMatch.Prefix">
-                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Counter
-                        </NavLink>
-                    </li>
+                    
                     <li>
                         <NavLink href="/Farm" Match="NavLinkMatch.Prefix">
                             @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Farm
                         </NavLink>
                     </li>
+                <li>
+                    <NavLink href="/Livestock" Match="NavLinkMatch.Prefix">
+                        @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Livestock
+                    </NavLink>
+                </li>
                     <li>
                         <NavLink href="Account/Manage">
                             @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ @context.User.Identity?.Name

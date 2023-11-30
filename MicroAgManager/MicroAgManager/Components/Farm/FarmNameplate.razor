@@ -3,37 +3,35 @@
 @using MicroAgManager.Components.Weather
 <section class="FarmNameplate">
     <span class="name">@Farm.Name</span>
-    @if (ShowAddress)
+
+    if (ShowAddress && ShowStreet)
     {
-        if (ShowStreet)
-        {
-            <span class="street">@Farm.StreetAddress</span>
-        }
-        if (ShowCity)
-        {
-            <span class="city">@Farm.City</span>
-        }
-        if (ShowState)
-        {
-            <span class="state">@Farm.State</span>
-        }
-        if (ShowZip)
-        {
-            <span class="zip">@Farm.Zip</span>
-        }
-        if (ShowCountry)
-        {
-            if (!string.IsNullOrEmpty(Farm.Country))
-            {
-                <span class="country">@Farm.Country</span>
-            }
-            if (!string.IsNullOrEmpty(Farm.CountryCode))
-            {
-                <span class="countrycode">@Farm.CountryCode</span>
-            }
-        }
+        <span class="street">@Farm.StreetAddress</span>
     }
-    @if(ShowPlotUse)
+    if (ShowAddress && ShowCity)
+    {
+        <span class="city">@Farm.City</span>
+    }
+    if (ShowAddress && ShowState)
+    {
+        <span class="state">@Farm.State</span>
+    }
+    if (ShowAddress && ShowZip)
+    {
+        <span class="zip">@Farm.Zip</span>
+    }
+
+    if (ShowAddress && ShowCountry !string.IsNullOrEmpty(Farm.Country))
+    {
+        <span class="country">@Farm.Country</span>
+    }
+    if (ShowAddress && ShowCountry !string.IsNullOrEmpty(Farm.CountryCode))
+    {
+        <span class="countrycode">@Farm.CountryCode</span>
+    }
+
+
+    @if (ShowPlotUse)
     {
         <span class="plotGeneralUse">@LandPlotUseConstants.GeneralUse @Farm.Plots.Where(p => p.Usage == nameof(LandPlotUseConstants.GeneralUse)).Count()</span>
         <span class="plotCrop">@LandPlotUseConstants.Crop @Farm.Plots.Where(p => p.Usage == nameof(LandPlotUseConstants.Crop)).Count()</span>
@@ -43,9 +41,9 @@
         <span class="plotOutbuilding">@LandPlotUseConstants.Outbuilding @Farm.Plots.Where(p => p.Usage == nameof(LandPlotUseConstants.Outbuilding)).Count()</span>
         <span class="plotPasture">@LandPlotUseConstants.Pasture @Farm.Plots.Where(p => p.Usage == nameof(LandPlotUseConstants.Pasture)).Count()</span>
     }
-    @if(ShowLocation)
+    @if (ShowLocation)
     {
-        <span class="latitude" >Latitude : @Farm.Latitude</span>
+        <span class="latitude">Latitude : @Farm.Latitude</span>
         <span class="longitude">Longitude: @Farm.Longitude</span>
     }
     @if (ShowWeather)
@@ -53,7 +51,7 @@
         <WeatherPlate class="weather" Latitude="@Farm.Latitude" Longitude="@Farm.Longitude"></WeatherPlate>
     }
 </section>
-@code{
+@code {
     [CascadingParameter] FarmLocationModel Farm { get; set; }
     [Parameter] public bool ShowAddress { get; set; } = false;
     [Parameter] public bool ShowStreet { get; set; } = true;

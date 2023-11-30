@@ -37,7 +37,6 @@ namespace Domain.Models
             return model;
         }
 
-
         public override BaseModel Map(BaseModel farm)
         {
             if (farm is null | farm is not FarmLocationModel) return null;

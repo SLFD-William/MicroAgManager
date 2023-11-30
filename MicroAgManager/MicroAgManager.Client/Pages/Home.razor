@@ -1,22 +1,5 @@
 ﻿@page "/Home"
+@inherits ClientAppPage
 @rendermode InteractiveWebAssembly
-@inject ClientApplicationStateProvider app
-@inject IJSRuntime jsRuntime
-
 
 <PageTitle>Home</PageTitle>
-
-Db is @DbState
-
-@code{
-    protected string DbState { get; private set; }="Uninitialized";
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            InvokeAsync(async () => await app.InitializeDbContextAsync(jsRuntime));
-            DbState = "Initialized";
-            StateHasChanged();
-        }
-    }
-}

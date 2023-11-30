@@ -1,12 +1,121 @@
 ﻿@page "/farm"
-
-@inject ClientApplicationStateProvider app
+@inherits ClientAppPage
 @rendermode InteractiveWebAssembly
+@using Domain.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+
 <PageTitle>Farm</PageTitle>
-
-
+@if (_app.Initialized)
+{ 
+<QuickGrid @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true ItemsProvider="@LoadFarm">
+    <PropertyColumn Property="@(p => p.Name)" Title="Farm" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+        <PropertyColumn Property="@(p => p.StreetAddress)" Title="Street" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="streetFilter" @bind:event="oninput" placeholder="Street..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.City)" Title="City" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="cityFilter" @bind:event="oninput" placeholder="City..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.State)" Title="State" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="stateFilter" @bind:event="oninput" placeholder="State..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Zip)" Title="Zip" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="zipFilter" @bind:event="oninput" placeholder="Zip..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Country)" Title="Country" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="countryFilter" @bind:event="oninput" placeholder="Country..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.CountryCode)" Title="Country Code" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="countryCodeFilter" @bind:event="oninput" placeholder="Country Code..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+</QuickGrid>
+}
+else
+{
+<span>Initializing application </span>    
+}
 
 
 @code {
-    
+    [Parameter] public string farmLocationId { get; set; }
+    QuickGrid<FarmLocationModel> farmGrid;
+    string farmNameFilter;
+    string streetFilter;
+    string cityFilter;
+    string stateFilter;
+    string zipFilter;
+    string countryFilter;
+    string countryCodeFilter;
+
+
+    private async ValueTask<GridItemsProviderResult<FarmLocationModel>> LoadFarm(GridItemsProviderRequest<FarmLocationModel> request)
+    {
+        var totalLivestock = await filteredFarmQuery().CountAsync();
+
+        var numLivestock = Math.Min(request.Count ?? 100, totalLivestock - request.StartIndex);
+        var livestock = await filteredFarmQuery().OrderBy(l => l.Id).Skip(request.StartIndex).Take(numLivestock).ToListAsync(request.CancellationToken);
+        return new GridItemsProviderResult<FarmLocationModel>
+            {
+                Items = livestock,
+                TotalItemCount = totalLivestock
+            };
+    }
+
+    private async Task<IQueryable<FarmLocationModel>> baseFarmQuery()
+    {
+        var db = await _app.GetDbContextAsync();
+        return db.Farms.AsQueryable();
+    }
+    private IQueryable<FarmLocationModel> filteredFarmQuery()
+    {
+        var query = baseFarmQuery().Result;
+        if (!string.IsNullOrEmpty(farmNameFilter))
+            query = query.Where(p => p.Name.Contains(farmNameFilter));
+        if (!string.IsNullOrEmpty(streetFilter))
+            query = query.Where(p => p.StreetAddress.Contains(streetFilter));
+        if (!string.IsNullOrEmpty(cityFilter))
+            query = query.Where(p => p.City.Contains(cityFilter));
+        if (!string.IsNullOrEmpty(stateFilter))
+            query = query.Where(p => p.State.Contains(stateFilter));
+        if (!string.IsNullOrEmpty(zipFilter))
+            query = query.Where(p => p.Zip.Contains(zipFilter));
+        if (!string.IsNullOrEmpty(countryFilter))
+            query = query.Where(p => p.Country.Contains(countryFilter));
+        if (!string.IsNullOrEmpty(countryCodeFilter))
+            query = query.Where(p => p.CountryCode.Contains(countryCodeFilter));
+
+        return query;
+    }
+
 }

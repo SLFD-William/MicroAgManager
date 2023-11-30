@@ -6,9 +6,10 @@
 }
 
 main {
-    max-width: 650px;
+    position:relative;
     width: fit-content;
     margin-inline: auto;
+    overflow:auto;
 }
 
 /*.sidebar {

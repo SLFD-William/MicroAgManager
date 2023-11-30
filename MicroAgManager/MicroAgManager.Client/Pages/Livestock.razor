@@ -1,0 +1,148 @@
+﻿@page "/livestock"
+@inherits ClientAppPage
+@rendermode InteractiveWebAssembly
+@using Domain.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+
+<PageTitle>Livestock</PageTitle>
+@if (_app.Initialized)
+{
+    <QuickGrid @ref=livestockGrid TGridItem=LivestockModel Virtualize=true ItemsProvider="@LoadLivestock">
+        <PropertyColumn Property="@(p => p.Breed.Animal.Name)" Title="Name" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Breed.Name)" Title="Breed" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="breedNameFilter" @bind:event="oninput" placeholder="Breed..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+
+        <PropertyColumn Property="@(p => p.Breed.EmojiChar)" Title="Emoji" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="breedEmojiFilter" @bind:event="oninput" placeholder="Emoji..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Variety)" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="varietyFilter" @bind:event="oninput" placeholder="Variety..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.BatchNumber)" Title="Batch Number" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="batchNumberFilter" @bind:event="oninput" placeholder="Batch Number..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+
+        <PropertyColumn Property="@(p => p.Gender)" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="genderFilter" @bind:event="oninput" placeholder="Gender..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Status.Status)" Title="Status">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="statusFilter" @bind:event="oninput" placeholder="Status..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Name)" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Name..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Birthdate)" Format="yyyy-MM-dd" Sortable="true" />
+        <PropertyColumn Property="@(p => p.BeingManaged)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.Sterile)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.InMilk)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.BottleFed)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.ForSale)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.MotherName)" Title="Mother" Sortable="false" />
+        <PropertyColumn Property="@(p => p.FatherName)" Title="Father" Sortable="false" />
+        <PropertyColumn Property="@(p => p.BornDefective)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.BirthDefect)" Title="Defect Description" Sortable="true" />
+    </QuickGrid>
+}
+else
+{
+    <span>Initializing application </span>
+}
+
+
+@code {
+    [Parameter] public string livestockId { get; set; }
+    QuickGrid<LivestockModel> livestockGrid;
+    string animalNameFilter;
+    string breedNameFilter;
+    string breedEmojiFilter;
+    string varietyFilter;
+    string batchNumberFilter;
+    string genderFilter;
+    string statusFilter;
+    string nameFilter;
+
+    private async ValueTask<GridItemsProviderResult<LivestockModel>> LoadLivestock(GridItemsProviderRequest<LivestockModel> request)
+    {
+        var totalLivestock = await filteredLivestockQuery().CountAsync();
+        
+        var numLivestock = Math.Min(request.Count ?? 100, totalLivestock - request.StartIndex);
+        var livestock = await filteredLivestockQuery().OrderBy(l => l.Id).Skip(request.StartIndex).Take(numLivestock).ToListAsync(request.CancellationToken);
+        return new GridItemsProviderResult<LivestockModel>
+            {
+                Items = livestock,
+                TotalItemCount = totalLivestock
+            };
+    }
+
+    private async Task<IQueryable<LivestockModel>> baseLivestockQuery() {
+            var db = await _app.GetDbContextAsync();
+            return db.Livestocks
+                .Include(p => p.Status)
+                .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                .Include(p => p.Mother)
+                .Include(p => p.Father);
+    }
+
+    private IQueryable<LivestockModel> filteredLivestockQuery()
+    {
+        var query = baseLivestockQuery().Result;
+
+        if (!string.IsNullOrEmpty(animalNameFilter))
+            query = query.Where(p => p.Breed.Animal.Name.Contains(animalNameFilter));
+        if (!string.IsNullOrEmpty(breedNameFilter))
+            query = query.Where(p => p.Breed.Name.Contains(breedNameFilter));
+        if (!string.IsNullOrEmpty(breedEmojiFilter))
+            query = query.Where(p => p.Breed.EmojiChar.Contains(breedEmojiFilter));
+        if (!string.IsNullOrEmpty(varietyFilter))
+            query = query.Where(p => p.Variety.Contains(varietyFilter));
+        if (!string.IsNullOrEmpty(batchNumberFilter))
+            query = query.Where(p => p.BatchNumber.Contains(batchNumberFilter));
+        if (!string.IsNullOrEmpty(genderFilter))
+            query = query.Where(p => p.Gender.Contains(genderFilter));
+        if (!string.IsNullOrEmpty(statusFilter))
+            query = query.Where(p => p.CurrentStatus.Contains(statusFilter));
+        if (!string.IsNullOrEmpty(nameFilter))
+            query = query.Where(p => p.Name.Contains(nameFilter));
+
+        return query;
+
+    }
+
+}

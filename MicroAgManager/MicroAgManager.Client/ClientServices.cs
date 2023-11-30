@@ -14,6 +14,7 @@ namespace MicroAgManager.Client
                 options => options.UseSqlite($"Filename={DataSynchronizer.SqliteDbFilename}")
                 );
             serviceCollection.AddSingleton<DataSynchronizer>();
+            serviceCollection.AddQuickGridEntityFrameworkAdapter();
             serviceCollection.AddSingleton<ClientApplicationStateProvider>();
         }
     }
