@@ -1,15 +1,16 @@
 ﻿@using MicroAgManager.Client.Data
 @if (weather is not null)
 {
-    <div class="WeatherPlate">
-        <p class="degreesF">@weather.CurrentConditions.Temp</p>
-        <p><i class="@MapToFontAwesome(weather.CurrentConditions.Icon)"></i> @weather.CurrentConditions.Conditions</p>
+    <div class="WeatherPlate @ContainerCss">
+        <span class="degreesF">@weather.CurrentConditions.Temp</span>
+        <span><i class="@MapToFontAwesome(weather.CurrentConditions.Icon)"></i> @weather.CurrentConditions.Conditions</span>
     </div>
 }
 
 @code {
     [Parameter] public double? Latitude { get; set; }
     [Parameter] public double? Longitude { get; set; }
+    [Parameter] public string ContainerCss { get; set; }
     [Inject] private IAPIService api { get; set; }
     private WeatherData weather { get; set; }
 
@@ -54,4 +55,3 @@
     }
 }
 
-}

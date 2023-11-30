@@ -10307,6 +10307,45 @@ html, body {
   color: var(--typography-primary-color);
 }
 
+.modalContainer {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+}
+.modalContainer:before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modalContainer dialog {
+  margin: auto;
+  border-radius: 1em;
+  box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: calc(100% - 1em);
+}
+
+.firstColumn {
+  grid-column: 1;
+}
+
+.secondColumn {
+  grid-column: 2;
+}
+
+.fullWidth {
+  grid-column: 1/-1;
+}
+
 .quickgrid[theme=microagmanager] {
   color: var(--typography-primary-color);
   background-color: var(--light-brand);

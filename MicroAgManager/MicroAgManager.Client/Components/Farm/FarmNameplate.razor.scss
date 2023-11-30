@@ -1,0 +1,54 @@
+.FarmNameplate {
+    display: grid;
+    align-items: center;
+    grid-gap: 0 0.25rem;
+    justify-items: baseline;
+
+    & h3, & h4 {
+        margin-block: auto;
+    }
+
+    & .name {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+    }
+
+    & .address {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        align-items: center;
+
+        & > h4 {
+            flex: 0 0 100%;
+        }
+    }
+
+    & .plots {
+        display: grid;
+        grid-gap: 0 0.25rem;
+        grid-template-columns: repeat(3, 1fr auto);
+
+        & > label {
+            font-size: .75em;
+            font-weight: bold;
+        }
+    }
+
+    & .location {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+        flex-wrap: wrap;
+
+        & > h4 {
+            flex: 0 0 100%;
+        }
+
+        & > label {
+            font-size: .85em;
+            font-weight: bold;
+        }
+    }
+}

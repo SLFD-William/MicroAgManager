@@ -6,9 +6,22 @@
 @using Microsoft.EntityFrameworkCore
 
 
-<PageTitle>Farm</PageTitle>
+
+<PageTitle>Farms</PageTitle>
+
+
 @if (_app.Initialized)
-{ 
+{
+
+    @if (_farmCount == 1)
+    {
+        <CascadingValue Value="farm">
+            <MicroAgManager.Client.Components.Farm.FarmNameplate ShowAll=true></MicroAgManager.Client.Components.Farm.FarmNameplate>
+        </CascadingValue>
+    }
+    else
+    {
+    
     <QuickGrid Theme="microagmanager" @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true ItemsProvider="@LoadFarm">
     <PropertyColumn Property="@(p => p.Name)" Title="Farm" Sortable="true">
         <ColumnOptions>
@@ -59,7 +72,24 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
+
+        <PropertyColumn Property="@(p => p.Latitude)" Title="Latitude" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="latitudeFilter" @bind:event="oninput" placeholder="Latitude..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Longitude)" Title="Longitude" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="longitudeFilter" @bind:event="oninput" placeholder="Longitude..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+
 </QuickGrid>
+    }
 }
 else
 {
@@ -70,6 +100,10 @@ else
 @code {
     [Parameter] public string farmLocationId { get; set; }
     QuickGrid<FarmLocationModel> farmGrid;
+
+    FarmLocationModel farm = new();
+
+    private int _farmCount=0;
     string farmNameFilter;
     string streetFilter;
     string cityFilter;
@@ -77,6 +111,8 @@ else
     string zipFilter;
     string countryFilter;
     string countryCodeFilter;
+    string latitudeFilter;
+    string longitudeFilter;
 
 
     private async ValueTask<GridItemsProviderResult<FarmLocationModel>> LoadFarm(GridItemsProviderRequest<FarmLocationModel> request)
@@ -114,8 +150,18 @@ else
             query = query.Where(p => p.Country.Contains(countryFilter));
         if (!string.IsNullOrEmpty(countryCodeFilter))
             query = query.Where(p => p.CountryCode.Contains(countryCodeFilter));
+        if (!string.IsNullOrEmpty(latitudeFilter))
+            query = query.Where(p => p.Latitude.HasValue && p.Latitude.Value.ToString().Contains(latitudeFilter));
+        if (!string.IsNullOrEmpty(longitudeFilter))
+            query = query.Where(p => p.Longitude.HasValue && p.Longitude.Value.ToString().Contains(longitudeFilter));
+        _farmCount=query.Count();
+        if (_farmCount == 1)
+        {
+            farm = query.First();
+            StateHasChanged();
+        }
 
-        return query;
+            return query;
     }
 
 }

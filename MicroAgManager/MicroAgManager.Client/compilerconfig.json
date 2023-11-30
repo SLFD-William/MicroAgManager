@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "Components/Weather/WeatherPlate.razor.css",
+    "inputFile": "Components/Weather/WeatherPlate.razor.scss"
+  },
+  {
+    "outputFile": "Components/Farm/FarmNameplate.razor.css",
+    "inputFile": "Components/Farm/FarmNameplate.razor.scss"
+  }
+]
