@@ -1,0 +1,79 @@
+﻿@using Domain.Models
+<section class="LandPlotNameplate">
+    <section class="name">
+        <h3 >@Plot.Name</h3>
+    </section>
+    @if (ShowAll || ShowFarm)
+    {
+        <section class="farm">
+            @if (ShowAll)
+            {
+                <h4>Farm</h4>
+            }
+            <span>@Plot.Farm.Name</span>
+        </section>
+    }
+    @if (ShowAll || ShowDescription)
+    {
+        <section class="description">
+            @if (ShowAll)
+            {
+                <h4>Description</h4>
+            }
+            <span>@Plot.Description</span>
+        </section>
+    }
+    @if(ShowAll || ShowArea)
+    {
+        <section class="area">
+            @if (ShowAll)
+            {
+                <h4>Area</h4>
+            }
+            <span>@Plot.Area @Plot.AreaUnit.Symbol</span>
+        </section>
+    }
+    @if (ShowAll || ShowUsage)
+    {
+        <section class="usage">
+            @if (ShowAll)
+            {
+                <h4>Usage</h4>
+            }
+            <span>@Plot.Usage</span>
+        </section>
+    }
+    @if (ShowAll || ShowSubplots)
+    {
+        <section class="subplots">
+            @if (ShowAll)
+            {
+                <h4>Subplots</h4>
+            }
+            <span>@Plot.Subplots?.Count()</span>
+        </section>
+    }
+    @if (ShowAll || ShowLivestocks)
+    {
+        <section class="livestocks">
+            @if (ShowAll)
+            {
+                <h4>Livestocks</h4>
+            }
+            <span>@Plot.Livestocks?.Count()</span>
+        </section>
+    }
+</section>
+@code {
+    [CascadingParameter] LandPlotModel Plot { get; set; }
+    [Parameter] public bool ShowAll { get; set; } = false;
+    [Parameter] public bool ShowFarm { get; set; } = false;
+    [Parameter] public bool ShowDescription { get; set; } = false;
+    [Parameter] public bool ShowArea { get; set; } = false;
+    [Parameter] public bool ShowUsage { get; set; } = false;
+    [Parameter] public bool ShowSubplots { get; set; } = false;
+    [Parameter] public bool ShowLivestocks { get; set; } = false;
+    
+    
+
+}

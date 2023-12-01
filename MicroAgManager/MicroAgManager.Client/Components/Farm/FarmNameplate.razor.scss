@@ -1,54 +1,52 @@
 .FarmNameplate {
     display: grid;
+    grid-template-columns: 30ch repeat(auto-fill,minmax(29%, 1fr));
     align-items: center;
-    grid-gap: 0 0.25rem;
+    grid-gap: .5em;
     justify-items: baseline;
+
+    
 
     & h3, & h4 {
         margin-block: auto;
     }
 
     & .name {
-        display: flex;
-        gap: 0.25rem;
-        align-items: center;
+        grid-row-end: -1;
     }
 
     & .address {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.25rem;
-        align-items: center;
-
-        & > h4 {
-            flex: 0 0 100%;
-        }
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(19%, 15ch));
+        grid-gap: .25em;
     }
 
     & .plots {
+        width: 100%;
         display: grid;
-        grid-gap: 0 0.25rem;
-        grid-template-columns: repeat(3, 1fr auto);
-
-        & > label {
-            font-size: .75em;
-            font-weight: bold;
-        }
+        grid-template-columns: repeat(auto-fill, minmax(12.4%, 30ch));
+        grid-gap: .25em;
     }
 
     & .location {
-        display: flex;
-        gap: 0.25rem;
         align-items: center;
-        flex-wrap: wrap;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(29%, 22ch));
+        grid-gap: .25em;
+    }
+}
+@container (width < 405px) {
+    .FarmNameplate {
+        grid-template-columns: max-content;
 
-        & > h4 {
-            flex: 0 0 100%;
+        & .plots {
+            grid-template-columns: unset;
         }
 
-        & > label {
-            font-size: .85em;
-            font-weight: bold;
+        & .location {
+            grid-template-columns: unset;
         }
     }
 }

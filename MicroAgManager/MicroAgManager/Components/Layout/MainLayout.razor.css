@@ -1,5 +1,6 @@
 ﻿.MainLayout {
   height: 100%;
+  width: 100%;
   position: relative;
   display: grid;
   grid-template-rows: min-content 1fr min-content;
@@ -7,9 +8,10 @@
 
 main {
   position: relative;
-  width: fit-content;
+  width: inherit;
   margin-inline: auto;
   overflow: auto;
+  container: mainlayout_main/inline-size;
 }
 
 /*.sidebar {

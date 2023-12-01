@@ -1,45 +1,44 @@
 ﻿.FarmNameplate {
   display: grid;
+  grid-template-columns: 30ch repeat(auto-fill, minmax(29%, 1fr));
   align-items: center;
-  grid-gap: 0 0.25rem;
+  grid-gap: 0.5em;
   justify-items: baseline;
 }
 .FarmNameplate h3, .FarmNameplate h4 {
   margin-block: auto;
 }
 .FarmNameplate .name {
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
+  grid-row-end: -1;
 }
 .FarmNameplate .address {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  align-items: center;
-}
-.FarmNameplate .address > h4 {
-  flex: 0 0 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19%, 15ch));
+  grid-gap: 0.25em;
 }
 .FarmNameplate .plots {
+  width: 100%;
   display: grid;
-  grid-gap: 0 0.25rem;
-  grid-template-columns: repeat(3, 1fr auto);
-}
-.FarmNameplate .plots > label {
-  font-size: 0.75em;
-  font-weight: bold;
+  grid-template-columns: repeat(auto-fill, minmax(12.4%, 30ch));
+  grid-gap: 0.25em;
 }
 .FarmNameplate .location {
-  display: flex;
-  gap: 0.25rem;
   align-items: center;
-  flex-wrap: wrap;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(29%, 22ch));
+  grid-gap: 0.25em;
 }
-.FarmNameplate .location > h4 {
-  flex: 0 0 100%;
-}
-.FarmNameplate .location > label {
-  font-size: 0.85em;
-  font-weight: bold;
+
+@container (width < 405px) {
+  .FarmNameplate {
+    grid-template-columns: max-content;
+  }
+  .FarmNameplate .plots {
+    grid-template-columns: unset;
+  }
+  .FarmNameplate .location {
+    grid-template-columns: unset;
+  }
 }

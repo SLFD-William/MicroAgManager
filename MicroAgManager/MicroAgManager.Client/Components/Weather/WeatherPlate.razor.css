@@ -2,8 +2,14 @@
 .WeatherPlate {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.5em;
 }
 .WeatherPlate .degreesF::after {
   content: "°F";
+}
+.WeatherPlate .degreesC::after {
+  content: "°C";
+}
+.WeatherPlate .currentConditions {
+  font-size: 0.8em;
 }

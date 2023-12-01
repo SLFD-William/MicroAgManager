@@ -71,6 +71,9 @@ height: 100vh;
 .secondColumn {
     grid-column: 2;
 }
+.span2Column {
+    grid-column: span 2;
+}
 
 .fullWidth {
     grid-column: 1/-1;

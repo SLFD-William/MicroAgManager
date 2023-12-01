@@ -4,101 +4,44 @@
 @using Domain.Models
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
-
+@using MicroAgManager.Client.Components.Farm
 
 
 <PageTitle>Farms</PageTitle>
-
+<div class="Farm">
 
 @if (_app.Initialized)
 {
-
     @if (_farmCount == 1)
     {
         <CascadingValue Value="farm">
-            <MicroAgManager.Client.Components.Farm.FarmNameplate ShowAll=true></MicroAgManager.Client.Components.Farm.FarmNameplate>
+            <FarmNameplate ShowAll=true ></FarmNameplate>
         </CascadingValue>
     }
     else
     {
-    
-    <QuickGrid Theme="microagmanager" @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true ItemsProvider="@LoadFarm">
-    <PropertyColumn Property="@(p => p.Name)" Title="Farm" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn>
-        <PropertyColumn Property="@(p => p.StreetAddress)" Title="Street" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="streetFilter" @bind:event="oninput" placeholder="Street..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.City)" Title="City" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="cityFilter" @bind:event="oninput" placeholder="City..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.State)" Title="State" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="stateFilter" @bind:event="oninput" placeholder="State..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Zip)" Title="Zip" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="zipFilter" @bind:event="oninput" placeholder="Zip..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Country)" Title="Country" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="countryFilter" @bind:event="oninput" placeholder="Country..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.CountryCode)" Title="Country Code" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="countryCodeFilter" @bind:event="oninput" placeholder="Country Code..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-
-        <PropertyColumn Property="@(p => p.Latitude)" Title="Latitude" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="latitudeFilter" @bind:event="oninput" placeholder="Latitude..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Longitude)" Title="Longitude" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="longitudeFilter" @bind:event="oninput" placeholder="Longitude..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-
-</QuickGrid>
+        <FarmGrid cityFilterChanged="@((x) => {cityFilter=x; StateHasChanged();})"
+                  countryCodeFilterChanged="@((x) => {countryCodeFilter=x; StateHasChanged();})"
+                  countryFilterChanged="@((x) => {countryFilter=x; StateHasChanged();})"
+                  farmNameFilterChanged="@((x) => {farmNameFilter=x; StateHasChanged();})"
+                  latitudeFilterChanged="@((x) => {latitudeFilter=x; StateHasChanged();})"
+                  longitudeFilterChanged="@((x) => {longitudeFilter=x; StateHasChanged();})"
+                  stateFilterChanged="@((x) => {stateFilter=x; StateHasChanged();})"
+                  streetFilterChanged="@((x) => {streetFilter=x; StateHasChanged();})"
+                  zipFilterChanged="@((x) => {zipFilter=x; StateHasChanged();})"
+                  Items="filteredFarmQuery()">
+              </FarmGrid>
     }
 }
 else
 {
 <span>Initializing application </span>    
 }
+</div>
 
 
 @code {
-    [Parameter] public string farmLocationId { get; set; }
+    [Parameter] public long? farmLocationId { get; set; }
     QuickGrid<FarmLocationModel> farmGrid;
 
     FarmLocationModel farm = new();
@@ -113,29 +56,22 @@ else
     string countryCodeFilter;
     string latitudeFilter;
     string longitudeFilter;
-
-
-    private async ValueTask<GridItemsProviderResult<FarmLocationModel>> LoadFarm(GridItemsProviderRequest<FarmLocationModel> request)
-    {
-        var totalLivestock = await filteredFarmQuery().CountAsync();
-
-        var numLivestock = Math.Min(request.Count ?? 100, totalLivestock - request.StartIndex);
-        var livestock = await filteredFarmQuery().OrderBy(l => l.Id).Skip(request.StartIndex).Take(numLivestock).ToListAsync(request.CancellationToken);
-        return new GridItemsProviderResult<FarmLocationModel>
-            {
-                Items = livestock,
-                TotalItemCount = totalLivestock
-            };
-    }
-
     private async Task<IQueryable<FarmLocationModel>> baseFarmQuery()
     {
         var db = await _app.GetDbContextAsync();
-        return db.Farms.AsQueryable();
+        return db.Farms.Include(p=>p.Plots).AsQueryable();
     }
     private IQueryable<FarmLocationModel> filteredFarmQuery()
     {
         var query = baseFarmQuery().Result;
+        if (farmLocationId.HasValue)
+        {
+            _farmCount = 1;
+            query = query.Where(p => p.Id == farmLocationId);
+            farm = query.First();
+            return query;
+        }
+        
         if (!string.IsNullOrEmpty(farmNameFilter))
             query = query.Where(p => p.Name.Contains(farmNameFilter));
         if (!string.IsNullOrEmpty(streetFilter))

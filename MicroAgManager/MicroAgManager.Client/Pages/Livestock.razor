@@ -4,127 +4,56 @@
 @using Domain.Models
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
+@using MicroAgManager.Client.Components.Livestock
 <div class="Livestock">
 
 <PageTitle>Livestock</PageTitle>
 @if (_app.Initialized)
-{
-        <QuickGrid Theme="microagmanager" @ref=livestockGrid TGridItem=LivestockModel Items="@filteredLivestockQuery()">
-        <PropertyColumn Property="@(p => p.Breed.Animal.Name)" Title="Name" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Breed.Name)" Title="Breed" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="breedNameFilter" @bind:event="oninput" placeholder="Breed..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-
-        <PropertyColumn Property="@(p => p.Breed.EmojiChar)" Title="Emoji" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="breedEmojiFilter" @bind:event="oninput" placeholder="Emoji..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Variety)" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="varietyFilter" @bind:event="oninput" placeholder="Variety..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.BatchNumber)" Title="Batch Number" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="batchNumberFilter" @bind:event="oninput" placeholder="Batch Number..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-
-        <PropertyColumn Property="@(p => p.Gender)" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="genderFilter" @bind:event="oninput" placeholder="Gender..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Status.Status)" Title="Status">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="statusFilter" @bind:event="oninput" placeholder="Status..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Name)" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Name..." />
-                </div>
-            </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Birthdate)" Format="yyyy-MM-dd" Sortable="true" />
-        <PropertyColumn Property="@(p => p.BeingManaged)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.Sterile)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.InMilk)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.BottleFed)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.ForSale)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.MotherName)" Title="Mother" Sortable="false" />
-        <PropertyColumn Property="@(p => p.FatherName)" Title="Father" Sortable="false" />
-        <PropertyColumn Property="@(p => p.BornDefective)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.BirthDefect)" Title="Defect Description" Sortable="true" />
-    </QuickGrid>
-}
+    {
+        <LivestockGrid Items="filteredLivestockQuery()"
+                       animalNameFilterChanged="@((x) => {animalNameFilter=x; StateHasChanged();})"
+                       batchNumberFilterChanged="@((x) => {batchNumberFilter=x; StateHasChanged();})"
+                       breedEmojiFilterChanged="@((x) => {breedEmojiFilter=x; StateHasChanged();})"
+                       breedNameFilterChanged="@((x) => {breedNameFilter=x; StateHasChanged();})"
+                       genderFilterChanged="@((x) => {genderFilter=x; StateHasChanged();})"
+                       nameFilterChanged="@((x) => {nameFilter=x; StateHasChanged();})"
+                       statusFilterChanged="@((x) => {statusFilter=x; StateHasChanged();})"
+                       varietyFilterChanged="@((x) => {varietyFilter=x; StateHasChanged();})">
+        </LivestockGrid>
+        
+    }
 else
-{
-    <span>Initializing application </span>
-}
+    {
+        <span>Initializing application </span>
+    }
 </div>
 
 @code {
-    [Parameter] public string livestockId { get; set; }
+    [Parameter] public long? livestockId { get; set; }
     QuickGrid<LivestockModel> livestockGrid;
     string animalNameFilter;
-    string breedNameFilter;
-    string breedEmojiFilter;
-    string varietyFilter;
     string batchNumberFilter;
+    string breedEmojiFilter;
+    string breedNameFilter;
     string genderFilter;
-    string statusFilter;
     string nameFilter;
-
-    private async ValueTask<GridItemsProviderResult<LivestockModel>> LoadLivestock(GridItemsProviderRequest<LivestockModel> request)
-    {
-        var query = filteredLivestockQuery();
-        var totalLivestock = await query.CountAsync();
-        var ordering = request.GetSortByProperties();
-
-        var numLivestock = Math.Min(request.Count.HasValue ? request.Count.Value : totalLivestock, totalLivestock - request.StartIndex);
-        var livestock = await query.Skip(request.StartIndex).Take(numLivestock).ToListAsync(request.CancellationToken);
-        return new GridItemsProviderResult<LivestockModel>
-            {
-                Items = livestock,
-                TotalItemCount = totalLivestock
-            };
-    }
-
+    string statusFilter;
+    string varietyFilter;
+    
     private async Task<IQueryable<LivestockModel>> baseLivestockQuery() {
-            var db = await _app.GetDbContextAsync();
-            return db.Livestocks
-                .Include(p => p.Status)
-                .Include(p => p.Breed).ThenInclude(p => p.Animal)
-                .Include(p => p.Mother)
-                .Include(p => p.Father);
+        var db = await _app.GetDbContextAsync();
+        return db.Livestocks
+            .Include(p => p.Status)
+            .Include(p => p.Breed).ThenInclude(p => p.Animal)
+            .Include(p => p.Mother)
+            .Include(p => p.Father);
     }
 
     private IQueryable<LivestockModel> filteredLivestockQuery()
     {
         var query = baseLivestockQuery().Result;
+        if (livestockId.HasValue)
+            return query.Where(p => p.Id == livestockId);
 
         if (!string.IsNullOrEmpty(animalNameFilter))
             query = query.Where(p => p.Breed.Animal.Name.Contains(animalNameFilter));

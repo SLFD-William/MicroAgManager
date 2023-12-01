@@ -1,0 +1,167 @@
+﻿@using Domain.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+
+<QuickGrid Theme="microagmanager" @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true Items="Items">
+    <PropertyColumn Property="@(p => p.Name)" Title="Farm" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.StreetAddress)" Title="Street" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="streetFilter" @bind:event="oninput" placeholder="Street..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.City)" Title="City" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="cityFilter" @bind:event="oninput" placeholder="City..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.State)" Title="State" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="stateFilter" @bind:event="oninput" placeholder="State..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Zip)" Title="Zip" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="zipFilter" @bind:event="oninput" placeholder="Zip..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Country)" Title="Country" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="countryFilter" @bind:event="oninput" placeholder="Country..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.CountryCode)" Title="Country Code" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="countryCodeFilter" @bind:event="oninput" placeholder="Country Code..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Latitude)" Title="Latitude" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="latitudeFilter" @bind:event="oninput" placeholder="Latitude..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Longitude)" Title="Longitude" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="longitudeFilter" @bind:event="oninput" placeholder="Longitude..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+</QuickGrid>
+@code {
+    [Parameter] required public IQueryable<FarmLocationModel> Items { get; set; }
+    QuickGrid<FarmLocationModel> farmGrid;
+    string farmNameFilter
+    {
+        get => _farmNameFilter; set
+        {
+            farmNameFilterChanged.Invoke(value);
+            _farmNameFilter = value;
+        }
+    }
+    string streetFilter
+    {
+        get => _streetFilter; set
+        {
+            streetFilterChanged.Invoke(value);
+            _streetFilter = value;
+        }
+    }
+    string cityFilter
+    {
+        get => _cityFilter; set
+        {
+            cityFilterChanged.Invoke(value);
+            _cityFilter = value;
+        }
+    }
+    string stateFilter
+    {
+        get => _stateFilter; set
+        {
+            stateFilterChanged.Invoke(value);
+            _stateFilter = value;
+        }
+    }
+    string zipFilter
+    {
+        get => _zipFilter; set
+        {
+            zipFilterChanged.Invoke(value);
+            _zipFilter = value;
+        }
+    }
+    string countryFilter
+    {
+        get => _countryFilter; set
+        {
+            countryFilterChanged.Invoke(value);
+            _countryFilter = value;
+        }
+    }
+    string countryCodeFilter
+    {
+        get => _countryCodeFilter; set
+        {
+            countryCodeFilterChanged.Invoke(value);
+            _countryCodeFilter = value;
+        }
+    }
+    string latitudeFilter
+    {
+        get => _latitudeFilter; set
+        {
+            latitudeFilterChanged.Invoke(value);
+            _latitudeFilter = value;
+        }
+    }
+    string longitudeFilter
+    {
+        get => _longitudeFilter; set
+        {
+            longitudeFilterChanged.Invoke(value);
+            _longitudeFilter = value;
+        }
+    }
+    [Parameter] public Action<string> farmNameFilterChanged { get; set; }
+    [Parameter] public Action<string> streetFilterChanged { get; set; }
+    [Parameter] public Action<string> cityFilterChanged { get; set; }
+    [Parameter] public Action<string> stateFilterChanged { get; set; }
+    [Parameter] public Action<string> zipFilterChanged { get; set; }
+    [Parameter] public Action<string> countryFilterChanged { get; set; }
+    [Parameter] public Action<string> countryCodeFilterChanged { get; set; }
+    [Parameter] public Action<string> latitudeFilterChanged { get; set; }
+    [Parameter] public Action<string> longitudeFilterChanged { get; set; }
+
+    private string _farmNameFilter;
+    private string _streetFilter;
+    private string _cityFilter;
+    private string _stateFilter;
+    private string _zipFilter;
+    private string _countryFilter;
+    private string _countryCodeFilter;
+    private string _latitudeFilter;
+    private string _longitudeFilter;
+
+
+}
