@@ -68,7 +68,7 @@ else
         if (!string.IsNullOrEmpty(genderFilter))
             query = query.Where(p => p.Gender.Contains(genderFilter));
         if (!string.IsNullOrEmpty(statusFilter))
-            query = query.Where(p => p.CurrentStatus.Contains(statusFilter));
+            query = query.Where(p => p.StatusId.HasValue && p.Status.Status.Contains(statusFilter));
         if (!string.IsNullOrEmpty(nameFilter))
             query = query.Where(p => p.Name.Contains(nameFilter));
 

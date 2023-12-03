@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\MicroAgManager.Client\Pages\FarmNameplate.razor" Link="FarmNameplate.razor" />
     <None Include="compilerconfig.json" />
   </ItemGroup>
 

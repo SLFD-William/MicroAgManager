@@ -1,7 +1,4 @@
-﻿using Domain.Context;
-using MicroAgManager.Client.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace MicroAgManager.Client.Pages

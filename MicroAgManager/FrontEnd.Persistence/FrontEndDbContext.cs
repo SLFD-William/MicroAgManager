@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Context
+namespace FrontEnd.Persistence
 {
     public class FrontEndDbContext : DbContext, IFrontEndDbContext
     {

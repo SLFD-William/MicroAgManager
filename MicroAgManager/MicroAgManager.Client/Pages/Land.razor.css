@@ -1,0 +1,7 @@
+﻿.Land {
+  width: inherit;
+  container: landpage/inline-size;
+}
+.Land .microagmanager {
+  width: 75vw;
+}

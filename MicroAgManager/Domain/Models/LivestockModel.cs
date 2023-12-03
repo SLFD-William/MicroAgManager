@@ -32,12 +32,6 @@ namespace Domain.Models
         public virtual LivestockBreedModel Breed { get; set; }
         public virtual LandPlotModel? Location { get; set; }
 
-        [NotMapped]public string CurrentStatus => Status?.Status ?? string.Empty;
-        [NotMapped]public string BreedName => Breed?.Name ?? string.Empty;
-        [NotMapped] public string AnimalName => Breed?.Animal?.Name ?? string.Empty;
-        [NotMapped] public string MotherName => Mother?.Name ?? string.Empty;
-        [NotMapped] public string FatherName => Father?.Name ?? string.Empty;
-
         public static LivestockModel Create(Livestock livestock)
         {
             var model = PopulateBaseModel(livestock, new LivestockModel

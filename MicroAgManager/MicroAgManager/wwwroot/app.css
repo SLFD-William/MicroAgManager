@@ -10351,9 +10351,20 @@ html, body {
 }
 
 .quickgrid[theme=microagmanager] {
+  margin-inline: auto;
+  position: relative;
   color: var(--typography-primary-color);
   background-color: var(--light-brand);
   width: 75vw;
+}
+.quickgrid[theme=microagmanager] th {
+  position: sticky;
+}
+.quickgrid[theme=microagmanager] thead tr th {
+  /* Don't forget this, required for the stickiness */
+  top: 0;
+  background-color: var(--light-brand);
+  border: 1px solid var(--typography-primary-bg-color);
 }
 .quickgrid[theme=microagmanager] button.col-title:hover, .quickgrid[theme=microagmanager] .col-options-button:hover {
   background-color: var(--light-brand);
@@ -10399,8 +10410,52 @@ html, body {
   grid-column: 1/-1;
 }
 
+.btn-link {
+  background: transparent;
+  border: none;
+  border-radius: 1em;
+  font: inherit;
+  cursor: pointer;
+}
+
 a, .btn-link {
   color: var(--medium-brand);
+}
+
+.logo {
+  width: 3.5em;
+  fill: var(--typography-secondary-color);
+}
+
+.btn-link.warning {
+  font-weight: bold;
+  color: var(--yellow);
+}
+.btn-link.warning:hover {
+  background-color: var(--yellow);
+  color: black;
+}
+
+.btn-link.danger {
+  font-weight: bold;
+  color: var(--red);
+}
+.btn-link.danger:hover {
+  background-color: var(--red);
+  color: white;
+}
+
+.btn-link.safe {
+  font-weight: bold;
+  color: var(--green);
+}
+.btn-link.safe:hover {
+  background-color: var(--green);
+  color: white;
+}
+
+.btn-link.nav-link:hover {
+  text-decoration: underline;
 }
 
 .btn-primary {

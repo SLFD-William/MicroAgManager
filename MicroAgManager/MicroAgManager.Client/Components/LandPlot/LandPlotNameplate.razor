@@ -1,7 +1,14 @@
 ﻿@using Domain.Models
+@using MicroAgManager.Client.Components.Shared
 <section class="LandPlotNameplate">
-    <section class="name">
-        <h3 >@Plot.Name</h3>
+     <section class="name">
+        <h3>@Plot.Name</h3>
+        <NavCrudButtons OnCancelClick="TestCall"
+                        OnCreateClick="TestCall"
+                        OnDeleteClick="TestCall"
+                        OnEditClick="TestCall"
+                        OnNavigateClick="TestCall"
+                        OnSaveClick="TestCall"></NavCrudButtons>
     </section>
     @if (ShowAll || ShowFarm)
     {
@@ -74,6 +81,13 @@
     [Parameter] public bool ShowSubplots { get; set; } = false;
     [Parameter] public bool ShowLivestocks { get; set; } = false;
     
-    
+    [Parameter] public EventCallback OnEditClick { get; set; }
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
+    [Parameter] public EventCallback OnSaveClick { get; set; }
+    [Parameter] public EventCallback OnDeleteClick { get; set; }
+    [Parameter] public EventCallback OnCreateClick { get; set; }
+    [Parameter] public EventCallback OnCancelClick { get; set; }
+
+    private void TestCall() { }
 
 }

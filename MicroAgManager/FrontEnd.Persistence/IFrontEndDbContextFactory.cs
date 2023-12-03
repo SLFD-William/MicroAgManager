@@ -1,6 +1,4 @@
-﻿using Domain.Context;
-
-namespace Domain.Interfaces
+﻿namespace FrontEnd.Persistence
 {
     public interface IFrontEndDbContextFactory
     {

@@ -1,5 +1,7 @@
-.Livestock{
-    & .microagmanager{
-        width:75vw;
+.Livestock {
+    width: inherit;
+    container: livestockpage / inline-size;
+    & .microagmanager {
+        width: 75vw;
     }
 }

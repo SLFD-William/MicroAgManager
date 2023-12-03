@@ -9,7 +9,9 @@
   margin-block: auto;
 }
 .FarmNameplate .name {
-  grid-row-end: -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
 }
 .FarmNameplate .address {
   width: 100%;

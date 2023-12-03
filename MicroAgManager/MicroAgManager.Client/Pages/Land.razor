@@ -1,0 +1,78 @@
+﻿@page "/Land"
+@inherits ClientAppPage
+@rendermode InteractiveWebAssembly
+@using Domain.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+@using MicroAgManager.Client.Components.LandPlot
+
+
+<PageTitle>LandPlots</PageTitle>
+<div class="Land">
+
+    @if (_app.Initialized)
+    {
+        @if (_LandPlotCount == 1)
+        {
+            <CascadingValue Value="LandPlot">
+                <LandPlotNameplate></LandPlotNameplate>
+            </CascadingValue>
+        }
+        else
+        {
+            <LandPlotGrid farmNameFilterChanged="@((x) => {farmNameFilter=x; StateHasChanged();})"
+                          parentPlotNameFilterChanged="@((x) => {parentPlotNameFilter=x; StateHasChanged();})"
+                          plotNameFilterChanged="@((x) => {plotNameFilter=x; StateHasChanged();})"
+                          usageFilterChanged="@((x) => {usageFilter=x; StateHasChanged();})"
+                          Items="filteredLandPlotQuery()">
+            </LandPlotGrid>
+        }
+    }
+    else
+    {
+        <span>Initializing application </span>
+    }
+</div>
+
+
+@code {
+    [Parameter] public long? LandPlotLocationId { get; set; }
+    QuickGrid<LandPlotModel> LandPlotGrid;
+
+    LandPlotModel LandPlot = new();
+
+    private int _LandPlotCount = 0;
+    string farmNameFilter;
+    string parentPlotNameFilter;
+    string usageFilter;
+    string plotNameFilter;
+    private async Task<IQueryable<LandPlotModel>> baseLandPlotQuery()
+    {
+        var db = await _app.GetDbContextAsync();
+        return db.LandPlots.Include(p => p.Subplots).Include(p=>p.ParentPlot).Include(p=>p.Farm).AsQueryable();
+    }
+    private IQueryable<LandPlotModel> filteredLandPlotQuery()
+    {
+        var query = baseLandPlotQuery().Result;
+        if (LandPlotLocationId.HasValue)
+        {
+            _LandPlotCount = 1;
+            query = query.Where(p => p.Id == LandPlotLocationId);
+            LandPlot = query.First();
+            return query;
+        }
+
+        if (!string.IsNullOrEmpty(plotNameFilter))
+            query = query.Where(p => p.Name.Contains(plotNameFilter));
+
+        _LandPlotCount = query.Count();
+        if (_LandPlotCount == 1)
+        {
+            LandPlot = query.First();
+            StateHasChanged();
+        }
+
+        return query;
+    }
+
+}

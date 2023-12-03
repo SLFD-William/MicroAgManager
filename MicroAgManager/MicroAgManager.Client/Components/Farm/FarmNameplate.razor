@@ -1,10 +1,16 @@
 ﻿@using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Client.Components.Weather
-
+@using MicroAgManager.Client.Components.Shared
 <section class="FarmNameplate">
     <section class="name">
         <h3 >@Farm.Name</h3>
+        <NavCrudButtons OnCancelClick="TestCall"
+                        OnCreateClick="TestCall"
+                        OnDeleteClick="TestCall"
+                        OnEditClick="TestCall"
+                        OnNavigateClick="TestCall"
+                        OnSaveClick="TestCall"></NavCrudButtons>
     </section>
     @if (ShowAll || ShowAddress)
     {
@@ -130,5 +136,14 @@
     [Parameter] public bool ShowState { get; set; } = true;
     [Parameter] public bool ShowZip { get; set; } = true;
     [Parameter] public bool ShowCountry { get; set; } = true;
+
+    [Parameter] public EventCallback OnEditClick { get; set; }
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
+    [Parameter] public EventCallback OnSaveClick { get; set; }
+    [Parameter] public EventCallback OnDeleteClick { get; set; }
+    [Parameter] public EventCallback OnCreateClick { get; set; }
+    [Parameter] public EventCallback OnCancelClick { get; set; }
+
+    private void TestCall() { }
 
 }

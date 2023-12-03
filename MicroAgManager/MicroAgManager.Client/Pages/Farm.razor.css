@@ -1,0 +1,7 @@
+﻿.Farm {
+  width: inherit;
+  container: farmpage/inline-size;
+}
+.Farm .microagmanager {
+  width: 75vw;
+}

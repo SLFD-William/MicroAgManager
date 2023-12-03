@@ -1,0 +1,21 @@
+﻿.LandPlotNameplate {
+  display: grid;
+  grid-template-columns: 30ch repeat(auto-fill, minmax(29%, 1fr));
+  align-items: center;
+  grid-gap: 0.5em;
+  justify-items: baseline;
+}
+.LandPlotNameplate h3, .LandPlotNameplate h4 {
+  margin-block: auto;
+}
+.LandPlotNameplate .name {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+
+@container (width < 405px) {
+  .LandPlotNameplate {
+    grid-template-columns: max-content;
+  }
+}

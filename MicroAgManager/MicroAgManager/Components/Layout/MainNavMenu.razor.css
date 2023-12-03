@@ -5,8 +5,9 @@
   background-image: linear-gradient(90deg, var(--nav-gradient-start-color) 0%, var(--nav-gradient-end-color) 100%);
 }
 .MainNavMenu > ul {
+  padding: unset;
+  padding-inline: 0.3em;
   width: 100%;
-  padding-inline: 1rem;
   display: inline-flex;
   -webkit-justify-content: space-between;
   justify-content: space-between;
@@ -36,28 +37,33 @@
 .MainNavMenu > ul ::deep li a.active, .MainNavMenu > ul ::deep li button.active {
   text-decoration: underline;
 }
+.MainNavMenu > ul ::deep li:first-child {
+  display: flex;
+  align-items: center;
+  background-color: var(--logo-bg-color);
+  border-radius: 1em;
+  gap: 0.25em;
+  padding: 0.2em 0.6em;
+}
 .MainNavMenu > ul ::deep li:first-child a {
   overflow: hidden;
   text-overflow: ellipsis;
   text-decoration: none;
   color: var(--typography-secondary-color);
-  background-color: var(--logo-bg-color);
-  border-radius: 1rem;
-  font-size: 1.5rem;
-  padding: 0.5rem 1rem;
 }
 
 .navbar-toggler {
+  display: none;
   appearance: none;
-  margin: unset;
-  cursor: pointer;
-  width: 3.3rem;
-  height: 3.3rem;
-  color: white;
-  position: relative;
-  background: var(--logo-bg-color) url(/logo.png) left no-repeat;
-  background-size: 3.3rem;
-  left: 0.25rem;
+  /*    margin: unset;
+      cursor: pointer;
+      width: 3.3rem;
+      height: 3.3rem;
+      color: white;
+      position: relative;
+      background: var(--nav-gradient-start-color) url(/logo.svg) left no-repeat;
+      background-size: 3.3rem;
+      left: .25rem;*/
 }
 
 .navbar-toggler:checked {

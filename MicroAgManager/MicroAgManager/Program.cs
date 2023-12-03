@@ -1,5 +1,4 @@
 using BackEnd.Infrastructure;
-using Domain.Context;
 using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logging;
@@ -13,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 

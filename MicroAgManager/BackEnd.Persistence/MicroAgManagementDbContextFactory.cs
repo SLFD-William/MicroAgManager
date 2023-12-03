@@ -1,5 +1,4 @@
-﻿using Domain.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {

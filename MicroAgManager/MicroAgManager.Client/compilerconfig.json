@@ -6,5 +6,25 @@
   {
     "outputFile": "Components/Farm/FarmNameplate.razor.css",
     "inputFile": "Components/Farm/FarmNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Components/LandPlot/LandPlotNameplate.razor.css",
+    "inputFile": "Components/LandPlot/LandPlotNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockNameplate.razor.css",
+    "inputFile": "Components/Livestock/LivestockNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Livestock.razor.css",
+    "inputFile": "Pages/Livestock.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Land.razor.css",
+    "inputFile": "Pages/Land.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Farm.razor.css",
+    "inputFile": "Pages/Farm.razor.scss"
   }
 ]

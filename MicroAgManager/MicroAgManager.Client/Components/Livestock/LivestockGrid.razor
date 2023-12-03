@@ -46,13 +46,13 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Status.Status)" Title="Status">
+@*     <PropertyColumn Property="@(p => p.Status.Status)" Title="Status" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="@statusFilter" @bind:event="oninput" placeholder="Status..." />
                 </div>
             </ColumnOptions>
-        </PropertyColumn>
+        </PropertyColumn> *@
         <PropertyColumn Property="@(p => p.Name)" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
@@ -66,8 +66,8 @@
         <PropertyColumn Property="@(p => p.InMilk)" Sortable="true" />
         <PropertyColumn Property="@(p => p.BottleFed)" Sortable="true" />
         <PropertyColumn Property="@(p => p.ForSale)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.MotherName)" Title="Mother" Sortable="false" />
-        <PropertyColumn Property="@(p => p.FatherName)" Title="Father" Sortable="false" />
+@*         <PropertyColumn Property="@(p => p.Mother.Name)" Title="Mother" Sortable="false" />
+        <PropertyColumn Property="@(p => p.Father.Name)" Title="Father" Sortable="false" /> *@
         <PropertyColumn Property="@(p => p.BornDefective)" Sortable="true" />
         <PropertyColumn Property="@(p => p.BirthDefect)" Title="Defect Description" Sortable="true" />
     </QuickGrid>
