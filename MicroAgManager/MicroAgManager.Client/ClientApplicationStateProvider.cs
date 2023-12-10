@@ -1,4 +1,5 @@
-﻿using FrontEnd.Persistence;
+﻿using Domain.Constants;
+using FrontEnd.Persistence;
 using MicroAgManager.Client.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
@@ -11,7 +12,7 @@ namespace MicroAgManager.Client
         private readonly IAPIService _api;
         private readonly DataSynchronizer _dataSynchronizer;
         private NavigationManager _nm;
-
+        public bool ShowLivestock { get; private set; } = false;
         public string CurrentURL { get; private set; }
         public bool Initialized { get; private set; } = false;
         public ClientApplicationStateProvider(IAPIService api, DataSynchronizer dataSynchronizer)
@@ -22,6 +23,7 @@ namespace MicroAgManager.Client
             _dataSynchronizer.OnError += DataSyncError;
         }
         public event Action<string>? OnLocationChanged;
+        public event Action? OnDataBaseInitialized;
 
 
         public ValueTask DisposeAsync()
@@ -38,6 +40,9 @@ namespace MicroAgManager.Client
 
             await _dataSynchronizer.InitializeDbContextAsync(js);
             Initialized = true;
+            var db =await _dataSynchronizer.GetPreparedDbContextAsync();
+            ShowLivestock = db.LandPlots.Any(l => l.Usage == LandPlotUseConstants.Livestock);
+            OnDataBaseInitialized?.Invoke();
         }
         #region Db
         public async Task<FrontEndDbContext> GetDbContextAsync() => await _dataSynchronizer.GetPreparedDbContextAsync();
@@ -54,8 +59,8 @@ namespace MicroAgManager.Client
 
         private void LocationChanged(object? sender, LocationChangedEventArgs e)
         {
-            CurrentURL = e.Location;
-            OnLocationChanged?.Invoke(e.Location);
+            CurrentURL =_nm.ToBaseRelativePath(e.Location);
+            OnLocationChanged?.Invoke(CurrentURL);
         }
 
         public async Task<string> IsServerAlive()=> await _api.TestApiResult();

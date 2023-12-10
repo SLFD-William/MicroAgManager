@@ -1,103 +1,35 @@
-using BackEnd.Infrastructure;
-using Domain.Entity;
-using Domain.Interfaces;
-using Domain.Logging;
-using MediatR;
-using MicroAgManager;
-using MicroAgManager.Client;
-using MicroAgManager.Client.Pages;
-using MicroAgManager.Components;
-using MicroAgManager.Components.Account;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MicroAgManager.Components;
+using MicroAgManager.Identity;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-// Add services to the container.
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
+// register the cookie handler
+builder.Services.AddScoped<CookieHandler>();
 
+// set up authorization
+builder.Services.AddAuthorizationCore();
 
-builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+// register the custom state provider
+builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-});
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
+// register the account management interface
+builder.Services.AddScoped(
+    sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
+// set base address for default host
+builder.Services.AddScoped(sp =>
+    new HttpClient { BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://localhost:5002") });
 
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
-builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+// configure client for auth interactions
+builder.Services.AddHttpClient(
+    "Auth",
+    opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
+    .AddHttpMessageHandler<CookieHandler>();
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<IMicroAgManagementDbContext,MicroAgManagementDbContext>(options =>
-    options.UseSqlServer(connectionString));
-
-builder.Services.AddLogging(bu =>
-{
-    bu.AddConfiguration(builder.Configuration.GetSection("Logging"));
-    bu.AddProvider(new DatabaseLoggingProvider(builder.Services.BuildServiceProvider().GetService<MicroAgManagementDbContext>(), builder.Configuration));
-});
-builder.Services.AddSingleton(typeof(ILogger), typeof(Logger<Log>));
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<MicroAgManagementDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-builder.Services.AddTransient<IClaimsTransformation, ApiClaimsTransformation>();
-ClientServices.AddSharedClientServices(builder.Services);
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseWebAssemblyDebugging();
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
-
-app.MapRazorComponents<App>()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Farm).Assembly);
-
-// Add additional endpoints required by the Identity /Account Razor components.
-app.MapAdditionalIdentityEndpoints();
-BusinessLogicAPI.MapTest(app);
-BusinessLogicAPI.MapAnciliary(app);
-BusinessLogicAPI.MapFarm(app);
-BusinessLogicAPI.MapJoins(app);
-BusinessLogicAPI.MapLivestock(app);
-BusinessLogicAPI.MapScheduling(app);
-
-
-app.Run();
+await builder.Build().RunAsync();

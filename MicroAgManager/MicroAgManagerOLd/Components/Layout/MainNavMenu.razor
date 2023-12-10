@@ -1,7 +1,5 @@
 ﻿@implements IDisposable
 
-@inject NavigationManager NavigationManager
-
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
     <nav class="MainNavMenu" onclick="document.querySelector('.navbar-toggler').click()">
@@ -28,11 +26,14 @@
                             @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Land
                         </NavLink>
                     </li>
-                <li>
-                    <NavLink href="/Livestock" Match="NavLinkMatch.Prefix">
-                        @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Livestock
-                    </NavLink>
-                </li>
+                    @if (app.ShowLivestock)
+                    { 
+                        <li>
+                            <NavLink href="/Livestock" Match="NavLinkMatch.Prefix">
+                                @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Livestock
+                            </NavLink>
+                        </li>
+                    }
                     <li>
                         <NavLink href="Account/Manage">
                             @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ @context.User.Identity?.Name
@@ -64,23 +65,25 @@
         </ul>
     </nav>
 @code {
-    private string? currentUrl;
+    [Inject] private IJSRuntime _jsRuntime { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private ClientApplicationStateProvider app { get; set; }
 
+    private string? currentUrl;
     protected override void OnInitialized()
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.LocationChanged += OnLocationChanged;
+           currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            app.OnLocationChanged += LocationChanged;
     }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    
+    protected void LocationChanged(string obj)
     {
-        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        currentUrl = obj;
         StateHasChanged();
     }
-
     public void Dispose()
     {
-        NavigationManager.LocationChanged -= OnLocationChanged;
+        app.OnLocationChanged += LocationChanged;
     }
 }
 

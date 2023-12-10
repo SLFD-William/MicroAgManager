@@ -1,0 +1,56 @@
+﻿@if (editContext is not null)
+{
+    @if (Modal)
+    {
+        @if (Show)
+        {
+            <div class="modalContainer">
+                <dialog open="true">
+                  
+                    <EditForm EditContext="@editContext" OnSubmit="OnSubmit" class="@CssClass">
+                        <DataAnnotationsValidator />
+                        <section class="dataSection">
+                            @DataContent
+                        </section>
+                        @if (SecondaryContent is not null)
+                        {
+                            <section class="secondaryContent">
+                                @SecondaryContent
+                            </section>
+                        }
+                        @if (showUpdateCancelButtons)
+                        {
+                            <section class="updateCancelButtons">
+                                <button type="submit">@(createOnly ? "Create" : "Update")</button>
+                                <button type="button" @onclick="@(()=>OnCancel.InvokeAsync(editContext))">Cancel</button>
+                            </section>
+                        }
+                    </EditForm> 
+                </dialog>
+            </div>
+        }
+    }
+    else
+    {
+        <EditForm EditContext="@editContext" OnSubmit="OnSubmit" class="@CssClass">
+            <DataAnnotationsValidator />
+            <section class="dataSection">
+                @DataContent
+            </section>
+            @if (SecondaryContent is not null)
+            {
+                <section class="secondaryContent">
+                    @SecondaryContent
+                </section>
+            }
+            @if (showUpdateCancelButtons)
+            {
+                <section class="updateCancelButtons">
+                    <button type="submit">@(createOnly ? "Create" : "Update")</button>
+                    <button type="button" @onclick="@(()=>OnCancel.InvokeAsync(editContext))">Cancel</button>
+                </section>
+            }
+
+         </EditForm>
+    }
+}

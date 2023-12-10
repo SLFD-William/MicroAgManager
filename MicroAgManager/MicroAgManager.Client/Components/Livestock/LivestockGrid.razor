@@ -53,13 +53,26 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn> *@
-        <PropertyColumn Property="@(p => p.Name)" Sortable="true">
+    <TemplateColumn Title="Name" SortBy="@sortByName">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="@nameFilter" @bind:event="oninput" placeholder="Name..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <CascadingValue Value="@context">
+                <LivestockNameplate OnNavigateClick="@(()=>OnNavigateClick.InvokeAsync(context.Id))"></LivestockNameplate>
+            </CascadingValue>
+        </ChildContent>
+    </TemplateColumn>
+@*         <PropertyColumn Property="@(p => p.Name)" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="@nameFilter" @bind:event="oninput" placeholder="Name..." />
                 </div>
             </ColumnOptions>
-        </PropertyColumn>
+            
+        </PropertyColumn> *@
         <PropertyColumn Property="@(p => p.Birthdate)" Format="yyyy-MM-dd" Sortable="true" />
         <PropertyColumn Property="@(p => p.BeingManaged)" Sortable="true" />
         <PropertyColumn Property="@(p => p.Sterile)" Sortable="true" />
@@ -74,7 +87,16 @@
         
 @code {
     [Parameter] required public IQueryable<LivestockModel> Items { get; set; }
+    [Parameter] public EventCallback<long> OnNavigateClick { get; set; }
+    [Parameter] public EventCallback<long> OnDeleteClick { get; set; }
+    [Parameter] public EventCallback<long> OnCreateClick { get; set; }
+    [Parameter] public EventCallback<long> OnEditClick { get; set; }
+
     QuickGrid<LivestockModel> livestockGrid;
+    GridSort<LivestockModel> sortByName = GridSort<LivestockModel>
+    .ByAscending(p => p.Name);
+
+    #region Filtering
 
     [Parameter] public Action<string> animalNameFilterChanged { get; set; }
     private string _animalNameFilter;
@@ -161,4 +183,6 @@
             _nameFilter = value;
         }
     }
+    #endregion
+    
 }

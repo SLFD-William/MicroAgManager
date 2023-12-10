@@ -8,6 +8,7 @@ namespace MicroAgManager.Client
     {
         public static void AddSharedClientServices(this IServiceCollection serviceCollection)
         {
+            serviceCollection.AddGeolocationServices();
             serviceCollection.AddHttpClient();
             serviceCollection.AddSingleton<IAPIService, APIService>();
             serviceCollection.AddDbContextFactory<FrontEndDbContext>(

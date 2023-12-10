@@ -3,19 +3,19 @@
 @if (!Editting)
 
 {
-    @if (OnNavigateClick.HasDelegate)
+    @if (ShowNavigate && OnNavigateClick.HasDelegate)
     {
         <button class="btn-link nav-link" type="button" @onclick=navigateClicked>@NavigateText</button>
     }
-    @if (OnCreateClick.HasDelegate)
+    @if (ShowCreate && OnCreateClick.HasDelegate)
     {
         <button class="btn-link safe" type="button" @onclick=createClicked>@CreateText</button>
     }
-    @if (OnEditClick.HasDelegate)
+    @if (ShowEdit && OnEditClick.HasDelegate)
     {
         <button class="btn-link warning" type="button" @onclick=editClicked>@EditText</button>
     }
-    @if (OnDeleteClick.HasDelegate)
+    @if (ShowDelete && OnDeleteClick.HasDelegate)
     {
         <button class="btn-link danger" type="button" @onclick=deleteClicked>@DeleteText</button>
     }
@@ -32,11 +32,19 @@ else{
     }
 }
 @code {
+    [Parameter] public string CreateText { get; set; } = "create";
     [Parameter] public string EditText { get; set; } = "edit";
     [Parameter] public string NavigateText { get; set; } = "navigate";
-    [Parameter] public string SaveText { get; set; } = "save";
     [Parameter] public string DeleteText { get; set; } = "delete";
-    [Parameter] public string CreateText { get; set; } = "create";
+    
+    [Parameter] public bool ShowCreate { get; set; } = false;
+    [Parameter] public bool ShowEdit { get; set; } = false;
+    [Parameter] public bool ShowNavigate { get; set; } = false;
+    [Parameter] public bool ShowDelete { get; set; } = false;
+
+
+ 
+    [Parameter] public string SaveText { get; set; } = "save";
     [Parameter] public string CancelText { get; set; } = "cancel";
 
 

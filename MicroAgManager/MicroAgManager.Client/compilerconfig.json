@@ -26,5 +26,9 @@
   {
     "outputFile": "Pages/Farm.razor.css",
     "inputFile": "Pages/Farm.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/ValidatedField.razor.css",
+    "inputFile": "Components/Shared/ValidatedField.razor.scss"
   }
 ]

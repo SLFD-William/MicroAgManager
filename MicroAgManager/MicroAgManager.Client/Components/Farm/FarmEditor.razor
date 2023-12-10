@@ -1,0 +1,111 @@
+﻿@using Domain.Models
+@using MicroAgManager.Client.Components.Shared
+@using MicroAgManager.Client.Data
+@inherits BaseEditor
+@if (editContext is not null)
+{
+        <ValidatedForm editContext="editContext"
+                   OnSubmit="@(()=> OnSubmit.InvokeAsync(editContext))"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <DataContent>
+ <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).Name)">
+                <InputText placeholder="Name" @bind-Value="@(((FarmLocationModel)editContext.Model).Name)" />
+            </ValidatedField>
+               <ValidatedField Legend="Address" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).StreetAddress)">
+                <InputText placeholder="Street Address" @bind-Value="@(((FarmLocationModel)editContext.Model).StreetAddress)" />
+            </ValidatedField>
+            <ValidatedField Legend="City" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).City)">
+                <InputText placeholder="City" @bind-Value="@(((FarmLocationModel)editContext.Model).City)" />
+            </ValidatedField>
+            <ValidatedField Legend="State" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).State)">
+                <InputText placeholder="State" @bind-Value="@(((FarmLocationModel)editContext.Model).State)" />
+            </ValidatedField>
+            <ValidatedField Legend="Zip" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).Zip)">
+                <InputText placeholder="Zip" @bind-Value="@(((FarmLocationModel)editContext.Model).Zip)" />
+            </ValidatedField>
+            <ValidatedField Legend="Country" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).Country)">
+                <InputText placeholder="Country" @bind-Value="@(((FarmLocationModel)editContext.Model).Country)" />
+            </ValidatedField>
+            @if (locationEnabled)
+            {
+                <ValidatedField Legend="Latitude" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).Latitude)">
+                    <InputNumber placeholder="Latitude" step="0.0000001" @bind-Value="@(((FarmLocationModel)editContext.Model).Latitude)" />
+                </ValidatedField>
+                <ValidatedField Legend="Longitude" ValidationMessageFor="@(() => ((FarmLocationModel)editContext.Model).Longitude)">
+                    <InputNumber placeholder="Longitude" step="0.0000001" @bind-Value="@(((FarmLocationModel)editContext.Model).Longitude)" />
+                </ValidatedField>
+
+        }       
+        </DataContent>
+
+        <SecondaryContent>
+            <section class="updateCancelButtons">
+                <button type="button" @onclick="GetGeoLocation">Look up geo location</button>
+                @if (locationEnabled)
+                {
+                    <button type="button" @onclick="OnCoordinateChange">Look up address</button>
+                }
+            </section>
+
+    </SecondaryContent>
+    </ValidatedForm>
+}
+
+
+@code {
+    private ValidatedForm _validatedForm;
+    bool locationEnabled { get; set; } = true;
+    [Inject] protected IGeolocationService GeoLoc { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (((FarmLocationModel)editContext.Model) is null) return;
+        if (firstRender && !(((FarmLocationModel)editContext.Model).Longitude.HasValue || ((FarmLocationModel)editContext.Model).Latitude.HasValue))
+            GeoLoc.GetCurrentPosition(this, nameof(OnCoordinatesPermitted), nameof(OnErrorRequestingCoordinates));
+    }
+    [JSInvokable]
+    public void OnCoordinatesPermitted(GeolocationPosition position)
+    {
+        locationEnabled = true;
+        var locChanged = ((FarmLocationModel)editContext.Model).Latitude != position.Coords.Latitude || ((FarmLocationModel)editContext.Model).Longitude != position.Coords.Longitude;
+        if (!locChanged) return;
+        ((FarmLocationModel)editContext.Model).Latitude = position.Coords.Latitude;
+        ((FarmLocationModel)editContext.Model).Longitude = position.Coords.Longitude;
+
+        Task.Run(OnCoordinateChange);
+        StateHasChanged();
+    }
+    private async Task OnCoordinateChange()
+    {
+        var geoLoc = await api.GetClosestAddress(((FarmLocationModel)editContext.Model).Latitude.Value, ((FarmLocationModel)editContext.Model).Longitude.Value);
+        var address = geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Address;
+        if (address == null) return;
+
+        ((FarmLocationModel)editContext.Model).StreetAddress = address.AddressLine;
+        ((FarmLocationModel)editContext.Model).City = address.Locality;
+        ((FarmLocationModel)editContext.Model).State = address.AdminDistrict;
+        ((FarmLocationModel)editContext.Model).Country = address.CountryRegion;
+        ((FarmLocationModel)editContext.Model).Zip = address.PostalCode;
+        StateHasChanged();
+    }
+    private async Task GetGeoLocation()
+    {
+        var geoLoc = await api.GetClosestGeoLocation((FarmLocationModel)editContext.Model);
+        var point = geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Point;
+        if (point == null) return;
+        ((FarmLocationModel)editContext.Model).Latitude = point.Coordinates[0];
+        ((FarmLocationModel)editContext.Model).Longitude = point.Coordinates[1];
+        StateHasChanged();
+    }
+    [JSInvokable]
+    public void OnErrorRequestingCoordinates(GeolocationPositionError error)
+    {
+        // TODO: consume/handle error.
+        locationEnabled = false;
+        StateHasChanged();
+    }
+}

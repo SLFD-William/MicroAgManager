@@ -24,12 +24,11 @@
             </span>
         }
         <h3>@Livestock.Name</h3>
-        <NavCrudButtons OnCancelClick="TestCall"
-                        OnCreateClick="TestCall"
-                        OnDeleteClick="TestCall"
-                        OnEditClick="TestCall"
-                        OnNavigateClick="TestCall"
-                        OnSaveClick="TestCall"></NavCrudButtons>
+        <NavCrudButtons ShowCreate="@OnCancelClick.HasDelegate" OnCancelClick="@(()=>OnCancelClick.InvokeAsync(Livestock.Id))"
+                        ShowDelete="@OnDeleteClick.HasDelegate"  OnDeleteClick="@(()=>OnDeleteClick.InvokeAsync(Livestock.Id))"
+                        ShowEdit="@OnEditClick.HasDelegate" OnEditClick="@(()=>OnEditClick.InvokeAsync(Livestock.Id))"
+                        ShowNavigate="@OnNavigateClick.HasDelegate" OnNavigateClick="@(()=>OnNavigateClick.InvokeAsync(Livestock.Id))"
+                        OnSaveClick="@(()=>OnSaveClick.InvokeAsync(Livestock.Id))"></NavCrudButtons>
     </section>
     @if (ShowGeneral)
     {
@@ -83,12 +82,12 @@
 
 
 
-    [Parameter] public EventCallback OnEditClick { get; set; }
-    [Parameter] public EventCallback OnNavigateClick { get; set; }
-    [Parameter] public EventCallback OnSaveClick { get; set; }
-    [Parameter] public EventCallback OnDeleteClick { get; set; }
-    [Parameter] public EventCallback OnCreateClick { get; set; }
-    [Parameter] public EventCallback OnCancelClick { get; set; }
+    [Parameter] public EventCallback<long> OnEditClick { get; set; }
+    [Parameter] public EventCallback<long> OnNavigateClick { get; set; }
+    [Parameter] public EventCallback<long> OnSaveClick { get; set; }
+    [Parameter] public EventCallback<long> OnDeleteClick { get; set; }
+    [Parameter] public EventCallback<long> OnCreateClick { get; set; }
+    [Parameter] public EventCallback<long> OnCancelClick { get; set; }
     private string Age()
     {
         if (Livestock is null)

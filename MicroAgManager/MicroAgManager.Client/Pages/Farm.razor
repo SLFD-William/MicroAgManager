@@ -1,4 +1,5 @@
 ﻿@page "/farm"
+@page "/farm/{farmLocationId}"
 @inherits ClientAppPage
 @rendermode InteractiveWebAssembly
 @using Domain.Models
@@ -41,7 +42,7 @@ else
 
 
 @code {
-    [Parameter] public long? farmLocationId { get; set; }
+    [Parameter] public string farmLocationId { get; set; }
     QuickGrid<FarmLocationModel> farmGrid;
 
     FarmLocationModel farm = new();
@@ -64,14 +65,13 @@ else
     private IQueryable<FarmLocationModel> filteredFarmQuery()
     {
         var query = baseFarmQuery().Result;
-        if (farmLocationId.HasValue)
+        if (!string.IsNullOrEmpty(farmLocationId))
         {
-            _farmCount = 1;
-            query = query.Where(p => p.Id == farmLocationId);
-            farm = query.First();
-            return query;
+            if(long.TryParse(farmLocationId,out var id))
+                query = query.Where(p => p.Id == id);
         }
-        
+        else
+        {
         if (!string.IsNullOrEmpty(farmNameFilter))
             query = query.Where(p => p.Name.Contains(farmNameFilter));
         if (!string.IsNullOrEmpty(streetFilter))
@@ -90,14 +90,14 @@ else
             query = query.Where(p => p.Latitude.HasValue && p.Latitude.Value.ToString().Contains(latitudeFilter));
         if (!string.IsNullOrEmpty(longitudeFilter))
             query = query.Where(p => p.Longitude.HasValue && p.Longitude.Value.ToString().Contains(longitudeFilter));
+        }
         _farmCount=query.Count();
         if (_farmCount == 1)
         {
             farm = query.First();
             StateHasChanged();
         }
-
-            return query;
+        return query;
     }
 
 }

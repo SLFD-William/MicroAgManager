@@ -1,5 +1,7 @@
 ﻿@page "/livestock"
+@page "/livestock/{livestockId}"
 @inherits ClientAppPage
+@inject NavigationManager navMan
 @rendermode InteractiveWebAssembly
 @using Domain.Models
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -10,16 +12,26 @@
 <PageTitle>Livestock</PageTitle>
 @if (_app.Initialized)
     {
-        <LivestockGrid Items="filteredLivestockQuery()"
-                       animalNameFilterChanged="@((x) => {animalNameFilter=x; StateHasChanged();})"
-                       batchNumberFilterChanged="@((x) => {batchNumberFilter=x; StateHasChanged();})"
-                       breedEmojiFilterChanged="@((x) => {breedEmojiFilter=x; StateHasChanged();})"
-                       breedNameFilterChanged="@((x) => {breedNameFilter=x; StateHasChanged();})"
-                       genderFilterChanged="@((x) => {genderFilter=x; StateHasChanged();})"
-                       nameFilterChanged="@((x) => {nameFilter=x; StateHasChanged();})"
-                       statusFilterChanged="@((x) => {statusFilter=x; StateHasChanged();})"
-                       varietyFilterChanged="@((x) => {varietyFilter=x; StateHasChanged();})">
+        @if (_livestockCount == 1)
+        {
+            <CascadingValue Value="livestock">
+                <LivestockNameplate ></LivestockNameplate>
+            </CascadingValue>
+        }
+        else
+        {
+            <LivestockGrid Items="filteredLivestockQuery()"
+                animalNameFilterChanged="@((x) => {animalNameFilter=x; StateHasChanged();})"
+                batchNumberFilterChanged="@((x) => {batchNumberFilter=x; StateHasChanged();})"
+                breedEmojiFilterChanged="@((x) => {breedEmojiFilter=x; StateHasChanged();})"
+                breedNameFilterChanged="@((x) => {breedNameFilter=x; StateHasChanged();})"
+                genderFilterChanged="@((x) => {genderFilter=x; StateHasChanged();})"
+                nameFilterChanged="@((x) => {nameFilter=x; StateHasChanged();})"
+                statusFilterChanged="@((x) => {statusFilter=x; StateHasChanged();})"
+                varietyFilterChanged="@((x) => {varietyFilter=x; StateHasChanged();})"
+                           OnNavigateClick="@((x) => navMan.NavigateTo($"/livestock/{x}"))">
         </LivestockGrid>
+        }
         
     }
 else
@@ -29,8 +41,13 @@ else
 </div>
 
 @code {
-    [Parameter] public long? livestockId { get; set; }
+    [Parameter] public string livestockId { get; set; }
     QuickGrid<LivestockModel> livestockGrid;
+
+    LivestockModel livestock = new();
+
+    private int _livestockCount = 0;
+
     string animalNameFilter;
     string batchNumberFilter;
     string breedEmojiFilter;
@@ -39,7 +56,7 @@ else
     string nameFilter;
     string statusFilter;
     string varietyFilter;
-    
+
     private async Task<IQueryable<LivestockModel>> baseLivestockQuery() {
         var db = await _app.GetDbContextAsync();
         return db.Livestocks
@@ -52,9 +69,12 @@ else
     private IQueryable<LivestockModel> filteredLivestockQuery()
     {
         var query = baseLivestockQuery().Result;
-        if (livestockId.HasValue)
-            return query.Where(p => p.Id == livestockId);
-
+        if (!string.IsNullOrEmpty(livestockId))
+        {
+            if(long.TryParse(livestockId,out var id))
+                query = query.Where(p => p.Id == id);
+        }
+        else{
         if (!string.IsNullOrEmpty(animalNameFilter))
             query = query.Where(p => p.Breed.Animal.Name.Contains(animalNameFilter));
         if (!string.IsNullOrEmpty(breedNameFilter))
@@ -71,7 +91,13 @@ else
             query = query.Where(p => p.StatusId.HasValue && p.Status.Status.Contains(statusFilter));
         if (!string.IsNullOrEmpty(nameFilter))
             query = query.Where(p => p.Name.Contains(nameFilter));
-
+        }
+            _livestockCount = query.Count();
+            if (_livestockCount == 1)
+            {
+                livestock = query.First();
+                StateHasChanged();
+            }
         return query;
 
     }

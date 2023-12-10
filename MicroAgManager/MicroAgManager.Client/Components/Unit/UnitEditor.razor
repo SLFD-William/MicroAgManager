@@ -1,0 +1,45 @@
+﻿@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Client.Components.Shared
+@inherits BaseEditor
+
+@if (editContext is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="@(()=> OnSubmit.InvokeAsync(editContext))"
+                   OnCancel="@(()=> OnCancel.InvokeAsync())"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <DataContent>
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Category)">
+                <InputSelect @bind-Value="@(((UnitModel)editContext.Model).Category)">
+                    <option value="">Select Category ...</option>
+                    @foreach (var category in UnitCategoryConstants.Units.Keys.Order().ToList())
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Name)">
+                <InputText placeholder="Unit" @bind-Value="@(((UnitModel)editContext.Model).Name)" />
+            </ValidatedField>
+            <ValidatedField Legend="Symbol" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Symbol)">
+                <InputText placeholder="Unit" @bind-Value="@(((UnitModel)editContext.Model).Symbol)" />
+            </ValidatedField>
+            @if (!string.IsNullOrEmpty(((UnitModel)editContext.Model).Category))
+            { 
+                <ValidatedField Legend=@($"Conversion to SI {UnitCategoryConstants.Units[((UnitModel)editContext.Model).Category]}") ValidationMessageFor="@(() => ((UnitModel)editContext.Model).ConversionFactorToSIUnit)">
+                    <InputNumber placeholder="0" @bind-Value="@(((UnitModel)editContext.Model).ConversionFactorToSIUnit)" />
+                </ValidatedField>
+            }
+        </DataContent>
+
+    </ValidatedForm>
+}
+
+@code {
+    private ValidatedForm _validatedForm;
+
+}
