@@ -43,7 +43,7 @@ namespace MicroAgManager.Identity
         /// </summary>
         /// <param name="httpClientFactory">Factory to retrieve auth client.</param>
         public CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory)
-            => _httpClient = httpClientFactory.CreateClient("Auth");
+            => _httpClient = httpClientFactory.CreateClient("API");
 
         /// <summary>
         /// Register a new user.

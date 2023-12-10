@@ -9,6 +9,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Services.AddGeolocationServices();
+
 // register the cookie handler
 builder.Services.AddScoped<CookieHandler>();
 
@@ -28,7 +30,7 @@ builder.Services.AddScoped(sp =>
 
 // configure client for auth interactions
 builder.Services.AddHttpClient(
-    "Auth",
+    "API",
     opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
     .AddHttpMessageHandler<CookieHandler>();
 
