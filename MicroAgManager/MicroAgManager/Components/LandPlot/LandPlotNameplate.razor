@@ -1,0 +1,93 @@
+﻿@using Domain.Models
+@using MicroAgManager.Components.Shared
+<section class="LandPlotNameplate">
+     <section class="name">
+        <h3>@Plot.Name</h3>
+        <NavCrudButtons OnCancelClick="TestCall"
+                        OnCreateClick="TestCall"
+                        OnDeleteClick="TestCall"
+                        OnEditClick="TestCall"
+                        OnNavigateClick="TestCall"
+                        OnSaveClick="TestCall"></NavCrudButtons>
+    </section>
+    @if (ShowAll || ShowFarm)
+    {
+        <section class="farm">
+            @if (ShowAll)
+            {
+                <h4>Farm</h4>
+            }
+            <span>@Plot.Farm.Name</span>
+        </section>
+    }
+    @if (ShowAll || ShowDescription)
+    {
+        <section class="description">
+            @if (ShowAll)
+            {
+                <h4>Description</h4>
+            }
+            <span>@Plot.Description</span>
+        </section>
+    }
+    @if(ShowAll || ShowArea)
+    {
+        <section class="area">
+            @if (ShowAll)
+            {
+                <h4>Area</h4>
+            }
+            <span>@Plot.Area @Plot.AreaUnit.Symbol</span>
+        </section>
+    }
+    @if (ShowAll || ShowUsage)
+    {
+        <section class="usage">
+            @if (ShowAll)
+            {
+                <h4>Usage</h4>
+            }
+            <span>@Plot.Usage</span>
+        </section>
+    }
+    @if (ShowAll || ShowSubplots)
+    {
+        <section class="subplots">
+            @if (ShowAll)
+            {
+                <h4>Subplots</h4>
+            }
+            <span>@Plot.Subplots?.Count()</span>
+        </section>
+    }
+    @if (ShowAll || ShowLivestocks)
+    {
+        <section class="livestocks">
+            @if (ShowAll)
+            {
+                <h4>Livestocks</h4>
+            }
+            <span>@Plot.Livestocks?.Count()</span>
+        </section>
+    }
+</section>
+@code {
+    [CascadingParameter] LandPlotModel Plot { get; set; }
+    [Parameter] public bool ShowAll { get; set; } = false;
+    [Parameter] public bool ShowFarm { get; set; } = false;
+    [Parameter] public bool ShowDescription { get; set; } = false;
+    [Parameter] public bool ShowArea { get; set; } = false;
+    [Parameter] public bool ShowUsage { get; set; } = false;
+    [Parameter] public bool ShowSubplots { get; set; } = false;
+    [Parameter] public bool ShowLivestocks { get; set; } = false;
+    
+    [Parameter] public EventCallback OnEditClick { get; set; }
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
+    [Parameter] public EventCallback OnSaveClick { get; set; }
+    [Parameter] public EventCallback OnDeleteClick { get; set; }
+    [Parameter] public EventCallback OnCreateClick { get; set; }
+    [Parameter] public EventCallback OnCancelClick { get; set; }
+
+    private void TestCall() { }
+
+}

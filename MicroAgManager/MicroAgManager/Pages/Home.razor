@@ -1,0 +1,18 @@
+﻿@page "/Home"
+@using FrontEnd.Persistence
+@using Microsoft.EntityFrameworkCore
+
+
+<PageTitle>Home</PageTitle>
+
+@if (dbContext?.Farms.Any() != true)
+{
+    <NavLink href="/Land/-1">Create Farm</NavLink>
+}
+
+@code{
+    [CascadingParameter] private FrontEndDbContext dbContext {get;set;}
+
+    
+
+}

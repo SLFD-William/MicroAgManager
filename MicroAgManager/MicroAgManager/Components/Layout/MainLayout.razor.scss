@@ -1,0 +1,67 @@
+.MainLayout {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: grid;
+    grid-template-rows: [header-start] auto [header-end main-start] 1fr [main-end footer-start]auto[footer-end];
+}
+
+
+
+main {
+    grid-row:main;
+    position: relative;
+    width: inherit;
+    margin-inline: auto;
+    overflow: auto;
+    container: mainlayout_main / inline-size;
+
+}
+
+/*.sidebar {
+    
+}*/
+
+header {
+    justify-content: flex-end;
+    height: fit-content;
+    display: flex;
+    grid-row: header;
+}
+footer {
+    justify-content: flex-end;
+    height: fit-content;
+    display: flex;
+    grid-row: footer;
+}
+@media (max-width: var(--media-max-width)) {
+    header {
+        justify-content: space-between;
+
+        & ::deep a, & ::deep .btn-link {
+            margin-left: 0;
+        }
+    }
+}
+
+@media (min-width: var(--media-min-width)) {
+
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        &.auth ::deep a:first-child {
+            flex: 1;
+            text-align: right;
+            width: 0;
+        }
+
+        &, article {
+            padding-left: 2rem !important;
+            padding-right: 1.5rem !important;
+        }
+    }
+}
+
+

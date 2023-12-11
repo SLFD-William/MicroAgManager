@@ -1,7 +1,7 @@
 ﻿@page "/register"
 @using MicroAgManager.Identity
 @inject IAccountManagement Acct
-
+@inject NavigationManager nm
 <PageTitle>Register</PageTitle>
 
 <h1>Register</h1>
@@ -101,6 +101,7 @@
         {
             success = true;
             email = password = confirmPassword = string.Empty;
+            nm.NavigateTo("/Home");
         }
         else
         {

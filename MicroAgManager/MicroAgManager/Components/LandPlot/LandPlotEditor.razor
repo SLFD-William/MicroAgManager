@@ -1,0 +1,143 @@
+﻿@using Domain.Constants
+@using Domain.Models
+@using FrontEnd.Persistence
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.Unit
+@using MicroAgManager.Components.Farm
+@inherits BaseEditor
+@if (editContext is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="@(()=> OnSubmit.InvokeAsync(editContext))"
+                   OnCancel="@(()=> OnCancel.InvokeAsync())"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(((LandPlotModel)editContext.Model).Id<1)"
+                   Modal=Modal
+                    Show=Show>
+
+        <DataContent>
+            <ValidatedField ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).FarmLocationId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Farm</span><button type="button" @onclick=ShowFarmEditor>+</button>
+                        <FarmEditor Modal=true Show=@showFarmModal editContext=farmEditContext OnCancel=FarmCanceled OnSubmit=FarmSubmitted></FarmEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@(((LandPlotModel)editContext.Model).FarmLocationId)">
+                        <option value="">Select Farm ...</option>
+                        @foreach (var unit in _dbContext.Farms)
+                        {
+                            <option value="@unit.Id">
+                                <CascadingValue Value="@unit">
+                                    <FarmNameplate ></FarmNameplate>
+                                </CascadingValue>
+                            </option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Usage)">
+                <InputSelect @bind-Value="@(((LandPlotModel)editContext.Model).Usage)">
+                    <option value="">Select Use ...</option>
+                    <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
+                    <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
+                    <option value="@LandPlotUseConstants.Livestock">@LandPlotUseConstants.Livestock</option>
+                    <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Name)">
+                <InputText placeholder="Name" @bind-Value="@(((LandPlotModel)editContext.Model).Name)" />
+            </ValidatedField>
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Description)">
+                <InputText placeholder="Description" @bind-Value="@(((LandPlotModel)editContext.Model).Description)" />
+            </ValidatedField>
+            <ValidatedField Legend="Area" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Area)">
+                <InputNumber placeholder="0" @bind-Value="@(((LandPlotModel)editContext.Model).Area)" />
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).AreaUnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Area Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@(((LandPlotModel)editContext.Model).AreaUnitId)">
+                        <option value="">Select Units ...</option>
+                        @foreach (var unit in _dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
+                        {
+                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+        </DataContent>
+    </ValidatedForm>
+}
+
+
+@code {
+    
+    private bool showFarmModal = false;
+    private EditContext farmEditContext = new EditContext(new FarmLocationModel());
+    private void ShowFarmEditor()
+    {
+        showFarmModal = true;
+        StateHasChanged();
+    }
+    private void FarmSubmitted(object e)
+    {
+        // var model = e as UnitModel;
+         showFarmModal = false;
+        // ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
+        // editContext = new EditContext(working);
+        // StateHasChanged();
+    }
+    private void FarmCanceled(object e)
+    {
+        showFarmModal = false;
+        StateHasChanged();
+    }
+    
+    private EditContext unitEditContext = new EditContext(new UnitModel());
+    private bool showUnitModal = false;
+
+
+    private void ShowUnitEditor()
+    {
+        showUnitModal = true;
+        StateHasChanged();
+    }
+    private void UnitSubmitted(object e)
+    {
+        // var model = e as UnitModel;
+        showUnitModal = false;
+        // ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
+        // editContext = new EditContext(working);
+        // StateHasChanged();
+    }
+    private void UnitCanceled(object e)
+    {
+        showUnitModal = false;
+        StateHasChanged();
+    }
+    // private void Cancel()
+    // {
+    //     // working = original.Map((LandPlotModel)working);
+    //     // SetEditContext((LandPlotModel)working);
+    //     Task.Run(Cancelled.InvokeAsync);
+    // }
+    // public async Task OnSubmit()
+    // {
+    //     // var id = (working?.Id <= 0) ?
+    //     //     await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = (LandPlotModel)working }) :
+    //     //     await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = (LandPlotModel)working });
+
+    //     // if (id <= 0)
+    //     //     throw new Exception("Unable to save editContext");
+    //     // ((LandPlotModel)working).Id = id;
+    //     // SetEditContext((LandPlotModel)working);
+    //     await Submitted.InvokeAsync(working);
+    // }
+}

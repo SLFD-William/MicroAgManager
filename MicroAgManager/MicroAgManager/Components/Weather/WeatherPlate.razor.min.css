@@ -1,0 +1,1 @@
+﻿@charset "UTF-8";.WeatherPlate{display:flex;flex-wrap:wrap;gap:.5em;}.WeatherPlate .degreesF::after{content:"°F";}.WeatherPlate .degreesC::after{content:"°C";}.WeatherPlate .currentConditions{font-size:.8em;}

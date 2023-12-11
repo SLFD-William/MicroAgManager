@@ -1,0 +1,21 @@
+.WeatherPlate {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+
+    & .degreesF {
+        &::after {
+            content: "\00b0 F";
+        }
+    }
+
+    & .degreesC {
+        &::after {
+            content: "\00b0 C";
+        }
+    }
+
+    & .currentConditions {
+        font-size: 0.8em;
+    }
+}

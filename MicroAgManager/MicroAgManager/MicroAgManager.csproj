@@ -8,15 +8,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\ClientAppPage.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="compilerconfig.json" />
+    <Content Remove="Pages\Farm.razor" />
+    <Content Remove="Pages\Livestock.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Farm.razor.css" />
+    <None Remove="Pages\Farm.razor.min.css" />
+    <None Remove="Pages\Farm.razor.scss" />
+    <None Remove="Pages\Livestock.razor.css" />
+    <None Remove="Pages\Livestock.razor.min.css" />
+    <None Remove="Pages\Livestock.razor.scss" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
+    <None Include="Components\Farm\FarmEditor.razor" />
+    <None Include="Components\Farm\FarmGrid.razor" />
+    <None Include="Components\Farm\FarmNameplate.razor" />
+    <None Include="Components\LandPlot\LandPlotEditor.razor" />
+    <None Include="Components\LandPlot\LandPlotGrid.razor" />
+    <None Include="Components\LandPlot\LandPlotNameplate.razor" />
+    <None Include="Components\Livestock\LivestockGrid.razor" />
+    <None Include="Components\Livestock\LivestockNameplate.razor" />
+    <None Include="Components\Shared\NavCrudButtons.razor" />
+    <None Include="Components\Shared\ValidatedField.razor" />
+    <None Include="Components\Shared\ValidatedForm.razor" />
+    <None Include="Components\Unit\UnitEditor.razor" />
+    <None Include="Components\Weather\WeatherPlate.razor" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazor.Geolocation.WebAssembly" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.0" />
@@ -26,11 +56,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BackEnd\BackEnd.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\FrontEnd.Persistence\FrontEnd.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

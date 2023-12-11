@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @using MicroAgManager.Identity
 @inject IAccountManagement Acct
+@inject NavigationManager nm
 
 <PageTitle>Login</PageTitle>
 
@@ -71,6 +72,7 @@
         {
             success = true;
             email = password = string.Empty;
+            nm.NavigateTo("/Home");
         }
         else
         {

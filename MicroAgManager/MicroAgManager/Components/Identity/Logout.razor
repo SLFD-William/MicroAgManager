@@ -1,6 +1,7 @@
 ﻿@page "/logout"
 @using MicroAgManager.Identity
 @inject IAccountManagement Acct
+@inject NavigationManager nm
 
 <PageTitle>Logout</PageTitle>
 
@@ -23,6 +24,7 @@
         if (await Acct.CheckAuthenticatedAsync())
         {
             await Acct.LogoutAsync();
+            nm.NavigateTo("");
         }
 
         await base.OnInitializedAsync();
