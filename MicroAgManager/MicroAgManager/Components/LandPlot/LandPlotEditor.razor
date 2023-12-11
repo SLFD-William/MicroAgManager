@@ -78,7 +78,7 @@
 
 
 @code {
-    
+
     private bool showFarmModal = false;
     private EditContext farmEditContext = new EditContext(new FarmLocationModel());
     private void ShowFarmEditor()
@@ -86,13 +86,14 @@
         showFarmModal = true;
         StateHasChanged();
     }
-    private void FarmSubmitted(object e)
+    private void FarmSubmitted(EditContext e)
     {
-        // var model = e as UnitModel;
-         showFarmModal = false;
-        // ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
+        var model = e.Model as FarmLocationModel;
+        showFarmModal = false;
+        if (model == null) return;
+        ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
         // editContext = new EditContext(working);
-        // StateHasChanged();
+         StateHasChanged();
     }
     private void FarmCanceled(object e)
     {

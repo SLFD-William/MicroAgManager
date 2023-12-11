@@ -4,10 +4,16 @@
 
 
 <PageTitle>Home</PageTitle>
-
-@if (dbContext?.Farms.Any() != true)
+@if(dbContext == null)
 {
-    <NavLink href="/Land/-1">Create Farm</NavLink>
+    <span>Initializing DB</span>
+}
+else 
+{
+    @if (!dbContext.Farms.Any())
+    {
+        <NavLink href="/Land/-1">Create a Plot of Land</NavLink>
+    }
 }
 
 @code{

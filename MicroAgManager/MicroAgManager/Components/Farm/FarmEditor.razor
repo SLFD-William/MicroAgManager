@@ -1,13 +1,14 @@
-﻿@using Domain.Models
+﻿@using BackEnd.BusinessLogic.FarmLocation
+@using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
 @inherits BaseEditor
 @if (editContext is not null)
 {
         <ValidatedForm editContext="editContext"
-                   OnSubmit="@(()=> OnSubmit.InvokeAsync(editContext))"
+                   OnSubmit="OnFarmSubmit"
                    OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
-                   showUpdateCancelButtons="true"
+               showUpdateCancelButtons="true"
                    @ref=_validatedForm
                    Modal=Modal
                    Show=Show>
@@ -107,5 +108,45 @@
         // TODO: consume/handle error.
         locationEnabled = false;
         StateHasChanged();
+    }
+
+    private async Task OnFarmSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            if (!(((FarmLocationModel)editContext.Model).Latitude.HasValue || ((FarmLocationModel)editContext.Model).Longitude.HasValue))
+                await GetGeoLocation();
+
+            var creating = (((FarmLocationModel)editContext.Model).Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<FarmLocationModel, CreateFarmLocation>("api/CreateFarmLocation", new CreateFarmLocation { Farm = (FarmLocationModel)editContext.Model }) :
+                await api.ProcessCommand<FarmLocationModel, UpdateFarmLocation>("api/UpdateFarmLocation", new UpdateFarmLocation { Farm = (FarmLocationModel)editContext.Model });
+
+            if (id <= 0)
+                throw new Exception("Unable to save farm location");
+            if (creating)
+            {
+                ((FarmLocationModel)editContext.Model).Id = id;
+                _dbContext.Farms.Add((FarmLocationModel)editContext.Model);
+            }
+            else
+            {
+                var updated =await _dbContext.Farms.FindAsync(id);
+                updated = ((FarmLocationModel)editContext.Model).Map(updated) as FarmLocationModel;
+            }
+            await _dbContext.SaveChangesAsync();
+
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        
+
     }
 }

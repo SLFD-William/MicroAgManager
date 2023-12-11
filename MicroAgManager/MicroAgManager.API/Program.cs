@@ -100,4 +100,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+bool migratingDb = false;
+using (var scope = app.Services.CreateScope())
+{
+    do
+    {
+        if (migratingDb) Task.Delay(1000).Wait();
+    } while (migratingDb);
+    migratingDb = true;
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<MicroAgManagementDbContext>();
+    context.Database.Migrate();
+}
+migratingDb = false;
 app.Run();
