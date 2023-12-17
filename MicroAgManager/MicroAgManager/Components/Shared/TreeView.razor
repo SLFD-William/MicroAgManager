@@ -1,0 +1,9 @@
+﻿<nav class="TreeView">
+<ul >
+    @ChildContent
+</ul>
+</nav>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

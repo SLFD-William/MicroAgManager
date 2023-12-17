@@ -1,7 +1,31 @@
 .Land {
     width: inherit;
     container: landpage / inline-size;
-    height:100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: start;
+
+    & ::deep > form {
+        grid-column: 1/-1;
+    }
+
+    & ::deep > .TreeView {
+        height: 100%;
+        background-image: linear-gradient(180deg, var(--nav-gradient-start-color) 0%, var(--nav-gradient-end-color) 100%);
+        color: var(--typography-secondary-color);
+    }
+
+    & ::deep .nodeContent {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        & a {
+            color:inherit;
+        }  
+    }
+
+
     & .microagmanager {
         width: 75vw;
     }

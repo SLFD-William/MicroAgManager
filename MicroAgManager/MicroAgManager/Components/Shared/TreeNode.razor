@@ -1,0 +1,48 @@
+﻿<li class="TreeNode">
+    <button class="@ButtonClass()" @onclick=@(() => NodeSelected=!NodeSelected)>
+        @if (ChildContent != null)
+        { 
+            @if (NodeSelected)
+            {
+                <span>-</span>
+            }
+            else
+            {
+                <span>+</span>
+            }
+        }
+        @if (NodeContent != null)
+        {
+            @NodeContent   
+        }
+        else
+        {
+            <span>@NodeName</span>
+        }
+    </button>
+    
+    @if (ChildContent != null && NodeSelected)
+    {
+        <TreeView>
+            @ChildContent
+        </TreeView>
+    }
+</li>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment NodeContent { get; set; }
+    [Parameter] public EventCallback<bool> OnNodeSelected { get; set; }
+    [Parameter] public TreeNode? ParentNode { get; set; }
+    [Parameter] public string NodeName { get; set; }
+
+    private bool _nodeSelected=false;
+    private string ButtonClass() => _nodeSelected ? "active" : string.Empty;
+    public bool NodeSelected { get => _nodeSelected; 
+        set
+        {
+            _nodeSelected = value;
+            OnNodeSelected.InvokeAsync(value);
+        } 
+    }
+}

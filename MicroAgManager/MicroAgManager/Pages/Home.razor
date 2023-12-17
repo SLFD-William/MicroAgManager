@@ -10,7 +10,7 @@
 }
 else 
 {
-    @if (!dbContext.Farms.Any())
+    @if (!dbContext.LandPlots.Any())
     {
         <NavLink href="/Land/-1">Create a Plot of Land</NavLink>
     }

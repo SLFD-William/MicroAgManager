@@ -10331,9 +10331,11 @@ html, body {
 }
 
 form {
-  margin: auto;
-  padding: 0.5em;
-  max-width: 75vw;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 125ch;
+  min-width: 40ch;
+  padding: 1em;
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
@@ -10343,9 +10345,10 @@ form {
 form .dataSection {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(25ch, 1fr));
+  grid-template-columns: repeat(auto-fill, 40ch);
   grid-gap: 1em;
   justify-items: center;
+  justify-content: center;
 }
 form.flexDataSection > .dataSection {
   display: flex;

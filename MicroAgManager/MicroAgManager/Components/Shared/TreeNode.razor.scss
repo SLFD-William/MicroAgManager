@@ -1,0 +1,28 @@
+.TreeNode {
+    padding: unset;
+    white-space: nowrap;
+    text-decoration: none;
+    color: inherit;
+
+
+    & > button {
+        width: 100%;
+        text-align: left;
+        background-color: transparent;
+        border: none;
+        padding: unset;
+        font: inherit;
+        color: inherit;
+        display:flex;
+
+
+        &.active {
+            background-color: var(--typography-secondary-bg-color);
+        }
+    }
+
+
+    & ::deep .TreeView {
+        margin-inline-start: 1em;
+    }
+}

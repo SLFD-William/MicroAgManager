@@ -22,7 +22,8 @@ namespace Domain.Models
         
         public string Usage { get; set; } = nameof(LandPlotUseConstants.GeneralUse);
         [ForeignKey(nameof(ParentPlot))] public long? ParentPlotId { get; set; }
-        public virtual LandPlotModel ParentPlot { get; set; }
+        public virtual LandPlotModel? ParentPlot { get; set; }
+        [NotMapped]public string ParentPlotName { get => ParentPlot?.Name ?? string.Empty; }
         public virtual ICollection<LandPlotModel> Subplots { get; set; }=new List<LandPlotModel>();
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
 

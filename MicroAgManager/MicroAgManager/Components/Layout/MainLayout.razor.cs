@@ -1,10 +1,8 @@
-﻿using Domain.Logging;
-using FrontEnd.Persistence;
+﻿using FrontEnd.Persistence;
 using MicroAgManager.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace MicroAgManager.Components.Layout
 {
@@ -12,51 +10,67 @@ namespace MicroAgManager.Components.Layout
     {
         private static ILogger _log;
         private static FrontEndDbContext _dbContext;
-        private AuthenticationStateProvider _authentication;
+        private static AuthenticationStateProvider _authentication;
         private static DataSynchronizer _dbSynchonizer;
+        private static NavigationManager _navigationManager;
 
         [Inject] DataSynchronizer dbSynchonizer { get; set; }
         [Inject] IConfiguration config { get; set; }
         [Inject] AuthenticationStateProvider authentication { get; set; }
+        [Inject] NavigationManager navigationManager { get; set; }
+        
+        
         protected async override Task OnInitializedAsync()
         {
             _authentication = authentication;
             _authentication.AuthenticationStateChanged += Authentication_AuthenticationStateChanged;
-            var user = await _authentication.GetAuthenticationStateAsync();
+            _navigationManager = navigationManager;
+            _navigationManager.LocationChanged += NavigationManager_LocationChanged;
             if (_dbContext == null || _dbSynchonizer == null)
             {
                 _dbSynchonizer = dbSynchonizer;
                 _dbContext = await _dbSynchonizer.InitializeDbContextAsync();
-                if (user.User?.Identity?.IsAuthenticated == true)
-                    await _dbSynchonizer.EnsureSynchronizingAsync(null);
+                await EnsureDbSynchronizing();
                 //_log = new DatabaseLoggingProvider(_dbContext, config).CreateLogger("ClientLogging");
             }
+            await RedirectLandingToHomeIfAuthenticated();
         }
-        
-
-        private async void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task)
+        public void Dispose()
         {
-            var user = await task;
-            if (user.User?.Identity?.IsAuthenticated == true)
+            _authentication.AuthenticationStateChanged -= Authentication_AuthenticationStateChanged;
+            _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
+        }
+        private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e) => InvokeAsync(RedirectLandingToHomeIfAuthenticated);
+        private void Authentication_AuthenticationStateChanged(Task<AuthenticationState> task) => InvokeAsync(EnsureDbSynchronizing);
+
+
+        private async Task RedirectLandingToHomeIfAuthenticated()
+        {
+            if (_navigationManager.BaseUri == _navigationManager.Uri && await UserIsAuthenticated())
+                _navigationManager.NavigateTo("/Home");
+
+        }
+        private async Task<bool> UserIsAuthenticated()
+        {
+            var user = await _authentication.GetAuthenticationStateAsync();
+            return user.User?.Identity?.IsAuthenticated == true;
+        }
+        private async Task EnsureDbSynchronizing()
+        {
+            if (await UserIsAuthenticated())
             {
                 try
                 {
-                    Console.WriteLine("Initializing SignalR");
+                    //Console.WriteLine("Initializing SignalR");
                     //await InitializeNotificationHub();
+                    await _dbSynchonizer.EnsureSynchronizingAsync(null);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message + e.StackTrace);
                 }
-                Console.WriteLine("Synchronizing DB");
-                await _dbSynchonizer.EnsureSynchronizingAsync(null);
-                Console.WriteLine("Synchronized DB");
-            }
-        }
 
-        public void Dispose()
-        {
-            _authentication.AuthenticationStateChanged -= Authentication_AuthenticationStateChanged;
+            }
         }
     }
 }

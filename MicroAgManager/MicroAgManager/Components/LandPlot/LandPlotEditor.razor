@@ -1,22 +1,24 @@
-﻿@using Domain.Constants
+﻿@using BackEnd.BusinessLogic.FarmLocation.LandPlots
+@using Domain.Constants
 @using Domain.Models
 @using FrontEnd.Persistence
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Components.Unit
 @using MicroAgManager.Components.Farm
+@using MicroAgManager.Data
 @inherits BaseEditor
-@if (editContext is not null)
+@if (landPlot is not null)
 {
     <ValidatedForm editContext="editContext"
-                   OnSubmit="@(()=> OnSubmit.InvokeAsync(editContext))"
-                   OnCancel="@(()=> OnCancel.InvokeAsync())"
+                   OnSubmit="@OnLandPlotSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
                    showUpdateCancelButtons="true"
-                   createOnly="@(((LandPlotModel)editContext.Model).Id<1)"
+                   createOnly="@(landPlot.Id<1)"
                    Modal=Modal
                     Show=Show>
 
         <DataContent>
-            <ValidatedField ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).FarmLocationId)">
+            <ValidatedField ValidationMessageFor="@(() => landPlot.FarmLocationId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Farm</span><button type="button" @onclick=ShowFarmEditor>+</button>
@@ -24,7 +26,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@(((LandPlotModel)editContext.Model).FarmLocationId)">
+                    <InputSelect @bind-Value="@landPlot.FarmLocationId">
                         <option value="">Select Farm ...</option>
                         @foreach (var unit in _dbContext.Farms)
                         {
@@ -37,8 +39,8 @@
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
-            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Usage)">
-                <InputSelect @bind-Value="@(((LandPlotModel)editContext.Model).Usage)">
+            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => landPlot.Usage)">
+                <InputSelect @bind-Value="@landPlot.Usage">
                     <option value="">Select Use ...</option>
                     <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
                     <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
@@ -46,16 +48,16 @@
                     <option value="@LandPlotUseConstants.Pasture">@LandPlotUseConstants.Pasture</option>
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Name" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Name)">
-                <InputText placeholder="Name" @bind-Value="@(((LandPlotModel)editContext.Model).Name)" />
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => landPlot.Name)">
+                <InputText placeholder="Name" @bind-Value="@landPlot.Name" />
             </ValidatedField>
-            <ValidatedField Legend="Description" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Description)">
-                <InputText placeholder="Description" @bind-Value="@(((LandPlotModel)editContext.Model).Description)" />
+            <ValidatedField Legend="Description" ValidationMessageFor="@(() => landPlot.Description)">
+                <InputText placeholder="Description" @bind-Value="@landPlot.Description" />
             </ValidatedField>
-            <ValidatedField Legend="Area" ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).Area)">
-                <InputNumber placeholder="0" @bind-Value="@(((LandPlotModel)editContext.Model).Area)" />
+            <ValidatedField Legend="Area" ValidationMessageFor="@(() => landPlot.Area)">
+                <InputNumber placeholder="0" @bind-Value="@landPlot.Area" />
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => ((LandPlotModel)editContext.Model).AreaUnitId)">
+            <ValidatedField ValidationMessageFor="@(() => landPlot.AreaUnitId)">
                 <LegendContent>
                     <div style="display:inline-flex">
                         <span>Area Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
@@ -63,7 +65,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@(((LandPlotModel)editContext.Model).AreaUnitId)">
+                    <InputSelect @bind-Value="@landPlot.AreaUnitId">
                         <option value="">Select Units ...</option>
                         @foreach (var unit in _dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
                         {
@@ -78,7 +80,9 @@
 
 
 @code {
-
+    [Inject] protected IAPIService api { get; set; }
+    private LandPlotModel? landPlot;
+    #region ModalEditors
     private bool showFarmModal = false;
     private EditContext farmEditContext = new EditContext(new FarmLocationModel());
     private void ShowFarmEditor()
@@ -93,18 +97,16 @@
         if (model == null) return;
         ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
         // editContext = new EditContext(working);
-         StateHasChanged();
+        StateHasChanged();
     }
     private void FarmCanceled(object e)
     {
         showFarmModal = false;
         StateHasChanged();
     }
-    
-    private EditContext unitEditContext = new EditContext(new UnitModel());
+
     private bool showUnitModal = false;
-
-
+    private EditContext unitEditContext = new EditContext(new UnitModel());
     private void ShowUnitEditor()
     {
         showUnitModal = true;
@@ -123,22 +125,44 @@
         showUnitModal = false;
         StateHasChanged();
     }
-    // private void Cancel()
-    // {
-    //     // working = original.Map((LandPlotModel)working);
-    //     // SetEditContext((LandPlotModel)working);
-    //     Task.Run(Cancelled.InvokeAsync);
-    // }
-    // public async Task OnSubmit()
-    // {
-    //     // var id = (working?.Id <= 0) ?
-    //     //     await app.api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = (LandPlotModel)working }) :
-    //     //     await app.api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = (LandPlotModel)working });
+    #endregion
+    protected override void OnInitialized()
+    {
+        landPlot = editContext.Model as LandPlotModel;
+        if (landPlot is null) return;
+    }
+    private async Task OnLandPlotSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+        try
+        {
 
-    //     // if (id <= 0)
-    //     //     throw new Exception("Unable to save editContext");
-    //     // ((LandPlotModel)working).Id = id;
-    //     // SetEditContext((LandPlotModel)working);
-    //     await Submitted.InvokeAsync(working);
-    // }
+            var creating = (landPlot.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<LandPlotModel, CreateLandPlot>("api/CreateLandPlot", new CreateLandPlot { LandPlot = landPlot }) :
+                await api.ProcessCommand<LandPlotModel, UpdateLandPlot>("api/UpdateLandPlot", new UpdateLandPlot { LandPlot = landPlot });
+
+            if (id <= 0)
+                throw new Exception("Unable to save land plot");
+            if (creating)
+            {
+                landPlot.Id = id;
+                _dbContext.LandPlots.Add(landPlot);
+            }
+            else
+            {
+                var updated = await _dbContext.LandPlots.FindAsync(landPlot.Id);
+                updated = landPlot.Map(updated) as LandPlotModel;
+            }
+            await _dbContext.SaveChangesAsync();
+            editContext = new EditContext(landPlot);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+        
+    }
 }

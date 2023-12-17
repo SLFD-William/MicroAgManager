@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Net.Http.Json;
 using MicroAgManager.Identity.Models;
-using System.Net.Http;
 using Domain.ValueObjects;
 
 namespace MicroAgManager.Identity
@@ -184,8 +183,12 @@ namespace MicroAgManager.Identity
                         new(ClaimTypes.Name, userInfo.Email),
                         new(ClaimTypes.Email, userInfo.Email),
                         new Claim(nameof(userInfo.TenantId), userInfo.TenantId),
-                    };   
-
+                    };
+                    // add any additional claims
+                    var types = claims.Select(c => c.Type).ToList();
+                    claims.AddRange(
+                        userInfo.Claims.Where(c => !types.Contains( c.Key))
+                            .Select(c => new Claim(c.Key, c.Value)));
                     // set the principal
                     var id = new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider));
                     user = new ClaimsPrincipal(id);

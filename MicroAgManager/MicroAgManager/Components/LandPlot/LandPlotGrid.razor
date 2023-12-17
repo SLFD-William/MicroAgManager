@@ -4,27 +4,38 @@
 
 
 <QuickGrid Theme="microagmanager" @ref=plotGrid TGridItem=LandPlotModel Virtualize=true Items="Items">
-    <PropertyColumn Property="@(p => p.Farm.Name)" Title="Farm" Sortable="true">
-        <ColumnOptions>
+    
+    @if (ShowFarmColumn)
+    {
+        <PropertyColumn Property="@(p => p.Farm.Name)" Title="Farm" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+    }
+    @if (ShowUsageColumn)
+    {
+        <PropertyColumn Property
+        ="@(p => p.Usage)" Title
+        ="Usage" Sortable
+        ="true">
+            <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
+                <input type="search" autofocus @bind="usageFilter" @bind:event="oninput" placeholder="Farm..." />
             </div>
         </ColumnOptions>
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.ParentPlot.Name)" Title="Parent Plot" Sortable="true">
+    }
+    <PropertyColumn Property="@(p => p.ParentPlotName)" Title="Parent Plot" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="parentPlotNameFilter" @bind:event="oninput" placeholder="Parent Plot..." />
             </div>
         </ColumnOptions>
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Usage)" Title="Usage" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-            <input type="search" autofocus @bind="usageFilter" @bind:event="oninput" placeholder="Farm..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn>
+    
     <PropertyColumn Property="@(p => p.Name)" Title="Name" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
@@ -39,19 +50,22 @@
             </div> *@
         </ColumnOptions>
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.AreaUnit.Symbol)" Title="Area Unit" Sortable="true">
+     <PropertyColumn Property="@(p => p.AreaUnit.Symbol)" Title="Area Unit" Sortable="true">
         <ColumnOptions>
             @* <div class="search-box">
             <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
-            </div> *@
+            </div>         *@
         </ColumnOptions>
     </PropertyColumn>
+
 
 </QuickGrid>
 @code {
     [Parameter] required public IQueryable<LandPlotModel> Items { get; set; }
     QuickGrid<LandPlotModel> plotGrid;
 
+
+    [Parameter] public bool ShowFarmColumn { get; set; } = true;
     [Parameter] public Action<string> farmNameFilterChanged { get; set; }
     private string _farmNameFilter;
     string farmNameFilter
@@ -85,6 +99,7 @@
     }
 
 
+    [Parameter] public bool ShowUsageColumn { get; set; } = true;
     [Parameter] public Action<string> usageFilterChanged { get; set; }
     private string _usageFilter;
     string usageFilter

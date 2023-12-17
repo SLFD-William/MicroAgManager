@@ -26,5 +26,13 @@
   {
     "outputFile": "Pages/Livestock.razor.css",
     "inputFile": "Pages/Livestock.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/TreeView.razor.css",
+    "inputFile": "Components/Shared/TreeView.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/TreeNode.razor.css",
+    "inputFile": "Components/Shared/TreeNode.razor.scss"
   }
 ]

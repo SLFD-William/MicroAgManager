@@ -1,0 +1,1 @@
+﻿.TreeNode{padding:unset;white-space:nowrap;text-decoration:none;color:inherit;}.TreeNode>button{width:100%;text-align:left;background-color:transparent;border:0;padding:unset;font:inherit;color:inherit;display:flex;}.TreeNode>button.active{background-color:var(--typography-secondary-bg-color);}.TreeNode ::deep .TreeView{margin-inline-start:1em;}

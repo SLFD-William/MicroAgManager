@@ -56,7 +56,13 @@ namespace MicroAgManager.API
                 {
                     return TypedResults.NotFound();
                 }
-                return TypedResults.Ok(new UserInfo { Email = user.Email, TenantId = user.TenantId.ToString(), UserId = user.Id.ToString() });
+                return TypedResults.Ok(new UserInfo { 
+                    Email = user.Email, 
+                    TenantId = user.TenantId.ToString(), 
+                    UserId = user.Id.ToString(), 
+                    IsEmailConfirmed = await userManager.IsEmailConfirmedAsync(user),
+                    Claims=claimsPrincipal.Claims.ToDictionary(claim => claim.Type, claim => claim.Value)
+                });
             });
             app.MapGroup("/account").MapPost("/customregister", async Task<Results<Ok, ValidationProblem>>
             ([FromBody] RegisterRequest registration, HttpContext context,
