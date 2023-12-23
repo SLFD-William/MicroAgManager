@@ -2,6 +2,7 @@
 @using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
+@using MicroAgManager.Services
 @inherits BaseEditor
 @if (farm is not null)
 {
@@ -133,14 +134,14 @@
             if (creating)
             {
                 farm.Id = id;
-                _dbContext.Farms.Add(farm);
+                ApplicationState._dbContext.Farms.Add(farm);
             }
             else
             {
-                var updated =await _dbContext.Farms.FindAsync(farm.Id);
+                var updated = await ApplicationState._dbContext.Farms.FindAsync(farm.Id);
                 updated = farm.Map(updated) as FarmLocationModel;
             }
-            await _dbContext.SaveChangesAsync();
+            await ApplicationState._dbContext.SaveChangesAsync();
             editContext = new EditContext(farm);
             await OnSubmit.InvokeAsync(editContext);
         }

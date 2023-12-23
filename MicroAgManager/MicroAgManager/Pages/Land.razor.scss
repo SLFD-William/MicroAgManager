@@ -3,12 +3,9 @@
     container: landpage / inline-size;
     height: 100%;
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 25ch 1fr;
+    grid-gap:1em;
     align-items: start;
-
-    & ::deep > form {
-        grid-column: 1/-1;
-    }
 
     & ::deep > .TreeView {
         height: 100%;

@@ -1,108 +1,25 @@
-﻿@page "/livestock"
-@page "/livestock/{livestockId}"
-@inherits ClientAppPage
-@inject NavigationManager navMan
-@using Domain.Models
+﻿@page "/Livestock"
 @using FrontEnd.Persistence
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using Microsoft.EntityFrameworkCore
-@using MicroAgManager.Components.Livestock
-<div class="Livestock">
+@using MicroAgManager.Services
 
 <PageTitle>Livestock</PageTitle>
-@if (_app!=null)
+<div class="Livestock">
+    @if (ApplicationState._dbContext?.Tenants.Any() == true)
     {
-        @if (_livestockCount == 1)
-        {
-            <CascadingValue Value="livestock">
-                <LivestockNameplate ></LivestockNameplate>
-            </CascadingValue>
-        }
-        else
-        {
-            <LivestockGrid Items="filteredLivestockQuery()"
-                animalNameFilterChanged="@((x) => {animalNameFilter=x; StateHasChanged();})"
-                batchNumberFilterChanged="@((x) => {batchNumberFilter=x; StateHasChanged();})"
-                breedEmojiFilterChanged="@((x) => {breedEmojiFilter=x; StateHasChanged();})"
-                breedNameFilterChanged="@((x) => {breedNameFilter=x; StateHasChanged();})"
-                genderFilterChanged="@((x) => {genderFilter=x; StateHasChanged();})"
-                nameFilterChanged="@((x) => {nameFilter=x; StateHasChanged();})"
-                statusFilterChanged="@((x) => {statusFilter=x; StateHasChanged();})"
-                varietyFilterChanged="@((x) => {varietyFilter=x; StateHasChanged();})"
-                           OnNavigateClick="@((x) => navMan.NavigateTo($"/livestock/{x}"))">
-        </LivestockGrid>
-        }
-        
     }
-else
+    else
     {
-        <span>Initializing application </span>
+    <span>Initializing application </span>
     }
 </div>
 
+
 @code {
-    [Inject] IDbContextFactory<FrontEndDbContext> _dbContextFactory { get; set; }
-    [Parameter] public string livestockId { get; set; }
-    QuickGrid<LivestockModel> livestockGrid;
-
-    LivestockModel livestock = new();
-
-    private int _livestockCount = 0;
-
-    string animalNameFilter;
-    string batchNumberFilter;
-    string breedEmojiFilter;
-    string breedNameFilter;
-    string genderFilter;
-    string nameFilter;
-    string statusFilter;
-    string varietyFilter;
-
-    private async Task<IQueryable<LivestockModel>> baseLivestockQuery() {
-        using (var dbContext = await _dbContextFactory.CreateDbContextAsync())
-        { 
-            return dbContext.Livestocks
-                .Include(p => p.Status)
-                .Include(p => p.Breed).ThenInclude(p => p.Animal)
-                .Include(p => p.Mother)
-                .Include(p => p.Father);
-        }
-    }
-
-    private IQueryable<LivestockModel> filteredLivestockQuery()
-    {
-        var query = baseLivestockQuery().Result;
-        if (!string.IsNullOrEmpty(livestockId))
-        {
-            if(long.TryParse(livestockId,out var id))
-                query = query.Where(p => p.Id == id);
-        }
-        else{
-        if (!string.IsNullOrEmpty(animalNameFilter))
-            query = query.Where(p => p.Breed.Animal.Name.Contains(animalNameFilter));
-        if (!string.IsNullOrEmpty(breedNameFilter))
-            query = query.Where(p => p.Breed.Name.Contains(breedNameFilter));
-        if (!string.IsNullOrEmpty(breedEmojiFilter))
-            query = query.Where(p => p.Breed.EmojiChar.Contains(breedEmojiFilter));
-        if (!string.IsNullOrEmpty(varietyFilter))
-            query = query.Where(p => p.Variety.Contains(varietyFilter));
-        if (!string.IsNullOrEmpty(batchNumberFilter))
-            query = query.Where(p => p.BatchNumber.Contains(batchNumberFilter));
-        if (!string.IsNullOrEmpty(genderFilter))
-            query = query.Where(p => p.Gender.Contains(genderFilter));
-        if (!string.IsNullOrEmpty(statusFilter))
-            query = query.Where(p => p.StatusId.HasValue && p.Status.Status.Contains(statusFilter));
-        if (!string.IsNullOrEmpty(nameFilter))
-            query = query.Where(p => p.Name.Contains(nameFilter));
-        }
-            _livestockCount = query.Count();
-            if (_livestockCount == 1)
-            {
-                livestock = query.First();
-                StateHasChanged();
-            }
-        return query;
-
-    }
+    [Inject] NavigationManager navigationManager { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "Id")] public long? Id { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "LocationId")] public long? LocationId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "LivestockAnimalId")] public long? LivestockAnimalId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "StatusId")] public long? StatusId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "LivestockBreedId")] public long? LivestockBreedId { get; set; }
 
 }

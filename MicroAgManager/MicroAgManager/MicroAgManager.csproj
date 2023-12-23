@@ -14,7 +14,6 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="Pages\Farm.razor" />
-    <Content Remove="Pages\Livestock.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,10 +62,6 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

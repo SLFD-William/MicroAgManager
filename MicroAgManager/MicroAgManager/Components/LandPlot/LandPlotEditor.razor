@@ -6,6 +6,7 @@
 @using MicroAgManager.Components.Unit
 @using MicroAgManager.Components.Farm
 @using MicroAgManager.Data
+@using MicroAgManager.Services
 @inherits BaseEditor
 @if (landPlot is not null)
 {
@@ -28,7 +29,7 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@landPlot.FarmLocationId">
                         <option value="">Select Farm ...</option>
-                        @foreach (var unit in _dbContext.Farms)
+                        @foreach (var unit in ApplicationState._dbContext.Farms)
                         {
                             <option value="@unit.Id">
                                 <CascadingValue Value="@unit">
@@ -67,7 +68,7 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@landPlot.AreaUnitId">
                         <option value="">Select Units ...</option>
-                        @foreach (var unit in _dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
+                        @foreach (var unit in ApplicationState._dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
                         {
                             <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
                         }
@@ -148,14 +149,14 @@
             if (creating)
             {
                 landPlot.Id = id;
-                _dbContext.LandPlots.Add(landPlot);
+                ApplicationState._dbContext.LandPlots.Add(landPlot);
             }
             else
             {
-                var updated = await _dbContext.LandPlots.FindAsync(landPlot.Id);
+                var updated = await ApplicationState._dbContext.LandPlots.FindAsync(landPlot.Id);
                 updated = landPlot.Map(updated) as LandPlotModel;
             }
-            await _dbContext.SaveChangesAsync();
+            await ApplicationState._dbContext.SaveChangesAsync();
             editContext = new EditContext(landPlot);
             await OnSubmit.InvokeAsync(editContext);
         }

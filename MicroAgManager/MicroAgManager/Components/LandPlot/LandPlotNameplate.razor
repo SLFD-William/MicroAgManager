@@ -3,12 +3,7 @@
 <section class="LandPlotNameplate">
      <section class="name">
         <h3>@Plot.Name</h3>
-        <NavCrudButtons OnCancelClick="TestCall"
-                        OnCreateClick="TestCall"
-                        OnDeleteClick="TestCall"
-                        OnEditClick="TestCall"
-                        OnNavigateClick="TestCall"
-                        OnSaveClick="TestCall"></NavCrudButtons>
+        <NavCrudButtons ShowEdit="@OnEditClick.HasDelegate" OnEditClick="OnEditClick"></NavCrudButtons>
     </section>
     @if (ShowAll || ShowFarm)
     {
@@ -87,7 +82,4 @@
     [Parameter] public EventCallback OnDeleteClick { get; set; }
     [Parameter] public EventCallback OnCreateClick { get; set; }
     [Parameter] public EventCallback OnCancelClick { get; set; }
-
-    private void TestCall() { }
-
 }

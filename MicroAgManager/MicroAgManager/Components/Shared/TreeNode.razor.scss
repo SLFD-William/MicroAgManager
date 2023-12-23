@@ -3,6 +3,8 @@
     white-space: nowrap;
     text-decoration: none;
     color: inherit;
+    display:grid;
+    grid-template-columns:min-content 1fr;
 
 
     & > button {
@@ -13,16 +15,14 @@
         padding: unset;
         font: inherit;
         color: inherit;
-        display:flex;
-
-
+        display: flex;
         &.active {
-            background-color: var(--typography-secondary-bg-color);
+            background-color: var(--typography-primary-alternate-bg-color);
+            color: var(--typography-primary-color);
         }
     }
-
-
     & ::deep .TreeView {
+        grid-column:1/-1;
         margin-inline-start: 1em;
     }
 }

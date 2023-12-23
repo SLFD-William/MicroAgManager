@@ -3,6 +3,8 @@
   white-space: nowrap;
   text-decoration: none;
   color: inherit;
+  display: grid;
+  grid-template-columns: min-content 1fr;
 }
 .TreeNode > button {
   width: 100%;
@@ -15,8 +17,10 @@
   display: flex;
 }
 .TreeNode > button.active {
-  background-color: var(--typography-secondary-bg-color);
+  background-color: var(--typography-primary-alternate-bg-color);
+  color: var(--typography-primary-color);
 }
 .TreeNode ::deep .TreeView {
+  grid-column: 1/-1;
   margin-inline-start: 1em;
 }

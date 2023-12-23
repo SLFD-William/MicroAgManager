@@ -1,12 +1,10 @@
-﻿using FrontEnd.Persistence;
-using Microsoft.AspNetCore.Components.Forms;
+﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
 
 namespace MicroAgManager.Components.Shared
 {
     public class BaseEditor:ComponentBase
     {
-        [CascadingParameter] protected FrontEndDbContext _dbContext { get; set; }
         [Parameter] required public EditContext editContext { get; set; }
         [Parameter] public EventCallback<EditContext> OnSubmit { get; set; }
         [Parameter] public EventCallback<EditContext> OnCancel { get; set; }

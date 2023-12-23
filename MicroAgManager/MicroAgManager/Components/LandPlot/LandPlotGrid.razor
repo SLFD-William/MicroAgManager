@@ -7,13 +7,16 @@
     
     @if (ShowFarmColumn)
     {
-        <PropertyColumn Property="@(p => p.Farm.Name)" Title="Farm" Sortable="true">
+        <TemplateColumn Title="Farm" Sortable="true" Context="farm" SortBy="@OrderByFarmName">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
                 </div>
             </ColumnOptions>
-        </PropertyColumn>
+            <ChildContent>
+                <NavLink href=@($"/Land?FarmLocationId={farm.Farm.Id}") >@farm.Farm.Name</NavLink>
+            </ChildContent>
+        </TemplateColumn>
     }
     @if (ShowUsageColumn)
     {
@@ -28,21 +31,30 @@
         </ColumnOptions>
     </PropertyColumn>
     }
-    <PropertyColumn Property="@(p => p.ParentPlotName)" Title="Parent Plot" Sortable="true">
+    <TemplateColumn Title="Parent Plot" Sortable="true" Context="plot" SortBy="@OrderByParentPlotName">
         <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="parentPlotNameFilter" @bind:event="oninput" placeholder="Parent Plot..." />
+                <input type="search" autofocus @bind="plotNameFilter" @bind:event="oninput" placeholder="Parent Plot..." />
             </div>
         </ColumnOptions>
-    </PropertyColumn>
-    
-    <PropertyColumn Property="@(p => p.Name)" Title="Name" Sortable="true">
+        <ChildContent>
+            @if (plot.ParentPlotId.HasValue)
+            {
+                <NavLink href=@($"/Land?Id={plot.ParentPlotId.Value}")>@plot.ParentPlotName</NavLink>
+            }
+        </ChildContent>
+    </TemplateColumn>
+
+    <TemplateColumn Title="Name" Sortable="true" Context="plot"  SortBy="@OrderByPlotName">
         <ColumnOptions>
             <div class="search-box">
-            <input type="search" autofocus @bind="plotNameFilter" @bind:event="oninput" placeholder="Farm..." />
+                <input type="search" autofocus @bind="plotNameFilter" @bind:event="oninput" placeholder="Plot..." />
             </div>
         </ColumnOptions>
-    </PropertyColumn>
+        <ChildContent>
+            <NavLink href=@($"/Land?Id={plot.Id}")>@plot.Name</NavLink>
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.Area)" Title="Area" Sortable="true">
         <ColumnOptions>
             @* <div class="search-box">
@@ -63,7 +75,9 @@
 @code {
     [Parameter] required public IQueryable<LandPlotModel> Items { get; set; }
     QuickGrid<LandPlotModel> plotGrid;
-
+    private GridSort<LandPlotModel> OrderByPlotName = GridSort<LandPlotModel>.ByAscending(p => p.Name);
+    private GridSort<LandPlotModel> OrderByParentPlotName = GridSort<LandPlotModel>.ByAscending(p => p.ParentPlotName);
+    private GridSort<LandPlotModel> OrderByFarmName = GridSort<LandPlotModel>.ByAscending(p => p.Farm.Name);
 
     [Parameter] public bool ShowFarmColumn { get; set; } = true;
     [Parameter] public Action<string> farmNameFilterChanged { get; set; }

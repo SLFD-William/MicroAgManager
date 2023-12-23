@@ -11,7 +11,8 @@
 .LandPlotNameplate .name {
   display: flex;
   flex-wrap: wrap;
-  justify-content: end;
+  width: 100%;
+  gap: 1em;
 }
 
 @container (width < 405px) {

@@ -1,23 +1,24 @@
 ﻿@page "/Home"
 @using FrontEnd.Persistence
+@using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
 
 
 <PageTitle>Home</PageTitle>
-@if(dbContext == null)
+@if(ApplicationState._dbContext == null)
 {
     <span>Initializing DB</span>
 }
 else 
 {
-    @if (!dbContext.LandPlots.Any())
+    @if (!ApplicationState._dbContext.LandPlots.Any())
     {
         <NavLink href="/Land/-1">Create a Plot of Land</NavLink>
     }
 }
 
 @code{
-    [CascadingParameter] private FrontEndDbContext dbContext {get;set;}
+
 
     
 

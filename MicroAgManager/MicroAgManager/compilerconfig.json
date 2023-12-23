@@ -34,5 +34,9 @@
   {
     "outputFile": "Components/Shared/TreeNode.razor.css",
     "inputFile": "Components/Shared/TreeNode.razor.scss"
+  },
+  {
+    "outputFile": "Components/LandPlot/LandPlotNameplate.razor.css",
+    "inputFile": "Components/LandPlot/LandPlotNameplate.razor.scss"
   }
 ]
