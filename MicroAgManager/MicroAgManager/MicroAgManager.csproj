@@ -20,9 +20,6 @@
     <None Remove="Pages\Farm.razor.css" />
     <None Remove="Pages\Farm.razor.min.css" />
     <None Remove="Pages\Farm.razor.scss" />
-    <None Remove="Pages\Livestock.razor.css" />
-    <None Remove="Pages\Livestock.razor.min.css" />
-    <None Remove="Pages\Livestock.razor.scss" />
   </ItemGroup>
 
   <ItemGroup>

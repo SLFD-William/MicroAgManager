@@ -2,24 +2,35 @@
 @using FrontEnd.Persistence
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
-
+@implements IDisposable
 
 <PageTitle>Home</PageTitle>
-@if(ApplicationState._dbContext == null)
+@if (appState.DbContext == null)
 {
     <span>Initializing DB</span>
 }
 else 
 {
-    @if (!ApplicationState._dbContext.LandPlots.Any())
+    @if (!appState.DbContext.LandPlots.Any())
     {
-        <NavLink href="/Land/-1">Create a Plot of Land</NavLink>
+        <NavLink href="/Land?LandPlotId=-1">Create a Plot of Land</NavLink>
     }
 }
 
 @code{
-
-
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    protected override void OnInitialized()
+    {
+        appState.OnDbInitialized += appState_OnDbInitialized;
+        appState.OnDbUpdate += appState_OnDbUpdate;
+    }
+    private void appState_OnDbUpdate() => StateHasChanged();
+    private void appState_OnDbInitialized() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= appState_OnDbInitialized;
+        appState.OnDbUpdate -= appState_OnDbUpdate;
+    }
     
 
 }

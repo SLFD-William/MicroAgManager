@@ -2,15 +2,11 @@
 @using Domain.Models
 @using MicroAgManager.Components.Weather
 @using MicroAgManager.Components.Shared
+@using MicroAgManager.Services
 <section class="FarmNameplate">
     <section class="name">
         <h3 >@Farm.Name</h3>
-        <NavCrudButtons OnCancelClick="TestCall"
-                        OnCreateClick="TestCall"
-                        OnDeleteClick="TestCall"
-                        OnEditClick="TestCall"
-                        OnNavigateClick="TestCall"
-                        OnSaveClick="TestCall"></NavCrudButtons>
+        <NavCrudButtons Editting="@showFarmModal" ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Farm.Id>0)" OnEditClick="@ShowFarmEditor"></NavCrudButtons>
     </section>
     @if (ShowAll || ShowAddress)
     {
@@ -119,7 +115,7 @@
             </section>
         </section>
     }
-    
+    <FarmEditor Modal=true Show=@showFarmModal editContext=farmEditContext OnCancel=FarmCanceled OnSubmit=FarmSubmitted></FarmEditor>
 
 </section>
 @code {
@@ -137,13 +133,39 @@
     [Parameter] public bool ShowZip { get; set; } = true;
     [Parameter] public bool ShowCountry { get; set; } = true;
 
+    [Parameter] public bool ShowEdit { get; set; } = false;
     [Parameter] public EventCallback OnEditClick { get; set; }
     [Parameter] public EventCallback OnNavigateClick { get; set; }
     [Parameter] public EventCallback OnSaveClick { get; set; }
     [Parameter] public EventCallback OnDeleteClick { get; set; }
     [Parameter] public EventCallback OnCreateClick { get; set; }
     [Parameter] public EventCallback OnCancelClick { get; set; }
+    private bool showFarmModal = false;
+    private EditContext farmEditContext;
+    protected override void OnInitialized()
+    {
+        farmEditContext = new EditContext(Farm);
+    }
+    private void ShowFarmEditor()
+    {
+        var farm = ApplicationState._dbContext.Farms.Find(Farm.Id) ?? new FarmLocationModel();
 
-    private void TestCall() { }
+        farmEditContext = new EditContext(farm);
+        showFarmModal = true;
+        StateHasChanged();
+        OnEditClick.InvokeAsync();
+    }
+    private void FarmSubmitted(EditContext e)
+    {
+        var model = e.Model as FarmLocationModel;
+        showFarmModal = false;
+        if (model == null) return;
+        StateHasChanged();
+    }
+    private void FarmCanceled(object e)
+    {
+        showFarmModal = false;
+        StateHasChanged();
+    }
 
 }

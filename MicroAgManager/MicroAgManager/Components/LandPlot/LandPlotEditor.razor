@@ -22,14 +22,18 @@
             <ValidatedField ValidationMessageFor="@(() => landPlot.FarmLocationId)">
                 <LegendContent>
                     <div style="display:inline-flex">
-                        <span>Farm</span><button type="button" @onclick=ShowFarmEditor>+</button>
-                        <FarmEditor Modal=true Show=@showFarmModal editContext=farmEditContext OnCancel=FarmCanceled OnSubmit=FarmSubmitted></FarmEditor>
+                        <span>Farm</span>
+                        @if (ApplicationState.CanAddFarm())
+                        { 
+                            <button type="button" @onclick=ShowFarmEditor>+</button>
+                            <FarmEditor Modal=true Show=@showFarmModal editContext=farmEditContext OnCancel=FarmCanceled OnSubmit=FarmSubmitted></FarmEditor>
+                        }
                     </div>
                 </LegendContent>
                 <ChildContent>
                     <InputSelect @bind-Value="@landPlot.FarmLocationId">
                         <option value="">Select Farm ...</option>
-                        @foreach (var unit in ApplicationState._dbContext.Farms)
+                        @foreach (var unit in appState.DbContext.Farms)
                         {
                             <option value="@unit.Id">
                                 <CascadingValue Value="@unit">
@@ -40,8 +44,8 @@
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
-            <ValidatedField Legend="Plot Use" ValidationMessageFor="@(() => landPlot.Usage)">
-                <InputSelect @bind-Value="@landPlot.Usage">
+            <ValidatedField  Legend="Plot Use" ValidationMessageFor="@(() => landPlot.Usage)">
+                <InputSelect disabled="@(landPlot.FarmLocationId<=0)" @bind-Value="@landPlot.Usage">
                     <option value="">Select Use ...</option>
                     <option value="@LandPlotUseConstants.GeneralUse">@LandPlotUseConstants.GeneralUse</option>
                     <option value="@LandPlotUseConstants.Garden">@LandPlotUseConstants.Garden</option>
@@ -50,13 +54,13 @@
                 </InputSelect>
             </ValidatedField>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => landPlot.Name)">
-                <InputText placeholder="Name" @bind-Value="@landPlot.Name" />
+                <InputText disabled="@(landPlot.FarmLocationId<=0)" placeholder="Name" @bind-Value="@landPlot.Name" />
             </ValidatedField>
             <ValidatedField Legend="Description" ValidationMessageFor="@(() => landPlot.Description)">
-                <InputText placeholder="Description" @bind-Value="@landPlot.Description" />
+                <InputText disabled="@(landPlot.FarmLocationId<=0)" placeholder="Description" @bind-Value="@landPlot.Description" />
             </ValidatedField>
             <ValidatedField Legend="Area" ValidationMessageFor="@(() => landPlot.Area)">
-                <InputNumber placeholder="0" @bind-Value="@landPlot.Area" />
+                <InputNumber disabled="@(landPlot.FarmLocationId<=0)" placeholder="0" @bind-Value="@landPlot.Area" />
             </ValidatedField>
             <ValidatedField ValidationMessageFor="@(() => landPlot.AreaUnitId)">
                 <LegendContent>
@@ -66,7 +70,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@landPlot.AreaUnitId">
+                    <InputSelect disabled="@(landPlot.FarmLocationId<=0)" @bind-Value="@landPlot.AreaUnitId">
                         <option value="">Select Units ...</option>
                         @foreach (var unit in ApplicationState._dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
                         {
@@ -81,6 +85,7 @@
 
 
 @code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private LandPlotModel? landPlot;
     #region ModalEditors
@@ -149,14 +154,14 @@
             if (creating)
             {
                 landPlot.Id = id;
-                ApplicationState._dbContext.LandPlots.Add(landPlot);
+                appState.DbContext.LandPlots.Add(landPlot);
             }
             else
             {
-                var updated = await ApplicationState._dbContext.LandPlots.FindAsync(landPlot.Id);
+                var updated = await appState.DbContext.LandPlots.FindAsync(landPlot.Id);
                 updated = landPlot.Map(updated) as LandPlotModel;
             }
-            await ApplicationState._dbContext.SaveChangesAsync();
+            await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(landPlot);
             await OnSubmit.InvokeAsync(editContext);
         }

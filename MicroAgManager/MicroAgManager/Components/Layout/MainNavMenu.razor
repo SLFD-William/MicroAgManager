@@ -1,6 +1,7 @@
 ﻿@using Domain.Constants
 @using FrontEnd.Persistence
 @using MicroAgManager.Services
+@implements IDisposable
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
     <nav class="MainNavMenu" onclick="document.querySelector('.navbar-toggler').click()">
@@ -21,14 +22,14 @@
                             @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Home
                         </NavLink>
                     </li>
-                @if (ApplicationState._dbContext?.Tenants.Any()==true)
+                @if (appState.DbContext?.Tenants.Any() == true)
                     {
                         <li>
                             <NavLink href="/Land" Match="NavLinkMatch.Prefix">
                                 @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Land
                             </NavLink>
                         </li>
-                    @if (ApplicationState._dbContext?.LandPlots.Any(l => l.Usage == LandPlotUseConstants.Livestock) == true)
+                    @if (appState.DbContext?.LandPlots.Any(l => l.Usage == LandPlotUseConstants.Livestock) == true)
                         { 
                             <li>
                                 <NavLink href="/Livestock" Match="NavLinkMatch.Prefix">
@@ -55,5 +56,19 @@
             </AuthorizeView>
         </ul>
     </nav>
-
+    @code{
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    protected override void OnInitialized()
+    {
+        appState.OnDbInitialized += appState_OnDbInitialized;
+        appState.OnDbUpdate += appState_OnDbUpdate;
+    }
+    private void appState_OnDbUpdate() => StateHasChanged();
+    private void appState_OnDbInitialized() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= appState_OnDbInitialized;
+        appState.OnDbUpdate -= appState_OnDbUpdate;
+    }
+    }
     

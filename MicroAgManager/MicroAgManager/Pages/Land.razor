@@ -1,5 +1,6 @@
 ﻿@page "/Land"
 
+@using Domain.Constants
 @using Domain.Models
 @using FrontEnd.Persistence
 @using MicroAgManager.Components.Shared
@@ -7,15 +8,25 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 @using MicroAgManager.Components.LandPlot
-
-
+@using MicroAgManager.Components.Farm
+@implements IDisposable
 <PageTitle>Land</PageTitle>
 <div class="Land">
-    @if (ApplicationState._dbContext?.Tenants.Any() == true)
+    @if (appState.DbContext?.Tenants.Any() == true)
     {
         <TreeView>
             <TreeNode NodeName="Farms">
-                @foreach (var farm in ApplicationState._dbContext.Farms)
+                <NodeContent>
+                    <section class="nodeContent">
+                        <span>Farms</span>
+                        @if (ApplicationState.CanAddFarm())
+                        {
+                            <NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LandPlotId", "-1" }}))>add</NavLink>
+                        }
+                    </section>
+                </NodeContent>
+                <ChildContent>
+                @foreach (var farm in appState.DbContext.Farms)
                 {
                     <TreeNode NodeName="@farm.Name" 
                         IsCollapsed=@(!ApplicationState.FarmNameSelectedFilter.Contains(farm.Id)) 
@@ -24,11 +35,11 @@
                               OnSelectionChange="@((b) => FarmSelectionChange(b,farm.Id))">
                         <NodeContent>
                             <section class="nodeContent">
-                                <span>@farm.Name</span> <NavLink @onclick:stopPropagation href=@($"/Land?Id=-1&FarmLocationId={farm.Id}")>add plot</NavLink>
+                                    <span>@farm.Name</span> <NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LandPlotId", "-1" },{ "FarmLocationId", farm.Id.ToString()}}))>add plot</NavLink>
                             </section>
                         </NodeContent>
                         <ChildContent>
-                            @foreach (var usage in ApplicationState._dbContext.LandPlots.Select(p => p.Usage).Distinct().OrderBy(u => u))
+                            @foreach (var usage in appState.DbContext.LandPlots.Select(p => p.Usage).Distinct().OrderBy(u => u))
                             {
                                 <TreeNode NodeName="@usage" 
                                     IsSelected=@(ApplicationState.FarmNameSelectedFilter.Contains(farm.Id) && ApplicationState.UsageSelectedFilter.Contains(usage))
@@ -38,32 +49,47 @@
                         </ChildContent>
                     </TreeNode>
                 }
+                </ChildContent>
             </TreeNode>
         </TreeView>
-        @if (Id.HasValue)
-        {
-            @if (_editting)
+        <div>
+            @if (FarmLocationId.HasValue)
             {
-                <LandPlotEditor  editContext="_editPlot"  OnCancel="PlotEditCancelled" OnSubmit="PlotEditSubmitted" ></LandPlotEditor>
-            }
-            else 
-            {
-                <CascadingValue Value="LandPlot">
-                    <LandPlotNameplate ShowAll="true" OnEditClick="@(()=>_editting=true)" ></LandPlotNameplate>
+                <CascadingValue Value="@appState.DbContext.Farms.Find(FarmLocationId.Value)">
+                    <FarmNameplate ShowAddress="true" ShowStreet="true" ShowCity="true" ShowState="true" ShowZip="true" ShowWeather="true" ShowEdit="true"></FarmNameplate>
                 </CascadingValue>
             }
-        }
-        else
-        {
-            <LandPlotGrid farmNameFilterChanged="@((x) => {farmNameFilter=x; StateHasChanged();})"
-                          parentPlotNameFilterChanged="@((x) => {parentPlotNameFilter=x; StateHasChanged();})"
-                          plotNameFilterChanged="@((x) => {plotNameFilter=x; StateHasChanged();})"
-                          usageFilterChanged="@((x) => {usageFilter=x; StateHasChanged();})"
+
+            @if (LandPlotId.HasValue || _addingPlot)
+            {
+                @if (_addingPlot)
+                {
+                    <LandPlotEditor Modal="true" Show="@_addingPlot" editContext="_addPlotContext" OnCancel="PlotAddCancelled" OnSubmit="PlotAddSubmitted"></LandPlotEditor>
+                }
+                else
+                {
+                    <CascadingValue Value="LandPlot">
+                        <LandPlotNameplate ShowArea="true" ShowFarm="@(!FarmLocationId.HasValue)" ShowDescription="true" ShowUsage="true" ShowSubplots="true"  ShowEdit="true"></LandPlotNameplate>
+                    </CascadingValue>
+                    @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
+                    {
+                        <Livestock LocationId="@LandPlot.Id"></Livestock>
+                    }
+                }
+            }
+            else
+            {
+
+                <LandPlotGrid farmNameFilterChanged="@((x) => {farmNameFilter=x; StateHasChanged();})"
+                              parentPlotNameFilterChanged="@((x) => {parentPlotNameFilter=x; StateHasChanged();})"
+                              plotNameFilterChanged="@((x) => {plotNameFilter=x; StateHasChanged();})"
+                              usageFilterChanged="@((x) => {usageFilter=x; StateHasChanged();})"
                               Items="baseLandPlotQuery()"
-                          ShowFarmColumn=@(ApplicationState.FarmNameSelectedFilter.Count!=1)
-                          ShowUsageColumn=@(ApplicationState.UsageSelectedFilter.Count!=1)>
-            </LandPlotGrid>
-        }
+                              ShowFarmColumn=@(ApplicationState.FarmNameSelectedFilter.Count!=1)
+                              ShowUsageColumn=@(ApplicationState.UsageSelectedFilter.Count!=1)>
+                </LandPlotGrid>
+            }
+        </div>
     }
     else
     {
@@ -74,11 +100,9 @@
 
 @code {
     [Inject] NavigationManager navigationManager { get; set; }
-    [Parameter][SupplyParameterFromQuery(Name = "FarmLocationId")] public long? FarmLocationId { get; set; }
-
     [CascadingParameter] private ApplicationState appState { get; set; }
-    [Parameter][SupplyParameterFromQuery(Name = "Id")] public long? Id { get; set; }
-    QuickGrid<LandPlotModel> LandPlotGrid;
+    [Parameter][SupplyParameterFromQuery(Name = "FarmLocationId")] public long? FarmLocationId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "LandPlotId")] public long? LandPlotId { get; set; }
 
     LandPlotModel LandPlot = new();
 
@@ -91,8 +115,8 @@
     string usageFilter;
     string plotNameFilter;
 
-    private EditContext _editPlot;
-    private bool _editting = false;
+    private EditContext _addPlotContext;
+    private bool _addingPlot = false;
 
 
     private void FarmSelectedByUser(TreeNode selectedNode, long farmId) => FarmSelected(!selectedNode.IsSelected, farmId);
@@ -133,50 +157,48 @@
         }
     }
 
-
-
-    private async Task SetEditContext()
+    protected override void OnInitialized()
     {
-        if ((!Id.HasValue && !FarmLocationId.HasValue) || (ApplicationState._dbContext?.Tenants.Any() != true))
+        appState.OnDbInitialized += appState_OnDbInitialized;
+        appState.OnDbUpdate += appState_OnDbUpdate;
+    }
+    private void appState_OnDbUpdate() => StateHasChanged();
+    private void appState_OnDbInitialized() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= appState_OnDbInitialized;
+        appState.OnDbUpdate -= appState_OnDbUpdate;
+    }
+    protected override void OnParametersSet()
+    {
+        if ((!LandPlotId.HasValue && !FarmLocationId.HasValue) || (appState.DbContext?.Tenants.Any() != true))
         {
-            await base.OnParametersSetAsync();
+            base.OnParametersSet();
             return;
         }
         if (!FarmLocationId.HasValue && navigationManager.Uri.Contains("FarmLocationId"))
             navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "FarmLocationId", string.Empty } }));
-
         if (FarmLocationId.HasValue && navigationManager.Uri.Contains("FarmLocationId") && !ApplicationState.FarmNameSelectedFilter.Contains(FarmLocationId.Value))
             ApplicationState.FarmNameSelectedFilter.Add(FarmLocationId.Value);
 
-        _landPlotId = Id.HasValue? Id.Value : -1;
-
-        LandPlot = await GetLandPlotAsync(_landPlotId) ?? new();
+        _landPlotId = LandPlotId.HasValue ? LandPlotId.Value : -1;
+        LandPlot = appState.DbContext.LandPlots.Find(_landPlotId) ?? new();
         if (_landPlotId < 1 && FarmLocationId.HasValue)
             LandPlot.FarmLocationId = FarmLocationId.Value;
 
-        _editPlot = new EditContext(LandPlot);
-        _editting = _landPlotId < 1;
+        if (_landPlotId > 0 && LandPlot.FarmLocationId != FarmLocationId)
+            FarmLocationId = LandPlot.FarmLocationId;
+        _addPlotContext = new EditContext(LandPlot);
+        _addingPlot = LandPlotId < 1;
         StateHasChanged();
     }
 
-    protected override async Task OnParametersSetAsync() => await SetEditContext();
-
-    private void PlotEditCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "Id", string.Empty } }));
-
-
-    private async Task<LandPlotModel?> GetLandPlotAsync(long id)
-    {
-        var tenant = await ApplicationState._dbContext.Tenants.FirstOrDefaultAsync();
-        var plot = await ApplicationState._dbContext.LandPlots.FirstOrDefaultAsync(l => l.Id == id);
-        return plot;
-        //return await dbContext.LandPlots.Include(p => p.Subplots).Include(p => p.ParentPlot).Include(p => p.Farm).FirstOrDefaultAsync(l => l.Id == id);
-    }
-
-    private void PlotEditSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "Id", (context.Model as LandPlotModel)?.Id.ToString() } }));
-
+    private void PlotAddCancelled(EditContext context)=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LandPlotId", string.Empty } }));
+    private void PlotAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LandPlotId", (context.Model as LandPlotModel)?.Id.ToString() } }));
+        
     private IQueryable<LandPlotModel> baseLandPlotQuery()
     {
-        var query = ApplicationState._dbContext.LandPlots.Include(p => p.Farm).Include(p => p.ParentPlot).Include(p => p.AreaUnit).AsQueryable();
+        var query = appState.DbContext.LandPlots.Include(p => p.Farm).Include(p => p.ParentPlot).Include(p => p.AreaUnit).AsQueryable();
         if (_landPlotId > 0)
             query = query.Where(p => p.Id == _landPlotId);
         else
@@ -191,7 +213,4 @@
         _LandPlotCount = query.Count();
         return query.ToList().AsQueryable();
     }
-
-   // private void OnAddLivestockClick() => navigationManager.NavigateTo();
-  
 }

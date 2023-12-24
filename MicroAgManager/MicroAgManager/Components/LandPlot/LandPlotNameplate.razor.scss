@@ -1,9 +1,7 @@
 .LandPlotNameplate {
-    display: grid;
-    grid-template-columns: 30ch repeat(auto-fill,minmax(29%, 1fr));
+    display: flex;
+    gap: 0.5em;
     align-items: center;
-    grid-gap: .5em;
-    justify-items: baseline;
 
 
 
@@ -12,16 +10,6 @@
     }
 
     & .name {
-        display: flex;
-        flex-wrap: wrap;
-        width:100%;
-        gap:1em;
-    }
-    
-}
-
-@container (width < 405px) {
-    .LandPlotNameplate {
-        grid-template-columns: max-content;
+        flex-shrink: 0;
     }
 }

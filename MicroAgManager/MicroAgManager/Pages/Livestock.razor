@@ -1,11 +1,126 @@
 ﻿@page "/Livestock"
+@using Domain.Models
 @using FrontEnd.Persistence
 @using MicroAgManager.Services
-
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.Livestock
+@using Microsoft.EntityFrameworkCore
 <PageTitle>Livestock</PageTitle>
 <div class="Livestock">
-    @if (ApplicationState._dbContext?.Tenants.Any() == true)
+    @if (appState.DbContext.Tenants.Any())
     {
+        <TreeView>
+            <TreeNode NodeName="Animals">
+                <NodeContent>
+                    <section class="nodeContent">
+                        <span>Animal</span><NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", "-1" }}))>add</NavLink>
+                    </section>
+                </NodeContent>
+                <ChildContent>
+                    @foreach (var animal in appState.DbContext.LivestockAnimals)
+                    {
+                        <TreeNode NodeName="@animal.Name">
+                            <NodeContent>
+                                <section class="nodeContent">
+                                    <span>@animal.Name</span><NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", animal.Id.ToString() },{ "LivestockId", "-1" }}))>add</NavLink>
+                                </section>
+                            </NodeContent>
+                            <ChildContent>
+                                @if (appState.DbContext.LivestockStatuses.Any(s => s.LivestockAnimalId == animal.Id))
+                                { 
+                                    <TreeNode NodeName="Breeds">
+                                        <NodeContent>
+                                            <section class="nodeContent">
+                                                <span>Breeds</span><NavLink @onclick:stopPropagation>add</NavLink>
+                                            </section>
+                                        </NodeContent>
+                                        <ChildContent>
+                                            @foreach (var breed in appState.DbContext.LivestockBreeds.Where(b=>b.LivestockAnimalId==animal.Id).OrderBy(b=>b.Name))
+                                            {
+                                        
+                                            }
+                                        </ChildContent>
+                                    </TreeNode>
+                                    <TreeNode NodeName="Feeds">
+                                        <NodeContent>
+                                            <section class="nodeContent">
+                                                <span>Feeds</span><NavLink @onclick:stopPropagation>add</NavLink>
+                                            </section>
+                                        </NodeContent>
+                                        <ChildContent>
+                                            @foreach (var feed in appState.DbContext.LivestockFeeds.Where(b => b.LivestockAnimalId == animal.Id).OrderBy(b => b.Name))
+                                            {
+
+                                            }
+                                        </ChildContent>
+                                    </TreeNode>
+                                }
+                                <TreeNode NodeName="Statuses">
+                                    <NodeContent>
+                                        <section class="nodeContent">
+                                            <span>Statuses</span><NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", animal.Id.ToString()},{ "LivestockStatusId", "-1"}}))>add</NavLink>
+                                        </section>
+                                    </NodeContent>
+                                    <ChildContent>
+                                        @foreach (var feed in appState.DbContext.LivestockStatuses.Where(b => b.LivestockAnimalId == animal.Id).OrderBy(b => b.Status))
+                                        {
+
+                                        }
+                                    </ChildContent>
+                                </TreeNode>
+                            </ChildContent>
+                        </TreeNode>
+                    }
+                </ChildContent>
+            </TreeNode>
+        </TreeView>
+      <div>
+            @if (LivestockAnimalId.HasValue)
+            {
+                @if (LivestockAnimalId.Value > 0)
+                { 
+                    <CascadingValue Value="@appState.DbContext.LivestockAnimals.Find(LivestockAnimalId.Value)">
+
+                    </CascadingValue>
+                }
+                else
+                {
+                    <LivestockAnimalEditor Modal="true" Show="@_addingAnimal" editContext="@_addAnimalContext" OnSubmit="AnimalAddSubmitted" OnCancel="AnimalAddCancelled"></LivestockAnimalEditor>
+                }
+            }
+            @if (LivestockStatusId.HasValue && LivestockStatusId.Value<1)
+            {   
+                <LivestockStatusEditor Modal="true" Show="@_addingStatus" editContext="@_addStatusContext" OnSubmit="StatusAddSubmitted" OnCancel="StatusAddCancelled"></LivestockStatusEditor>
+            }
+            @if (LivestockBreedId.HasValue)
+            {
+                @if (LivestockBreedId.Value > 0)
+                {
+                    <CascadingValue Value="@appState.DbContext.LivestockBreeds.Find(LivestockBreedId.Value)">
+
+                    </CascadingValue>
+                }
+                else
+                {
+                }
+            }
+            @if (LivestockId.HasValue || _addingLivestock)
+            {
+                @if (_addingLivestock)
+                {
+                }
+                else
+                {
+                    <CascadingValue Value="LivestockModel">
+
+                    </CascadingValue>
+                }
+            }
+            else
+            {
+                <LivestockGrid Items="baseLivestockQuery()"></LivestockGrid>
+            }
+        </div>
     }
     else
     {
@@ -15,11 +130,97 @@
 
 
 @code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    protected override void OnInitialized()
+    {
+        appState.OnDbInitialized += appState_OnDbInitialized;
+        appState.OnDbUpdate += appState_OnDbUpdate;
+    }
+    private void appState_OnDbUpdate() => StateHasChanged();
+    private void appState_OnDbInitialized() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= appState_OnDbInitialized;
+        appState.OnDbUpdate -= appState_OnDbUpdate;
+    }
+
     [Inject] NavigationManager navigationManager { get; set; }
-    [Parameter][SupplyParameterFromQuery(Name = "Id")] public long? Id { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "LivestockId")] public long? LivestockId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LocationId")] public long? LocationId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockAnimalId")] public long? LivestockAnimalId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "StatusId")] public long? StatusId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockBreedId")] public long? LivestockBreedId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "LivestockStatusId")] public long? LivestockStatusId { get; set; }
 
+    private bool _addingLivestock = false;
+
+    LivestockModel LivestockModel = new();
+    private long _livestockId = -1;
+    private IQueryable<LivestockModel> baseLivestockQuery()
+    {
+        var query = appState.DbContext.Livestocks.Include(l=>l.Breed).ThenInclude(b=>b.Animal)
+            .Include(s => s.Status).Include(p => p.Father).Include(p => p.Mother).AsQueryable();
+        if (_livestockId > 0)
+            query = query.Where(p => p.Id == _livestockId);
+        else
+        {
+            // if (ApplicationState.FarmNameSelectedFilter.Any())
+            //     query = query.Where(p => ApplicationState.FarmNameSelectedFilter.Contains(p.FarmLocationId));
+            // if (ApplicationState.UsageSelectedFilter.Any())
+            //     query = query.Where(p => ApplicationState.UsageSelectedFilter.Contains(p.Usage));
+            // if (!string.IsNullOrEmpty(plotNameFilter))
+            //     query = query.Where(p => p.Name.Contains(plotNameFilter));
+        }
+        return query.ToList().AsQueryable();
+    }
+    
+    private bool _addingAnimal = false;
+    private EditContext _addAnimalContext;
+    private void AnimalAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", string.Empty } }));
+    private void AnimalAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", (context.Model as LivestockAnimalModel)?.Id.ToString() } }));
+
+
+    private bool _addingStatus = false;
+    private EditContext _addStatusContext;
+    private void StatusAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", string.Empty } }));
+    private void StatusAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", (context.Model as LivestockStatusModel)?.Id.ToString() } }));
+
+
+    protected override void OnParametersSet()
+    {
+        if ((!LivestockBreedId.HasValue && !LivestockAnimalId.HasValue && !LivestockId.HasValue) || (appState.DbContext?.Tenants.Any() != true))
+        {
+            base.OnParametersSet();
+            return;
+        }
+        if (!LivestockBreedId.HasValue && navigationManager.Uri.Contains("LivestockBreedId"))
+            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", string.Empty } }));
+        if (!LivestockAnimalId.HasValue && navigationManager.Uri.Contains("LivestockAnimalId"))
+            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", string.Empty } }));
+        if (!LivestockId.HasValue && navigationManager.Uri.Contains("LivestockId"))
+            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockId", string.Empty } }));
+        if (!LivestockStatusId.HasValue && navigationManager.Uri.Contains("LivestockStatusId"))
+            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", string.Empty } }));
+
+        _addingAnimal = LivestockAnimalId == -1;
+        if (_addingAnimal)
+            _addAnimalContext = new EditContext(new LivestockAnimalModel());
+
+        _addingStatus = LivestockStatusId == -1 && LivestockAnimalId.HasValue;
+        if (_addingStatus)
+            _addStatusContext = new EditContext(new LivestockStatusModel() { LivestockAnimalId= LivestockAnimalId.Value });
+
+
+        // _landPlotId = LandPlotId.HasValue ? LandPlotId.Value : -1;
+        // LandPlot = appState.DbContext.LandPlots.Find(_landPlotId) ?? new();
+        // if (_landPlotId < 1 && FarmLocationId.HasValue)
+        //     LandPlot.FarmLocationId = FarmLocationId.Value;
+
+        // if (_landPlotId > 0 && LandPlot.FarmLocationId != FarmLocationId)
+        //     FarmLocationId = LandPlot.FarmLocationId;
+        // _addPlotContext = new EditContext(LandPlot);
+        // _addingPlot = LandPlotId < 1;
+        StateHasChanged();
+    }
+    
 }

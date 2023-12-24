@@ -59,6 +59,7 @@
 
 
 @code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
     private ValidatedForm _validatedForm;
     bool locationEnabled { get; set; } = true;
     [Inject] protected IGeolocationService GeoLoc { get; set; }
@@ -134,14 +135,14 @@
             if (creating)
             {
                 farm.Id = id;
-                ApplicationState._dbContext.Farms.Add(farm);
+                appState.DbContext.Farms.Add(farm);
             }
             else
             {
-                var updated = await ApplicationState._dbContext.Farms.FindAsync(farm.Id);
+                var updated = await appState.DbContext.Farms.FindAsync(farm.Id);
                 updated = farm.Map(updated) as FarmLocationModel;
             }
-            await ApplicationState._dbContext.SaveChangesAsync();
+            await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(farm);
             await OnSubmit.InvokeAsync(editContext);
         }

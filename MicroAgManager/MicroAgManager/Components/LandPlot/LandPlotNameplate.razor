@@ -1,9 +1,10 @@
 ﻿@using Domain.Models
 @using MicroAgManager.Components.Shared
+@using MicroAgManager.Services
 <section class="LandPlotNameplate">
      <section class="name">
         <h3>@Plot.Name</h3>
-        <NavCrudButtons ShowEdit="@OnEditClick.HasDelegate" OnEditClick="OnEditClick"></NavCrudButtons>
+        <NavCrudButtons Editting="@showPlotModal" ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Plot.Id>0)" OnEditClick="ShowPlotEditor"></NavCrudButtons>
     </section>
     @if (ShowAll || ShowFarm)
     {
@@ -65,6 +66,7 @@
             <span>@Plot.Livestocks?.Count()</span>
         </section>
     }
+    <LandPlotEditor Modal=true Show=@showPlotModal editContext=plotEditContext OnCancel=PlotCanceled OnSubmit=PlotSubmitted></LandPlotEditor>
 </section>
 @code {
     [CascadingParameter] LandPlotModel Plot { get; set; }
@@ -75,11 +77,39 @@
     [Parameter] public bool ShowUsage { get; set; } = false;
     [Parameter] public bool ShowSubplots { get; set; } = false;
     [Parameter] public bool ShowLivestocks { get; set; } = false;
-    
+
+    [Parameter] public bool ShowEdit { get; set; } = false; 
     [Parameter] public EventCallback OnEditClick { get; set; }
     [Parameter] public EventCallback OnNavigateClick { get; set; }
     [Parameter] public EventCallback OnSaveClick { get; set; }
     [Parameter] public EventCallback OnDeleteClick { get; set; }
     [Parameter] public EventCallback OnCreateClick { get; set; }
     [Parameter] public EventCallback OnCancelClick { get; set; }
+
+    protected override void OnInitialized()
+    {
+        plotEditContext = new EditContext(Plot);
+    }
+    private bool showPlotModal = false;
+    private EditContext plotEditContext;
+    private void ShowPlotEditor()
+    {
+        var plot = ApplicationState._dbContext.LandPlots.Find(Plot.Id) ?? new LandPlotModel();
+        plotEditContext = new EditContext(plot);
+        showPlotModal = true;
+        OnEditClick.InvokeAsync();
+        StateHasChanged();
+    }
+    private void PlotSubmitted(EditContext e)
+    {
+        var model = e.Model as LandPlotModel;
+        showPlotModal = false;
+        if (model == null) return;
+        StateHasChanged();
+    }
+    private void PlotCanceled(object e)
+    {
+        showPlotModal = false;
+        StateHasChanged();
+    }
 }

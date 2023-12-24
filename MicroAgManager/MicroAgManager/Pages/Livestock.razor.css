@@ -1,4 +1,4 @@
-﻿.Land {
+﻿.Livestock {
   width: inherit;
   height: 100%;
   display: grid;
@@ -6,19 +6,19 @@
   grid-gap: 1em;
   align-items: start;
 }
-.Land ::deep > .TreeView {
+.Livestock ::deep > .TreeView {
   height: 100%;
   background-image: linear-gradient(180deg, var(--nav-gradient-start-color) 0%, var(--nav-gradient-end-color) 100%);
   color: var(--typography-secondary-color);
 }
-.Land ::deep .nodeContent {
+.Livestock ::deep .nodeContent {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
-.Land ::deep .nodeContent a {
+.Livestock ::deep .nodeContent a {
   color: inherit;
 }
-.Land .microagmanager {
+.Livestock .microagmanager {
   width: 75vw;
 }

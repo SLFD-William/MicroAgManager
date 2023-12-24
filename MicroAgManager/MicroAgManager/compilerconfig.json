@@ -38,5 +38,9 @@
   {
     "outputFile": "Components/LandPlot/LandPlotNameplate.razor.css",
     "inputFile": "Components/LandPlot/LandPlotNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Components/Farm/FarmNameplate.razor.css",
+    "inputFile": "Components/Farm/FarmNameplate.razor.scss"
   }
 ]

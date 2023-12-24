@@ -40,7 +40,7 @@
         <ChildContent>
             @if (plot.ParentPlotId.HasValue)
             {
-                <NavLink href=@($"/Land?Id={plot.ParentPlotId.Value}")>@plot.ParentPlotName</NavLink>
+                <NavLink href=@($"/Land?LandPlotId={plot.ParentPlotId.Value}")>@plot.ParentPlotName</NavLink>
             }
         </ChildContent>
     </TemplateColumn>
@@ -52,7 +52,7 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            <NavLink href=@($"/Land?Id={plot.Id}")>@plot.Name</NavLink>
+            <NavLink href=@($"/Land?LandPlotId={plot.Id}")>@plot.Name</NavLink>
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.Area)" Title="Area" Sortable="true">

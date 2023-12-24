@@ -1,0 +1,83 @@
+﻿@using BackEnd.BusinessLogic.Livestock.Animals
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+@if (animal is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="OnAnimalSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <DataContent>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => animal.Name)">
+                <InputText placeholder="Name" @bind-Value="@animal.Name" />
+            </ValidatedField>
+            <ValidatedField Legend="Collective Name" ValidationMessageFor="@(() => animal.GroupName)">
+                <InputText placeholder="Collective Name" @bind-Value="@animal.GroupName" />
+            </ValidatedField>
+            <ValidatedField Legend="Male Parent Name" ValidationMessageFor="@(() => animal.ParentMaleName)">
+                <InputText placeholder="Male Parent Name" @bind-Value="@animal.ParentMaleName" />
+            </ValidatedField>
+            <ValidatedField Legend="Female Parent Name" ValidationMessageFor="@(() => animal.ParentFemaleName)">
+                <InputText placeholder="Female Parent Name" @bind-Value="@animal.ParentFemaleName" />
+            </ValidatedField>
+            <ValidatedField Legend="Care" ValidationMessageFor="@(() => animal.Care)">
+                <InputSelect @bind-Value="@(animal.Care)">
+                    <option value="@LivestockCareConstants.Individual">@LivestockCareConstants.Individual</option>
+                    <option value="@LivestockCareConstants.Collective">@LivestockCareConstants.Collective</option>
+                </InputSelect>
+            </ValidatedField>
+        </DataContent>
+    </ValidatedForm>
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+    private LivestockAnimalModel? animal;
+    protected override void OnAfterRender(bool firstRender)
+    {
+        animal = editContext.Model as LivestockAnimalModel;
+        if (animal is null) return;
+    }
+    private async Task OnAnimalSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (animal.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<LivestockAnimalModel, CreateLivestockAnimal>("api/CreateLivestockAnimal", new CreateLivestockAnimal {  LivestockAnimal = animal }) :
+                await api.ProcessCommand<LivestockAnimalModel, UpdateLivestockAnimal>("api/UpdateLivestockAnimal", new UpdateLivestockAnimal { LivestockAnimal = animal });
+
+            if (id <= 0)
+                throw new Exception("Unable to save animal");
+            if (creating)
+            {
+                animal.Id = id;
+                appState.DbContext.LivestockAnimals.Add(animal);
+            }
+            else
+            {
+                var updated = await appState.DbContext.LivestockAnimals.FindAsync(animal.Id);
+                updated = animal.Map(updated) as LivestockAnimalModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(animal);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}

@@ -1,6 +1,4 @@
-﻿
-
-@if (!Editting)
+﻿@if (!Editting)
 
 {
     @if (ShowNavigate && OnNavigateClick.HasDelegate)
@@ -21,11 +19,7 @@
     }
 }
 else{
-    @if (OnCancelClick.HasDelegate)
-    {
-        <button class="btn-link safe" type="button" @onclick=cancelClicked>@CancelText</button>
-    }
-
+    <button class="btn-link safe" type="button" @onclick=cancelClicked>@CancelText</button>
     @if (OnSaveClick.HasDelegate)
     {
         <button class="btn-link warning" type="button" @onclick=saveClicked>@SaveText</button>

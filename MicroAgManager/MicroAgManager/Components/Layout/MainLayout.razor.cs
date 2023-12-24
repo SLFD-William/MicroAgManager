@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace MicroAgManager.Components.Layout
 {
-    public partial class MainLayout: LayoutComponentBase,IDisposable
+    public partial class MainLayout: LayoutComponentBase
     {
         private static ApplicationState _appState;
         [Inject] DataSynchronizer dbSynchonizer { get; set; }
@@ -15,17 +15,9 @@ namespace MicroAgManager.Components.Layout
         protected override void OnInitialized()
         {
             _appState = new ApplicationState(authentication, dbSynchonizer, navigationManager, config);
-            _appState.OnDbInitialized += _appState_OnDbInitialized;
-            _appState.OnDbUpdate += _appState_OnDbUpdate;
+          
         }
 
-        private void _appState_OnDbUpdate() => StateHasChanged();
-
-        private void _appState_OnDbInitialized() => StateHasChanged();
-        public void Dispose()
-        {
-            _appState.OnDbInitialized -= _appState_OnDbInitialized;
-            _appState.OnDbUpdate -= _appState_OnDbUpdate;
-        }
+     
     }
 }

@@ -18,6 +18,7 @@ namespace MicroAgManager.Services
         private static DataSynchronizer _dbSynchonizer;
         private static NavigationManager _navigationManager;
 
+        public FrontEndDbContext DbContext { get => _dbContext; }
         public ApplicationState(AuthenticationStateProvider authentication, DataSynchronizer dbSynchonizer, NavigationManager navigationManager, IConfiguration config)
         {
             _authentication = authentication;
@@ -33,6 +34,7 @@ namespace MicroAgManager.Services
         public static List<long> FarmNameSelectedFilter { get => _farmNameSelectedFilter; set { _farmNameSelectedFilter = value; } }
         public static List<string> UsageSelectedFilter { get => _usageSelectedFilter; set { _usageSelectedFilter = value; } }
 
+        public static bool CanAddFarm() => _dbContext.Farms.Count() < 1;
         private void _dbSynchonizer_OnUpdate()=>OnDbUpdate?.Invoke();
 
         private void _dbSynchonizer_OnDbInitialized()=>OnDbInitialized?.Invoke();

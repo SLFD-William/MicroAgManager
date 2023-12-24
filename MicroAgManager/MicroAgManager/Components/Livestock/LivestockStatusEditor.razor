@@ -1,0 +1,132 @@
+﻿@using BackEnd.BusinessLogic.Livestock.Status
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+
+@if (status is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="OnStatusSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <DataContent>
+            @if (status.LivestockAnimalId <= 0)
+            {
+                <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => status.LivestockAnimalId)">
+                    <InputSelect @bind-Value="@(status.LivestockAnimalId)">
+                        <option value="0">Select Livestock Type ...</option>
+                        @foreach (var state in appState.DbContext.LivestockAnimals.OrderBy(a => a.Name))
+                        {
+                            <option value="@state.Id">@state.Name</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+            }
+            <ValidatedField Legend="Status" ValidationMessageFor="@(() => status.Status)">
+                <InputText placeholder="Status" @bind-Value="@(status.Status)" />
+            </ValidatedField>
+            <ValidatedField Legend="Default Status" ValidationMessageFor="@(() => status.DefaultStatus)">
+                <InputCheckbox @bind-Value="@(status.DefaultStatus)" />
+            </ValidatedField>
+            <ValidatedField Legend="Being Managed" ValidationMessageFor="@(() => status.BeingManaged)">
+                <InputSelect @bind-Value="@(status.BeingManaged)">
+                    @foreach (var state in StatusModes)
+                    {
+                        <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => status.Sterile)">
+                <InputSelect @bind-Value="@(status.Sterile)">
+                    @foreach (var state in StatusModes)
+                    {
+                        <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => status.InMilk)">
+                <InputSelect @bind-Value="@(status.InMilk)">
+                    @foreach (var state in StatusModes)
+                    {
+                        <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Bottle Fed" ValidationMessageFor="@(() => status.BottleFed)">
+                <InputSelect @bind-Value="@(status.BottleFed)">
+                    @foreach (var state in StatusModes)
+                    {
+                        <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => status.ForSale)">
+                <InputSelect @bind-Value="@(status.ForSale)">
+                    @foreach (var state in StatusModes)
+                    {
+                        <option value="@state">@(string.IsNullOrEmpty(state) ? "Select Status state ..." : state)</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+        </DataContent>
+    </ValidatedForm>
+}
+
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+    private LivestockStatusModel? status;
+    protected override void OnAfterRender(bool firstRender)
+    {
+        status = editContext.Model as LivestockStatusModel;
+        if (status is null) return;
+    }
+    private async Task OnStatusSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (status.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<LivestockStatusModel, CreateLivestockStatus>("api/CreateLivestockStatus", new CreateLivestockStatus { LivestockStatus = status }) :
+                await api.ProcessCommand<LivestockStatusModel, UpdateLivestockStatus>("api/UpdateLivestockStatus", new UpdateLivestockStatus { LivestockStatus = status });
+
+            if (id <= 0)
+                throw new Exception("Unable to save status");
+            if (creating)
+            {
+                status.Id = id;
+                appState.DbContext.LivestockStatuses.Add(status);
+            }
+            else
+            {
+                var updated = await appState.DbContext.LivestockStatuses.FindAsync(status.Id);
+                updated = status.Map(updated) as LivestockStatusModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(status);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    private readonly static List<string> StatusModes = new List<string> {
+            string.Empty,
+            LivestockStatusModeConstants.Unchanged,
+            LivestockStatusModeConstants.False,
+            LivestockStatusModeConstants.True
+        };
+
+}

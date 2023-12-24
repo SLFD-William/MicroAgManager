@@ -1,9 +1,9 @@
-.Land {
+.Livestock {
     width: inherit;
     height: 100%;
     display: grid;
     grid-template-columns: 25ch 1fr;
-    grid-gap:1em;
+    grid-gap: 1em;
     align-items: start;
 
     & ::deep > .TreeView {
@@ -16,9 +16,10 @@
         width: 100%;
         display: flex;
         justify-content: space-between;
+
         & a {
-            color:inherit;
-        }  
+            color: inherit;
+        }
     }
 
 
