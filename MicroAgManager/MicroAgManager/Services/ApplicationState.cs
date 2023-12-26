@@ -12,7 +12,10 @@ namespace MicroAgManager.Services
         public event Action? OnDbInitialized;
         public event Action? OnDbUpdate;
 
-        private static List<long> _farmNameSelectedFilter = new();
+        private static List<long> _farmSelectedFilter = new();
+        private static List<long> _animalSelectedFilter = new();
+        private static List<long> _locationSelectedFilter = new();
+        private static List<long> _breedSelectedFilter = new();
         private static List<string> _usageSelectedFilter = new();
         private static List<string> _selectedTreeNodes = new();
         private static List<string> _expandedTreeNodes = new();
@@ -58,7 +61,10 @@ namespace MicroAgManager.Services
         public static List<string> SelectedTreeNodes { get => _selectedTreeNodes; private set { _selectedTreeNodes = value; } }
         public static List<string> ExpandedTreeNodes { get => _expandedTreeNodes; private set { _expandedTreeNodes = value; } }
 
-        public static List<long> FarmNameSelectedFilter { get => _farmNameSelectedFilter; set { _farmNameSelectedFilter = value; } }
+        public static List<long> AnimalSelectedFilter { get => _animalSelectedFilter; set { _animalSelectedFilter = value; } }
+        public static List<long> BreedSelectedFilter { get => _breedSelectedFilter; set { _breedSelectedFilter = value; } }
+        public static List<long> LocationSelectedFilter { get => _locationSelectedFilter; set { _locationSelectedFilter = value; } }
+        public static List<long> FarmSelectedFilter { get => _farmSelectedFilter; set { _farmSelectedFilter = value; } }
         public static List<string> UsageSelectedFilter { get => _usageSelectedFilter; set { _usageSelectedFilter = value; } }
 
         public static bool CanAddFarm() => _dbContext.Farms.Count() < 1;
@@ -119,6 +125,8 @@ namespace MicroAgManager.Services
             var baseUri = uri.GetLeftPart(UriPartial.Path);
             return queryParameters.Count == 0 ? baseUri : $"{baseUri}?{queryParameters}";
         }
+        public static bool FieldIsInQueryString(string field) => _navigationManager.Uri.Contains(field);
+        
         private async Task RedirectLandingToHomeIfAuthenticated()
         {
             if (_navigationManager.BaseUri == _navigationManager.Uri && await UserIsAuthenticated())

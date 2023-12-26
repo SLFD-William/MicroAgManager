@@ -4,7 +4,7 @@
 @inject NavigationManager nm
 
 <PageTitle>Login</PageTitle>
-
+<div>
 <h1>Login</h1>
 
 <AuthorizeView>
@@ -38,7 +38,7 @@
         </div>
     </NotAuthorized>
 </AuthorizeView>
-
+</div>
 @code {
     private bool success, errors;
     private string email = string.Empty;

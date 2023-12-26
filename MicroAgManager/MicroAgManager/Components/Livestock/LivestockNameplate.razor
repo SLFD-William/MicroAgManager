@@ -1,6 +1,7 @@
 ﻿@using Domain.Models
 @using Domain.Constants
 @using MicroAgManager.Components.Shared
+@using MicroAgManager.Services
 <section class="LivestockNameplate">
     <section class="name">
         @if (ShowEmoji)
@@ -24,11 +25,13 @@
             </span>
         }
         <h3>@Livestock.Name</h3>
-        <NavCrudButtons ShowCreate="@OnCancelClick.HasDelegate" OnCancelClick="@(()=>OnCancelClick.InvokeAsync(Livestock.Id))"
-                        ShowDelete="@OnDeleteClick.HasDelegate"  OnDeleteClick="@(()=>OnDeleteClick.InvokeAsync(Livestock.Id))"
-                        ShowEdit="@OnEditClick.HasDelegate" OnEditClick="@(()=>OnEditClick.InvokeAsync(Livestock.Id))"
-                        ShowNavigate="@OnNavigateClick.HasDelegate" OnNavigateClick="@(()=>OnNavigateClick.InvokeAsync(Livestock.Id))"
-                        OnSaveClick="@(()=>OnSaveClick.InvokeAsync(Livestock.Id))"></NavCrudButtons>
+        <NavCrudButtons Editting="@showLivestockModal"
+                        ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Livestock.Id>0)"
+                        OnEditClick="ShowLivestockEditor"
+                        ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))" 
+                        OnNavigateClick="@OnNavigateClick"
+                        NavigateText="@NavigateText"
+                        ></NavCrudButtons>
     </section>
     @if (ShowGeneral)
     {
@@ -66,10 +69,12 @@
                 }
             </span>
             }
-    
+    <LivestockEditor Modal="true" Show="@showLivestockModal" editContext="@livestockEditContext" OnCancel=LivestockCanceled OnSubmit=LivestockSubmitted></LivestockEditor>
 </section>
+@ChildContent
 @code {
     [CascadingParameter] LivestockModel Livestock { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public bool ShowAll { get; set; } = false;
     [Parameter] public bool ShowGender { get; set; } = true;
     [Parameter] public bool ShowEmoji { get; set; } = true;
@@ -81,9 +86,13 @@
     [Parameter] public bool ShowParents { get; set; } = false;
 
 
-
+    [Parameter] public bool ShowEdit { get; set; } = false;
     [Parameter] public EventCallback<long> OnEditClick { get; set; }
-    [Parameter] public EventCallback<long> OnNavigateClick { get; set; }
+
+    [Parameter] public string NavigateText { get; set; } = "back";
+    [Parameter] public bool ShowNavigate { get; set; } = false;
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
+    
     [Parameter] public EventCallback<long> OnSaveClick { get; set; }
     [Parameter] public EventCallback<long> OnDeleteClick { get; set; }
     [Parameter] public EventCallback<long> OnCreateClick { get; set; }
@@ -106,7 +115,32 @@
                 return $"{age.Days / 365} years old";
         }
     }
-
-    private void TestCall() { }
+    protected override void OnInitialized()
+    {
+        livestockEditContext = new EditContext(Livestock);
+    }
+    private bool showLivestockModal = false;
+    private EditContext livestockEditContext;
+    private void ShowLivestockEditor()
+    {
+        var livestock = ApplicationState._dbContext.Livestocks.Find(Livestock.Id) ?? new LivestockModel();
+        livestockEditContext = new EditContext(livestock);
+        showLivestockModal = true;
+        OnEditClick.InvokeAsync();
+        StateHasChanged();
+    }
+    private void LivestockSubmitted(EditContext e)
+    {
+        var model = e.Model as LivestockModel;
+        showLivestockModal = false;
+        if (model == null) return;
+        StateHasChanged();
+    }
+    private void LivestockCanceled(object e)
+    {
+        showLivestockModal = false;
+        StateHasChanged();
+    }
+ 
 
 }

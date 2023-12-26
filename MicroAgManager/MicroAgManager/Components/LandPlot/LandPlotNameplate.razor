@@ -4,7 +4,13 @@
 <section class="LandPlotNameplate">
      <section class="name">
         <h3>@Plot.Name</h3>
-        <NavCrudButtons Editting="@showPlotModal" ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Plot.Id>0)" OnEditClick="ShowPlotEditor"></NavCrudButtons>
+        <NavCrudButtons Editting="@showPlotModal" 
+            ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Plot.Id>0)" 
+            OnEditClick="ShowPlotEditor"
+                        ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))"
+                        NavigateText="@NavigateText"
+                        OnNavigateClick=@OnNavigateClick
+        ></NavCrudButtons>
     </section>
     @if (ShowAll || ShowFarm)
     {
@@ -68,7 +74,9 @@
     }
     <LandPlotEditor Modal=true Show=@showPlotModal editContext=plotEditContext OnCancel=PlotCanceled OnSubmit=PlotSubmitted></LandPlotEditor>
 </section>
+@ChildContent
 @code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
     [CascadingParameter] LandPlotModel Plot { get; set; }
     [Parameter] public bool ShowAll { get; set; } = false;
     [Parameter] public bool ShowFarm { get; set; } = false;
@@ -80,7 +88,11 @@
 
     [Parameter] public bool ShowEdit { get; set; } = false; 
     [Parameter] public EventCallback OnEditClick { get; set; }
+    
+    [Parameter] public string NavigateText { get; set; } = "back";
+    [Parameter] public bool ShowNavigate { get; set; } = false;
     [Parameter] public EventCallback OnNavigateClick { get; set; }
+    
     [Parameter] public EventCallback OnSaveClick { get; set; }
     [Parameter] public EventCallback OnDeleteClick { get; set; }
     [Parameter] public EventCallback OnCreateClick { get; set; }

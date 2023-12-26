@@ -1,9 +1,12 @@
 ﻿.Land {
-  width: inherit;
-  height: 100%;
+  width: 100%;
+  height: -webkit-fill-available;
   display: grid;
   grid-template-columns: 25ch 1fr;
   align-items: start;
+}
+.Land > div {
+  overflow: auto;
 }
 .Land ::deep > .TreeView {
   height: 100%;
@@ -19,5 +22,5 @@
   color: inherit;
 }
 .Land .microagmanager {
-  width: 75vw;
+  width: 100%;
 }

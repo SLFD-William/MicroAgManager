@@ -1,5 +1,19 @@
-﻿<h3>LivestockAnimalNameplate</h3>
-
+﻿@using Domain.Models
+@using Domain.Constants
+@using MicroAgManager.Components.Shared
+<section class="LivestockAnimalNameplate">
+    <section class="name">
+        <h3>@LivestockAnimal.Name</h3>
+    </section>
+</section>
+@ChildContent
 @code {
+    [CascadingParameter] LivestockAnimalModel LivestockAnimal { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool ShowEdit { get; set; } = false;
+    [Parameter] public EventCallback<long> OnEditClick { get; set; }
 
+    [Parameter] public string NavigateText { get; set; } = "back";
+    [Parameter] public bool ShowNavigate { get; set; } = false;
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
 }

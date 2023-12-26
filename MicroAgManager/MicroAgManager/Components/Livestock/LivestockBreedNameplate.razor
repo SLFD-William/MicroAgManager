@@ -1,5 +1,54 @@
-﻿<h3>LivestockBreedNameplate</h3>
-
+﻿@using Domain.Models
+@using Domain.Constants
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Services
+<section class="LivestockBreedNameplate">
+    <section class="name">
+        <h3>@LivestockBreed.Name</h3>
+        <NavCrudButtons Editting="@showBreedModal"
+                        ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && LivestockBreed.Id>0)"
+                        OnEditClick="ShowBreedEditor"
+                        ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))"
+                        NavigateText="@NavigateText"
+                        OnNavigateClick=@OnNavigateClick></NavCrudButtons>
+    </section>
+    <LivestockBreedEditor Modal=true Show=@showBreedModal editContext=breedEditContext OnCancel=BreedCanceled OnSubmit=BreedSubmitted></LivestockBreedEditor>
+</section>
+@ChildContent
 @code {
+    [CascadingParameter] LivestockBreedModel LivestockBreed { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool ShowEdit { get; set; } = false;
+    [Parameter] public EventCallback<long> OnEditClick { get; set; }
 
+    [Parameter] public string NavigateText { get; set; } = "back";
+    [Parameter] public bool ShowNavigate { get; set; } = false;
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
+
+    protected override void OnInitialized()
+    {
+        breedEditContext = new EditContext(LivestockBreed);
+    }
+    private bool showBreedModal = false;
+    private EditContext breedEditContext;
+    private void ShowBreedEditor()
+    {
+        var breed = ApplicationState._dbContext.LivestockBreeds.Find(LivestockBreed.Id) ?? new LivestockBreedModel();
+        breedEditContext = new EditContext(breed);
+        showBreedModal = true;
+        OnEditClick.InvokeAsync();
+        StateHasChanged();
+    }
+    private void BreedSubmitted(EditContext e)
+    {
+        var model = e.Model as LivestockBreedModel;
+        showBreedModal = false;
+        if (model == null) return;
+        StateHasChanged();
+    }
+    private void BreedCanceled(object e)
+    {
+        showBreedModal = false;
+        StateHasChanged();
+    }
 }

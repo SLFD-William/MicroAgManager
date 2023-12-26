@@ -6,7 +6,14 @@
 <section class="FarmNameplate">
     <section class="name">
         <h3 >@Farm.Name</h3>
-        <NavCrudButtons Editting="@showFarmModal" ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Farm.Id>0)" OnEditClick="@ShowFarmEditor"></NavCrudButtons>
+        <NavCrudButtons Editting="@showFarmModal" 
+            ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Farm.Id>0)" 
+            OnEditClick="@ShowFarmEditor"
+            ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))"
+            NavigateText="@NavigateText"
+            OnNavigateClick=@OnNavigateClick
+        >
+    </NavCrudButtons>
     </section>
     @if (ShowAll || ShowAddress)
     {
@@ -118,7 +125,9 @@
     <FarmEditor Modal=true Show=@showFarmModal editContext=farmEditContext OnCancel=FarmCanceled OnSubmit=FarmSubmitted></FarmEditor>
 
 </section>
+@ChildContent
 @code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
     [CascadingParameter] FarmLocationModel Farm { get; set; }
     [Parameter] public bool ShowAll { get; set; } = false;
 
@@ -134,8 +143,13 @@
     [Parameter] public bool ShowCountry { get; set; } = true;
 
     [Parameter] public bool ShowEdit { get; set; } = false;
+
     [Parameter] public EventCallback OnEditClick { get; set; }
+    
+    [Parameter] public string NavigateText { get; set; } = "back";
+    [Parameter] public bool ShowNavigate { get; set; } = false;
     [Parameter] public EventCallback OnNavigateClick { get; set; }
+
     [Parameter] public EventCallback OnSaveClick { get; set; }
     [Parameter] public EventCallback OnDeleteClick { get; set; }
     [Parameter] public EventCallback OnCreateClick { get; set; }

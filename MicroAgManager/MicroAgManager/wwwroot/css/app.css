@@ -10397,7 +10397,7 @@ form .updateCancelButtons {
   border-radius: 1em;
   box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   max-height: -webkit-fill-available;
-  width: -webkit-fill-available;
+  min-width: 50%;
   max-width: calc(100% - 1em);
   z-index: 100;
 }
@@ -10407,7 +10407,7 @@ form .updateCancelButtons {
   position: relative;
   color: var(--typography-primary-color);
   background-color: var(--light-brand);
-  width: 75vw;
+  width: 100%;
 }
 .quickgrid[theme=microagmanager] th {
   position: sticky;

@@ -32,6 +32,7 @@ height: 100vh;
     background-color: var(--typography-primary-bg-color);
     color: var(--typography-primary-color);
 }
+
 #app{
     height:100%;
 }
@@ -127,7 +128,7 @@ form {
         border-radius: 1em;
         box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         max-height: -webkit-fill-available;
-        width: -webkit-fill-available;
+        min-width: 50%;
         max-width: calc(100% - 1em);
         z-index: 100;
     }
@@ -137,7 +138,7 @@ form {
     position: relative;
     color: var(--typography-primary-color);
     background-color: var(--light-brand);
-    width: 75vw;
+    width: 100%;
 
     & th {
         position: sticky;

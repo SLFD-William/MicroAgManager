@@ -1,23 +1,35 @@
 ﻿@using Domain.Models
+@using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
 
 <QuickGrid Theme="microagmanager" @ref=livestockGrid TGridItem=LivestockModel Items="@Items">
-        <PropertyColumn Property="@(p => p.Breed.Animal.Name)" Title="Name" Sortable="true">
+    @if (ShowAnimalNameColumn)
+    {
+        <TemplateColumn Title="Animal" Sortable="true" Context="livestock" SortBy="@OrderByAnimalName">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
                 </div>
             </ColumnOptions>
-        </PropertyColumn>
-        <PropertyColumn Property="@(p => p.Breed.Name)" Title="Breed" Sortable="true">
+            <ChildContent>
+                <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", livestock.Breed.Animal.Id.ToString() }}))>@livestock.Breed.Animal.Name</NavLink>
+            </ChildContent>
+            </TemplateColumn>
+    }
+    @if (ShowBreedColumns)
+    {
+        <TemplateColumn Title="Animal" Sortable="true" Context="livestock" SortBy="@OrderByBreedName">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="breedNameFilter" @bind:event="oninput" placeholder="Breed..." />
                 </div>
             </ColumnOptions>
-        </PropertyColumn>
+            <ChildContent>
+                <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", livestock.Breed.Animal.Id.ToString() },{ "LivestockBreedId", livestock.Breed.Id.ToString() }}))>@livestock.Breed.Name</NavLink>
+            </ChildContent>
+        </TemplateColumn>
         <PropertyColumn Property="@(p => p.Breed.EmojiChar)" Title="Emoji" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
@@ -25,6 +37,7 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
+    }
         <PropertyColumn Property="@(p => p.Variety)" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
@@ -32,6 +45,16 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
+    @if (ShowLocationColumn)
+    { 
+        <PropertyColumn Property="@(p => p.Location.Name)" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="locationFilter" @bind:event="oninput" placeholder="Location..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>   
+    }
         <PropertyColumn Property="@(p => p.BatchNumber)" Title="Batch Number" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
@@ -53,7 +76,7 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn> *@
-    <TemplateColumn Title="Name" SortBy="@sortByName">
+    <TemplateColumn Title="Name" SortBy="@OrderByName">
         <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="@nameFilter" @bind:event="oninput" placeholder="Name..." />
@@ -93,9 +116,12 @@
     [Parameter] public EventCallback<long> OnEditClick { get; set; }
 
     QuickGrid<LivestockModel> livestockGrid;
-    GridSort<LivestockModel> sortByName = GridSort<LivestockModel>
-    .ByAscending(p => p.Name);
-
+    GridSort<LivestockModel> OrderByName = GridSort<LivestockModel>.ByAscending(p => p.Name);
+    GridSort<LivestockModel> OrderByAnimalName = GridSort<LivestockModel>.ByAscending(p => p.Breed.Animal.Name);
+    GridSort<LivestockModel> OrderByBreedName = GridSort<LivestockModel>.ByAscending(p => p.Breed.Name);
+    [Parameter] public bool ShowAnimalNameColumn { get; set; } = true;
+    [Parameter] public bool ShowBreedColumns { get; set; } = true;
+    [Parameter] public bool ShowLocationColumn { get; set; } = true;
     #region Filtering
 
     [Parameter] public Action<string> animalNameFilterChanged { get; set; }
@@ -150,7 +176,16 @@
             _batchNumberFilter = value;
         }
     }
-    
+    [Parameter] public Action<string> locationFilterChanged { get; set; }
+    private string _locationFilter;
+    string locationFilter
+    {
+        get => _locationFilter; set
+        {
+            locationFilterChanged.Invoke(value);
+            _locationFilter = value;
+        }
+    }
     [Parameter] public Action<string> genderFilterChanged { get; set; }
     private string _genderFilter;
     string genderFilter

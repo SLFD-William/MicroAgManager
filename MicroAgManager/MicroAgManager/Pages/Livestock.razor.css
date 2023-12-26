@@ -1,9 +1,12 @@
 ﻿.Livestock {
-  width: inherit;
-  height: 100%;
+  width: 100%;
+  height: -webkit-fill-available;
   display: grid;
   grid-template-columns: 25ch 1fr;
   align-items: start;
+}
+.Livestock > div {
+  overflow: auto;
 }
 .Livestock ::deep > .TreeView {
   height: 100%;
@@ -14,10 +17,11 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+  text-wrap: balance;
 }
 .Livestock ::deep .nodeContent a {
   color: inherit;
 }
 .Livestock .microagmanager {
-  width: 75vw;
+  width: 100%;
 }
