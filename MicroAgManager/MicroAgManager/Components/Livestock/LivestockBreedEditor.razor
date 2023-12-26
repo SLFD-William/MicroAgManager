@@ -1,0 +1,126 @@
+﻿@using BackEnd.BusinessLogic.Livestock.Animals
+@using BackEnd.BusinessLogic.Livestock.Breeds
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+@if (breed is not null)
+{
+    <ValidatedForm editContext ="editContext"
+        OnSubmit="OnBreedSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <DataContent>
+
+                <ValidatedField ValidationMessageFor="@(() => breed.LivestockAnimalId)">
+                    <LegendContent>
+                        <div style="display:inline-flex">
+                            <span>Animal</span><button type="button" @onclick=ShowAnimalEditor>+</button>
+                        @if (_addingAnimal)
+                        {
+                            <LivestockAnimalEditor Modal="true" Show="@_addingAnimal" editContext="@_addAnimalContext" OnSubmit="AnimalAddSubmitted" OnCancel="AnimalAddCancelled"></LivestockAnimalEditor>
+                        }
+                        </div>
+                    </LegendContent>
+                    <ChildContent>
+                        <InputSelect @bind-Value="@LivestockAnimalId">
+                            <option value="0">Select Animal ...</option>
+                            @foreach (var state in appState.DbContext.LivestockAnimals.OrderBy(a => a.Name))
+                            {
+                                <option value="@state.Id">@state.Name</option>
+                            }
+                        </InputSelect>
+                    </ChildContent>
+
+                </ValidatedField>
+  
+                <ValidatedField Legend="Name" ValidationMessageFor="@(() => breed.Name)">
+                    <InputText placeholder="Name" @bind-Value="@breed.Name" />
+                </ValidatedField>
+                <ValidatedField Legend="Emoji" ValidationMessageFor="@(() => breed.EmojiChar)">
+                    <InputText placeholder="Emoji" @bind-Value="@breed.EmojiChar" />
+                </ValidatedField>
+                <ValidatedField Legend="Gestation Period (days)" ValidationMessageFor="@(() => breed.GestationPeriod)">
+                    <InputNumber placeholder="150" @bind-Value="@breed.GestationPeriod" />
+                </ValidatedField>
+                <ValidatedField Legend="Heat Period (days)" ValidationMessageFor="@(() => breed.HeatPeriod)">
+                    <InputNumber placeholder="30" @bind-Value="@breed.HeatPeriod" />
+                </ValidatedField>
+         
+        </DataContent>
+    </ValidatedForm>
+    }
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+    private LivestockBreedModel? breed;
+
+    private long _LivestockAnimalId = 0;
+    private long LivestockAnimalId { get => _LivestockAnimalId; set => _LivestockAnimalId = value; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        breed = editContext.Model as LivestockBreedModel;
+        if (breed is null) return;
+        LivestockAnimalId = breed.LivestockAnimalId;
+    }
+    private async Task OnBreedSubmit(EditContext editContext)
+    {
+
+        if (breed.LivestockAnimalId < 1)
+            ((LivestockBreedModel)editContext.Model).LivestockAnimalId = _LivestockAnimalId;
+
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (breed.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<LivestockBreedModel, CreateLivestockBreed>("api/CreateLivestockBreed", new CreateLivestockBreed { LivestockBreed = breed }) :
+                await api.ProcessCommand<LivestockBreedModel, UpdateLivestockBreed>("api/UpdateLivestockBreed", new UpdateLivestockBreed { LivestockBreed = breed });
+
+            if (id <= 0)
+                throw new Exception("Unable to save breed");
+            if (creating)
+            {
+                breed.Id = id;
+                appState.DbContext.LivestockBreeds.Add(breed);
+            }
+            else
+            {
+                var updated = await appState.DbContext.LivestockBreeds.FindAsync(breed.Id);
+                updated = breed.Map(updated) as LivestockBreedModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(breed);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    private void ShowAnimalEditor()
+    {
+        LivestockAnimalModel animal = new();
+        _addAnimalContext = new EditContext(animal);
+        _addingAnimal = true;
+        StateHasChanged();
+    }
+    private bool _addingAnimal = false;
+    private EditContext _addAnimalContext;
+    private void AnimalAddCancelled(EditContext context) { _addingAnimal = false; }
+    private void AnimalAddSubmitted(EditContext context)
+    {
+        _addingAnimal = false;
+        breed.LivestockAnimalId = (context.Model as LivestockAnimalModel)?.Id ?? breed.LivestockAnimalId;
+        StateHasChanged();
+    }
+}

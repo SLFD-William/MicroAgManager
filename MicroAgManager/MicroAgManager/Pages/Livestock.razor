@@ -9,17 +9,24 @@
 <div class="Livestock">
     @if (appState.DbContext.Tenants.Any())
     {
-        <TreeView>
-            <TreeNode NodeName="Animals">
+        <TreeView Id="Livestock">
+            <TreeNode Id="Livestock>Animals" NodeName="Animals">
                 <NodeContent>
                     <section class="nodeContent">
-                        <span>Animal</span><NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", "-1" }}))>add</NavLink>
+                        <span>Animal</span>
+                        <NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockId", "-1" }}))>add</NavLink>
                     </section>
                 </NodeContent>
                 <ChildContent>
                     @foreach (var animal in appState.DbContext.LivestockAnimals)
                     {
-                        <TreeNode NodeName="@animal.Name">
+                        var animalNodeId = $"Livestock>Animals>{nameof(LivestockAnimalModel)}.{nameof(LivestockAnimalModel.Id)}:{animal.Id}";
+                        <TreeNode Id="@animalNodeId" NodeName="@animal.Name"
+                                  IsCollapsed=@(!ApplicationState.ExpandedTreeNodes.Contains(animalNodeId))
+                                  IsSelected=@ApplicationState.SelectedTreeNodes.Contains(animalNodeId)
+                                  OnNodeCollapseClick="@((b) =>{ApplicationState.UpdageExpandedNodeState(b.Id, b.IsCollapsed);})"
+                                  OnNodeSelectClick="NodeSelectedByUser"
+                                  OnSelectionChange="NodeSelectionChanged">
                             <NodeContent>
                                 <section class="nodeContent">
                                     <span>@animal.Name</span><NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", animal.Id.ToString() },{ "LivestockId", "-1" }}))>add</NavLink>
@@ -27,44 +34,78 @@
                             </NodeContent>
                             <ChildContent>
                                 @if (appState.DbContext.LivestockStatuses.Any(s => s.LivestockAnimalId == animal.Id))
-                                { 
-                                    <TreeNode NodeName="Breeds">
+                                {
+                                    <TreeNode Id="@(animalNodeId+">Breeds")" NodeName="Breeds" Collapsable="false">
                                         <NodeContent>
                                             <section class="nodeContent">
-                                                <span>Breeds</span><NavLink @onclick:stopPropagation>add</NavLink>
+                                                <span>Breeds</span><NavLink @onclick:stopPropagation
+                                                                            href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockBreedId", "-1" },{ "LivestockAnimalId", animal.Id.ToString() }}))>add</NavLink>
                                             </section>
                                         </NodeContent>
                                         <ChildContent>
                                             @foreach (var breed in appState.DbContext.LivestockBreeds.Where(b=>b.LivestockAnimalId==animal.Id).OrderBy(b=>b.Name))
                                             {
-                                        
+                                                var breedNodeId = animalNodeId + $">{nameof(LivestockBreedModel)}.{nameof(LivestockBreedModel.Id)}:{breed.Id}";
+                                                <TreeNode Id="@breedNodeId" NodeName="@breed.Name"
+                                                          IsCollapsed=@(!ApplicationState.ExpandedTreeNodes.Contains(breedNodeId))
+                                                          IsSelected=@ApplicationState.SelectedTreeNodes.Contains(breedNodeId)
+                                                          OnNodeCollapseClick="@((b) =>{ApplicationState.UpdageExpandedNodeState(b.Id, b.IsCollapsed);})"
+                                                          OnNodeSelectClick="NodeSelectedByUser"
+                                                          OnSelectionChange="NodeSelectionChanged">
+                                                    <NodeContent>
+                                                        <section class="nodeContent">
+                                                            <span>@breed.Name</span><NavLink @onclick:stopPropagation
+                                                                href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockId", "-1" },{ "LivestockAnimalId", breed.LivestockAnimalId.ToString()},{ "LivestockBreedId", breed.Id.ToString() }}))>add</NavLink>
+                                                        </section>
+                                                    </NodeContent>
+                                                </TreeNode>
                                             }
                                         </ChildContent>
                                     </TreeNode>
-                                    <TreeNode NodeName="Feeds">
+                                    @* <TreeNode Id="@(animalNodeId+">Feeds")" NodeName="Feeds" Collapsable="false">
                                         <NodeContent>
                                             <section class="nodeContent">
-                                                <span>Feeds</span><NavLink @onclick:stopPropagation>add</NavLink>
+                                                <span>Feeds</span><NavLink @onclick:stopPropagation
+                                                                           href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockFeedId", "-1" },{ "LivestockAnimalId", animal.Id.ToString() }}))>add</NavLink>
                                             </section>
                                         </NodeContent>
                                         <ChildContent>
                                             @foreach (var feed in appState.DbContext.LivestockFeeds.Where(b => b.LivestockAnimalId == animal.Id).OrderBy(b => b.Name))
                                             {
-
+                                                var feedNodeId = animalNodeId + $">{nameof(LivestockFeedModel)}.{nameof(LivestockFeedModel.Id)}:{feed.Id}";
+                                                <TreeNode Id="@feedNodeId" NodeName="@feed.Name"
+                                                          IsCollapsed=@(!ApplicationState.ExpandedTreeNodes.Contains(feedNodeId))
+                                                          IsSelected=@ApplicationState.SelectedTreeNodes.Contains(feedNodeId)
+                        OnNodeCollapseClick="@((b) =>{ApplicationState.UpdageExpandedNodeState(b.Id, b.IsCollapsed);})"
+                        OnNodeSelectClick="NodeSelectedByUser"
+                        OnSelectionChange="NodeSelectionChanged"></TreeNode>
                                             }
                                         </ChildContent>
-                                    </TreeNode>
+                                    </TreeNode> *@
                                 }
-                                <TreeNode NodeName="Statuses">
+                                <TreeNode Id="@(animalNodeId+">Statuses")" NodeName="Statuses" Collapsable="false">
                                     <NodeContent>
                                         <section class="nodeContent">
                                             <span>Statuses</span><NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", animal.Id.ToString()},{ "LivestockStatusId", "-1"}}))>add</NavLink>
                                         </section>
                                     </NodeContent>
                                     <ChildContent>
-                                        @foreach (var feed in appState.DbContext.LivestockStatuses.Where(b => b.LivestockAnimalId == animal.Id).OrderBy(b => b.Status))
+                                        @foreach (var status in appState.DbContext.LivestockStatuses.Where(b => b.LivestockAnimalId == animal.Id).OrderBy(b => b.Status))
                                         {
-
+                                            var statusNodeId = animalNodeId + $">{nameof(LivestockStatusModel)}.{nameof(LivestockStatusModel.Id)}:{status.Id}";
+                                            <TreeNode Id="@statusNodeId" NodeName="@status.Status"
+                                                      IsCollapsed=@(!ApplicationState.ExpandedTreeNodes.Contains(statusNodeId))
+                                                      IsSelected=@ApplicationState.SelectedTreeNodes.Contains(statusNodeId)
+                                                      OnNodeCollapseClick="@((b) =>{ApplicationState.UpdageExpandedNodeState(b.Id, b.IsCollapsed);})"
+                                                      OnNodeSelectClick="NodeSelectedByUser"
+                                                      OnSelectionChange="NodeSelectionChanged">
+                                                <NodeContent>
+                                                    <section class="nodeContent">
+                                                        <span>@status.Status</span><NavLink @onclick:stopPropagation
+                                                            href=@(ApplicationState.CorrectedParametersUri(new(){{"LivestockId", "-1"},{ "LivestockAnimalId", status.LivestockAnimalId.ToString()},{ "LivestockStatusId", status.Id.ToString() }}))>add</NavLink>
+                                                    </section>
+                                                </NodeContent>
+                                            </TreeNode>
                                         }
                                     </ChildContent>
                                 </TreeNode>
@@ -102,18 +143,20 @@
                 }
                 else
                 {
+                    <LivestockBreedEditor Modal="true" Show="@_addingBreed" editContext="@_addBreedContext" OnSubmit="BreedAddSubmitted" OnCancel="BreedAddCancelled"></LivestockBreedEditor>
                 }
             }
-            @if (LivestockId.HasValue || _addingLivestock)
+            @if (LivestockId.HasValue)
             {
-                @if (_addingLivestock)
+                @if (LivestockId.Value > 0)
                 {
+                    <CascadingValue Value="@appState.DbContext.Livestocks.Find(LivestockId.Value)">
+                        <LivestockNameplate ShowAll="true" ></LivestockNameplate>
+                    </CascadingValue>
                 }
                 else
                 {
-                    <CascadingValue Value="LivestockModel">
-
-                    </CascadingValue>
+                    <LivestockEditor Modal="true" Show="@_addingLivestock" LivestockAnimalId="@LivestockAnimalId" editContext="@_addLivestockContext" OnSubmit="LivestockAddSubmitted" OnCancel="LivestockAddCancelled"></LivestockEditor>
                 }
             }
             else
@@ -152,9 +195,10 @@
     [Parameter][SupplyParameterFromQuery(Name = "LivestockBreedId")] public long? LivestockBreedId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockStatusId")] public long? LivestockStatusId { get; set; }
 
-    private bool _addingLivestock = false;
+    
 
     LivestockModel LivestockModel = new();
+    
     private long _livestockId = -1;
     private IQueryable<LivestockModel> baseLivestockQuery()
     {
@@ -173,7 +217,13 @@
         }
         return query.ToList().AsQueryable();
     }
-    
+
+    private bool _addingLivestock = false;
+    private EditContext _addLivestockContext;
+    private void LivestockAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockId", string.Empty } }));
+    private void LivestockAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockId", (context.Model as LivestockModel)?.Id.ToString() } }));
+
+
     private bool _addingAnimal = false;
     private EditContext _addAnimalContext;
     private void AnimalAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", string.Empty } }));
@@ -184,6 +234,11 @@
     private EditContext _addStatusContext;
     private void StatusAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", string.Empty } }));
     private void StatusAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", (context.Model as LivestockStatusModel)?.Id.ToString() } }));
+
+    private bool _addingBreed = false;
+    private EditContext _addBreedContext;
+    private void BreedAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", string.Empty } }));
+    private void BreedAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", (context.Model as LivestockBreedModel)?.Id.ToString() } }));
 
 
     protected override void OnParametersSet()
@@ -205,22 +260,44 @@
         _addingAnimal = LivestockAnimalId == -1;
         if (_addingAnimal)
             _addAnimalContext = new EditContext(new LivestockAnimalModel());
-
         _addingStatus = LivestockStatusId == -1 && LivestockAnimalId.HasValue;
         if (_addingStatus)
             _addStatusContext = new EditContext(new LivestockStatusModel() { LivestockAnimalId= LivestockAnimalId.Value });
+        _addingBreed = LivestockBreedId == -1 && LivestockAnimalId.HasValue;
+        if (_addingBreed)
+            _addBreedContext = new EditContext(new LivestockBreedModel() { LivestockAnimalId = LivestockAnimalId.Value });
 
 
-        // _landPlotId = LandPlotId.HasValue ? LandPlotId.Value : -1;
-        // LandPlot = appState.DbContext.LandPlots.Find(_landPlotId) ?? new();
-        // if (_landPlotId < 1 && FarmLocationId.HasValue)
-        //     LandPlot.FarmLocationId = FarmLocationId.Value;
-
-        // if (_landPlotId > 0 && LandPlot.FarmLocationId != FarmLocationId)
-        //     FarmLocationId = LandPlot.FarmLocationId;
-        // _addPlotContext = new EditContext(LandPlot);
-        // _addingPlot = LandPlotId < 1;
+        _livestockId = LivestockId.HasValue ? LivestockId.Value : -1;
+        LivestockModel = appState.DbContext.Livestocks.Find(_livestockId) ?? new();
+        if (_livestockId < 1)
+        {
+            if(LivestockBreedId.HasValue)
+                LivestockModel.LivestockBreedId = LivestockBreedId.Value;
+            if (LivestockStatusId.HasValue)
+                LivestockModel.StatusId = LivestockStatusId.Value;
+        }
+        
+        _addLivestockContext = new EditContext(LivestockModel);
+        _addingLivestock = LivestockId < 1;
         StateHasChanged();
     }
-    
+    private void NodeSelectedByUser(TreeNode selectedNode) => NodeSelected(selectedNode, !selectedNode.IsSelected);
+    private void NodeSelectionChanged(TreeNode selectedNode) => NodeSelected(selectedNode, selectedNode.IsSelected);
+
+    private void NodeSelected(TreeNode selectedNode, bool selected)
+    {
+        var nodeId = selectedNode.Id;
+        ApplicationState.UpdageSelectedNodeState(nodeId, selected);
+        var nodes = nodeId.Split('>');
+        foreach (var node in nodes)
+            if (node.Contains(':'))
+            {
+                var entityKeyValue = node.Split(':');
+                // if (entityKeyValue[0] == $"{nameof(FarmLocationModel)}.{nameof(FarmLocationModel.Id)}" && long.TryParse(entityKeyValue[1], out var farmId))
+                //     FarmSelected(selected, farmId);
+                // if (entityKeyValue[0] == $"{nameof(LandPlotModel)}.{nameof(LandPlotModel.Usage)}")
+                //     UsageSelected(selected, entityKeyValue[1]);
+            }
+    }
 }

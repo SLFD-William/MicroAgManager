@@ -14,8 +14,8 @@
 <div class="Land">
     @if (appState.DbContext?.Tenants.Any() == true)
     {
-        <TreeView>
-            <TreeNode NodeName="Farms">
+        <TreeView Id="Land" >
+            <TreeNode Id="Land>Farms" NodeName="Farms" Collapsable="false">
                 <NodeContent>
                     <section class="nodeContent">
                         <span>Farms</span>
@@ -28,26 +28,29 @@
                 <ChildContent>
                 @foreach (var farm in appState.DbContext.Farms)
                 {
-                    <TreeNode NodeName="@farm.Name" 
-                        IsCollapsed=@(!ApplicationState.FarmNameSelectedFilter.Contains(farm.Id)) 
-                        IsSelected=@ApplicationState.FarmNameSelectedFilter.Contains(farm.Id)
-                              OnNodeSelectClick="@((b) => FarmSelectedByUser(b,farm.Id))"
-                              OnSelectionChange="@((b) => FarmSelectionChange(b,farm.Id))">
-                        <NodeContent>
-                            <section class="nodeContent">
+                        var farmNodeId = $"Land>Farms>{nameof(FarmLocationModel)}.{nameof(FarmLocationModel.Id)}:{farm.Id}";
+                        <TreeNode Id=@farmNodeId NodeName="@farm.Name"
+                                  IsCollapsed=@(!ApplicationState.ExpandedTreeNodes.Contains(farmNodeId))
+                                  IsSelected=@ApplicationState.SelectedTreeNodes.Contains(farmNodeId)
+                                  OnNodeCollapseClick="@((b) =>{ApplicationState.UpdageExpandedNodeState(b.Id, b.IsCollapsed);})"
+                                  OnNodeSelectClick="NodeSelectedByUser"
+                                  OnSelectionChange="NodeSelectionChanged">
+                            <NodeContent>
+                                <section class="nodeContent">
                                     <span>@farm.Name</span> <NavLink @onclick:stopPropagation href=@(ApplicationState.CorrectedParametersUri(new(){{ "LandPlotId", "-1" },{ "FarmLocationId", farm.Id.ToString()}}))>add plot</NavLink>
-                            </section>
-                        </NodeContent>
-                        <ChildContent>
-                            @foreach (var usage in appState.DbContext.LandPlots.Select(p => p.Usage).Distinct().OrderBy(u => u))
-                            {
-                                <TreeNode NodeName="@usage" 
-                                    IsSelected=@(ApplicationState.FarmNameSelectedFilter.Contains(farm.Id) && ApplicationState.UsageSelectedFilter.Contains(usage))
-                                          OnNodeSelectClick="@((b) => UsageSelectedByUser(b,usage))"
-                                          OnSelectionChange="@((b) => UsageSelectionChange(b,usage))"></TreeNode>
-                            }
-                        </ChildContent>
-                    </TreeNode>
+                                </section>
+                            </NodeContent>
+                            <ChildContent>
+                                @foreach (var usage in appState.DbContext.LandPlots.Select(p => p.Usage).Distinct().OrderBy(u => u))
+                                {
+                                    var usageNodeId = farmNodeId + $">{nameof(LandPlotModel)}.{nameof(LandPlotModel.Usage)}:{usage}";
+                                    <TreeNode Id=@usageNodeId NodeName="@usage"
+                                              IsSelected=@ApplicationState.SelectedTreeNodes.Contains(usageNodeId)
+                                              OnNodeSelectClick="NodeSelectedByUser"
+                                              OnSelectionChange="NodeSelectionChanged"></TreeNode>
+                                }
+                            </ChildContent>
+                        </TreeNode>
                 }
                 </ChildContent>
             </TreeNode>
@@ -55,13 +58,17 @@
         <div>
             @if (FarmLocationId.HasValue)
             {
+                <div>
                 <CascadingValue Value="@appState.DbContext.Farms.Find(FarmLocationId.Value)">
                     <FarmNameplate ShowAddress="true" ShowStreet="true" ShowCity="true" ShowState="true" ShowZip="true" ShowWeather="true" ShowEdit="true"></FarmNameplate>
                 </CascadingValue>
+                </div>
             }
-
+          
             @if (LandPlotId.HasValue || _addingPlot)
             {
+
+            <div>
                 @if (_addingPlot)
                 {
                     <LandPlotEditor Modal="true" Show="@_addingPlot" editContext="_addPlotContext" OnCancel="PlotAddCancelled" OnSubmit="PlotAddSubmitted"></LandPlotEditor>
@@ -73,13 +80,16 @@
                     </CascadingValue>
                     @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
                     {
+                        <div>
                         <Livestock LocationId="@LandPlot.Id"></Livestock>
+                        </div>
                     }
                 }
+            </div>
             }
             else
             {
-
+            <div>
                 <LandPlotGrid farmNameFilterChanged="@((x) => {farmNameFilter=x; StateHasChanged();})"
                               parentPlotNameFilterChanged="@((x) => {parentPlotNameFilter=x; StateHasChanged();})"
                               plotNameFilterChanged="@((x) => {plotNameFilter=x; StateHasChanged();})"
@@ -88,6 +98,7 @@
                               ShowFarmColumn=@(ApplicationState.FarmNameSelectedFilter.Count!=1)
                               ShowUsageColumn=@(ApplicationState.UsageSelectedFilter.Count!=1)>
                 </LandPlotGrid>
+            </div>
             }
         </div>
     }
@@ -119,19 +130,36 @@
     private bool _addingPlot = false;
 
 
-    private void FarmSelectedByUser(TreeNode selectedNode, long farmId) => FarmSelected(!selectedNode.IsSelected, farmId);
-    private void FarmSelectionChange(TreeNode selectedNode, long farmId) => FarmSelected(selectedNode.IsSelected, farmId);
+    private void NodeSelectedByUser(TreeNode selectedNode) => NodeSelected(selectedNode, !selectedNode.IsSelected);
+    private void NodeSelectionChanged(TreeNode selectedNode) => NodeSelected(selectedNode, selectedNode.IsSelected);
+
+    private void NodeSelected(TreeNode selectedNode, bool selected)
+    {
+        var nodeId = selectedNode.Id;
+        ApplicationState.UpdageSelectedNodeState(nodeId, selected);
+        var nodes = nodeId.Split('>');
+        foreach (var node in nodes)
+            if (node.Contains(':'))
+            {
+                var entityKeyValue = node.Split(':');
+                if (entityKeyValue[0] == $"{nameof(FarmLocationModel)}.{nameof(FarmLocationModel.Id)}" && long.TryParse(entityKeyValue[1], out var farmId))
+                    FarmSelected(selected, farmId);
+                if (entityKeyValue[0] == $"{nameof(LandPlotModel)}.{nameof(LandPlotModel.Usage)}")
+                    UsageSelected(selected, entityKeyValue[1]);
+            }
+    }
+
+
+
     private void FarmSelected(bool selected, long farmId)
     {
         if (selected)
         {
-            if (!ApplicationState.FarmNameSelectedFilter.Contains(farmId))
-                ApplicationState.FarmNameSelectedFilter.Add(farmId);
+            if (!ApplicationState.FarmNameSelectedFilter.Contains(farmId)) ApplicationState.FarmNameSelectedFilter.Add(farmId);
         }
         else
         {
-            if (ApplicationState.FarmNameSelectedFilter.Contains(farmId))
-                ApplicationState.FarmNameSelectedFilter.Remove(farmId);
+            if (ApplicationState.FarmNameSelectedFilter.Contains(farmId)) ApplicationState.FarmNameSelectedFilter.Remove(farmId);
         }
         StateHasChanged();
         if (ApplicationState.FarmNameSelectedFilter.Count != 1)
@@ -141,10 +169,9 @@
 
     }
 
-    private void UsageSelectedByUser(TreeNode selectedNode, string usage) => UsageSelected(!selectedNode.IsSelected, usage);
-    private void UsageSelectionChange(TreeNode selectedNode, string usage) => UsageSelected(selectedNode.IsSelected, usage);
-    private void UsageSelected(bool selected, string usage)
+    private void UsageSelected( bool selected, string usage)
     {
+        
         if (selected)
         {
             if (!ApplicationState.UsageSelectedFilter.Contains(usage))

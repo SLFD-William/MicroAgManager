@@ -14,6 +14,8 @@ namespace MicroAgManager.Services
 
         private static List<long> _farmNameSelectedFilter = new();
         private static List<string> _usageSelectedFilter = new();
+        private static List<string> _selectedTreeNodes = new();
+        private static List<string> _expandedTreeNodes = new();
         private static AuthenticationStateProvider _authentication;
         private static DataSynchronizer _dbSynchonizer;
         private static NavigationManager _navigationManager;
@@ -31,6 +33,31 @@ namespace MicroAgManager.Services
             Task.Run(InitializeApp);
             Task.Run(RedirectLandingToHomeIfAuthenticated);
         }
+        public static void UpdageSelectedNodeState(string selectedNode, bool selected)
+        {
+            if (selected)
+            {
+                if (!SelectedTreeNodes.Contains(selectedNode)) SelectedTreeNodes.Add(selectedNode);
+            }
+            else
+            {
+                if (SelectedTreeNodes.Contains(selectedNode)) SelectedTreeNodes.Remove(selectedNode);
+            }
+        }
+        public static void UpdageExpandedNodeState(string expandedNode, bool expanded)
+        {
+            if (expanded)
+            {
+                if (!ExpandedTreeNodes.Contains(expandedNode)) ExpandedTreeNodes.Add(expandedNode);
+            }
+            else
+            {
+                if (ExpandedTreeNodes.Contains(expandedNode)) ExpandedTreeNodes.Remove(expandedNode);
+            }
+        }
+        public static List<string> SelectedTreeNodes { get => _selectedTreeNodes; private set { _selectedTreeNodes = value; } }
+        public static List<string> ExpandedTreeNodes { get => _expandedTreeNodes; private set { _expandedTreeNodes = value; } }
+
         public static List<long> FarmNameSelectedFilter { get => _farmNameSelectedFilter; set { _farmNameSelectedFilter = value; } }
         public static List<string> UsageSelectedFilter { get => _usageSelectedFilter; set { _usageSelectedFilter = value; } }
 

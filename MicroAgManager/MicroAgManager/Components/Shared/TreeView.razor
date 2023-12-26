@@ -1,9 +1,10 @@
-﻿<nav class="TreeView">
+﻿<nav id="@Id" class="TreeView">
 <ul >
     @ChildContent
 </ul>
 </nav>
 
 @code {
+    [Parameter] public string? Id { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 }

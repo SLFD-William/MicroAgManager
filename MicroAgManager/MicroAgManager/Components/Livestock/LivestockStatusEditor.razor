@@ -16,18 +16,27 @@
                    Modal=Modal
                    Show=Show>
         <DataContent>
-            @if (status.LivestockAnimalId <= 0)
-            {
-                <ValidatedField Legend="Livestock Type" ValidationMessageFor="@(() => status.LivestockAnimalId)">
-                    <InputSelect @bind-Value="@(status.LivestockAnimalId)">
-                        <option value="0">Select Livestock Type ...</option>
+            <ValidatedField ValidationMessageFor="@(() => status.LivestockAnimalId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Animal</span><button type="button" @onclick=ShowAnimalEditor>+</button>
+                        @if (_addingAnimal)
+                        { 
+                            <LivestockAnimalEditor Modal="true" Show="@_addingAnimal" editContext="@_addAnimalContext" OnSubmit="AnimalAddSubmitted" OnCancel="AnimalAddCancelled"></LivestockAnimalEditor>
+                        }
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@LivestockAnimalId">
+                        <option value="0">Select Animal ...</option>
                         @foreach (var state in appState.DbContext.LivestockAnimals.OrderBy(a => a.Name))
                         {
                             <option value="@state.Id">@state.Name</option>
                         }
                     </InputSelect>
-                </ValidatedField>
-            }
+                </ChildContent>
+
+            </ValidatedField>
             <ValidatedField Legend="Status" ValidationMessageFor="@(() => status.Status)">
                 <InputText placeholder="Status" @bind-Value="@(status.Status)" />
             </ValidatedField>
@@ -74,23 +83,31 @@
                     }
                 </InputSelect>
             </ValidatedField>
+
         </DataContent>
     </ValidatedForm>
 }
-
 
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private LivestockStatusModel? status;
+    private long _LivestockAnimalId = 0;
+    private long LivestockAnimalId { get => _LivestockAnimalId; set => _LivestockAnimalId = value; }
+
     protected override void OnAfterRender(bool firstRender)
     {
         status = editContext.Model as LivestockStatusModel;
         if (status is null) return;
+        LivestockAnimalId = status.LivestockAnimalId;
+
     }
     private async Task OnStatusSubmit(EditContext editContext)
     {
+        if (status.LivestockAnimalId < 1)
+            ((LivestockStatusModel)editContext.Model).LivestockAnimalId = _LivestockAnimalId;
+        
         if (!editContext.Validate()) return;
 
         try
@@ -128,5 +145,21 @@
             LivestockStatusModeConstants.False,
             LivestockStatusModeConstants.True
         };
+    private void ShowAnimalEditor()
+    {
+        LivestockAnimalModel animal = new();
+        _addAnimalContext = new EditContext(animal);
+        _addingAnimal = true;
+        StateHasChanged();
+    }
+    private bool _addingAnimal = false;
+    private EditContext _addAnimalContext;
+    private void AnimalAddCancelled(EditContext context) { _addingAnimal = false; }
+    private void AnimalAddSubmitted(EditContext context)
+    {
+        _addingAnimal = false;
+        status.LivestockAnimalId = (context.Model as LivestockAnimalModel)?.Id ?? status.LivestockAnimalId;
+        StateHasChanged();
+    }
 
 }

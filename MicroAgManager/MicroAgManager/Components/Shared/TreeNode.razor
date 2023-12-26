@@ -1,5 +1,6 @@
-﻿<li class="TreeNode">
-    @if (ChildContent != null)
+﻿@implements IDisposable
+<li id="@Id"  class="TreeNode">
+    @if (ChildContent != null && Collapsable)
         {
         <button class="@CollapseButtonClass()" @onclick=@(()=>OnNodeCollapseClick.InvokeAsync(this))>
             @if (IsCollapsed)
@@ -31,28 +32,70 @@
     
     @if (ChildContent != null && !IsCollapsed)
     {
-        <TreeView>
-            @ChildContent
-        </TreeView>
+        <CascadingValue Value="@this" IsFixed="true">
+            <TreeView Id="@($"{Id}~ChildContent")">
+                @ChildContent
+            </TreeView>
+        </CascadingValue>
     }
 </li>
 
 @code {
+    [CascadingParameter] protected TreeNode ParentNode { get; set; }
+    [Parameter] public string? Id { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public RenderFragment NodeContent { get; set; }
     [Parameter] public EventCallback<TreeNode> OnNodeSelectClick { get; set; }
     [Parameter] public EventCallback<TreeNode> OnNodeCollapseClick { get; set; }
+    [Parameter] public EventCallback<TreeNode> OnNodeCollapseChange { get; set; }
     [Parameter] public EventCallback<TreeNode> OnSelectionChange { get; set; }
     [Parameter] public string NodeName { get; set; }
+    [Parameter] public bool Collapsable { get; set; } = true;
+    [Parameter] public bool DeselectWithParent { get; set; } = true;
+    [Parameter] public bool SelectParentWhenSelected { get; set; } = true;
+
+    public event Action<TreeNode>? SelectionChanged;
+    protected override void OnInitialized()
+    {
+        if (ParentNode == null) return;
+        ParentNode.SelectionChanged += HandleParentSelectionChange;
+
+    }
+
+    private void HandleParentSelectionChange(TreeNode parent)
+    {
+        if (DeselectWithParent && !parent.IsSelected)
+            IsSelected = false;
+    }
+    public void Dispose()
+    {
+        if (ParentNode == null) return;
+        ParentNode.SelectionChanged -= HandleParentSelectionChange;
+
+    }
     private bool _IsSelected = false;
     [Parameter] public bool IsSelected { get =>_IsSelected; 
         set {
             if (_IsSelected == value) return;
             _IsSelected = value;
+            if (ParentNode != null && _IsSelected && SelectParentWhenSelected)
+                ParentNode.IsSelected = _IsSelected;
             OnSelectionChange.InvokeAsync(this);
+            SelectionChanged?.Invoke(this);
         } 
     }
-    [Parameter] public bool IsCollapsed { get; set; }
+    private bool _IsCollapsed = false;
+    [Parameter]
+    public bool IsCollapsed
+    {
+        get => _IsCollapsed;
+        set
+        {
+            if (_IsCollapsed == value) return;
+            _IsCollapsed = value;
+            OnNodeCollapseChange.InvokeAsync(this);
+        }
+    }
     private string SelectButtonClass() => IsSelected ? "active" : string.Empty;
     private string CollapseButtonClass() => IsSelected ? "active" : string.Empty;
     
