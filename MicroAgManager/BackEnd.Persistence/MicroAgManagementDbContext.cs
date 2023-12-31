@@ -38,6 +38,7 @@ namespace Persistence
         public DbSet<Unit> Units { get; set; }
         public DbSet<Treatment> Treatments { get; set; }
         public DbSet<TreatmentRecord> TreatmentRecords { get; set; }
+        public DbSet<Chore> Chores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

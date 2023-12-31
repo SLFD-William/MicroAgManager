@@ -20,7 +20,7 @@
     }
     @if (ShowBreedColumns)
     {
-        <TemplateColumn Title="Animal" Sortable="true" Context="livestock" SortBy="@OrderByBreedName">
+        <TemplateColumn Title="Breed" Sortable="true" Context="livestock" SortBy="@OrderByBreedName">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="breedNameFilter" @bind:event="oninput" placeholder="Breed..." />
@@ -76,16 +76,15 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn> *@
-    <TemplateColumn Title="Name" SortBy="@OrderByName">
+    <TemplateColumn Title="Name" SortBy="@OrderByName" Context="livestock">
         <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="@nameFilter" @bind:event="oninput" placeholder="Name..." />
             </div>
         </ColumnOptions>
         <ChildContent>
-            <CascadingValue Value="@context">
-                <LivestockNameplate OnNavigateClick="@(()=>OnNavigateClick.InvokeAsync(context.Id))"></LivestockNameplate>
-            </CascadingValue>
+            <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", livestock.Breed.Animal.Id.ToString() },{ "LivestockBreedId", livestock.Breed.Id.ToString() }
+                     ,{ "LivestockId", livestock.Id.ToString() }}))>@livestock.Name</NavLink>
         </ChildContent>
     </TemplateColumn>
 @*         <PropertyColumn Property="@(p => p.Name)" Sortable="true">

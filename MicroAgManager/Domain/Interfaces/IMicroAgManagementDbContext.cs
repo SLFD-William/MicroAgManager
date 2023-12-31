@@ -20,6 +20,7 @@ namespace Domain.Interfaces
         DbSet<LivestockFeedAnalysisResult> LivestockFeedAnalysisResults { get; set; }
         DbSet<Duty> Duties { get; set; }
         DbSet<Event> Events { get; set; }
+        DbSet<Chore> Chores { get; set; }
         DbSet<Milestone> Milestones { get; set; }
         DbSet<ScheduledDuty> ScheduledDuties { get; set; }
         DbSet<BreedingRecord> BreedingRecords { get; set; }

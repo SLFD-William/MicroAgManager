@@ -1,10 +1,18 @@
 ﻿@using Domain.Models
 @using Domain.Constants
 @using MicroAgManager.Components.Shared
+@using MicroAgManager.Services
 <section class="LivestockAnimalNameplate">
     <section class="name">
         <h3>@LivestockAnimal.Name</h3>
+        <NavCrudButtons Editting="@showAnimalModal"
+                        ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && LivestockAnimal.Id>0)"
+                        OnEditClick="ShowAnimalEditor"
+                        ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))"
+                        NavigateText="@NavigateText"
+                        OnNavigateClick=@OnNavigateClick></NavCrudButtons>
     </section>
+    <LivestockAnimalEditor Modal=true Show=@showAnimalModal editContext=animalEditContext OnCancel=AnimalCanceled OnSubmit=AnimalSubmitted></LivestockAnimalEditor>
 </section>
 @ChildContent
 @code {
@@ -16,4 +24,32 @@
     [Parameter] public string NavigateText { get; set; } = "back";
     [Parameter] public bool ShowNavigate { get; set; } = false;
     [Parameter] public EventCallback OnNavigateClick { get; set; }
+
+    protected override void OnInitialized()
+    {
+        animalEditContext = new EditContext(LivestockAnimal);
+    }
+    private bool showAnimalModal = false;
+    private EditContext animalEditContext;
+    private void ShowAnimalEditor()
+    {
+        var animal = ApplicationState._dbContext.LivestockAnimals.Find(LivestockAnimal.Id) ?? new LivestockAnimalModel();
+        animalEditContext = new EditContext(animal);
+        showAnimalModal = true;
+        OnEditClick.InvokeAsync();
+        StateHasChanged();
+    }
+    private void AnimalSubmitted(EditContext e)
+    {
+        var model = e.Model as LivestockAnimalModel;
+        showAnimalModal = false;
+        if (model == null) return;
+        StateHasChanged();
+    }
+    private void AnimalCanceled(object e)
+    {
+        showAnimalModal = false;
+        StateHasChanged();
+    }
 }
+

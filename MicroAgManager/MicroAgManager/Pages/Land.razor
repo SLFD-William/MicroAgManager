@@ -15,7 +15,7 @@
     @if (appState.DbContext?.Tenants.Any() == true)
     {
         <TreeView Id="Land" >
-            <TreeNode Id="Land>Farms" NodeName="Farms">
+            <TreeNode Id="Land>Farms" NodeName="Farms" DeselectWithParent="false" SelectParentWhenSelected="false">
                 <NodeContent>
                     <section class="nodeContent">
                         <span>Farms</span>
@@ -64,7 +64,7 @@
                             ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(FarmLocationId))"
                             ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(FarmLocationId))"
                             NavigateText="back"
-                                       OnNavigateClick="@(()=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { nameof(FarmLocationId), string.Empty } })))">
+                                       OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(FarmLocationId), string.Empty } }))">
                             @if (LandPlotId.HasValue || _addingPlot)
                             {
                                     @if (_addingPlot)
@@ -78,7 +78,7 @@
                                                                ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LandPlotId))"
                                                                ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LandPlotId))"
                                                                NavigateText="back"
-                                                               OnNavigateClick="@(()=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { nameof(LandPlotId), string.Empty } })))">
+                                                               OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), string.Empty } }))">
                                                 @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
                                         {
                                                   <Livestock LocationId="@LandPlot.Id"></Livestock>
@@ -117,7 +117,6 @@
 
 
 @code {
-    [Inject] NavigationManager navigationManager { get; set; }
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "FarmLocationId")] public long? FarmLocationId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LandPlotId")] public long? LandPlotId { get; set; }
@@ -170,10 +169,9 @@
         }
         StateHasChanged();
         if (ApplicationState.FarmSelectedFilter.Count != 1)
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "FarmLocationId", string.Empty } }));
+            ApplicationState.NavigateTo(new() { { "FarmLocationId", string.Empty } });
         else if (FarmLocationId != ApplicationState.FarmSelectedFilter[0])
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "FarmLocationId", ApplicationState.FarmSelectedFilter[0].ToString() } }));
-
+            ApplicationState.NavigateTo(new() { { "FarmLocationId", ApplicationState.FarmSelectedFilter[0].ToString()}});
     }
 
     private void UsageSelected( bool selected, string usage)
@@ -193,15 +191,16 @@
 
     protected override void OnInitialized()
     {
-        appState.OnDbInitialized += appState_OnDbInitialized;
-        appState.OnDbUpdate += appState_OnDbUpdate;
+        appState.OnDbInitialized += Refresh;
+        appState.OnDbUpdate += Refresh;
+        appState.OnLocationChange += Refresh;
     }
-    private void appState_OnDbUpdate() => StateHasChanged();
-    private void appState_OnDbInitialized() => StateHasChanged();
+    private void Refresh() => StateHasChanged();
     public void Dispose()
     {
-        appState.OnDbInitialized -= appState_OnDbInitialized;
-        appState.OnDbUpdate -= appState_OnDbUpdate;
+        appState.OnDbInitialized -= Refresh;
+        appState.OnDbUpdate -= Refresh;
+        appState.OnLocationChange -= Refresh;
     }
     protected override void OnParametersSet()
     {
@@ -222,8 +221,8 @@
         StateHasChanged();
     }
 
-    private void PlotAddCancelled(EditContext context)=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LandPlotId", string.Empty } }));
-    private void PlotAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LandPlotId", (context.Model as LandPlotModel)?.Id.ToString() } }));
+    private void PlotAddCancelled(EditContext context) => ApplicationState.NavigateTo(new() { { "LandPlotId", string.Empty } });
+    private void PlotAddSubmitted(EditContext context) => ApplicationState.NavigateTo(new() { { "LandPlotId", (context.Model as LandPlotModel)?.Id.ToString()}});
         
     private IQueryable<LandPlotModel> baseLandPlotQuery()
     {

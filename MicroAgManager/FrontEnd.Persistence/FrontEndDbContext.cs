@@ -36,5 +36,6 @@ namespace FrontEnd.Persistence
         public DbSet<TreatmentModel> Treatments { get; set; }
         public DbSet<TreatmentRecordModel> TreatmentRecords { get; set; }
         public DbSet<UnitModel> Units { get; set; }
+        public DbSet<ChoreModel> Chores { get; set; }
     }
 }

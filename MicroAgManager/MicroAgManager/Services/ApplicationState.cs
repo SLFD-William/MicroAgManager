@@ -11,14 +11,10 @@ namespace MicroAgManager.Services
         public static FrontEndDbContext _dbContext;
         public event Action? OnDbInitialized;
         public event Action? OnDbUpdate;
+        public event Action? OnLocationChange;
 
-        private static List<long> _farmSelectedFilter = new();
-        private static List<long> _animalSelectedFilter = new();
-        private static List<long> _locationSelectedFilter = new();
-        private static List<long> _breedSelectedFilter = new();
-        private static List<string> _usageSelectedFilter = new();
-        private static List<string> _selectedTreeNodes = new();
-        private static List<string> _expandedTreeNodes = new();
+
+
         private static AuthenticationStateProvider _authentication;
         private static DataSynchronizer _dbSynchonizer;
         private static NavigationManager _navigationManager;
@@ -36,6 +32,9 @@ namespace MicroAgManager.Services
             Task.Run(InitializeApp);
             Task.Run(RedirectLandingToHomeIfAuthenticated);
         }
+        #region Tree Nodes
+        private static List<string> _selectedTreeNodes = new();
+        private static List<string> _expandedTreeNodes = new();
         public static void UpdageSelectedNodeState(string selectedNode, bool selected)
         {
             if (selected)
@@ -60,13 +59,20 @@ namespace MicroAgManager.Services
         }
         public static List<string> SelectedTreeNodes { get => _selectedTreeNodes; private set { _selectedTreeNodes = value; } }
         public static List<string> ExpandedTreeNodes { get => _expandedTreeNodes; private set { _expandedTreeNodes = value; } }
-
+        #endregion
+        #region Selected Filters
+        private static List<long> _farmSelectedFilter = new();
+        private static List<long> _animalSelectedFilter = new();
+        private static List<long> _locationSelectedFilter = new();
+        private static List<long> _breedSelectedFilter = new();
+        private static List<string> _usageSelectedFilter = new();
         public static List<long> AnimalSelectedFilter { get => _animalSelectedFilter; set { _animalSelectedFilter = value; } }
         public static List<long> BreedSelectedFilter { get => _breedSelectedFilter; set { _breedSelectedFilter = value; } }
         public static List<long> LocationSelectedFilter { get => _locationSelectedFilter; set { _locationSelectedFilter = value; } }
         public static List<long> FarmSelectedFilter { get => _farmSelectedFilter; set { _farmSelectedFilter = value; } }
         public static List<string> UsageSelectedFilter { get => _usageSelectedFilter; set { _usageSelectedFilter = value; } }
 
+        #endregion
         public static bool CanAddFarm() => _dbContext.Farms.Count() < 1;
         private void _dbSynchonizer_OnUpdate()=>OnDbUpdate?.Invoke();
 
@@ -111,6 +117,9 @@ namespace MicroAgManager.Services
             _dbSynchonizer.OnUpdate -= _dbSynchonizer_OnUpdate;
         }
         //public static ILogger _log;
+
+        public static void NavigateTo(Dictionary<string, string> NewParameters)=>_navigationManager.NavigateTo(CorrectedParametersUri(NewParameters));
+        
         public static string CorrectedParametersUri(Dictionary<string, string> NewParameters)
         {
             var uri = new Uri(_navigationManager.Uri);
@@ -126,12 +135,12 @@ namespace MicroAgManager.Services
             return queryParameters.Count == 0 ? baseUri : $"{baseUri}?{queryParameters}";
         }
         public static bool FieldIsInQueryString(string field) => _navigationManager.Uri.Contains(field);
-        
         private async Task RedirectLandingToHomeIfAuthenticated()
         {
             if (_navigationManager.BaseUri == _navigationManager.Uri && await UserIsAuthenticated())
                 _navigationManager.NavigateTo("/Home");
 
+            OnLocationChange?.Invoke();
         }
 
     }

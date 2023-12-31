@@ -128,10 +128,10 @@
                 @if (LivestockAnimalId.Value > 0)
                 {
                     <CascadingValue Value="@appState.DbContext.LivestockAnimals.Find(LivestockAnimalId.Value)">
-                        <LivestockAnimalNameplate ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockAnimalId))"
-                                                  ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockAnimalId))"
+                        <LivestockAnimalNameplate ShowEdit="@(ApplicationState.FieldIsInQueryString(nameof(LivestockAnimalId)) && !LivestockBreedId.HasValue)"
+                                                  ShowNavigate="@(ApplicationState.FieldIsInQueryString(nameof(LivestockAnimalId)) && !LivestockBreedId.HasValue)"
                                                   NavigateText="back"
-                                                  OnNavigateClick="@(()=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { nameof(LivestockAnimalId), string.Empty } })))">
+                                                  OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockAnimalId), string.Empty } }))">
                             @if (LivestockStatusId.HasValue && LivestockStatusId.Value < 1)
                             {
                                 <LivestockStatusEditor Modal="true" Show="@_addingStatus" editContext="@_addStatusContext" OnSubmit="StatusAddSubmitted" OnCancel="StatusAddCancelled"></LivestockStatusEditor>
@@ -144,27 +144,27 @@
                                         <LivestockBreedNameplate ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId))"
                                                                  ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId))"
                                                                  NavigateText="back"
-                                                                 OnNavigateClick="@(()=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { nameof(LivestockBreedId), string.Empty } })))">
+                                                                 OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockBreedId), string.Empty } }))">
                                             @if (LivestockId.HasValue)
-                                    {
-                                        @if (LivestockId.Value > 0)
-                                        {
-                                            <CascadingValue Value="@appState.DbContext.Livestocks.Find(LivestockId.Value)">
-                                                <LivestockNameplate ShowAll="true" ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
-                                                                    ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
-                                                                    NavigateText="back"
-                                                                    OnNavigateClick="@(()=> navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { nameof(LivestockId), string.Empty } })))">
+                                            {
+                                                @if (LivestockId.Value > 0)
+                                                {
+                                                    <CascadingValue Value="@appState.DbContext.Livestocks.Find(LivestockId.Value)">
+                                                        <LivestockNameplate ShowAll="true" ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
+                                                                            ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
+                                                                            NavigateText="back"
+                                                                            OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockId), string.Empty } }))">
 
-                                                </LivestockNameplate>
-                                            </CascadingValue>
-                                        }
-                                        else
-                                        {
-                                            <LivestockEditor Modal="true" Show="@_addingLivestock" LivestockAnimalId="@LivestockAnimalId" editContext="@_addLivestockContext" OnSubmit="LivestockAddSubmitted" OnCancel="LivestockAddCancelled"></LivestockEditor>
-                                        }
-                                    }
-                                </LivestockBreedNameplate>
-                            </CascadingValue>
+                                                        </LivestockNameplate>
+                                                    </CascadingValue>
+                                                }
+                                                else
+                                                {
+                                                    <LivestockEditor Modal="true" Show="@_addingLivestock" LivestockAnimalId="@LivestockAnimalId" editContext="@_addLivestockContext" OnSubmit="LivestockAddSubmitted" OnCancel="LivestockAddCancelled"></LivestockEditor>
+                                                }
+                                            }
+                                        </LivestockBreedNameplate>
+                                    </CascadingValue>
                                 }
                                 else
                                 {
@@ -184,7 +184,7 @@
                 <LivestockGrid Items="baseLivestockQuery()" 
                     ShowAnimalNameColumn=@(ApplicationState.AnimalSelectedFilter.Count!=1)
                     ShowLocationColumn=@(ApplicationState.LocationSelectedFilter.Count!=1)
-                               ShowBreedColumns=@(ApplicationState.BreedSelectedFilter.Count!=1)>
+                    ShowBreedColumns=@(ApplicationState.BreedSelectedFilter.Count!=1)>
                 </LivestockGrid>
             }
         </div>
@@ -200,18 +200,18 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     protected override void OnInitialized()
     {
-        appState.OnDbInitialized += appState_OnDbInitialized;
-        appState.OnDbUpdate += appState_OnDbUpdate;
+        appState.OnDbInitialized += Refresh;
+        appState.OnDbUpdate += Refresh;
+        appState.OnLocationChange += Refresh;
     }
-    private void appState_OnDbUpdate() => StateHasChanged();
-    private void appState_OnDbInitialized() => StateHasChanged();
+    private void Refresh() => StateHasChanged();
     public void Dispose()
     {
-        appState.OnDbInitialized -= appState_OnDbInitialized;
-        appState.OnDbUpdate -= appState_OnDbUpdate;
+        appState.OnDbInitialized -= Refresh;
+        appState.OnDbUpdate -= Refresh;
+        appState.OnLocationChange -= Refresh;
     }
 
-    [Inject] NavigationManager navigationManager { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockId")] public long? LivestockId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LocationId")] public long? LocationId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockAnimalId")] public long? LivestockAnimalId { get; set; }
@@ -245,25 +245,25 @@
         $"{breed.Name} Varieties:{appState.DbContext.Livestocks.Where(l => l.LivestockBreedId == breed.Id).Select(l => l.Variety).Distinct().Count()} Total: {appState.DbContext.Livestocks.Count(l => l.LivestockBreedId == breed.Id && l.BeingManaged==true)}";
     private bool _addingLivestock = false;
     private EditContext _addLivestockContext;
-    private void LivestockAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockId", string.Empty } }));
-    private void LivestockAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockId", (context.Model as LivestockModel)?.Id.ToString() } }));
+    private void LivestockAddCancelled(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockId", string.Empty } });
+    private void LivestockAddSubmitted(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockId", (context.Model as LivestockModel)?.Id.ToString() } });
 
 
     private bool _addingAnimal = false;
     private EditContext _addAnimalContext;
-    private void AnimalAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", string.Empty } }));
-    private void AnimalAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", (context.Model as LivestockAnimalModel)?.Id.ToString() } }));
+    private void AnimalAddCancelled(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockAnimalId", string.Empty } });
+    private void AnimalAddSubmitted(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockAnimalId", (context.Model as LivestockAnimalModel)?.Id.ToString() } });
 
 
     private bool _addingStatus = false;
     private EditContext _addStatusContext;
-    private void StatusAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", string.Empty } }));
-    private void StatusAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockStatusId", (context.Model as LivestockStatusModel)?.Id.ToString() } }));
+    private void StatusAddCancelled(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockStatusId", string.Empty } });
+    private void StatusAddSubmitted(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockStatusId", (context.Model as LivestockStatusModel)?.Id.ToString() } });
 
     private bool _addingBreed = false;
     private EditContext _addBreedContext;
-    private void BreedAddCancelled(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", string.Empty } }));
-    private void BreedAddSubmitted(EditContext context) => navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", (context.Model as LivestockBreedModel)?.Id.ToString() } }));
+    private void BreedAddCancelled(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockBreedId", string.Empty } });
+    private void BreedAddSubmitted(EditContext context) => ApplicationState.NavigateTo(new() { { "LivestockBreedId", (context.Model as LivestockBreedModel)?.Id.ToString() } });
 
 
     protected override void OnParametersSet()
@@ -273,7 +273,7 @@
             base.OnParametersSet();
             return;
         }
-  
+
         _addingAnimal = LivestockAnimalId == -1;
         if (_addingAnimal)
             _addAnimalContext = new EditContext(new LivestockAnimalModel());
@@ -283,6 +283,10 @@
         _addingBreed = LivestockBreedId == -1 && LivestockAnimalId.HasValue;
         if (_addingBreed)
             _addBreedContext = new EditContext(new LivestockBreedModel() { LivestockAnimalId = LivestockAnimalId.Value });
+
+        if (LivestockBreedId > 0 && !LivestockAnimalId.HasValue)
+            LivestockAnimalId = appState.DbContext.LivestockBreeds.Find(LivestockBreedId)?.LivestockAnimalId;
+
 
 
         _livestockId = LivestockId.HasValue ? LivestockId.Value : -1;
@@ -341,9 +345,9 @@
         }
         StateHasChanged();
         if (ApplicationState.AnimalSelectedFilter.Count != 1)
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", string.Empty } }));
+            ApplicationState.NavigateTo(new() { { "LivestockAnimalId", string.Empty } });
         else if (LivestockAnimalId != ApplicationState.AnimalSelectedFilter[0])
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockAnimalId", ApplicationState.AnimalSelectedFilter[0].ToString() } }));
+            ApplicationState.NavigateTo(new() { { "LivestockAnimalId", ApplicationState.AnimalSelectedFilter[0].ToString() } });
     }
     private void LocationSelected(bool selected, long animalId)
     {
@@ -357,9 +361,9 @@
         }
         StateHasChanged();
         if (ApplicationState.LocationSelectedFilter.Count != 1)
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LocationId", string.Empty } }));
+            ApplicationState.NavigateTo(new() { { "LocationId", string.Empty } });
         else if (LocationId != ApplicationState.LocationSelectedFilter[0])
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LocationId", ApplicationState.LocationSelectedFilter[0].ToString() } }));
+            ApplicationState.NavigateTo(new() { { "LocationId", ApplicationState.LocationSelectedFilter[0].ToString() } });
     }
     private void BreedSelected(bool selected, long animalId)
     {
@@ -373,8 +377,8 @@
         }
         StateHasChanged();
         if (ApplicationState.BreedSelectedFilter.Count != 1)
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", string.Empty } }));
-        else if (LivestockBreedId != ApplicationState.LocationSelectedFilter[0])
-            navigationManager.NavigateTo(ApplicationState.CorrectedParametersUri(new() { { "LivestockBreedId", ApplicationState.BreedSelectedFilter[0].ToString() } }));
+            ApplicationState.NavigateTo(new() { { "LivestockBreedId", string.Empty } });
+        else if (LivestockBreedId != ApplicationState.BreedSelectedFilter[0])
+            ApplicationState.NavigateTo(new() { { "LivestockBreedId", ApplicationState.BreedSelectedFilter[0].ToString() } });
     }
 }

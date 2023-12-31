@@ -12,7 +12,7 @@ namespace Domain.Entity
         {
         }
         [Required][MaxLength(40)] public string Name { get; set; }
-        [Required][MaxLength(40)] public string Color { get; set; }
+        [Required][MaxLength(40)] public string Color { get; set; } = "transparent";
         [Required] public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();

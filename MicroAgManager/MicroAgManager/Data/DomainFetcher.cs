@@ -26,6 +26,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using BackEnd.BusinessLogic.Event;
 using FrontEnd.Persistence;
+using BackEnd.BusinessLogic.Chore;
 
 namespace MicroAgManager.Data
 {
@@ -473,6 +474,60 @@ namespace MicroAgManager.Data
                     systemRequired.Value = model.SystemRequired;
                     recipientTypeId.Value = model.RecipientTypeId;
                     recipientType.Value = model.RecipientType;
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+        public async static Task BulkUpdateChores(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IAPIService api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(ChoreModel))) return;
+            var existingAccountIds = new HashSet<long>(db.Chores.Select(t => t.Id));
+            var mostRecentUpdate = db.Duties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
+            {
+                var returned = await api.ProcessQuery<ChoreModel, GetChoreList>("api/GetChores", new GetChoreList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                expectedCount = returned.Item1;
+                totalCount += returned.Item2.Count;
+                expectedCount = returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Chores from the API");
+                if (expectedCount == 0) break;
+                var command = connection.CreateCommand();
+                var baseParameters = GetBaseModelParameters(command);
+                var recipientTypeId = AddNamedParameter(command, "$RecipientTypeId");
+                var recipientType = AddNamedParameter(command, "$RecipientType");
+                var name = AddNamedParameter(command, "$Name");
+                var color = AddNamedParameter(command, "$Color");
+                var dueByTime = AddNamedParameter(command, "$DueByTime");
+                
+                var frequency = AddNamedParameter(command, "$Frequency");
+                var frequencyUnitId = AddNamedParameter(command, "$FrequencyUnitId");
+                var period = AddNamedParameter(command, "$Period");
+                var periodUnitId = AddNamedParameter(command, "$PeriodUnitId");
+
+
+                command.CommandText = $"INSERT or REPLACE INTO Chores (Id,Deleted,EntityModifiedOn,ModifiedBy,Name,RecipientTypeId,RecipientType,"
+                    + "Color,DueByTime,Frequency,FrequencyUnitId,Period,PeriodUnitId ) " +
+                $"Values ({baseParameters["Id"].ParameterName},{baseParameters["Deleted"].ParameterName},{baseParameters["EntityModifiedOn"].ParameterName}," +
+                $"{baseParameters["ModifiedBy"].ParameterName}," +
+                $"{name.ParameterName},{recipientTypeId.ParameterName},{recipientType.ParameterName},{color.ParameterName},{dueByTime.ParameterName},{frequency.ParameterName},"+
+                $"{frequencyUnitId.ParameterName},{period.ParameterName},{periodUnitId.ParameterName})";
+
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    PopulateBaseModelParameters(baseParameters, model);
+                    name.Value = model.Name;
+                    recipientTypeId.Value = model.RecipientTypeId;
+                    recipientType.Value = model.RecipientType;
+                    color.Value = model.Color;
+                    dueByTime.Value = model.DueByTime;
+                    frequency.Value = model.Frequency;
+                    frequencyUnitId.Value = model.FrequencyUnitId;
+                    period.Value = model.PeriodUnitId;
+                    periodUnitId.Value = model.PeriodUnitId;
+                   
                     await command.ExecuteNonQueryAsync();
                 }
             }
@@ -1154,6 +1209,41 @@ namespace MicroAgManager.Data
             }
             
         }
+
+        public async static Task BulkUpdateDutyChore(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IAPIService api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(ChoreModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
+            var dataReceived = new List<DutyChore>();
+            long totalCount = 0;
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
+            {
+                var returned = await api.ProcessQuery<DutyChore, GetDutyChoreList>("api/GetDutyChoreList", new GetDutyChoreList { Skip = (int)totalCount });
+                expectedCount = returned.Item1;
+                totalCount += returned.Item2.Count;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Duty to Chore joins from the API");
+                if (expectedCount == 0) break;
+
+                dataReceived.AddRange(returned.Item2);
+            }
+            var command = connection.CreateCommand();
+            var duties = AddNamedParameter(command, "$DutiesId");
+            var chores = AddNamedParameter(command, "$ChoresId");
+
+            command.CommandText = $"Delete FROM DutyModelChoreModel; ";
+            await command.ExecuteNonQueryAsync();
+            command.CommandText = $"INSERT or REPLACE INTO DutyModelChoreModel (DutiesId,ChoresId) " +
+                $"Values ({duties.ParameterName},{chores.ParameterName})";
+
+            foreach (var model in dataReceived)
+            {
+                if (model is null) continue;
+                duties.Value = model.DutiesId;
+                chores.Value = model.ChoresId;
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+
         public async static Task BulkUpdateDutyEvent(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IAPIService api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
@@ -1227,6 +1317,11 @@ namespace MicroAgManager.Data
             if(typeof(T)==typeof(BreedingRecordModel))
             {
                 var returnVal = await result.Content.ReadFromJsonAsync<BreedingRecordDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(ChoreModel))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<ChoreDto>(_jsonOptions);
                 return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
             }
             if (typeof(T) == typeof(DutyModel))
@@ -1322,6 +1417,11 @@ namespace MicroAgManager.Data
             if (typeof(T) == typeof(DutyEvent))
             {
                 var returnVal = await result.Content.ReadFromJsonAsync<DutyEventDto>(_jsonOptions);
+                return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
+            }
+            if (typeof(T) == typeof(DutyChore))
+            {
+                var returnVal = await result.Content.ReadFromJsonAsync<DutyChoreDto>(_jsonOptions);
                 return new Tuple<long, ICollection<T?>>(returnVal.Count, returnVal.Models as ICollection<T?>);
             }
             if (typeof(T) == typeof(DutyMilestone))

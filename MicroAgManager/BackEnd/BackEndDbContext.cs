@@ -36,5 +36,6 @@ namespace BackEnd
         public DbSet<TreatmentRecord> TreatmentRecords {get;set;}
         public DbSet<Unit> Units {get;set;}
         public DbSet<Log> Logs {get;set;}
+        public DbSet<Chore> Chores { get; set; }
     }
 }

@@ -33,6 +33,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Domain.ValueObjects;
+using BackEnd.BusinessLogic.Chore;
 
 namespace MicroAgManager.API
 {
@@ -233,6 +234,7 @@ namespace MicroAgManager.API
         {
             app.MapPost("/api/GetDutyMilestoneList", async (GetDutyMilestoneList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
             app.MapPost("/api/GetDutyEventList", async (GetDutyEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
+            app.MapPost("/api/GetDutyChoreList", async (GetDutyChoreList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
         }
         public static void MapLivestock(WebApplication app)
         {
@@ -273,6 +275,9 @@ namespace MicroAgManager.API
             app.MapPost("/api/GetMilestone", async (GetMilestone query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
             app.MapPost("/api/GetEvents", async (GetEventList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
             app.MapPost("/api/GetEvent", async (GetEvent query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
+            app.MapPost("/api/GetChores", async (GetChoreList query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
+            app.MapPost("/api/GetChore", async (GetChore query, IMediator mediator, HttpRequest request) => await ProcessQuery(query, mediator, request)).RequireAuthorization();
+
 
             app.MapPost("/api/CreateDuty", async (CreateDuty command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
             app.MapPost("/api/UpdateDuty", async (UpdateDuty command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
@@ -282,6 +287,8 @@ namespace MicroAgManager.API
             app.MapPost("/api/UpdateMilestone", async (UpdateMilestone command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
             app.MapPost("/api/CreateEvent", async (CreateEvent command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
             app.MapPost("/api/UpdateEvent", async (UpdateEvent command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
+            app.MapPost("/api/CreateChore", async (CreateChore command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
+            app.MapPost("/api/UpdateChore", async (UpdateChore command, IMediator mediator, HttpRequest request) => await ProcessCommand(command, mediator, request)).RequireAuthorization();
         }
 
     }
