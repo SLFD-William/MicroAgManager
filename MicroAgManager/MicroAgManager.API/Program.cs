@@ -4,12 +4,20 @@ using Domain.Interfaces;
 using Domain.Logging;
 using MediatR;
 using MicroAgManager.API;
+using MicroAgManager.API.Hubs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
@@ -56,6 +64,11 @@ builder.Services.AddCors(
             .AllowCredentials()));
 
 // Add services to the container.
+
+builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
+               .AddMessagePackProtocol();
+builder.Services.AddScoped<INotificationHandler<EntitiesModifiedNotification>, NotificationHandler>();
+
 // Learn more about configuring Swagger/OpenAPI at
 // https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -74,7 +87,7 @@ BusinessLogicAPI.MapFarm(app);
 BusinessLogicAPI.MapJoins(app);
 BusinessLogicAPI.MapLivestock(app);
 BusinessLogicAPI.MapScheduling(app);
-
+app.MapHub<NotificationHub>("/notificationhub");
 
 
 

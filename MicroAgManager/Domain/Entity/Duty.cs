@@ -25,5 +25,6 @@ namespace Domain.Entity
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
         public virtual ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
         public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
+        public virtual ICollection<Chore> Chores { get; set; } = new List<Chore>();
     }
 }

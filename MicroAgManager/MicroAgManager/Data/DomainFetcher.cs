@@ -1230,9 +1230,9 @@ namespace MicroAgManager.Data
             var duties = AddNamedParameter(command, "$DutiesId");
             var chores = AddNamedParameter(command, "$ChoresId");
 
-            command.CommandText = $"Delete FROM DutyModelChoreModel; ";
+            command.CommandText = $"Delete FROM ChoreModelDutyModel; ";
             await command.ExecuteNonQueryAsync();
-            command.CommandText = $"INSERT or REPLACE INTO DutyModelChoreModel (DutiesId,ChoresId) " +
+            command.CommandText = $"INSERT or REPLACE INTO ChoreModelDutyModel (DutiesId,ChoresId) " +
                 $"Values ({duties.ParameterName},{chores.ParameterName})";
 
             foreach (var model in dataReceived)

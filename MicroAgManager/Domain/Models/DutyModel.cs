@@ -23,6 +23,7 @@ namespace Domain.Models
 
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<MilestoneModel?> Milestones { get; set; } = new List<MilestoneModel?>();
+        public virtual ICollection<ChoreModel?> Chores { get; set; } = new List<ChoreModel?>();
         public virtual ICollection<ScheduledDutyModel?> ScheduledDuties { get; set; } = new List<ScheduledDutyModel?>();
 
         public static DutyModel? Create(Duty? duty)
@@ -40,9 +41,10 @@ namespace Domain.Models
                 Gender = duty.Gender,
                 SystemRequired = duty.SystemRequired,
                 ProcedureLink = duty.ProcedureLink,
-                Milestones=duty.Milestones.Select(m=>MilestoneModel.Create(m)).ToList() ?? new List<MilestoneModel?>(),
-                ScheduledDuties=duty.ScheduledDuties.Select(d=> ScheduledDutyModel.Create(d)).ToList() ?? new List<ScheduledDutyModel?>(),
-                Events =duty.Events.Select(d => EventModel.Create(d)).ToList() ?? new List<EventModel?>()
+                Milestones=duty.Milestones.Select(MilestoneModel.Create).ToList() ?? new List<MilestoneModel?>(),
+                ScheduledDuties=duty.ScheduledDuties.Select(ScheduledDutyModel.Create).ToList() ?? new List<ScheduledDutyModel?>(),
+                Events =duty.Events.Select(EventModel.Create).ToList() ?? new List<EventModel?>(),
+                Chores = duty.Chores.Select(ChoreModel.Create).ToList() ?? new List<ChoreModel?>()
             }) as DutyModel;
             return model;
         }

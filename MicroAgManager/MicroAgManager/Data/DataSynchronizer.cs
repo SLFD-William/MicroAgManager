@@ -79,13 +79,14 @@ namespace MicroAgManager.Data
         public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
         {
             var modified = notifications.EntitiesModified.Select(e => $"{e.EntityName}Model");
+            if(!modified.Any()) return;
             await EnsureSynchronizingAsync(modified.ToList());
         }
         public async Task EnsureSynchronizingAsync(List<string>? entityModels)
         {
             if (_isSynchronizing)
                 while (_isSynchronizing)
-                    await Task.Delay(1000);
+                    await Task.Delay(100);
             try
             {
                 _isSynchronizing = true;
@@ -117,7 +118,7 @@ namespace MicroAgManager.Data
                             await DomainFetcher.BulkUpdateLivestocks(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateMilestones(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
-                            await DomainFetcher.BulkUpdateChores(entityModels, db, connection, _api);
+                            //await DomainFetcher.BulkUpdateChores(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);
 
@@ -127,7 +128,7 @@ namespace MicroAgManager.Data
 
                             await DomainFetcher.BulkUpdateDutyMilestone(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateDutyEvent(entityModels, db, connection, _api);
-                            await DomainFetcher.BulkUpdateDutyChore(entityModels, db, connection, _api);
+                            //await DomainFetcher.BulkUpdateDutyChore(entityModels, db, connection, _api);
 
                             transaction.Commit();
                         }
