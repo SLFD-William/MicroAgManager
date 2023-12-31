@@ -29,6 +29,7 @@ namespace Domain.Models
            ((MeasureModel) measure).UnitId = UnitId;
             ((MeasureModel)measure).Method = Method;
             ((MeasureModel)measure).Name = Name;
+            ((MeasureModel)measure).EntityModifiedOn = EntityModifiedOn;
             return measure;
         }
 

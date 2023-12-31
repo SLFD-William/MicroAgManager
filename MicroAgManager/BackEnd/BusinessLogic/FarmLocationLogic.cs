@@ -23,14 +23,27 @@ namespace BackEnd.BusinessLogic
         private static void AddAncilliaries(Domain.Entity.FarmLocation farm, IMicroAgManagementDbContext context)
         {
             if (context.Units.Any(u => u.TenantId == farm.TenantId)) return;
-            var unit = new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            context.Units.Add(new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
             {
                 Name = "Acres",
                 Category = UnitCategoryConstants.Area.Key,
                 Symbol="acre",
                 ConversionFactorToSIUnit= 4046.85642
-            };
-            context.Units.Add(unit);
+            });
+            context.Units.Add(new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Daily",
+                Category = UnitCategoryConstants.Frequency.Key,
+                Symbol = "daily",
+                ConversionFactorToSIUnit = 1/86400
+            });
+            context.Units.Add(new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Day",
+                Category = UnitCategoryConstants.Time.Key,
+                Symbol = "day",
+                ConversionFactorToSIUnit = 86400
+            });
         }
     }
 }

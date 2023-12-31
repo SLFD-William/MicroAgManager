@@ -71,6 +71,7 @@ namespace Domain.Models
             ((TreatmentModel)model).FrequencyUnitId = FrequencyUnitId;
             ((TreatmentModel)model).Duration = Duration;
             ((TreatmentModel)model).DurationUnitId = DurationUnitId;
+            ((TreatmentModel)model).EntityModifiedOn = EntityModifiedOn;
             return model;
         }
 

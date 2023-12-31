@@ -42,15 +42,6 @@ namespace Domain.Models
             ((LivestockAnimal)entity).Care = Care;
             ((LivestockAnimal)entity).GroupName = GroupName;
             ((LivestockAnimal)entity).Name = Name;
-            if (((LivestockAnimal)entity).Breeds?.Any() ?? false)
-                foreach (var breed in ((LivestockAnimal)entity).Breeds)
-                    Breeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
-            if (((LivestockAnimal)entity).Statuses?.Any() ?? false)
-                foreach (var breed in ((LivestockAnimal)entity).Statuses)
-                    Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
-            if (((LivestockAnimal)entity).Feeds?.Any() ?? false)
-                foreach (var breed in ((LivestockAnimal)entity).Feeds)
-                    Feeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
             ((LivestockAnimal)entity).ModifiedOn = DateTime.UtcNow;
             return entity;
         }
@@ -63,15 +54,7 @@ namespace Domain.Models
             ((LivestockAnimalModel)entity).Care = Care;
             ((LivestockAnimalModel)entity).GroupName = GroupName;
             ((LivestockAnimalModel)entity).Name = Name;
-            if (((LivestockAnimalModel)entity).Breeds?.Any() ?? false)
-                foreach (var breed in ((LivestockAnimalModel)entity).Breeds)
-                    Breeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
-            if (((LivestockAnimalModel)entity).Statuses?.Any() ?? false)
-                foreach (var breed in ((LivestockAnimalModel)entity).Statuses)
-                    Statuses?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
-            if (((LivestockAnimalModel)entity).Feeds?.Any() ?? false)
-                foreach (var breed in ((LivestockAnimalModel)entity).Feeds)
-                    Feeds?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            ((LivestockAnimalModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
     }

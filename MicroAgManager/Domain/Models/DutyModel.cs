@@ -61,6 +61,7 @@ namespace Domain.Models
             ((DutyModel)duty).Gender = Gender;
             ((DutyModel)duty).ProcedureLink =ProcedureLink;
             ((DutyModel)duty).SystemRequired = SystemRequired;
+            ((DutyModel)duty).EntityModifiedOn = EntityModifiedOn;
             return duty;
         }
         public override BaseEntity Map(BaseEntity duty)

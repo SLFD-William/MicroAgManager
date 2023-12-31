@@ -43,9 +43,7 @@ namespace Domain.Models
             ((LivestockFeedAnalysisModel)entity).TestCode = TestCode;
             ((LivestockFeedAnalysisModel)entity).DatePrinted = DatePrinted;
             ((LivestockFeedAnalysisModel)entity).FeedId = FeedId;
-            if (((LivestockFeedAnalysisModel)entity).Results?.Any() ?? false)
-                foreach (var breed in ((LivestockFeedAnalysisModel)entity).Results)
-                    Results?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            ((LivestockFeedAnalysisModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 
@@ -60,9 +58,6 @@ namespace Domain.Models
             ((LivestockFeedAnalysis)entity).DatePrinted = DatePrinted;
             ((LivestockFeedAnalysis)entity).LivestockFeedId = FeedId;
             entity.ModifiedOn = DateTime.UtcNow;
-            if (((LivestockFeedAnalysis)entity).Results?.Any() ?? false)
-                foreach (var breed in ((LivestockFeedAnalysis)entity).Results)
-                    Results?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
             return entity;
         }
     }

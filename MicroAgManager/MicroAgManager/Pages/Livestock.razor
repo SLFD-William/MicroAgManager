@@ -183,7 +183,7 @@
             {
                 <LivestockGrid Items="baseLivestockQuery()" 
                     ShowAnimalNameColumn=@(ApplicationState.AnimalSelectedFilter.Count!=1)
-                    ShowLocationColumn=@(ApplicationState.LocationSelectedFilter.Count!=1)
+                               ShowLocationColumn=@(ApplicationState.LocationSelectedFilter.Count!=1 && !ApplicationState.FieldIsInQueryString("LandPlotId"))
                     ShowBreedColumns=@(ApplicationState.BreedSelectedFilter.Count!=1)>
                 </LivestockGrid>
             }

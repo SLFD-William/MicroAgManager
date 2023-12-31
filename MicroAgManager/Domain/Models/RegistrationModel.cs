@@ -36,6 +36,7 @@ namespace Domain.Models
             ((RegistrationModel)registration).Identifier = Identifier;
             ((RegistrationModel)registration).DefaultIdentification = DefaultIdentification;
             ((RegistrationModel)registration).RegistrationDate = RegistrationDate;
+            ((RegistrationModel)registration).EntityModifiedOn = EntityModifiedOn;
             return registration;
         }
 

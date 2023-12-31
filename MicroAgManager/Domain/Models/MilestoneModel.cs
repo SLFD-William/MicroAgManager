@@ -38,6 +38,7 @@ namespace Domain.Models
             ((MilestoneModel)milestone).SystemRequired = SystemRequired;
             ((MilestoneModel)milestone).RecipientTypeId = RecipientTypeId;
             ((MilestoneModel)milestone).RecipientType = RecipientType;
+            ((MilestoneModel)milestone).EntityModifiedOn = EntityModifiedOn;
             return milestone;
         }
 

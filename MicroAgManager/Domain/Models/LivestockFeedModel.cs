@@ -53,12 +53,7 @@ namespace Domain.Models
             ((LivestockFeedModel)entity).Distribution = Distribution;
             ((LivestockFeedModel)entity).Name = Name;
             ((LivestockFeedModel)entity).LivestockAnimalId = LivestockAnimalId;
-            if (((LivestockFeedModel)entity).Servings?.Any() ?? false)
-                foreach (var breed in ((LivestockFeedModel)entity).Servings)
-                    Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
-            if (((LivestockFeedModel)entity).Distributions?.Any() ?? false)
-                foreach (var breed in ((LivestockFeedModel)entity).Distributions)
-                    Distributions?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
+            ((LivestockFeedModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 
@@ -75,12 +70,6 @@ namespace Domain.Models
             ((LivestockFeed)entity).Name = Name;
             ((LivestockFeed)entity).LivestockAnimalId = LivestockAnimalId;
             entity.ModifiedOn = DateTime.UtcNow;
-            if (((LivestockFeed)entity).Servings?.Any() ?? false)
-                foreach (var breed in ((LivestockFeed)entity).Servings)
-                    Servings?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
-            if (((LivestockFeed)entity).Distributions?.Any() ?? false)
-                foreach (var breed in ((LivestockFeed)entity).Distributions)
-                    Distributions?.FirstOrDefault(p => p?.Id == breed.Id)?.Map(breed);
             return entity;
         }
     }

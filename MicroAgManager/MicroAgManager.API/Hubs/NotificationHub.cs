@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using System.Text.RegularExpressions;
 
 namespace MicroAgManager.API.Hubs
 {

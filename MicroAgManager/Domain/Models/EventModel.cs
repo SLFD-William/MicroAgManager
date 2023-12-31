@@ -36,15 +36,7 @@ namespace Domain.Models
             ((EventModel)duty).Color = Color;
             ((EventModel)duty).StartDate = StartDate;
             ((EventModel)duty).EndDate = EndDate;
-            if (((EventModel)duty).Duties?.Any() ?? false)
-                foreach (var plot in ((EventModel)duty).Duties)
-                    Duties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
-            if (((EventModel)duty).Milestones?.Any() ?? false)
-                foreach (var plot in ((EventModel)duty).Milestones)
-                    Milestones.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
-            if (((EventModel)duty).ScheduledDuties?.Any() ?? false)
-                foreach (var plot in ((EventModel)duty).ScheduledDuties)
-                    ScheduledDuties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
+            ((EventModel)duty).EntityModifiedOn = EntityModifiedOn;
             return duty;
         }
 
@@ -55,15 +47,6 @@ namespace Domain.Models
             ((Event)duty).Color = Color;
             ((Event)duty).StartDate = StartDate;
             ((Event)duty).EndDate = EndDate;
-            if (((Event)duty).Duties?.Any() ?? false)
-                foreach (var plot in ((Event)duty).Duties)
-                    Duties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
-            if (((Event)duty).Milestones?.Any() ?? false)
-                foreach (var plot in ((Event)duty).Milestones)
-                    Milestones.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
-            if (((Event)duty).ScheduledDuties?.Any() ?? false)
-                foreach (var plot in ((Event)duty).ScheduledDuties)
-                    ScheduledDuties.FirstOrDefault(p => p?.Id == plot.Id)?.Map(plot);
             duty.ModifiedOn = DateTime.UtcNow;
             return duty;
         }

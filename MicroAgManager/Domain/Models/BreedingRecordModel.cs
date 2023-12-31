@@ -52,6 +52,7 @@ namespace Domain.Models
             ((BreedingRecordModel)breedingRecord).BornMales = BornMales;
             ((BreedingRecordModel)breedingRecord).BornFemales = BornFemales;
             ((BreedingRecordModel)breedingRecord).Resolution = Resolution;
+            ((BreedingRecordModel)breedingRecord).EntityModifiedOn = EntityModifiedOn;
             return breedingRecord;
         }
 

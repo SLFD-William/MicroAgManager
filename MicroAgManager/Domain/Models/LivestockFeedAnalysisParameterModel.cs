@@ -30,6 +30,7 @@ namespace Domain.Models
             ((LivestockFeedAnalysisParameterModel)entity).SubParameter = SubParameter;
             ((LivestockFeedAnalysisParameterModel)entity).Unit = Unit;
             ((LivestockFeedAnalysisParameterModel)entity).Method = Method;
+            ((LivestockFeedAnalysisParameterModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 

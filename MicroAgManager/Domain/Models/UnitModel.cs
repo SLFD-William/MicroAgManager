@@ -29,6 +29,7 @@ namespace Domain.Models
             ((UnitModel)unit).Category = Category;
             ((UnitModel)unit).Symbol = Symbol;
             ((UnitModel)unit).ConversionFactorToSIUnit = ConversionFactorToSIUnit;
+            ((UnitModel)unit).EntityModifiedOn = EntityModifiedOn;
             return unit;
         }
 

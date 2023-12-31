@@ -28,9 +28,17 @@ namespace Domain.Models
             };
         }
 
-        public override BaseModel Map(BaseModel model)
+        public override BaseModel Map(BaseModel tenant)
         {
-            throw new NotImplementedException();
+            if (tenant is not TenantModel) return null;
+            ((TenantModel)tenant).Name = Name;
+            ((TenantModel)tenant).WeatherServiceQueryURL = WeatherServiceQueryURL;
+            ((TenantModel)tenant).GuidId= GuidId;
+            ((TenantModel)tenant).TenantUserAdminId = TenantUserAdminId;
+            ((TenantModel)tenant).Deleted = false;
+            ((TenantModel)tenant).EntityModifiedOn = EntityModifiedOn;
+            ((TenantModel)tenant).ModifiedBy = ModifiedBy;
+            return tenant;
         }
 
         public override BaseEntity Map(BaseEntity model)

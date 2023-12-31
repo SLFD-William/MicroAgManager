@@ -1,13 +1,8 @@
 ﻿using Domain.Abstracts;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Models
 {
@@ -61,10 +56,7 @@ namespace Domain.Models
             ((ChoreModel)chore).PeriodUnitId = PeriodUnitId;
             ((ChoreModel)chore).RecipientType = RecipientType;
             ((ChoreModel)chore).RecipientTypeId = RecipientTypeId;
-            if (((ChoreModel)chore).Duties?.Any() == true)
-                foreach (var duty in ((ChoreModel)chore).Duties)
-                    Duties.FirstOrDefault(d => d?.Id == duty?.Id)?.Map(duty);
-
+            ((ChoreModel)chore).EntityModifiedOn = EntityModifiedOn;
             return chore;
         }
 
@@ -80,9 +72,6 @@ namespace Domain.Models
             ((Chore)chore).PeriodUnitId = PeriodUnitId;
             ((Chore)chore).RecipientType = RecipientType;
             ((Chore)chore).RecipientTypeId = RecipientTypeId;
-            if (((Chore)chore).Duties?.Any() == true)
-                foreach (var duty in ((Chore)chore).Duties)
-                    Duties.FirstOrDefault(d => d?.Id == duty?.Id)?.Map(duty);
             chore.ModifiedOn = DateTime.UtcNow;
             return chore;
 

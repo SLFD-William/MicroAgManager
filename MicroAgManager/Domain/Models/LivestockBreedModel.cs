@@ -39,9 +39,7 @@ namespace Domain.Models
             ((LivestockBreedModel)entity).GestationPeriod = GestationPeriod;
             ((LivestockBreedModel)entity).HeatPeriod = HeatPeriod;
             ((LivestockBreedModel)entity).Name = Name;
-            if (((LivestockBreedModel)entity).Livestocks.Any())
-                foreach (var livestock in ((LivestockBreedModel)entity).Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
+            ((LivestockBreedModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 
@@ -54,9 +52,6 @@ namespace Domain.Models
             ((LivestockBreed)entity).HeatPeriod = HeatPeriod;
             ((LivestockBreed)entity).Name = Name;
             entity.ModifiedOn = DateTime.UtcNow;
-            if (((LivestockBreed)entity).Livestocks.Any())
-                foreach (var livestock in ((LivestockBreed)entity).Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
             return entity;
         }
     }

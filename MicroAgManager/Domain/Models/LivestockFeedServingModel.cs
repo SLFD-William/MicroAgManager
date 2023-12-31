@@ -33,6 +33,7 @@ namespace Domain.Models
             ((LivestockFeedServingModel)entity).StatusId = StatusId;
             ((LivestockFeedServingModel)entity).ServingFrequency = ServingFrequency;
             ((LivestockFeedServingModel)entity).Serving = Serving;
+            ((LivestockFeedServingModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 

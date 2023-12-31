@@ -36,6 +36,7 @@ namespace Domain.Models
             ((LivestockFeedDistributionModel)entity).Note = Note;
             ((LivestockFeedDistributionModel)entity).DatePerformed = DatePerformed;
             ((LivestockFeedDistributionModel)entity).FeedId = FeedId;
+            ((LivestockFeedDistributionModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 

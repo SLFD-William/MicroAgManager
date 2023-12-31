@@ -43,6 +43,7 @@ namespace Domain.Models
             ((TreatmentRecordModel)model).DosageAmount = DosageAmount;
             ((TreatmentRecordModel)model).DosageUnitId = DosageUnitId;
             ((TreatmentRecordModel)model).AppliedMethod = AppliedMethod;
+            ((TreatmentRecordModel)model).EntityModifiedOn = EntityModifiedOn;
             return model;
         }
 

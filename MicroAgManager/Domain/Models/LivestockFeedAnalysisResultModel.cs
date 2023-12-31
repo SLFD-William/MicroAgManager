@@ -33,6 +33,7 @@ namespace Domain.Models
             ((LivestockFeedAnalysisResultModel)entity).AsFed = AsFed;
             ((LivestockFeedAnalysisResultModel)entity).Dry = Dry;
             ((LivestockFeedAnalysisResultModel)entity).AnalysisId = AnalysisId;
+            ((LivestockFeedAnalysisResultModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 

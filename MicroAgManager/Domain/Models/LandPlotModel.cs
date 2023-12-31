@@ -55,12 +55,7 @@ namespace Domain.Models
             ((LandPlotModel)entity).AreaUnitId = AreaUnitId;
             ((LandPlotModel)entity).Description = Description ?? string.Empty;
             ((LandPlotModel)entity).FarmLocationId = FarmLocationId;
-            if (((LandPlotModel)entity).Subplots?.Any() ?? false)
-                foreach (var subplot in ((LandPlotModel)entity).Subplots)
-                    Subplots.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
-            if (((LandPlotModel)entity).Livestocks?.Any() ?? false)
-                foreach (var livestock in ((LandPlotModel)entity).Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
+            ((LandPlotModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
 
@@ -74,12 +69,6 @@ namespace Domain.Models
             ((LandPlot)entity).AreaUnitId = AreaUnitId;
             ((LandPlot)entity).Description = Description ?? string.Empty;
             ((LandPlot)entity).FarmLocationId = FarmLocationId;
-            if (((LandPlot)entity).Subplots?.Any() ?? false)
-                foreach (var subplot in ((LandPlot)entity).Subplots)
-                    Subplots.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
-            if (((LandPlot)entity).Livestocks?.Any() ?? false)
-                foreach (var livestock in ((LandPlot)entity).Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == livestock.Id)?.Map(livestock);
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }

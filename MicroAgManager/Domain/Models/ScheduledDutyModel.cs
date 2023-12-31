@@ -12,9 +12,6 @@ namespace Domain.Models
     [Index(nameof(Dismissed))]
     public class ScheduledDutyModel : BaseModel
     {
-        private const string NO_RECIPIENT = "No Recipient";
-        private const string NO_RECORD = "No Record";
-
         [Required][ForeignKey(nameof(Duty))] public long DutyId { get; set; }
         public virtual DutyModel Duty { get; set; }
 
@@ -91,6 +88,7 @@ namespace Domain.Models
             ((ScheduledDutyModel)duty).RecipientId = RecipientId;
             ((ScheduledDutyModel)duty).Record = Record;
             ((ScheduledDutyModel)duty).RecordId = RecordId;
+            ((ScheduledDutyModel)duty).EntityModifiedOn = EntityModifiedOn;
             return duty;
         }
         public override BaseEntity Map(BaseEntity duty)
@@ -109,41 +107,6 @@ namespace Domain.Models
             ((ScheduledDuty)duty).RecordId = RecordId;
             return duty;
         }
-        private static string getRecipient(ScheduledDuty duty,IMicroAgManagementDbContext db)
-        {
-            switch (duty.Recipient)
-            {
-                case "Livestock":
-                    {
-                        var livestock = db.Livestocks.Find(duty.RecipientId);
-                        if (livestock is null) return NO_RECIPIENT;
-                        var breed = db.LivestockBreeds.Find(livestock.LivestockBreedId);
-                        return $"{breed?.EmojiChar} {breed?.Name} {livestock.Name}".Trim();
-                    }
-            }
-            return NO_RECIPIENT;
-        }
-        private static string getRecord(ScheduledDuty duty, IMicroAgManagementDbContext db)
-        {
-            switch (duty.Record)
-            {
-                case "BreedingRecord":
-                    {
-                        var breedingRecord = db.BreedingRecords.Find(duty.RecordId);
-                        return (breedingRecord is not null) ? $"Breeding Record: {breedingRecord.Id}".Trim() : NO_RECORD;
-                    }
-                case "Measurement":
-                    {
-                        var measurement = db.Measurements.Find(duty.RecordId);
-                        return (measurement is not null) ? $"Measurement: {measurement.Id}".Trim() : NO_RECORD;
-                    }
-                case "TreatmentRecord":
-                    {
-                        var treatmentRecord = db.TreatmentRecords.Find(duty.RecordId);
-                        return (treatmentRecord is not null) ? $"Treatment Record: {treatmentRecord.Id}".Trim() : NO_RECORD;
-                    }
-            }
-            return NO_RECORD;
-        }
+
     }
 }

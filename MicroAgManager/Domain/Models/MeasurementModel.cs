@@ -38,6 +38,7 @@ namespace Domain.Models
             ((MeasurementModel)measurement).MeasurementUnitId = MeasurementUnitId;
             ((MeasurementModel)measurement).Notes = Notes;
             ((MeasurementModel)measurement).DatePerformed = DatePerformed;
+            ((MeasurementModel)measurement).EntityModifiedOn = EntityModifiedOn;
             return measurement;
         }
 

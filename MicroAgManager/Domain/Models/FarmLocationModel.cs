@@ -49,6 +49,7 @@ namespace Domain.Models
             ((FarmLocationModel)farm).Country = Country;
             ((FarmLocationModel)farm).Name = Name;
             ((FarmLocationModel)farm).CountryCode = CountryCode;
+            ((FarmLocationModel)farm).EntityModifiedOn = EntityModifiedOn;
             return farm;
         }
 

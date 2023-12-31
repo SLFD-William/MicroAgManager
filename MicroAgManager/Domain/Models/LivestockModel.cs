@@ -78,6 +78,7 @@ namespace Domain.Models
             ((LivestockModel)entity).BatchNumber = BatchNumber;
             ((LivestockModel)entity).StatusId = StatusId;
             ((LivestockModel)entity).LocationId = LocationId;
+            ((LivestockModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
         public override BaseEntity Map(BaseEntity entity)

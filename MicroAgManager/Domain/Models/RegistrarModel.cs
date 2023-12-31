@@ -34,6 +34,7 @@ namespace Domain.Models
             ((RegistrarModel)registrar).Website = Website;
             ((RegistrarModel)registrar).API = API;
             ((RegistrarModel)registrar).RegistrarFarmID = RegistrarFarmID;
+            ((RegistrarModel)registrar).EntityModifiedOn = EntityModifiedOn;
             return registrar;
         }
 

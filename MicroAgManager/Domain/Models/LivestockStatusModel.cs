@@ -46,9 +46,7 @@ namespace Domain.Models
             ((LivestockStatusModel)entity).Sterile = Sterile;
             ((LivestockStatusModel)entity).DefaultStatus = DefaultStatus;
             ((LivestockStatusModel)entity).LivestockAnimalId = LivestockAnimalId;
-            if (((LivestockStatusModel)entity).Livestocks.Any())
-                foreach (var subplot in ((LivestockStatusModel)entity).Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
+            ((LivestockStatusModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
         public override BaseEntity Map(BaseEntity entity)
@@ -62,9 +60,6 @@ namespace Domain.Models
             ((LivestockStatus)entity).Sterile = Sterile;
             ((LivestockStatus)entity).DefaultStatus = DefaultStatus;
             ((LivestockStatus)entity).LivestockAnimalId = LivestockAnimalId;
-            if (((LivestockStatus)entity).Livestocks.Any())
-                foreach (var subplot in ((LivestockStatus)entity).Livestocks)
-                    Livestocks.FirstOrDefault(p => p?.Id == subplot.Id)?.Map(subplot);
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
