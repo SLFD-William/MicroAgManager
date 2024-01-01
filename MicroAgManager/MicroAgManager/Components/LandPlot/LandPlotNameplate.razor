@@ -3,14 +3,14 @@
 @using MicroAgManager.Services
 <section class="LandPlotNameplate">
      <section class="name">
-        <h3>@Plot.Name</h3>
         <NavCrudButtons Editting="@showPlotModal" 
             ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Plot.Id>0)" 
             OnEditClick="ShowPlotEditor"
                         ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))"
                         NavigateText="@NavigateText"
                         OnNavigateClick=@OnNavigateClick
-        ></NavCrudButtons>
+                  ></NavCrudButtons>
+        <h3>@Plot.Name</h3>
     </section>
     @if (ShowAll || ShowFarm)
     {
@@ -95,6 +95,8 @@
     
     [Parameter] public EventCallback OnSaveClick { get; set; }
     [Parameter] public EventCallback OnDeleteClick { get; set; }
+    [Parameter] public string CreateText { get; set; } = "add";
+    [Parameter] public bool ShowCreate { get; set; } = false;
     [Parameter] public EventCallback OnCreateClick { get; set; }
     [Parameter] public EventCallback OnCancelClick { get; set; }
 

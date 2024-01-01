@@ -9,6 +9,8 @@
 <div class="Livestock">
     @if (appState.DbContext.Tenants.Any())
     {
+        @if(ShowTree)
+        {
         <TreeView Id="Livestock">
             <TreeNode Id="Livestock>Animals" NodeName="Animals">
                 <NodeContent>
@@ -122,6 +124,7 @@
                 </ChildContent>
             </TreeNode>
         </TreeView>
+        }
       <div>
             @if (LivestockAnimalId.HasValue)
             {
@@ -141,8 +144,8 @@
                                 @if (LivestockBreedId.Value > 0)
                                 {
                                     <CascadingValue Value="@appState.DbContext.LivestockBreeds.Find(LivestockBreedId.Value)">
-                                        <LivestockBreedNameplate ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId))"
-                                                                 ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId))"
+                                        <LivestockBreedNameplate ShowEdit="@(ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId)) && !LivestockId.HasValue)"
+                                                                 ShowNavigate="@(ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId)) && !LivestockId.HasValue)"
                                                                  NavigateText="back"
                                                                  OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockBreedId), string.Empty } }))">
                                             @if (LivestockId.HasValue)
@@ -179,14 +182,19 @@
                     <LivestockAnimalEditor Modal="true" Show="@_addingAnimal" editContext="@_addAnimalContext" OnSubmit="AnimalAddSubmitted" OnCancel="AnimalAddCancelled"></LivestockAnimalEditor>
                 }
             }
+            else if (LivestockId.HasValue && LivestockId.Value<1)
+            {
+                <LivestockEditor Modal="true" Show="@_addingLivestock" editContext="@_addLivestockContext" OnSubmit="LivestockAddSubmitted" OnCancel="LivestockAddCancelled"></LivestockEditor>
+            }
             @if (!LivestockId.HasValue)
             {
-                <LivestockGrid Items="baseLivestockQuery()" 
-                    ShowAnimalNameColumn=@(ApplicationState.AnimalSelectedFilter.Count!=1)
+                <LivestockGrid Items="baseLivestockQuery()"
+                               ShowAnimalNameColumn=@(ApplicationState.AnimalSelectedFilter.Count!=1 && !ApplicationState.FieldIsInQueryString(nameof(LivestockAnimalId)))
                                ShowLocationColumn=@(ApplicationState.LocationSelectedFilter.Count!=1 && !ApplicationState.FieldIsInQueryString("LandPlotId"))
-                    ShowBreedColumns=@(ApplicationState.BreedSelectedFilter.Count!=1)>
+                               ShowBreedColumns=@(ApplicationState.BreedSelectedFilter.Count!=1 && !ApplicationState.FieldIsInQueryString(nameof(LivestockBreedId)))>
                 </LivestockGrid>
             }
+
         </div>
     }
     else
@@ -219,7 +227,7 @@
     [Parameter][SupplyParameterFromQuery(Name = "LivestockBreedId")] public long? LivestockBreedId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockStatusId")] public long? LivestockStatusId { get; set; }
 
-
+    [Parameter] public bool ShowTree { get; set; } = true;
 
     LivestockModel LivestockObject = new();
 

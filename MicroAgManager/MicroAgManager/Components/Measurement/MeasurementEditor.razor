@@ -1,0 +1,177 @@
+﻿@using BackEnd.BusinessLogic.Measurement
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.Unit
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits HasRecipientsEditor
+@if (measurement is not null)
+{
+        <ValidatedForm editContext="editContext"
+                   OnSubmit="OnMeasurementSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+               showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+
+            <ValidatedField ValidationMessageFor="@(() => measurement.MeasureId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Measure</span>
+                        <button type="button" @onclick=ShowMeasureEditor>+</button>
+                        <MeasureEditor Modal=true Show=@showMeasureModal editContext=measureEditContext OnCancel=MeasureCanceled OnSubmit=MeasureSubmitted></MeasureEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                <InputSelect @bind-Value="@measurement.MeasureId">
+                        <option value="">Select Measure ...</option>
+                        @foreach (var unit in appState.DbContext.Measures)
+                        {
+                            <option value="@unit.Id">
+                                @unit.Name
+                            </option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+        @if (ShowRecipient)
+        {
+            <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => measurement.RecipientType)">
+                <InputSelect @bind-Value="@measurement.RecipientType">
+                    <option value="0">Select Recipient Type ...</option>
+                    <option value="@RecipientTypeConstants.LivestockAnimal" />
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => measurement.RecipientTypeId)">
+                <InputSelect @bind-Value="@measurement.RecipientTypeId">
+                    <option value="0">Select Recipient Type Instance ...</option>
+                    @foreach (var recipient in recipientTypeIds(appState.DbContext))
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+            <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => measurement.RecipientId)">
+                <InputSelect @bind-Value="@measurement.RecipientId">
+                    <option value="0">Select Recipient Instance ...</option>
+                    @foreach (var recipient in recipientIds(appState.DbContext))
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
+            </ValidatedField>
+        }
+        <ValidatedField Legend="Value" ValidationMessageFor="@(() => measurement.Value)">
+            <InputNumber @bind-Value="measurement.Value"></InputNumber>
+        </ValidatedField>
+        <ValidatedField ValidationMessageFor="@(() => measurement.MeasurementUnitId)">
+            <LegendContent>
+                <div style="display:inline-flex">
+                    <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                    <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
+                </div>
+            </LegendContent>
+            <ChildContent>
+                <InputSelect @bind-Value="@measurement.MeasurementUnitId">
+                    <option value="0">Select Unit ...</option>
+                    @foreach (var unit in appState.DbContext.Units.OrderBy(u => u.Category).ThenBy(u => u.Name))
+                    {
+                        <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                    }
+                </InputSelect>
+            </ChildContent>
+        </ValidatedField>
+        <ValidatedField Legend="Notes" ValidationMessageFor="@(() => measurement.Notes)">
+            <InputTextArea placeholder="Notes" @bind-Value="@measurement.Notes" />
+        </ValidatedField>
+        <ValidatedField Legend="Measurement Date" ValidationMessageFor="@(() => measurement.DatePerformed)">
+            <InputDate @bind-Value="@measurement.DatePerformed" />
+        </ValidatedField>
+    </ValidatedForm>
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+
+    private MeasurementModel? measurement;
+    private bool showMeasureModal = false;
+    private EditContext measureEditContext = new EditContext(new MeasureModel());
+    private void ShowMeasureEditor()
+    {
+        showMeasureModal = true;
+        StateHasChanged();
+    }
+    private void MeasureSubmitted(EditContext e)
+    {
+        var model = e.Model as MeasureModel;
+        showMeasureModal = false;
+        if (model == null) return;
+        ((MeasurementModel)editContext.Model).MeasureId = model.Id;
+        StateHasChanged();
+    }
+    private void MeasureCanceled(object e)
+    {
+        showMeasureModal = false;
+        StateHasChanged();
+    }
+    private bool showUnitModal = false;
+    private EditContext unitEditContext = new EditContext(new UnitModel());
+    private void ShowUnitEditor()
+    {
+        showUnitModal = true;
+        StateHasChanged();
+    }
+    private void UnitSubmitted(object e)
+    {
+        var model = e as UnitModel;
+        showUnitModal = false;
+        ((MeasurementModel)editContext.Model).MeasurementUnitId = model.Id;
+        StateHasChanged();
+    }
+    private void UnitCanceled(object e)
+    {
+        showUnitModal = false;
+        StateHasChanged();
+    }
+
+    private async Task OnMeasurementSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (measurement.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<MeasurementModel, CreateMeasurement>("api/CreateMeasurement", new CreateMeasurement { Measurement = measurement }) :
+                await api.ProcessCommand<MeasurementModel, UpdateMeasurement>("api/UpdateMeasurement", new UpdateMeasurement { Measurement = measurement });
+
+            if (id <= 0)
+                throw new Exception("Unable to save measurement");
+            if (creating)
+            {
+                measurement.Id = id;
+                appState.DbContext.Measurements.Add(measurement);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Measurements.FindAsync(measurement.Id);
+                updated = measurement.Map(updated) as MeasurementModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(measurement);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+
+    }
+}

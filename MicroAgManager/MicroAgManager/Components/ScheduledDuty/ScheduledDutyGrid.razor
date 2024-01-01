@@ -1,0 +1,290 @@
+﻿@using Domain.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+
+<QuickGrid Theme="microagmanager" @ref=scheduleDutyGrid TGridItem=ScheduledDutyModel Virtualize=true Items="Items">
+    <PropertyColumn Property="@(p => p.ScheduleSource)" Title="Source" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="sourceFilter" @bind:event="oninput" placeholder="Source..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.ScheduleSourceItem)" Title="Source Item" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="sourceItemFilter" @bind:event="oninput" placeholder="Source Item..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Duty.Name)" Title="Duty" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="sourceItemFilter" @bind:event="oninput" placeholder="Source Item..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <TemplateColumn Title="Duty" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyName">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dutyNameFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@scheduledDuty.Duty.Name</span>
+         </ChildContent>
+     </TemplateColumn>
+    <TemplateColumn Title="Command" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyCommand">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dutyCommandFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@scheduledDuty.Duty.Command</span>
+        </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Command Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyCommandItem">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dutyCommandItemFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@scheduledDuty.Duty.CommandItem</span>
+        </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Recipient Type" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientType">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dutyRecipientTypeFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@scheduledDuty.Duty.RecipientType</span>
+        </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Recipient Type Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientTypeItem">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dutyRecipientTypeItemFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@scheduledDuty.Duty.RecipientTypeItem</span>
+        </ChildContent>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Recipient)" Title="Recipient" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Source..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <TemplateColumn Title="Recipient Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientItem">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dutyRecipientTypeFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@scheduledDuty.RecipientItem</span>
+        </ChildContent>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.DueOn)" Title="DueOn" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dueOnFilter" @bind:event="oninput" placeholder="Source..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.ReminderDays)" Title="Reminder Days" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="reminderFilter" @bind:event="oninput" placeholder="Source..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.CompletedOn)" Title="Completed On" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="completedOnFilter" @bind:event="oninput" placeholder="Source..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <TemplateColumn Title="Record" Sortable="true" Context="scheduledDuty" SortBy="@OrderByRecord">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="recordFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <span>@($"{scheduledDuty.Record} {scheduledDuty.RecordId}")</span>
+        </ChildContent>
+    </TemplateColumn>
+</QuickGrid>
+@code {
+    [Parameter] required public IQueryable<ScheduledDutyModel> Items { get; set; }
+    QuickGrid<ScheduledDutyModel> scheduleDutyGrid;
+   
+    string sourceFilter
+    {
+        get => _sourceFilter; set
+        {
+            sourceFilterChanged.Invoke(value);
+            _sourceFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> sourceFilterChanged { get; set; }
+    private string _sourceFilter;
+    string sourceItemFilter
+    {
+        get => _sourceItemFilter; set
+        {
+            sourceItemFilterChanged.Invoke(value);
+            _sourceItemFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> sourceItemFilterChanged { get; set; }
+    private string _sourceItemFilter;
+
+    GridSort<ScheduledDutyModel> OrderByDutyName = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.Name);
+    string dutyNameFilter
+    {
+        get => _dutyNameFilter; set
+        {
+            dutyNameFilterChanged.Invoke(value);
+            _dutyNameFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> dutyNameFilterChanged { get; set; }
+    private string _dutyNameFilter;
+
+    GridSort<ScheduledDutyModel> OrderByDutyCommand = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.Command);
+    string dutyCommandFilter
+    {
+        get => _dutyCommandFilter; set
+        {
+            dutyCommandFilterChanged.Invoke(value);
+            _dutyCommandFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> dutyCommandFilterChanged { get; set; }
+    private string _dutyCommandFilter;
+    GridSort<ScheduledDutyModel> OrderByDutyCommandItem = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.CommandItem);
+    string dutyCommandItemFilter
+    {
+        get => _dutyCommandItemFilter; set
+        {
+            dutyCommandItemFilterChanged.Invoke(value);
+            _dutyCommandItemFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> dutyCommandItemFilterChanged { get; set; }
+    private string _dutyCommandItemFilter;
+
+    GridSort<ScheduledDutyModel> OrderByDutyRecipientType = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.RecipientType);
+    string dutyRecipientTypeFilter
+    {
+        get => _dutyRecipientTypeFilter; set
+        {
+            dutyRecipientTypeFilterChanged.Invoke(value);
+            _dutyRecipientTypeFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> dutyRecipientTypeFilterChanged { get; set; }
+    private string _dutyRecipientTypeFilter;
+
+    GridSort<ScheduledDutyModel> OrderByDutyRecipientTypeItem = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.RecipientTypeItem);
+    string dutyRecipientTypeItemFilter
+    {
+        get => _dutyRecipientTypeItemFilter; set
+        {
+            dutyRecipientTypeItemFilterChanged.Invoke(value);
+            _dutyRecipientTypeItemFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> dutyRecipientTypeItemFilterChanged { get; set; }
+    private string _dutyRecipientTypeItemFilter;
+    
+    string recipientFilter
+    {
+        get => _recipientFilter; set
+        {
+            recipientFilterChanged.Invoke(value);
+            _recipientFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> recipientFilterChanged { get; set; }
+    private string _recipientFilter;
+    
+    GridSort<ScheduledDutyModel> OrderByDutyRecipientItem = GridSort<ScheduledDutyModel>.ByAscending(p => p.RecipientItem);
+    string DutyRecipientItemFilter
+    {
+        get => _DutyRecipientItemFilter; set
+        {
+            DutyRecipientItemFilterChanged.Invoke(value);
+            _DutyRecipientItemFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> DutyRecipientItemFilterChanged { get; set; }
+    private string _DutyRecipientItemFilter;
+
+    string dueOnFilter
+    {
+        get => _dueOnFilter; set
+        {
+            dueOnFilterChanged.Invoke(value);
+            _dueOnFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> dueOnFilterChanged { get; set; }
+    private string _dueOnFilter;
+    string reminderFilter
+    {
+        get => _reminderFilter; set
+        {
+            reminderFilterChanged.Invoke(value);
+            _reminderFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> reminderFilterChanged { get; set; }
+    private string _reminderFilter;
+
+    string completedOnFilter
+    {
+        get => _completedOnFilter; set
+        {
+            completedOnFilterChanged.Invoke(value);
+            _completedOnFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> completedOnFilterChanged { get; set; }
+    private string _completedOnFilter;
+
+    GridSort<ScheduledDutyModel> OrderByRecord = GridSort<ScheduledDutyModel>.ByAscending(p => p.Record).ThenAscending(p=>p.RecipientId);
+    string recordFilter
+    {
+        get => _recordFilter; set
+        {
+            RecordFilterChanged.Invoke(value);
+            _recordFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> RecordFilterChanged { get; set; }
+    private string _recordFilter;
+}

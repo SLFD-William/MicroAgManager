@@ -42,5 +42,9 @@
   {
     "outputFile": "Components/Farm/FarmNameplate.razor.css",
     "inputFile": "Components/Farm/FarmNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/TabControl.razor.css",
+    "inputFile": "Components/Shared/TabControl.razor.scss"
   }
 ]

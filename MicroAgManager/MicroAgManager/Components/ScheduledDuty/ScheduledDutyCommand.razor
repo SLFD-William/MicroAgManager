@@ -1,0 +1,55 @@
+﻿@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Measurement
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using MicroAgManager.Components.Shared
+@using Microsoft.EntityFrameworkCore
+@inherits BaseEditor
+
+    <button type="button" @onclick=ShowDutyEditor>Do @Command</button>
+    @if (showDutyModal)
+    { 
+        <ScheduledDutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></ScheduledDutyEditor>
+    }
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    [Parameter] public long? ScheduledDutyId { get; set; }
+    [Parameter] public string Command { get; set; }
+
+    private ScheduledDutyModel _scheduledDuty;
+    private EventModel? _sourceEvent;
+    private DutyModel _duty;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _scheduledDuty = new();
+        if (ScheduledDutyId.HasValue)
+            _scheduledDuty = appState.DbContext.ScheduledDuties.Include(d=>d.Duty).First(s=>s.Id==ScheduledDutyId);
+        if (_scheduledDuty.Id < 1)
+            _scheduledDuty.Duty = new() { Command = Command };
+    }
+    private bool showDutyModal = false;
+    private EditContext dutyEditContext = new EditContext(new ScheduledDutyModel());
+    private void ShowDutyEditor()
+    {
+        dutyEditContext = new EditContext(_scheduledDuty);
+        showDutyModal = true;
+        StateHasChanged();
+    }
+    private void DutySubmitted(EditContext e)
+    {
+        var model = e.Model as ScheduledDutyModel;
+        showDutyModal = false;
+        _scheduledDuty = model;
+        editContext = new EditContext(_scheduledDuty);
+        StateHasChanged();
+    }
+    private void DutyCanceled(object e)
+    {
+        showDutyModal = false;
+        StateHasChanged();
+    }
+}

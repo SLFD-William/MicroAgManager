@@ -16,7 +16,7 @@
                    @ref=_validatedForm
                    Modal=Modal
                    Show=Show>
-                    <DataContent>
+                    <ChildContent>
             <ValidatedField ValidationMessageFor="@(() => livestock.LivestockBreedId)">
                 <LegendContent>
                     <div style="display:inline-flex">
@@ -30,13 +30,18 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@livestock.LivestockBreedId">
                         <option value="0">Select Breed ...</option>
-                        @foreach (var g in appState.DbContext.LivestockBreeds.Where(s => s.LivestockAnimalId == LivestockAnimalId).OrderBy(a => a.Name))
-                        {
-                            <option value="@g.Id">@g.Name</option>
-                        }
+                        @if (LivestockAnimalId.HasValue)
+                            foreach (var g in appState.DbContext.LivestockBreeds.Where(s => s.LivestockAnimalId == LivestockAnimalId).OrderBy(a => a.Name))
+                            {
+                                <option value="@g.Id">@g.Name</option>
+                            }
+                        else
+                            foreach (var g in appState.DbContext.LivestockBreeds.OrderBy(a=>a.Animal.Name).ThenBy(a => a.Name))
+                            {
+                                <option value="@g.Id">@($"{g.Animal.Name} {g.Name}")</option>
+                            }
                     </InputSelect>
                 </ChildContent>
-
             </ValidatedField>
             <ValidatedField Legend="Variety" ValidationMessageFor="@(() => livestock.Variety)">
                 <InputText placeholder="Variety" @bind-Value="@(livestock.Variety)" list="varietyList" />
@@ -143,7 +148,7 @@
                     }
                 </InputSelect>
             </ValidatedField>
-        </DataContent>
+        </ChildContent>
     </ValidatedForm>
 }
 
@@ -171,9 +176,6 @@
 
         if (LivestockAnimalId>0)
             animal = appState.DbContext.LivestockAnimals.Find(LivestockAnimalId);
-
-            
-
     }
     private LivestockStatusEditor _livestockStatusEditor;
     public long StatusId

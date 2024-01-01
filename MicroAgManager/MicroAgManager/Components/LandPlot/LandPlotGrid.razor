@@ -1,4 +1,5 @@
 ﻿@using Domain.Models
+@using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
@@ -14,10 +15,20 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                <NavLink href=@($"/Land?FarmLocationId={farm.Farm.Id}") >@farm.Farm.Name</NavLink>
+                <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink>
             </ChildContent>
         </TemplateColumn>
     }
+    <TemplateColumn Title="Plot" Sortable="true" Context="plot" SortBy="@OrderByPlotName">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="plotNameFilter" @bind:event="oninput" placeholder="Plot..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", plot.FarmLocationId.ToString()},{ "LandPlotId", plot.Id.ToString()}}))>@plot.Name</NavLink>
+            </ChildContent>
+    </TemplateColumn>
     @if (ShowUsageColumn)
     {
         <PropertyColumn Property
@@ -34,27 +45,18 @@
     <TemplateColumn Title="Parent Plot" Sortable="true" Context="plot" SortBy="@OrderByParentPlotName">
         <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="plotNameFilter" @bind:event="oninput" placeholder="Parent Plot..." />
+                <input type="search" autofocus @bind="parentPlotNameFilter" @bind:event="oninput" placeholder="Parent Plot..." />
             </div>
         </ColumnOptions>
         <ChildContent>
             @if (plot.ParentPlotId.HasValue)
             {
-                <NavLink href=@($"/Land?LandPlotId={plot.ParentPlotId.Value}")>@plot.ParentPlotName</NavLink>
+                <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", plot.FarmLocationId.ToString()},{ "LandPlotId", plot.ParentPlotId.Value.ToString()}}))>@plot.ParentPlotName</NavLink>
             }
         </ChildContent>
     </TemplateColumn>
 
-    <TemplateColumn Title="Name" Sortable="true" Context="plot"  SortBy="@OrderByPlotName">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="plotNameFilter" @bind:event="oninput" placeholder="Plot..." />
-            </div>
-        </ColumnOptions>
-        <ChildContent>
-            <NavLink href=@($"/Land?LandPlotId={plot.Id}")>@plot.Name</NavLink>
-        </ChildContent>
-    </TemplateColumn>
+    
     <PropertyColumn Property="@(p => p.Area)" Title="Area" Sortable="true">
         <ColumnOptions>
             @* <div class="search-box">

@@ -1,0 +1,205 @@
+﻿@using BackEnd.BusinessLogic.Duty
+@using Domain
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+
+@if (duty is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="@OnDutySubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(duty.Id<1)"
+                   Modal=Modal
+                   Show=Show>
+        <ChildContent>
+            <ValidatedField Legend="Name" ValidationMessageFor="@(() => duty.Name)">
+                <InputText @bind-Value="duty.Name"></InputText>
+            </ValidatedField>
+            <ValidatedField Legend="Procedure" ValidationMessageFor="@(() => duty.ProcedureLink)">
+                <InputText @bind-Value="duty.ProcedureLink"></InputText>
+                @if (Utilities.IsUrlValid(duty.ProcedureLink))
+                {
+                    <NavLink href="@duty.ProcedureLink" target="_blank" skip-router="true">Procedure</NavLink>
+                }
+            </ValidatedField>
+            <ValidatedField Legend="Command" ValidationMessageFor="@(() => duty.Command)">
+                <InputSelect @bind-Value="@Command">
+                    <option value="0">Select Command ...</option>
+                    <option value="@DutyCommandConstants.Birth" >@DutyCommandConstants.Birth</option>
+                    <option value="@DutyCommandConstants.Breed">@DutyCommandConstants.Breed</option>
+                    <option value="@DutyCommandConstants.Complete">@DutyCommandConstants.Complete</option>
+                    <option value="@DutyCommandConstants.Measurement">@DutyCommandConstants.Measurement</option>
+                    <option value="@DutyCommandConstants.Registration">@DutyCommandConstants.Registration</option>
+                    <option value="@DutyCommandConstants.Service">@DutyCommandConstants.Service</option>
+                    <option value="@DutyCommandConstants.Treatment">@DutyCommandConstants.Treatment</option>
+                </InputSelect>
+            </ValidatedField>
+            @if (showCommandId())
+            {
+                <ValidatedField ValidationMessageFor="@(() => duty.CommandId)">
+                    <LegendContent>
+                        <div style="display:inline-flex">
+                            <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
+                            @* <RegistrarEditor @ref=_registrarEditor Modal="true" Show="@(showCommandModal && (duty.Command == DutyCommandConstants.Registration)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
+                            <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showCommandModal && (duty.Command == DutyCommandConstants.Measurement)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></MeasureEditor>
+                            <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showCommandModal && (duty.Command == DutyCommandConstants.Treatment)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></TreatmentEditor> *@
+                        </div>
+                    </LegendContent>
+                    <ChildContent>
+                        <InputSelect @bind-Value="@duty.CommandId">
+                            <option value="0">Select Command Instance ...</option>
+                            @foreach (var command in commandIds())
+                            {
+                                <option value="@command.Key">@command.Value</option>
+                            }
+                        </InputSelect>
+                    </ChildContent>
+                </ValidatedField>
+            }
+            @if(!string.IsNullOrEmpty(duty.Command) && duty.Command != DutyCommandConstants.Complete)
+            {
+                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => duty.RecipientType)">
+                    <InputSelect @bind-Value="@duty.RecipientType">
+                        <option value="0">Select Recipient Type ...</option>
+                        <option value="@RecipientTypeConstants.LivestockAnimal">@RecipientTypeConstants.LivestockAnimal</option>
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => duty.RecipientTypeId)">
+                    <InputSelect @bind-Value="@duty.RecipientTypeId">
+                        <option value="0">Select Recipient Type Instance ...</option>
+                        @foreach (var recipient in recipientTypeIds())
+                        {
+                            <option value="@recipient.Key">@recipient.Value</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+            }
+            @if (duty.RecipientType == RecipientTypeConstants.LivestockAnimal)
+            {
+                <ValidatedField Legend="Gender" ValidationMessageFor="@(() => duty.Gender)">
+                    <InputSelect @bind-Value="@duty.Gender">
+                        <option value="">Select Gender ...</option>
+                        <option value="@GenderConstants.Female">@nameof(GenderConstants.Female)</option>
+                        <option value="@GenderConstants.Male">@nameof(GenderConstants.Male)</option>
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="Relationship" ValidationMessageFor="@(() => duty.Relationship)">
+                    <InputSelect @bind-Value="@duty.Relationship">
+                        <option value="0">Select Relationship ...</option>
+                        <option value="@DutyRelationshipConstants.Self">@DutyRelationshipConstants.Self</option>
+                        <option value="@DutyRelationshipConstants.Mother">@DutyRelationshipConstants.Mother</option>
+                        <option value="@DutyRelationshipConstants.Father">@DutyRelationshipConstants.Father</option>
+                    </InputSelect>
+                </ValidatedField>
+            }
+            <ValidatedField Legend="Number of Days from Event to schedule working" ValidationMessageFor="@(() => duty.DaysDue)">
+                <InputNumber @bind-Value="duty.DaysDue"></InputNumber>
+            </ValidatedField>
+        </ChildContent>
+    </ValidatedForm>
+}
+
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private DutyModel? duty;
+    protected override void OnInitialized()
+    {
+        duty = editContext.Model as DutyModel;
+        if (duty is null) return;
+    }
+    private async Task OnDutySubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+        try
+        {
+
+            var creating = (duty.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = duty }) :
+                await api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = duty });
+
+            if (id <= 0)
+                throw new Exception("Unable to save land plot");
+            if (creating)
+            {
+                duty.Id = id;
+                appState.DbContext.Duties.Add(duty);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Duties.FindAsync(duty.Id);
+                updated = duty.Map(updated) as DutyModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(duty);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+    }
+    private string Command
+    {
+        get => duty.Command;
+        set
+        {
+            duty.Command = value;
+            if (duty.Command == DutyCommandConstants.Complete)
+            {
+                duty.RecipientType = nameof(RecipientTypeConstants.None);
+                duty.RecipientTypeId = 0;
+                duty.Relationship = nameof(DutyRelationshipConstants.Self);
+            }
+        }
+    }
+
+    private bool showCommandId()
+    {
+        if (string.IsNullOrEmpty(duty.Command) || DutyCommandConstants.NonRecordCommands.Contains(duty.Command)) return false;
+        return true;
+    }
+    private List<KeyValuePair<long, string>> commandIds()
+    {
+        if (duty.Command == DutyCommandConstants.Registration)
+            return appState.DbContext.Registrars.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+        if (duty.Command == DutyCommandConstants.Measurement)
+            return appState.DbContext.Measures.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+        if (duty.Command == DutyCommandConstants.Treatment)
+            return appState.DbContext.Treatments.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+
+        return new List<KeyValuePair<long, string>>();
+    }
+    private List<KeyValuePair<long, string>> recipientTypeIds()
+    {
+        if (duty.RecipientType== RecipientTypeConstants.LivestockAnimal)
+            return appState.DbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+
+        return new List<KeyValuePair<long, string>>();
+    }
+    private string commandLabel()
+    {
+        switch (duty.Command)
+        {
+            case nameof(DutyCommandConstants.Registration):
+                return "Registrar";
+            case nameof(DutyCommandConstants.Measurement):
+                return "Measure";
+            case nameof(DutyCommandConstants.Treatment):
+                return "Treatment";
+            default:
+                return string.Empty;
+        }
+    }
+    private void ShowCommandEditor() { }
+
+}

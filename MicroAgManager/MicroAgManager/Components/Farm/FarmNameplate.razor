@@ -5,7 +5,6 @@
 @using MicroAgManager.Services
 <section class="FarmNameplate">
     <section class="name">
-        <h3 >@Farm.Name</h3>
         <NavCrudButtons Editting="@showFarmModal" 
             ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Farm.Id>0)" 
             OnEditClick="@ShowFarmEditor"
@@ -14,6 +13,7 @@
             OnNavigateClick=@OnNavigateClick
         >
     </NavCrudButtons>
+        <h3>@Farm.Name</h3>
     </section>
     @if (ShowAll || ShowAddress)
     {

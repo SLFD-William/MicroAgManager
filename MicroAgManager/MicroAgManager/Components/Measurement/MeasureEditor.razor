@@ -1,0 +1,109 @@
+﻿@using BackEnd.BusinessLogic.Measure
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.Unit
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+@if (measure is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="OnMeasureSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <ValidatedField Legend="Measure" ValidationMessageFor="@(() => measure.Name)">
+            <InputText placeholder="Measure" @bind-Value="@measure.Name" />
+        </ValidatedField>
+        <ValidatedField Legend="Method" ValidationMessageFor="@(() =>  measure.Method)">
+            <InputSelect @bind-Value="@measure.Method">
+                <option value="">Select Method ...</option>
+                <option value="@MeasurementMethodConstants.Direct">@MeasurementMethodConstants.Direct</option>
+            </InputSelect>
+        </ValidatedField>
+                    <ValidatedField ValidationMessageFor="@(() =>measure.UnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                <InputSelect @bind-Value="@measure.UnitId">
+                        <option value="">Select Units ...</option>
+                        @foreach (var unit in ApplicationState._dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
+                        {
+                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+    </ValidatedForm>
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+
+    private MeasureModel? measure;
+    private bool showUnitModal = false;
+    private EditContext unitEditContext = new EditContext(new UnitModel());
+    private void ShowUnitEditor()
+    {
+        showUnitModal = true;
+        StateHasChanged();
+    }
+    private void UnitSubmitted(object e)
+    {
+        var model = e as UnitModel;
+        showUnitModal = false;
+        ((MeasureModel)editContext.Model).UnitId = model.Id;
+        StateHasChanged();
+    }
+    private void UnitCanceled(object e)
+    {
+        showUnitModal = false;
+        StateHasChanged();
+    }
+
+    private async Task OnMeasureSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (measure.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<MeasureModel, CreateMeasure>("api/CreateMeasurement", new CreateMeasure { Measure = measure }) :
+                await api.ProcessCommand<MeasureModel, UpdateMeasure>("api/UpdateMeasurement", new UpdateMeasure { Measure = measure });
+
+            if (id <= 0)
+                throw new Exception("Unable to save measure");
+            if (creating)
+            {
+                measure.Id = id;
+                appState.DbContext.Measures.Add(measure);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Measures.FindAsync(measure.Id);
+                updated = measure.Map(updated) as MeasureModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(measure);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+
+    }
+}

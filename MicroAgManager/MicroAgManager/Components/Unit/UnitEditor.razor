@@ -12,7 +12,7 @@
                    @ref=_validatedForm
                    Modal=Modal
                    Show=Show>
-        <DataContent>
+        <ChildContent>
             <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Category)">
                 <InputSelect @bind-Value="@(((UnitModel)editContext.Model).Category)">
                     <option value="">Select Category ...</option>
@@ -34,7 +34,7 @@
                     <InputNumber placeholder="0" @bind-Value="@(((UnitModel)editContext.Model).ConversionFactorToSIUnit)" />
                 </ValidatedField>
             }
-        </DataContent>
+        </ChildContent>
 
     </ValidatedForm>
 }

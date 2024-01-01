@@ -18,7 +18,7 @@
                    Modal=Modal
                     Show=Show>
 
-        <DataContent>
+        <ChildContent>
             <ValidatedField ValidationMessageFor="@(() => landPlot.FarmLocationId)">
                 <LegendContent>
                     <div style="display:inline-flex">
@@ -79,7 +79,7 @@
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
-        </DataContent>
+        </ChildContent>
     </ValidatedForm>
 }
 
@@ -101,7 +101,7 @@
         var model = e.Model as FarmLocationModel;
         showFarmModal = false;
         if (model == null) return;
-        ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
+        ((LandPlotModel)editContext.Model).FarmLocationId = model.Id;
         // editContext = new EditContext(working);
         StateHasChanged();
     }
@@ -120,11 +120,10 @@
     }
     private void UnitSubmitted(object e)
     {
-        // var model = e as UnitModel;
+        var model = e as UnitModel;
         showUnitModal = false;
-        // ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
-        // editContext = new EditContext(working);
-        // StateHasChanged();
+        ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
+         StateHasChanged();
     }
     private void UnitCanceled(object e)
     {

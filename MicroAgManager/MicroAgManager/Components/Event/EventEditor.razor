@@ -1,0 +1,135 @@
+﻿@using BackEnd.BusinessLogic.Event
+@using BackEnd.BusinessLogic.Milestone
+@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Duty
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+@if (eventModel is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="@OnEventSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   createOnly="@(eventModel.Id<1)"
+                   Modal=Modal
+                   Show=Show>
+        <ChildContent>
+            <ValidatedField Legend="Event" ValidationMessageFor="@(() => eventModel.Name)">
+                <InputText placeholder="Milestone" @bind-Value="@(eventModel.Name)" />
+            </ValidatedField>
+            <ValidatedField Legend="Color" ValidationMessageFor="@(() => eventModel.Color)">
+                <InputText placeholder="Color" @bind-Value="@(eventModel.Color)" />
+            </ValidatedField>
+            <ValidatedField Legend="Start Date" ValidationMessageFor="@(() => eventModel.StartDate)">
+                <InputDate @bind-Value="eventModel.StartDate"></InputDate>
+            </ValidatedField>
+            <ValidatedField Legend="End Date" ValidationMessageFor="@(() => eventModel.EndDate)">
+                <InputDate @bind-Value="eventModel.EndDate"></InputDate>
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => eventModel.Duties)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Duties</span><button type="button" @onclick=ShowDutyEditor>+</button>
+                        <DutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
+                    </div>
+                </LegendContent>
+
+                <ChildContent>
+                    <ul>
+                        @foreach (var g in appState.DbContext.Duties.Where(l => eventModel.Duties.Contains(l)))
+                        {
+                            <li><button type="button" @onclick=@(()=> DutyRemoved(g))>-</button> @g.Name</li>
+                        }
+                    </ul>
+                    <select @onchange="DutySelected">
+                        <option value="">Select Duty ...</option>
+                        @foreach (var g in appState.DbContext.Duties.Where(l => !eventModel.Duties.Contains(l)))
+                        {
+                            <option value="@g.Id">@g.Name</option>
+                        }
+                    </select>
+                </ChildContent>
+            </ValidatedField>
+        </ChildContent>
+    </ValidatedForm>
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+    private EventModel? eventModel;
+    protected override void OnInitialized()
+    {
+        eventModel = editContext.Model as EventModel;
+        if (eventModel is null) return;
+    }
+    private async Task OnEventSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+        try
+        {
+
+            var creating = (eventModel.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<EventModel, CreateEvent>("api/CreateEvent", new CreateEvent { Event = eventModel }) :
+                await api.ProcessCommand<EventModel, UpdateEvent>("api/UpdateEvent", new UpdateEvent { Event = eventModel });
+
+            if (id <= 0)
+                throw new Exception("Unable to save event");
+            if (creating)
+            {
+                eventModel.Id = id;
+                appState.DbContext.Events.Add(eventModel);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Events.FindAsync(eventModel.Id);
+                updated = eventModel.Map(updated) as EventModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(eventModel);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+    }
+    private bool showDutyModal = false;
+    private EditContext dutyEditContext = new EditContext(new DutyModel());
+    private void ShowDutyEditor()
+    {
+        dutyEditContext = new EditContext(new DutyModel());
+        showDutyModal = true;
+        StateHasChanged();
+    }
+    private void DutySubmitted(EditContext e)
+    {
+        var model = e.Model as DutyModel;
+        showDutyModal = false;
+        eventModel.Duties.Add(model);
+        dutyEditContext = null;
+        StateHasChanged();
+    }
+    private void DutyCanceled(object e)
+    {
+        showDutyModal = false;
+        StateHasChanged();
+    }
+    void DutyRemoved(DutyModel duty)
+    {
+        eventModel.Duties.Remove(duty);
+        StateHasChanged();
+    }
+    void DutySelected(ChangeEventArgs e)
+    {
+        eventModel.Duties.Add(appState.DbContext.Duties.Find(long.Parse(e.Value.ToString())));
+        StateHasChanged();
+    }
+}

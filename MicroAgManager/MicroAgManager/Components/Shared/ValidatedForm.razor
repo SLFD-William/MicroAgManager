@@ -10,7 +10,7 @@
                     <EditForm EditContext="@editContext" OnSubmit="OnSubmit" class="@CssClass">
                         <DataAnnotationsValidator />
                         <section class="dataSection">
-                            @DataContent
+                            @ChildContent
                         </section>
                         @if (SecondaryContent is not null)
                         {
@@ -35,7 +35,7 @@
         <EditForm EditContext="@editContext" OnSubmit="OnSubmit" class="@CssClass">
             <DataAnnotationsValidator />
             <section class="dataSection">
-                @DataContent
+                @ChildContent
             </section>
             @if (SecondaryContent is not null)
             {

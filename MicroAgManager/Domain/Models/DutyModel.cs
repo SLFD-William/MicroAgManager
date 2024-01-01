@@ -1,6 +1,9 @@
 ﻿using Domain.Abstracts;
+using Domain.Constants;
 using Domain.Entity;
+using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
@@ -20,7 +23,8 @@ namespace Domain.Models
         [Required] public bool SystemRequired { get; set; }
         [MaxLength(255)] public string ProcedureLink { get; set; }
 
-
+        [NotMapped] public string RecipientTypeItem { get; private set; } = string.Empty;
+        [NotMapped] public string CommandItem { get; private set; } = string.Empty;
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<MilestoneModel?> Milestones { get; set; } = new List<MilestoneModel?>();
         public virtual ICollection<ChoreModel?> Chores { get; set; } = new List<ChoreModel?>();
@@ -80,6 +84,17 @@ namespace Domain.Models
             ((Duty)duty).ProcedureLink = ProcedureLink;
             duty.ModifiedOn = DateTime.UtcNow;
             return duty;
+        }
+        public void PopulateDynamicRelations(IFrontEndDbContext db)
+        {
+            if (RecipientType == nameof(LivestockAnimal))
+                RecipientTypeItem = db.LivestockAnimals.Find(RecipientTypeId)?.Name;
+            if (Command == DutyCommandConstants.Measurement)
+                CommandItem = db.Measures.Find(CommandId)?.Name;
+            if (Command == DutyCommandConstants.Treatment)
+                CommandItem = db.Treatments.Find(CommandId)?.Name;
+            if (Command == DutyCommandConstants.Registration)
+                CommandItem = db.Registrars.Find(CommandId)?.Name;
         }
     }
 }

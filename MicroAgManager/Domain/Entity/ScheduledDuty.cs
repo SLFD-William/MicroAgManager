@@ -16,9 +16,11 @@ namespace Domain.Entity
         [Required][ForeignKey(nameof(Duty))]public long DutyId { get; set; }
 
         public long? RecordId { get; set; }
-        [Required] public string Record { get; set; }
+        [Required] public string Record { get; set; }//TreatmentRecord, Registration, BreedingRecord etc.
         [Required] public long RecipientId { get; set; }
-        [Required] public string Recipient { get; set; }
+        [Required] public string Recipient { get; set; }//Livestock, etc.
+        [Required] public long ScheduleSourceId { get; set; }
+        [Required] public string ScheduleSource { get; set; } //Chore,Event,Milestone
         public bool Dismissed { get; set; }
         public DateTime DueOn { get; set; }
         [Precision(18,3)]public decimal ReminderDays { get; set; }
