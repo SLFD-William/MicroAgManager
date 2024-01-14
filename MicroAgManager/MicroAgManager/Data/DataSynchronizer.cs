@@ -120,6 +120,7 @@ namespace MicroAgManager.Data
                             await DomainFetcher.BulkUpdateLivestocks(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateMilestones(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateDuties(entityModels, db, connection, _api);
+                            await DomainFetcher.BulkUpdateEvents(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateChores(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateBreedingRecords(entityModels, db, connection, _api);
                             await DomainFetcher.BulkUpdateScheduledDuties(entityModels, db, connection, _api);

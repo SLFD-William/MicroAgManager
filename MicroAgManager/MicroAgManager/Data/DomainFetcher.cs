@@ -284,6 +284,34 @@ namespace MicroAgManager.Data
                 }
             }
         }
+
+        public async static Task BulkUpdateEvents(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IAPIService api)
+        {
+            if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel))) return;
+
+            var mostRecentUpdate = db.Events.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            long totalCount = 0;
+            long expectedCount = 1;
+            while (totalCount < expectedCount)
+            {
+                var returned = await api.ProcessQuery<EventModel, GetEventList>("api/GetEvents", new GetEventList { LastModified = mostRecentUpdate, Skip = (int)totalCount });
+                expectedCount = returned.Item1;
+                totalCount += returned.Item2.Count;
+                expectedCount = returned.Item1;
+                Console.WriteLine($"Received {totalCount} of {expectedCount} Events from the API");
+                if (expectedCount == 0) break;
+                foreach (var model in returned.Item2)
+                {
+                    if (model is null) continue;
+                    var local = await db.Events.FindAsync(model.Id);
+                    if (local == null)
+                        db.Events.Add(model);
+                    else
+                        model.Map(local);
+                    await db.SaveChangesAsync();
+                }
+            }
+        }
         public async static Task BulkUpdateChores(List<string>? entityModels, FrontEndDbContext db, DbConnection connection, IAPIService api)
         {
             if (!ShouldEntityBeUpdated(entityModels, nameof(ChoreModel))) return;

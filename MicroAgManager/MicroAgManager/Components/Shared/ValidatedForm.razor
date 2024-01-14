@@ -6,7 +6,7 @@
         {
             <div class="modalContainer">
                 <dialog open="true">
-                  
+                    <h1>@Title</h1>
                     <EditForm EditContext="@editContext" OnSubmit="OnSubmit" class="@CssClass">
                         <DataAnnotationsValidator />
                         <section class="dataSection">
@@ -32,6 +32,7 @@
     }
     else
     {
+        <h1>@Title</h1>
         <EditForm EditContext="@editContext" OnSubmit="OnSubmit" class="@CssClass">
             <DataAnnotationsValidator />
             <section class="dataSection">

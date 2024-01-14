@@ -14,7 +14,8 @@
                    showUpdateCancelButtons="true"
                    @ref=_validatedForm
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+                   Title="@(measure.Id< 1 ? "Create Measure" : $"Edit {measure.Name}")">
         <ValidatedField Legend="Measure" ValidationMessageFor="@(() => measure.Name)">
             <InputText placeholder="Measure" @bind-Value="@measure.Name" />
         </ValidatedField>
@@ -34,7 +35,7 @@
                 <ChildContent>
                 <InputSelect @bind-Value="@measure.UnitId">
                         <option value="">Select Units ...</option>
-                        @foreach (var unit in ApplicationState._dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
+                        @foreach (var unit in ApplicationState._dbContext.Units.OrderBy(u=>u.Category).ThenBy(u=>u.Name))
                         {
                             <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
                         }
@@ -48,6 +49,11 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
+    protected override void OnInitialized()
+    {
+        measure = editContext.Model as MeasureModel;
+        if (measure is null) return;
+    }
 
     private MeasureModel? measure;
     private bool showUnitModal = false;
@@ -79,8 +85,8 @@
             var creating = (measure.Id <= 0);
 
             var id = creating ?
-                await api.ProcessCommand<MeasureModel, CreateMeasure>("api/CreateMeasurement", new CreateMeasure { Measure = measure }) :
-                await api.ProcessCommand<MeasureModel, UpdateMeasure>("api/UpdateMeasurement", new UpdateMeasure { Measure = measure });
+                await api.ProcessCommand<MeasureModel, CreateMeasure>("api/CreateMeasure", new CreateMeasure { Measure = measure }) :
+                await api.ProcessCommand<MeasureModel, UpdateMeasure>("api/UpdateMeasure", new UpdateMeasure { Measure = measure });
 
             if (id <= 0)
                 throw new Exception("Unable to save measure");

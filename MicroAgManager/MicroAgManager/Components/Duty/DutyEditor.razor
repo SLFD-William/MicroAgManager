@@ -2,9 +2,11 @@
 @using Domain
 @using Domain.Constants
 @using Domain.Models
+@using MicroAgManager.Components.Measurement
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
 @using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
 @inherits BaseEditor
 
 @if (duty is not null)
@@ -15,7 +17,8 @@
                    showUpdateCancelButtons="true"
                    createOnly="@(duty.Id<1)"
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+                   Title="@(duty.Id< 1 ? "Create Duty" : $"Edit {duty.Name}")">
         <ChildContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => duty.Name)">
                 <InputText @bind-Value="duty.Name"></InputText>
@@ -45,9 +48,11 @@
                     <LegendContent>
                         <div style="display:inline-flex">
                             <span>@commandLabel()</span><button type="button" @onclick=ShowCommandEditor>+</button>
-                            @* <RegistrarEditor @ref=_registrarEditor Modal="true" Show="@(showCommandModal && (duty.Command == DutyCommandConstants.Registration)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></RegistrarEditor>
-                            <MeasureEditor @ref=_measureEditor Modal="true" Show="@(showCommandModal && (duty.Command == DutyCommandConstants.Measurement)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></MeasureEditor>
-                            <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showCommandModal && (duty.Command == DutyCommandConstants.Treatment)" showUpdateCancelButtons="true" Submitted="CommandCreated" Cancelled="CommandCanceled"></TreatmentEditor> *@
+                            @if (_showingCommandEditor)
+                            {
+                                <DynamicComponent Type="@commandType" Parameters="@components[commandType.Name].Parameters" />
+                            }
+
                         </div>
                     </LegendContent>
                     <ChildContent>
@@ -67,6 +72,7 @@
                     <InputSelect @bind-Value="@duty.RecipientType">
                         <option value="0">Select Recipient Type ...</option>
                         <option value="@RecipientTypeConstants.LivestockAnimal">@RecipientTypeConstants.LivestockAnimal</option>
+                        <option value="@RecipientTypeConstants.LivestockBreed">@RecipientTypeConstants.LivestockBreed</option>
                     </InputSelect>
                 </ValidatedField>
                 <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => duty.RecipientTypeId)">
@@ -79,7 +85,7 @@
                     </InputSelect>
                 </ValidatedField>
             }
-            @if (duty.RecipientType == RecipientTypeConstants.LivestockAnimal)
+            @if (duty.RecipientType == RecipientTypeConstants.LivestockAnimal || duty.RecipientType == RecipientTypeConstants.LivestockBreed)
             {
                 <ValidatedField Legend="Gender" ValidationMessageFor="@(() => duty.Gender)">
                     <InputSelect @bind-Value="@duty.Gender">
@@ -183,6 +189,8 @@
     {
         if (duty.RecipientType== RecipientTypeConstants.LivestockAnimal)
             return appState.DbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
+        if (duty.RecipientType == RecipientTypeConstants.LivestockBreed)
+            return appState.DbContext.LivestockBreeds.Include(a=>a.Animal).OrderBy(a=>a.Animal.Name).ThenBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
 
         return new List<KeyValuePair<long, string>>();
     }
@@ -200,6 +208,62 @@
                 return string.Empty;
         }
     }
-    private void ShowCommandEditor() { }
+    private bool _showingCommandEditor = false;
+    private void ShowCommandEditor()
+    {
+        object model = null;
+        switch (duty.Command)
+        {
+            case nameof(DutyCommandConstants.Registration):
+                break;
+            case nameof(DutyCommandConstants.Measurement):
+                model = appState.DbContext.Measures.Find(duty.CommandId) ?? new MeasureModel();
+                commandType = typeof(MeasureEditor);
+                break;
+            case nameof(DutyCommandConstants.Treatment):
+                break;
+            default:
+                commandType = null;
+                break;
+        }
+        if (commandType is not null)
+        {
+            components[commandType.Name].Parameters["editContext"] = new EditContext(model);
+            components[commandType.Name].Parameters["OnCancel"] = EventCallback.Factory.Create<EditContext>(this, CommandCanceled);
+            components[commandType.Name].Parameters["OnSubmit"] = EventCallback.Factory.Create<EditContext>(this, CommandSubmitted);
+        }
 
+
+        _showingCommandEditor = true;
+        StateHasChanged();
+    }
+    Type? commandType;
+    private Dictionary<string, ComponentMetadata> components =
+         new()
+         {
+            {
+                nameof(MeasureEditor),
+                new ComponentMetadata
+                {
+                    Name = "Measure",
+                    Parameters = new() { 
+                        { "Modal", true },
+                        { "Show", true },
+                        { "editContext", string.Empty },
+                        { "OnCancel", string.Empty },
+                        { "OnSubmit", string.Empty }
+                    }
+                }
+            }
+         };
+    private void CommandSubmitted(EditContext e)
+    {
+        _showingCommandEditor = false;
+        StateHasChanged();
+    }
+    private void CommandCanceled(EditContext e)
+    {
+        _showingCommandEditor = false;
+        StateHasChanged();
+    }
 }

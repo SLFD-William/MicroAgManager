@@ -1,5 +1,6 @@
 ﻿@using BackEnd.BusinessLogic.Measurement
 @using Domain.Constants
+@using Domain.Interfaces
 @using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Components.Unit
@@ -11,8 +12,7 @@
         <ValidatedForm editContext="editContext"
                    OnSubmit="OnMeasurementSubmit"
                    OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
-               showUpdateCancelButtons="true"
-                   @ref=_validatedForm
+                   showUpdateCancelButtons="@ShowUpdateCancel"
                    Modal=Modal
                    Show=Show>
 
@@ -41,7 +41,8 @@
             <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => measurement.RecipientType)">
                 <InputSelect @bind-Value="@measurement.RecipientType">
                     <option value="0">Select Recipient Type ...</option>
-                    <option value="@RecipientTypeConstants.LivestockAnimal" />
+                    <option value="@RecipientTypeConstants.LivestockAnimal">@RecipientTypeConstants.LivestockAnimal</option>
+                    <option value="@RecipientTypeConstants.LivestockBreed">@RecipientTypeConstants.LivestockBreed</option>
                 </InputSelect>
             </ValidatedField>
             <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => measurement.RecipientTypeId)">
@@ -95,9 +96,59 @@
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
-    private ValidatedForm _validatedForm;
-
     private MeasurementModel? measurement;
+    protected override void OnInitialized()
+    {
+        measurement = editContext.Model as MeasurementModel;
+        if (measurement is null) return;
+        if (measurement.MeasurementUnitId < 1)
+            measurement.MeasurementUnitId = measurement.Measure.UnitId;
+
+
+    }
+    public async override Task<IHasRecipient> SubmitEditContext()
+    {
+        await OnMeasurementSubmit(editContext);
+        return measurement;
+    }
+     
+    private async Task OnMeasurementSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (measurement.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<MeasurementModel, CreateMeasurement>("api/CreateMeasurement", new CreateMeasurement { Measurement = measurement }) :
+                await api.ProcessCommand<MeasurementModel, UpdateMeasurement>("api/UpdateMeasurement", new UpdateMeasurement { Measurement = measurement });
+
+            if (id <= 0)
+                throw new Exception("Unable to save measurement");
+            if (creating)
+            {
+                measurement.Id = id;
+                appState.DbContext.Measurements.Add(measurement);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Measurements.FindAsync(measurement.Id);
+                updated = measurement.Map(updated) as MeasurementModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(measurement);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+
+    }
+
     private bool showMeasureModal = false;
     private EditContext measureEditContext = new EditContext(new MeasureModel());
     private void ShowMeasureEditor()
@@ -138,40 +189,5 @@
         StateHasChanged();
     }
 
-    private async Task OnMeasurementSubmit(EditContext editContext)
-    {
-        if (!editContext.Validate()) return;
-
-        try
-        {
-            var creating = (measurement.Id <= 0);
-
-            var id = creating ?
-                await api.ProcessCommand<MeasurementModel, CreateMeasurement>("api/CreateMeasurement", new CreateMeasurement { Measurement = measurement }) :
-                await api.ProcessCommand<MeasurementModel, UpdateMeasurement>("api/UpdateMeasurement", new UpdateMeasurement { Measurement = measurement });
-
-            if (id <= 0)
-                throw new Exception("Unable to save measurement");
-            if (creating)
-            {
-                measurement.Id = id;
-                appState.DbContext.Measurements.Add(measurement);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Measurements.FindAsync(measurement.Id);
-                updated = measurement.Map(updated) as MeasurementModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
-            editContext = new EditContext(measurement);
-            await OnSubmit.InvokeAsync(editContext);
-        }
-        catch (Exception ex)
-        {
-
-        }
-
-
-
-    }
+    
 }

@@ -1,4 +1,6 @@
-﻿@using Domain
+﻿@using BackEnd.BusinessLogic.ScheduledDuty
+@using Domain
+@using Domain.Abstracts
 @using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Components.Chore
@@ -21,17 +23,18 @@
                    showUpdateCancelButtons="true"
                    createOnly="@(scheduledDuty.Id<1)"
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+                   Title="@((scheduledDuty.Id< 1 ? "Create " : "Edit ") + scheduledDuty.Duty.Command)">
         <ValidatedField ValidationMessageFor="@(() => scheduledDuty.DutyId)">
             <LegendContent>
                 <div style="display:inline-flex">
                     <span>Duty</span>
                     <button type="button" @onclick=ShowDutyEditor>+</button>
-                    <DutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
+                    <DutyEditor Modal=true Show=@_showingDutyEditor editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
                 </div>
             </LegendContent>
             <ChildContent>
-                <InputSelect @bind-Value="@scheduledDuty.DutyId">
+                <InputSelect ValueExpression="@(()=>scheduledDuty.DutyId)" ValueChanged="@((long value) => OnDutyChanged(value ))">
                     <option value="">Select Duty ...</option>
                     @foreach (var unit in appState.DbContext.Duties)
                     {
@@ -47,24 +50,16 @@
             <ValidatedField ValidationMessageFor="@(() => scheduledDuty.ScheduleSourceId)">
                 <LegendContent>
                     <div style="display:inline-flex">
-                        <span>Source</span>
+                        <span>@scheduledDuty.ScheduleSource</span>
                         <button type="button" @onclick=ShowSourceEditor>+</button>
-                        @if (string.IsNullOrEmpty(scheduledDuty.ScheduleSource) || scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Event)
+                        @if (_showingSourceEditor)
                         {
-                            <EventEditor Modal="true" Show="showSourceModal" editContext="SetupEventContext()" OnSubmit="SourceSubmitted" OnCancel="SourceCanceled"></EventEditor>
-                        }
-                        @if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Chore)
-                        {
-                            <ChoreEditor Modal="true" Show="showSourceModal" editContext="SetupChoreContext()" OnSubmit="SourceSubmitted" OnCancel="SourceCanceled"></ChoreEditor>
-                        }
-                        @if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
-                        {
-                            <ChoreEditor Modal="true" Show="showSourceModal" editContext="SetupMilestoneContext()" OnSubmit="SourceSubmitted" OnCancel="SourceCanceled"></ChoreEditor>
+                            <DynamicComponent Type="@sourceType" Parameters="@sourceComponents[sourceType.Name].Parameters" />
                         }
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@scheduledDuty.ScheduleSourceId">
+                    <InputSelect ValueExpression="@(()=>scheduledDuty.ScheduleSourceId)" ValueChanged="@((long value) => OnSourceChanged(value ))">
                         <option value="">Select Source ...</option>
                         @foreach (var unit in sourceIds())
                         {
@@ -76,162 +71,92 @@
                 </ChildContent>
             </ValidatedField>
         }
-@*         @if (recordComponent != null && scheduledDuty.ScheduleSourceId>0 )
-        { 
-            <DynamicComponent Type="@recordComponent" Parameters="@recordComponentParameters" />
-        } *@
+        @if (ShowRecordEditor())
+        {
+            <section style="grid-column:1/-1;width:100%;">
+            <DynamicComponent @ref="recordComponent" Type="@recordType" Parameters="@recordComponents[recordType.Name].Parameters" />
+            </section>
+        }
     </ValidatedForm>
 }
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
+
+    private DynamicComponent? recordComponent;
     private ScheduledDutyModel? scheduledDuty;
 
-    private Type recordComponent;
-    private Dictionary<string, object> recordComponentParameters { get; set; } = [];
-    private Type sourceComponent;
-    private Dictionary<string, object> sourceComponentParameters { get; set; } = [];
     protected override void OnInitialized()
     {
         scheduledDuty = editContext.Model as ScheduledDutyModel;
         if (scheduledDuty is null) return;
-        SetupRecordComponent();
+        if (string.IsNullOrEmpty(scheduledDuty.ScheduleSource)) scheduledDuty.ScheduleSource = ScheduledDutySourceConstants.Event;
+        if (scheduledDuty.DueOn == DateTime.MinValue) scheduledDuty.DueOn = DateTime.Today;
+        ShowRecordEditor();
+
     }
 
-    private EditContext SetupMilestoneContext()
+    private DateTime? GetDatePerformedFromRecord(object recordModel)
     {
-        var milestone = appState.DbContext.Milestones.Find(scheduledDuty.ScheduleSourceId) ?? new();
-        if (milestone.Id < 1)
-        {   milestone.RecipientType = scheduledDuty.Duty.RecipientType;
-            milestone.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-            milestone.Duties.Add(scheduledDuty.Duty);
-        }
-        return new EditContext(milestone);
-    }
-    private EditContext SetupChoreContext()
-    {
-        
-        var chore = appState.DbContext.Chores.Find(scheduledDuty.ScheduleSourceId) ?? new();
-        if (chore.Id < 1)
+        switch (recordModel.GetType().Name)
         {
-            chore.RecipientType = scheduledDuty.Duty.RecipientType;
-            chore.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-            chore.Duties.Add(scheduledDuty.Duty);
+            case nameof(MeasurementModel):
+                return ((MeasurementModel)recordModel).DatePerformed;
+
+            default:
+                return null;
         }
-        return new EditContext(chore);
     }
-    private EditContext SetupEventContext()
+    private string GetRecipientFromRecipientType(DutyModel duty)
     {
-        var eventModel = appState.DbContext.Events.Find(scheduledDuty.ScheduleSourceId) ?? new();
-        if (eventModel.Id < 1)
+        switch (duty.RecipientType)
         {
-            eventModel.Duties.Add(scheduledDuty.Duty);
+            case nameof(RecipientTypeConstants.LivestockAnimal):
+            case nameof(RecipientTypeConstants.LivestockBreed):
+                return nameof(Domain.Entity.Livestock);
+
+            default:
+                return null;
         }
-        return new EditContext(eventModel);
-    }
-    private void SetupRecordComponent()
-    {
-        recordComponentParameters.Clear();
-        if (scheduledDuty.Record == ScheduledDutyRecordConstants.BreedingRecord) SetupBreedingRecordComponent();
-        if (scheduledDuty.Record == ScheduledDutyRecordConstants.Measurement) SetupMeasurementComponent();
-        if (scheduledDuty.Record == ScheduledDutyRecordConstants.TreatmentRecord) SetupTreatmentRecordComponent();
-        if (scheduledDuty.Record == ScheduledDutyRecordConstants.Registration) SetupRegistrationComponent();
-    }
-    private void SetupBreedingRecordComponent()
-    {
-        recordComponent = typeof(BreedingRecordEditor);
-        // var measurement = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new();
-        // if (measurement.Id < 1)
-        // {
-        //     measurement.RecipientId = scheduledDuty.RecipientId;
-        //     measurement.RecipientType = scheduledDuty.Duty.RecipientType;
-        //     measurement.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-        //     measurement.MeasureId = scheduledDuty.Duty.CommandId;
-        // }
-        // var measurementContext = new EditContext(measurement);
-        // recordComponentParameters.Add("editContex", measurementContext);
-        // recordComponentParameters.Add("OnSubmit", EventCallback.Factory.Create<EditContext>(this, SourceSubmitted));
-        // recordComponentParameters.Add("OnCancel", EventCallback.Factory.Create<object>(this, SourceCanceled));
-
-    }
-    private void SetupRegistrationComponent()
-    {
-        recordComponent = typeof(RegistrationEditor);
-        // var measurement = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new();
-        // if (measurement.Id < 1)
-        // {
-        //     measurement.RecipientId = scheduledDuty.RecipientId;
-        //     measurement.RecipientType = scheduledDuty.Duty.RecipientType;
-        //     measurement.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-        //     measurement.MeasureId = scheduledDuty.Duty.CommandId;
-        // }
-        // var measurementContext = new EditContext(measurement);
-        // recordComponentParameters.Add("editContex", measurementContext);
-        // recordComponentParameters.Add("OnSubmit", EventCallback.Factory.Create<EditContext>(this, SourceSubmitted));
-        // recordComponentParameters.Add("OnCancel", EventCallback.Factory.Create<object>(this, SourceCanceled));
-
-    }
-    private void SetupMeasurementComponent()
-    {
-        recordComponent = typeof(MeasurementEditor);
-        var measurement = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new();
-        if (measurement.Id < 1)
-        {
-            measurement.RecipientId = scheduledDuty.RecipientId;
-            measurement.RecipientType = scheduledDuty.Duty.RecipientType;
-            measurement.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-            measurement.MeasureId = scheduledDuty.Duty.CommandId;
-        }
-        var measurementContext = new EditContext(measurement);
-        recordComponentParameters.Add("editContex", measurementContext);
-        recordComponentParameters.Add("OnSubmit", EventCallback.Factory.Create<EditContext>(this, SourceSubmitted));
-        recordComponentParameters.Add("OnCancel", EventCallback.Factory.Create<object>(this, SourceCanceled));
-
-    }
-    private void SetupTreatmentRecordComponent()
-    {
-        recordComponent = typeof(TreatmentRecordEditor);
-        // var measurement = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new();
-        // if (measurement.Id < 1)
-        // {
-        //     measurement.RecipientId = scheduledDuty.RecipientId;
-        //     measurement.RecipientType = scheduledDuty.Duty.RecipientType;
-        //     measurement.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-        //     measurement.MeasureId = scheduledDuty.Duty.CommandId;
-        // }
-        // var measurementContext = new EditContext(measurement);
-        // recordComponentParameters.Add("editContex", measurementContext);
-        // recordComponentParameters.Add("OnSubmit", EventCallback.Factory.Create<EditContext>(this, SourceSubmitted));
-        // recordComponentParameters.Add("OnCancel", EventCallback.Factory.Create<object>(this, SourceCanceled));
-
     }
 
     private async Task OnScheduledDutySubmit(EditContext editContext)
     {
+        var myComponent = recordComponent?.Instance as HasRecipientsEditor;
+        if (!myComponent.editContext.Validate()) return;
+
+        var recordModel = await myComponent.SubmitEditContext();
+        scheduledDuty.RecordId = ((BaseHasRecipientModel)recordModel).Id;
+        scheduledDuty.RecipientId = ((BaseHasRecipientModel)recordModel).RecipientId;
+        scheduledDuty.Recipient = GetRecipientFromRecipientType(scheduledDuty.Duty);
+        scheduledDuty.CompletedOn = GetDatePerformedFromRecord(recordModel);
+
+        editContext = new EditContext(scheduledDuty);
+
         if (!editContext.Validate()) return;
         try
         {
 
-            // var creating = (duty.Id <= 0);
+            var creating = (scheduledDuty.Id <= 0);
 
-            // var id = creating ?
-            //     await api.ProcessCommand<DutyModel, CreateDuty>("api/CreateDuty", new CreateDuty { Duty = duty }) :
-            //     await api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = duty });
+            var id = creating ?
+                await api.ProcessCommand<ScheduledDutyModel, CreateScheduledDuty>("api/CreateScheduledDuty", new CreateScheduledDuty { ScheduledDuty = scheduledDuty }) :
+                await api.ProcessCommand<ScheduledDutyModel, UpdateScheduledDuty>("api/UpdateScheduledDuty", new UpdateScheduledDuty { ScheduledDuty = scheduledDuty });
 
-            // if (id <= 0)
-            //     throw new Exception("Unable to save land plot");
-            // if (creating)
-            // {
-            //     duty.Id = id;
-            //     appState.DbContext.Duties.Add(duty);
-            // }
-            // else
-            // {
-            //     var updated = await appState.DbContext.Duties.FindAsync(duty.Id);
-            //     updated = duty.Map(updated) as DutyModel;
-            // }
-            // await appState.DbContext.SaveChangesAsync();
-            // editContext = new EditContext(duty);
+            if (id <= 0)
+                throw new Exception("Unable to save scheduled duty");
+            if (creating)
+            {
+                scheduledDuty.Id = id;
+                appState.DbContext.ScheduledDuties.Add(scheduledDuty);
+            }
+            else
+            {
+                var updated = await appState.DbContext.ScheduledDuties.FindAsync(scheduledDuty.Id);
+                updated = scheduledDuty.Map(updated) as ScheduledDutyModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(scheduledDuty);
             await OnSubmit.InvokeAsync(editContext);
         }
         catch (Exception ex)
@@ -240,46 +165,37 @@
         }
 
     }
-    private bool showDutyModal = false;
+
+    #region Duty
+    private bool _showingDutyEditor = false;
     private EditContext dutyEditContext = new EditContext(new DutyModel());
     private void ShowDutyEditor()
     {
-        showDutyModal = true;
+        _showingDutyEditor = true;
         StateHasChanged();
     }
     private void DutySubmitted(EditContext e)
     {
         var model = e.Model as DutyModel;
-        showDutyModal = false;
+        _showingDutyEditor = false;
         if (model == null) return;
         ((ScheduledDutyModel)editContext.Model).DutyId = model.Id;
         StateHasChanged();
     }
     private void DutyCanceled(object e)
     {
-        showDutyModal = false;
+        _showingDutyEditor = false;
         StateHasChanged();
     }
-
-    private bool showSourceModal = false;
-    private void ShowSourceEditor()
+    private void OnDutyChanged(long value)
     {
-        showSourceModal = true;
+        // Assign the selected value to the Model
+        scheduledDuty.DutyId = value;
+        scheduledDuty.Duty = appState.DbContext.Duties.Find(value);
         StateHasChanged();
     }
-    private void SourceSubmitted(EditContext e)
-    {
-        var model = e.Model as DutyModel;
-        showSourceModal = false;
-        if (model == null) return;
-        ((ScheduledDutyModel)editContext.Model).ScheduleSourceId = model.Id;
-        StateHasChanged();
-    }
-    private void SourceCanceled(object e)
-    {
-        showSourceModal = false;
-        StateHasChanged();
-    }
+    #endregion
+    #region Source
     private List<KeyValuePair<long, string>> sourceIds()
     {
         if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
@@ -291,4 +207,140 @@
 
         return new List<KeyValuePair<long, string>>();
     }
+    private bool _showingSourceEditor = false;
+    Type? sourceType;
+    private EditContext sourceEditContext;
+    private Dictionary<string, ComponentMetadata> sourceComponents =
+     new()
+         {
+            {
+                nameof(EventEditor),
+                new ComponentMetadata
+                {
+                    Name = "Event",
+                    Parameters = new() {
+                        { "Modal", true },
+                        { "Show", true },
+                        { "editContext", string.Empty },
+                        { "OnCancel", string.Empty },
+                        { "OnSubmit", string.Empty }
+                    }
+                }
+            }
+         };
+    private void ShowSourceEditor()
+    {
+        object model = null;
+        switch (scheduledDuty.ScheduleSource)
+        {
+            case nameof(ScheduledDutySourceConstants.Event):
+                model = appState.DbContext.Events.Find(scheduledDuty.ScheduleSourceId) ?? new EventModel() { Color = "#ffffff", StartDate = DateTime.Today, EndDate = DateTime.Today };
+                sourceType = typeof(EventEditor);
+                break;
+            case nameof(ScheduledDutySourceConstants.Chore):
+                break;
+            case nameof(ScheduledDutySourceConstants.Milestone):
+                break;
+            default:
+                sourceType = null;
+                break;
+        }
+        if (sourceType is not null)
+        {
+            sourceEditContext = new EditContext(model);
+            sourceComponents[sourceType.Name].Parameters["editContext"] = sourceEditContext;
+            sourceComponents[sourceType.Name].Parameters["OnCancel"] = EventCallback.Factory.Create<EditContext>(this, SourceCanceled);
+            sourceComponents[sourceType.Name].Parameters["OnSubmit"] = EventCallback.Factory.Create<EditContext>(this, SourceSubmitted);
+        }
+        _showingSourceEditor = true;
+        StateHasChanged();
+    }
+    private void SourceSubmitted(EditContext e)
+    {
+        scheduledDuty.ScheduleSourceId = ((BaseModel)e.Model).Id;
+        _showingSourceEditor = false;
+        StateHasChanged();
+    }
+    private void SourceCanceled(EditContext e)
+    {
+        _showingSourceEditor = false;
+        StateHasChanged();
+    }
+    private void OnSourceChanged(long value)
+    {
+        // Assign the selected value to the Model
+        scheduledDuty.ScheduleSourceId = value;
+        ShowRecordEditor();
+        StateHasChanged();
+    }
+    #endregion
+    #region Record
+    private bool _showingRecordEditor = false;
+    Type? recordType;
+    private Dictionary<string, ComponentMetadata> recordComponents =
+     new()
+             {
+            {
+                nameof(MeasurementEditor),
+                new ComponentMetadata
+                {
+                    Name = "Measurement",
+                    Parameters = new() {
+                        { "Modal", false },
+                        { "Show", true },
+                        { "ShowUpdateCancel", false },
+                        { "editContext", string.Empty }
+                    }
+                }
+            }
+     };
+    private bool ShowRecordEditor()
+    {
+        if (scheduledDuty.ScheduleSourceId < 1) return false;
+        BaseHasRecipientModel model = null;
+        switch (scheduledDuty.Duty.Command)
+        {
+            case nameof(DutyCommandConstants.Registration):
+                break;
+            case nameof(DutyCommandConstants.Measurement):
+                scheduledDuty.Record = nameof(Domain.Entity.Measurement);
+                model = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new MeasurementModel();
+                if (model.Id < 1)
+                {
+                    ((MeasurementModel)model).MeasureId = scheduledDuty.Duty.CommandId;
+                    ((MeasurementModel)model).Measure = appState.DbContext.Measures.Find(scheduledDuty.Duty.CommandId);
+                    ((MeasurementModel)model).DatePerformed = DateTime.Today;
+                }
+                recordType = typeof(MeasurementEditor);
+                break;
+            case nameof(DutyCommandConstants.Treatment):
+                break;
+            default:
+                recordType = null;
+                break;
+        }
+        if (recordType is not null)
+        {
+            model.RecipientType = scheduledDuty.Duty.RecipientType;
+            model.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
+            recordComponents[recordType.Name].Parameters["editContext"] = new EditContext(model);
+            return true;
+        }
+        return false;
+        
+    }
+    private void RecordSubmitted(EditContext e)
+    {
+        scheduledDuty.RecordId = ((BaseModel)e.Model).Id;
+        //_showingRecordEditor = false;
+        StateHasChanged();
+    }
+    private void RecordCanceled(EditContext e)
+    {
+        //_showingRecordEditor = false;
+        StateHasChanged();
+    }
+
+#endregion
+
 }

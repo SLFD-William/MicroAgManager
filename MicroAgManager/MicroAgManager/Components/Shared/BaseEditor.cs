@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MicroAgManager.Components.Shared
 {
-    public class BaseEditor:ComponentBase
+    public abstract class BaseEditor:ComponentBase
     {
         [Parameter] required public EditContext editContext { get; set; }
         [Parameter] public EventCallback<EditContext> OnSubmit { get; set; }

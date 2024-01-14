@@ -18,5 +18,6 @@ namespace MicroAgManager.Components.Shared
         [Parameter] public bool Modal { get; set; } = false;
         [Parameter] public bool Show { get; set; } = false;
 
+        [Parameter] public string Title { get; set; } 
     }
 }

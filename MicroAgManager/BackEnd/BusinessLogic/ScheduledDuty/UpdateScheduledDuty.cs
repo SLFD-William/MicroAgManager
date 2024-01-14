@@ -11,7 +11,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
 {
     public class UpdateScheduledDuty : BaseCommand, IUpdateCommand
     {
-        public ScheduledDutyModel Duty { get; set; }
+        public ScheduledDutyModel ScheduledDuty { get; set; }
         public class Handler: BaseCommandHandler<UpdateScheduledDuty>
         {
             public Handler(IMediator mediator, ILogger log) : base(mediator, log)
@@ -22,7 +22,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    var duty = request.Duty.Map(await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.Duty.Id)) as Domain.Entity.ScheduledDuty;
+                    var duty = request.ScheduledDuty.Map(await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.ScheduledDuty.Id)) as Domain.Entity.ScheduledDuty;
                     duty.ModifiedBy = request.ModifiedBy;
                     await context.SaveChangesAsync(cancellationToken);
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);

@@ -5,6 +5,7 @@
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
 @using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
 @inherits BaseEditor
 @if (milestone is not null)
 {
@@ -141,7 +142,8 @@
     {
         if (milestone.RecipientType == RecipientTypeConstants.LivestockAnimal)
             return appState.DbContext.LivestockAnimals.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-
+        if (milestone.RecipientType == RecipientTypeConstants.LivestockBreed)
+            return appState.DbContext.LivestockBreeds.Include(a=>a.Animal).OrderBy(a => a.Animal.Name).ThenBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
         return new List<KeyValuePair<long, string>>();
     }
 }

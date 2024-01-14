@@ -21,7 +21,7 @@ namespace Domain.Entity
         [Required][MaxLength(40)] public string RecipientType { get; set; }
         [Required][MaxLength(20)] public string Relationship { get; set; }
         [Required][MaxLength(40)]public string Name { get; set; }
-        [MaxLength(255)] public string ProcedureLink { get; set; }
+        [MaxLength(255)] public string? ProcedureLink { get; set; }
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
         public virtual ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
         public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();

@@ -22,12 +22,11 @@
     private EventModel? _sourceEvent;
     private DutyModel _duty;
 
-    protected override void OnInitialized()
+    private void InitializeScheduledDuty()
     {
-        base.OnInitialized();
         _scheduledDuty = new();
         if (ScheduledDutyId.HasValue)
-            _scheduledDuty = appState.DbContext.ScheduledDuties.Include(d=>d.Duty).First(s=>s.Id==ScheduledDutyId);
+            _scheduledDuty = appState.DbContext.ScheduledDuties.Include(d => d.Duty).First(s => s.Id == ScheduledDutyId);
         if (_scheduledDuty.Id < 1)
             _scheduledDuty.Duty = new() { Command = Command };
     }
@@ -35,6 +34,7 @@
     private EditContext dutyEditContext = new EditContext(new ScheduledDutyModel());
     private void ShowDutyEditor()
     {
+        InitializeScheduledDuty();
         dutyEditContext = new EditContext(_scheduledDuty);
         showDutyModal = true;
         StateHasChanged();
@@ -49,6 +49,8 @@
     }
     private void DutyCanceled(object e)
     {
+        _scheduledDuty = new();
+        editContext = new EditContext(_scheduledDuty);
         showDutyModal = false;
         StateHasChanged();
     }

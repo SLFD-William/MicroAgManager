@@ -10307,6 +10307,10 @@ html, body {
   color: var(--typography-primary-color);
 }
 
+select, input {
+  background-color: var(--typography-primary-alternate-bg-color);
+}
+
 #app {
   height: 100%;
 }

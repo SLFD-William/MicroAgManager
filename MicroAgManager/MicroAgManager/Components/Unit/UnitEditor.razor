@@ -1,20 +1,23 @@
-﻿@using Domain.Constants
+﻿@using BackEnd.BusinessLogic.Unit
+@using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
 @inherits BaseEditor
 
 @if (editContext is not null)
 {
     <ValidatedForm editContext="editContext"
-                   OnSubmit="@(()=> OnSubmit.InvokeAsync(editContext))"
+                   OnSubmit="@OnUnitSubmit"
                    OnCancel="@(()=> OnCancel.InvokeAsync())"
                    showUpdateCancelButtons="true"
-                   @ref=_validatedForm
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+                   Title="@(unit.Id< 1 ? "Create Unit" : $"Edit {unit.Name}")">
         <ChildContent>
-            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Category)">
-                <InputSelect @bind-Value="@(((UnitModel)editContext.Model).Category)">
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => unit.Category)">
+                <InputSelect @bind-Value="@unit.Category">
                     <option value="">Select Category ...</option>
                     @foreach (var category in UnitCategoryConstants.Units.Keys.Order().ToList())
                     {
@@ -22,16 +25,16 @@
                     }
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Name)">
-                <InputText placeholder="Unit" @bind-Value="@(((UnitModel)editContext.Model).Name)" />
+            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => unit.Name)">
+                <InputText placeholder="Unit" @bind-Value="@unit.Name" />
             </ValidatedField>
-            <ValidatedField Legend="Symbol" ValidationMessageFor="@(() => ((UnitModel)editContext.Model).Symbol)">
-                <InputText placeholder="Unit" @bind-Value="@(((UnitModel)editContext.Model).Symbol)" />
+            <ValidatedField Legend="Symbol" ValidationMessageFor="@(() => unit.Symbol)">
+                <InputText placeholder="Unit" @bind-Value="@unit.Symbol" />
             </ValidatedField>
-            @if (!string.IsNullOrEmpty(((UnitModel)editContext.Model).Category))
+            @if (!string.IsNullOrEmpty(unit.Category))
             { 
-                <ValidatedField Legend=@($"Conversion to SI {UnitCategoryConstants.Units[((UnitModel)editContext.Model).Category]}") ValidationMessageFor="@(() => ((UnitModel)editContext.Model).ConversionFactorToSIUnit)">
-                    <InputNumber placeholder="0" @bind-Value="@(((UnitModel)editContext.Model).ConversionFactorToSIUnit)" />
+                <ValidatedField Legend=@($"Conversion to SI {UnitCategoryConstants.Units[unit.Category]}") ValidationMessageFor="@(() => unit.ConversionFactorToSIUnit)">
+                    <InputNumber placeholder="0" @bind-Value="@unit.ConversionFactorToSIUnit" />
                 </ValidatedField>
             }
         </ChildContent>
@@ -40,6 +43,47 @@
 }
 
 @code {
-    private ValidatedForm _validatedForm;
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private UnitModel? unit;
+    protected override void OnInitialized()
+    {
+        unit = editContext.Model as UnitModel;
+        if (unit is null) return;
+    }
+    private async Task OnUnitSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+        try
+        {
+
+            var creating = (unit.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<UnitModel, CreateUnit>("api/CreateUnit", new CreateUnit { Unit = unit }) :
+                await api.ProcessCommand<UnitModel, UpdateUnit>("api/UpdateUnit", new UpdateUnit { Unit = unit });
+
+            if (id <= 0)
+                throw new Exception("Unable to save unit");
+            if (creating)
+            {
+                unit.Id = id;
+                appState.DbContext.Units.Add(unit);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Units.FindAsync(unit.Id);
+                updated = unit.Map(updated) as UnitModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(unit);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+    }
 
 }

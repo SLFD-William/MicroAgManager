@@ -1,5 +1,4 @@
 ﻿@using BackEnd.BusinessLogic.Event
-@using BackEnd.BusinessLogic.Milestone
 @using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Components.Duty
@@ -15,20 +14,24 @@
                    showUpdateCancelButtons="true"
                    createOnly="@(eventModel.Id<1)"
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+                   Title="@(eventModel.Id< 1 ? "Create Event" : $"Edit {eventModel.Name}")">
         <ChildContent>
             <ValidatedField Legend="Event" ValidationMessageFor="@(() => eventModel.Name)">
-                <InputText placeholder="Milestone" @bind-Value="@(eventModel.Name)" />
+                <InputText placeholder="event name" @bind-Value="eventModel.Name" />
             </ValidatedField>
             <ValidatedField Legend="Color" ValidationMessageFor="@(() => eventModel.Color)">
-                <InputText placeholder="Color" @bind-Value="@(eventModel.Color)" />
+                <InputText type="color" id="eventColor" placeholder="green" @bind-Value="eventModel.Color" />
+                <label for="eventColor">@eventModel.Color</label>
             </ValidatedField>
             <ValidatedField Legend="Start Date" ValidationMessageFor="@(() => eventModel.StartDate)">
-                <InputDate @bind-Value="eventModel.StartDate"></InputDate>
+                <InputDate @bind-Value="StartDate"></InputDate>
             </ValidatedField>
             <ValidatedField Legend="End Date" ValidationMessageFor="@(() => eventModel.EndDate)">
-                <InputDate @bind-Value="eventModel.EndDate"></InputDate>
+                <InputDate @bind-Value="EndDate"></InputDate>
             </ValidatedField>
+            @if (ShowDutySelections)
+            { 
             <ValidatedField ValidationMessageFor="@(() => eventModel.Duties)">
                 <LegendContent>
                     <div style="display:inline-flex">
@@ -53,6 +56,7 @@
                     </select>
                 </ChildContent>
             </ValidatedField>
+            }
         </ChildContent>
     </ValidatedForm>
 }
@@ -60,12 +64,28 @@
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
-    private ValidatedForm _validatedForm;
+    [Parameter] public bool ShowDutySelections { get; set; }
     private EventModel? eventModel;
+    private DateTime StartDate { get => eventModel.StartDate;
+        set
+        {
+            eventModel.StartDate = value;
+            if (eventModel.EndDate < value) eventModel.EndDate = value;
+        }
+    }
+    private DateTime EndDate
+    {
+        get => eventModel.EndDate ?? DateTime.MinValue;
+        set
+        {
+            eventModel.EndDate = (value < eventModel.StartDate) ? eventModel.StartDate : value;
+        }
+    }
     protected override void OnInitialized()
     {
         eventModel = editContext.Model as EventModel;
         if (eventModel is null) return;
+        if (!eventModel.EndDate.HasValue) eventModel.EndDate = eventModel.StartDate;
     }
     private async Task OnEventSubmit(EditContext editContext)
     {

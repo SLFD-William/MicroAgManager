@@ -21,7 +21,7 @@ namespace Domain.Models
         [Required][MaxLength(20)] public string Relationship { get; set; }
         [MaxLength(1)] public string? Gender { get; set; }
         [Required] public bool SystemRequired { get; set; }
-        [MaxLength(255)] public string ProcedureLink { get; set; }
+        [MaxLength(255)] public string? ProcedureLink { get; set; }
 
         [NotMapped] public string RecipientTypeItem { get; private set; } = string.Empty;
         [NotMapped] public string CommandItem { get; private set; } = string.Empty;

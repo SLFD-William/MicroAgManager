@@ -32,6 +32,9 @@ height: 100vh;
     background-color: var(--typography-primary-bg-color);
     color: var(--typography-primary-color);
 }
+select, input {
+    background-color: var(--typography-primary-alternate-bg-color);
+}
 
 #app{
     height:100%;

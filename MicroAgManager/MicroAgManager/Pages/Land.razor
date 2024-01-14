@@ -89,7 +89,7 @@
                                                        >
                                         <NavCrudButtons ShowCreate=true CreateText=@($"add {LandPlot.Usage}") Editting="@_addingPlot"
                                                         OnCreateClick="@NavigateToAddUsage"></NavCrudButtons>
-                                        <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement"></ScheduledDutyCommand>
+                                        <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement" ></ScheduledDutyCommand>
                                         @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
                                         {
                                             <Livestock ShowTree=false LocationId="@LandPlot.Id"></Livestock>
