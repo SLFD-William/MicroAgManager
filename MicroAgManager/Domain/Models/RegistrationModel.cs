@@ -53,5 +53,10 @@ namespace Domain.Models
             ((Registration)registration).RegistrationDate = RegistrationDate;
             return registration;
         }
+
+        public override BaseHasRecipientModel Map(BaseHasRecipientModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

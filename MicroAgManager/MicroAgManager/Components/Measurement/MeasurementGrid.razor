@@ -1,1 +1,174 @@
-﻿
+﻿@using Domain.Models
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+
+<QuickGrid Theme="microagmanager" @ref=measurementGrid TGridItem=MeasurementModel Virtualize=true Items="Items">
+    <TemplateColumn Title="Measure" Sortable="true" Context="measure" SortBy="@OrderByMeasureName">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="measureNameFilter" @bind:event="oninput" placeholder="Measure..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            @measure.Measure.Name
+            @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
+        </ChildContent>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Measure.Unit.Name)" Title="Measure Unit" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="measureUnitFilter" @bind:event="oninput" placeholder="Unit..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    @if (ShowRecipientTypeColumn)
+    {
+        <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="measurement" SortBy="@OrderByMeasureName">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @HasRecipientHelper.RecipientTypeName(appState.DbContext, measurement.RecipientType, measurement.RecipientTypeId)
+            </ChildContent> 
+        </TemplateColumn>
+    }
+    @if (ShowRecipientColumn)
+    {
+        <TemplateColumn Title="Recipient" Sortable="true" Context="measurement" SortBy="@OrderByMeasureName">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @HasRecipientHelper.RecipientName(appState.DbContext, measurement.RecipientType, measurement.RecipientId)
+            </ChildContent>
+        </TemplateColumn>
+    }
+    <PropertyColumn Property="@(p => p.Value)" Title="Value" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="measurementValueFilter" @bind:event="oninput" placeholder="Value..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.MeasurementUnit.Name)" Title="Measurement Unit" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="measurementUnitFilter" @bind:event="oninput" placeholder="Measurement  Unit..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+
+    <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="measurementNotesFilter" @bind:event="oninput" placeholder="Notes..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+</QuickGrid>
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] required public IQueryable<MeasurementModel> Items { get; set; }
+    QuickGrid<MeasurementModel> measurementGrid;
+
+
+    private GridSort<MeasurementModel> OrderByMeasureName = GridSort<MeasurementModel>.ByAscending(p => p.Measure.Name);
+    [Parameter] public Action<string> measureNameFilterChanged { get; set; }
+    private string _measureNameFilter;
+    string measureNameFilter
+    {
+        get => _measureNameFilter; set
+        {
+            measureNameFilterChanged.Invoke(value);
+            _measureNameFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> measureUnitFilterChanged { get; set; }
+    private string _measureUnitFilter;
+    string measureUnitFilter
+    {
+        get => _measureUnitFilter; set
+        {
+            measureUnitFilterChanged.Invoke(value);
+            _measureUnitFilter = value;
+        }
+    }
+    [Parameter] public bool ShowRecipientTypeColumn { get; set; } = true;
+    [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
+    private string _recipientTypeFilter;
+    string recipientTypeFilter
+    {
+        get => _recipientTypeFilter; set
+        {
+            recipientTypeFilterChanged.Invoke(value);
+            _recipientTypeFilter = value;
+        }
+    }
+    [Parameter] public Action<string> recipientTypeInstanceFilterChanged { get; set; }
+    private string _recipientTypeInstanceFilter;
+    string recipientTypeInstanceFilter
+    {
+        get => _recipientTypeInstanceFilter; set
+        {
+            recipientTypeInstanceFilterChanged.Invoke(value);
+            _recipientTypeInstanceFilter = value;
+        }
+    }
+    [Parameter] public bool ShowRecipientColumn { get; set; } = true;
+    [Parameter] public Action<string> recipientFilterChanged { get; set; }
+    private string _recipientFilter;
+    string recipientFilter
+    {
+        get => _recipientFilter; set
+        {
+            recipientFilterChanged.Invoke(value);
+            _recipientFilter = value;
+        }
+    }
+    [Parameter] public Action<string> measurementUnitFilterChanged { get; set; }
+    private string _measurementUnitFilter;
+    string measurementUnitFilter
+    {
+        get => _measurementUnitFilter; set
+        {
+            measurementUnitFilterChanged.Invoke(value);
+            _measurementUnitFilter = value;
+        }
+    }
+    [Parameter] public Action<string> measurementValueFilterChanged { get; set; }
+    private string _measurementValueFilter;
+    string measurementValueFilter
+    {
+        get => _measurementValueFilter; set
+        {
+            measurementValueFilterChanged.Invoke(value);
+            _measurementValueFilter = value;
+        }
+    }
+    [Parameter] public Action<string> measurementNotesFilterChanged { get; set; }
+    private string _measurementNotesFilter;
+    string measurementNotesFilter
+    {
+        get => _measurementNotesFilter; set
+        {
+            measurementNotesFilterChanged.Invoke(value);
+            _measurementNotesFilter = value;
+        }
+    }
+
+}

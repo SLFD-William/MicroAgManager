@@ -70,6 +70,7 @@
                         <NavCrudButtons ShowCreate=true CreateText="add plot" Editting="@_addingPlot"
                             OnCreateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), "-1" } }))"></NavCrudButtons>
                         <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement"></ScheduledDutyCommand>
+                        <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
                         <ScheduledDutyGrid Items="baseScheduledDutyQuery()"></ScheduledDutyGrid>
                         @if (LandPlotId.HasValue || _addingPlot)
                         {

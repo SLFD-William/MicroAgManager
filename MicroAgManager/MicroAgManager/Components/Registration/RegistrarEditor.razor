@@ -1,32 +1,82 @@
-﻿@* @using Domain.Constants;
-@using Domain.Models;
-@inherits DataComponent<RegistrarModel>
-@if (editContext is not null)
+﻿@using BackEnd.BusinessLogic.Registrar
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits BaseEditor
+@if (registrar is not null)
 {
-        <ValidatedForm editContext="editContext"
-                   FreshenData="FreshenData"
-                   OnValidSubmit="OnSubmit"
-                   Cancel="Cancel"
-                   showUpdateCancelButtons="showUpdateCancelButtons"
-                   Modal="Modal"
-                   Show="Show"
-                    @ref=_validatedForm>
-            <ChildContent>
-                <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => ((RegistrarModel)working).Name)">
-                    <InputText placeholder="Registrar Name" @bind-Value="@(((RegistrarModel)working).Name)" />
-                </ValidatedField>
-            <ValidatedField Legend="Farm Number" ValidationMessageFor="@(() => ((RegistrarModel)working).RegistrarFarmID)">
-                <InputText placeholder="Farm Number" @bind-Value="@(((RegistrarModel)working).RegistrarFarmID)" />
-            </ValidatedField>
-                <ValidatedField Legend="Email" ValidationMessageFor="@(() => ((RegistrarModel)working).Email)">
-                    <InputText placeholder="Email" @bind-Value="@(((RegistrarModel)working).Email)" />
-                </ValidatedField>
-                <ValidatedField Legend="Website" ValidationMessageFor="@(() => ((RegistrarModel)working).Website)">
-                    <InputText placeholder="Website" @bind-Value="@(((RegistrarModel)working).Website)" />
-                </ValidatedField>
-                <ValidatedField Legend="API" ValidationMessageFor="@(() => ((RegistrarModel)working).API)">
-                    <InputText placeholder="API" @bind-Value="@(((RegistrarModel)working).API)" />
-                </ValidatedField>
-            </ChildContent>
-        </ValidatedForm>
-} *@
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="OnRegistrarSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="true"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show
+                   Title="@(registrar.Id< 1 ? "Create Registrar" : $"Edit {registrar.Name}")">
+
+        <ValidatedField Legend="Registrar" ValidationMessageFor="@(() => registrar.Name)">
+            <InputText placeholder="Registrar Name" @bind-Value="@registrar.Name" />
+        </ValidatedField>
+        <ValidatedField Legend="Farm Number" ValidationMessageFor="@(() => registrar.RegistrarFarmID)">
+            <InputText placeholder="Farm Number" @bind-Value="@registrar.RegistrarFarmID" />
+        </ValidatedField>
+        <ValidatedField Legend="Email" ValidationMessageFor="@(() => registrar.Email)">
+            <InputText placeholder="Email" @bind-Value="@registrar.Email" />
+        </ValidatedField>
+        <ValidatedField Legend="Website" ValidationMessageFor="@(() => registrar.Website)">
+            <InputText placeholder="Website" @bind-Value="@registrar.Website" />
+        </ValidatedField>
+        <ValidatedField Legend="API" ValidationMessageFor="@(() => registrar.API)">
+            <InputText placeholder="API" @bind-Value="@registrar.API" />
+        </ValidatedField>
+    </ValidatedForm>
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+    protected override void OnInitialized()
+    {
+        registrar = editContext.Model as RegistrarModel;
+        if (registrar is null) return;
+    }
+    private RegistrarModel? registrar;
+    private async Task OnRegistrarSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (registrar.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<RegistrarModel, CreateRegistrar>("api/CreateRegistrar", new CreateRegistrar { Registrar = registrar }) :
+                await api.ProcessCommand<RegistrarModel, UpdateRegistrar>("api/UpdateRegistrar", new UpdateRegistrar { Registrar = registrar });
+
+            if (id <= 0)
+                throw new Exception("Unable to save registrar");
+            if (creating)
+            {
+                registrar.Id = id;
+                appState.DbContext.Registrars.Add(registrar);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Registrars.FindAsync(registrar.Id);
+                updated = registrar.Map(updated) as RegistrarModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(registrar);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+
+    }
+}

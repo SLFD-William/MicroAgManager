@@ -1,6 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using Domain.Interfaces;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.BusinessLogic.Registration
 {
@@ -18,7 +19,7 @@ namespace BackEnd.BusinessLogic.Registration
 
         protected override IQueryable<T> GetQuery<T>(IMicroAgManagementDbContext context)
         {
-            var query = PopulateBaseQuery(context.Registrations.AsQueryable());
+            var query = PopulateBaseQuery(context.Registrations.Include(r=>r.Registrar).AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
             if (!string.IsNullOrEmpty(Registrar)) query = query.Where(_ => _.Registrar != null && _.Registrar.Name.Contains(Registrar));
             if (RecipientTypeId.HasValue) query = query.Where(_ => _.RecipientTypeId == RecipientTypeId);

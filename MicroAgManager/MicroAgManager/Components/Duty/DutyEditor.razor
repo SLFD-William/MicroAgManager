@@ -3,6 +3,7 @@
 @using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Components.Measurement
+@using MicroAgManager.Components.Registration
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
 @using MicroAgManager.Services
@@ -133,7 +134,7 @@
                 await api.ProcessCommand<DutyModel, UpdateDuty>("api/UpdateDuty", new UpdateDuty { Duty = duty });
 
             if (id <= 0)
-                throw new Exception("Unable to save land plot");
+                throw new Exception("Unable to save duty");
             if (creating)
             {
                 duty.Id = id;
@@ -186,14 +187,8 @@
         return new List<KeyValuePair<long, string>>();
     }
     private List<KeyValuePair<long, string>> recipientTypeIds()
-    {
-        if (duty.RecipientType== RecipientTypeConstants.LivestockAnimal)
-            return appState.DbContext.LivestockAnimals.OrderBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-        if (duty.RecipientType == RecipientTypeConstants.LivestockBreed)
-            return appState.DbContext.LivestockBreeds.Include(a=>a.Animal).OrderBy(a=>a.Animal.Name).ThenBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-
-        return new List<KeyValuePair<long, string>>();
-    }
+    => HasRecipientHelper.RecipientTypeIds(appState.DbContext, duty.RecipientType);
+    
     private string commandLabel()
     {
         switch (duty.Command)
@@ -215,6 +210,8 @@
         switch (duty.Command)
         {
             case nameof(DutyCommandConstants.Registration):
+                model = appState.DbContext.Registrars.Find(duty.CommandId) ?? new RegistrarModel();
+                commandType = typeof(RegistrarEditor);
                 break;
             case nameof(DutyCommandConstants.Measurement):
                 model = appState.DbContext.Measures.Find(duty.CommandId) ?? new MeasureModel();
@@ -247,6 +244,20 @@
                 {
                     Name = "Measure",
                     Parameters = new() { 
+                        { "Modal", true },
+                        { "Show", true },
+                        { "editContext", string.Empty },
+                        { "OnCancel", string.Empty },
+                        { "OnSubmit", string.Empty }
+                    }
+                }
+            },
+            {
+                nameof(RegistrarEditor),
+                new ComponentMetadata
+                {
+                    Name = "Registrar",
+                    Parameters = new() {
                         { "Modal", true },
                         { "Show", true },
                         { "editContext", string.Empty },

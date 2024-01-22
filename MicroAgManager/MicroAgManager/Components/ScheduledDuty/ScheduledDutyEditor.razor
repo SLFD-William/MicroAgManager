@@ -36,7 +36,7 @@
             <ChildContent>
                 <InputSelect ValueExpression="@(()=>scheduledDuty.DutyId)" ValueChanged="@((long value) => OnDutyChanged(value ))">
                     <option value="">Select Duty ...</option>
-                    @foreach (var unit in appState.DbContext.Duties)
+                    @foreach (var unit in appState.DbContext.Duties.Where(d => d.Command == scheduledDuty.Duty.Command))
                     {
                         <option value="@unit.Id">
                             @unit.Name
@@ -102,7 +102,8 @@
         {
             case nameof(MeasurementModel):
                 return ((MeasurementModel)recordModel).DatePerformed;
-
+            case nameof(RegistrationModel):
+                return ((RegistrationModel)recordModel).RegistrationDate;
             default:
                 return null;
         }
@@ -279,7 +280,7 @@
     Type? recordType;
     private Dictionary<string, ComponentMetadata> recordComponents =
      new()
-             {
+        {
             {
                 nameof(MeasurementEditor),
                 new ComponentMetadata
@@ -292,8 +293,21 @@
                         { "editContext", string.Empty }
                     }
                 }
+            },
+            {
+                nameof(RegistrationEditor),
+                new ComponentMetadata
+                {
+                    Name = "Registration",
+                    Parameters = new() {
+                        { "Modal", false },
+                        { "Show", true },
+                        { "ShowUpdateCancel", false },
+                        { "editContext", string.Empty }
+                    }
+                }
             }
-     };
+         };
     private bool ShowRecordEditor()
     {
         if (scheduledDuty.ScheduleSourceId < 1) return false;
@@ -301,9 +315,18 @@
         switch (scheduledDuty.Duty.Command)
         {
             case nameof(DutyCommandConstants.Registration):
+                scheduledDuty.Record = nameof(DutyCommandConstants.Registration);
+                model = appState.DbContext.Registrations.Find(scheduledDuty.RecordId) ?? new RegistrationModel();
+                if (model.Id < 1)
+                {
+                    ((RegistrationModel)model).RegistrarId = scheduledDuty.Duty.CommandId;
+                    ((RegistrationModel)model).Registrar = appState.DbContext.Registrars.Find(scheduledDuty.Duty.CommandId);
+                    ((RegistrationModel)model).RegistrationDate = DateTime.Today;
+                }
+                recordType = typeof(RegistrationEditor);
                 break;
             case nameof(DutyCommandConstants.Measurement):
-                scheduledDuty.Record = nameof(Domain.Entity.Measurement);
+                scheduledDuty.Record = nameof(DutyCommandConstants.Measurement);
                 model = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new MeasurementModel();
                 if (model.Id < 1)
                 {

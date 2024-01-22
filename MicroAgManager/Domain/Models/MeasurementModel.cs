@@ -30,18 +30,20 @@ namespace Domain.Models
             return model;
         }
 
-        public override BaseModel Map(BaseModel measurement)
+        public override BaseHasRecipientModel Map(BaseHasRecipientModel measurement)
         {
             if (measurement == null || measurement is not MeasurementModel) return null;
-            ((MeasurementModel) measurement).MeasureId = MeasureId;
+            ((MeasurementModel)measurement).MeasureId = MeasureId;
             ((MeasurementModel)measurement).Value = Value;
             ((MeasurementModel)measurement).MeasurementUnitId = MeasurementUnitId;
             ((MeasurementModel)measurement).Notes = Notes;
             ((MeasurementModel)measurement).DatePerformed = DatePerformed;
             ((MeasurementModel)measurement).EntityModifiedOn = EntityModifiedOn;
+            ((MeasurementModel)measurement).RecipientId = RecipientId;
+            ((MeasurementModel)measurement).RecipientTypeId = RecipientTypeId;
+            ((MeasurementModel)measurement).RecipientType = RecipientType;
             return measurement;
         }
-
         public override BaseEntity Map(BaseEntity measurement)
         {
             if (measurement == null || measurement is not Measurement) return null;
@@ -55,6 +57,11 @@ namespace Domain.Models
             ((Measurement)measurement).DatePerformed = DatePerformed;
             measurement.ModifiedOn = DateTime.UtcNow;
             return measurement;
+        }
+
+        public override BaseModel Map(BaseModel model)
+        {
+            throw new NotImplementedException();
         }
     }
 }

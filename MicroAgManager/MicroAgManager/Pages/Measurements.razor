@@ -1,0 +1,113 @@
+﻿@page "/Measurements"
+@using Domain.Models
+@using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
+@using MicroAgManager.Components.Measurement
+@implements IDisposable
+<PageTitle>Measurements</PageTitle>
+<div class="Land">
+  @if (appState.DbContext?.Tenants.Any() == true)
+    {
+        <TreeView Id="Measurement">
+    
+        </TreeView>
+        <div>
+@*             @if (FarmLocationId.HasValue)
+            {
+
+                <CascadingValue Value="@appState.DbContext.Farms.Find(FarmLocationId.Value)">
+                    <FarmNameplate ShowAddress="true" ShowStreet="true" ShowCity="true" ShowState="true" ShowZip="true" ShowWeather="true"
+                                   ShowEdit="@(ApplicationState.FieldIsInQueryString(nameof(FarmLocationId)) && !LandPlotId.HasValue)"
+                                   ShowNavigate="@(ApplicationState.FieldIsInQueryString(nameof(FarmLocationId)) && !LandPlotId.HasValue)"
+                                   NavigateText="back"
+                                   OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(FarmLocationId), string.Empty } }))"
+                                   >
+                        <NavCrudButtons ShowCreate=true CreateText="add plot" Editting="@_addingPlot"
+                            OnCreateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), "-1" } }))"></NavCrudButtons>
+                        <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement"></ScheduledDutyCommand>
+                        <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
+                        <ScheduledDutyGrid Items="baseScheduledDutyQuery()"></ScheduledDutyGrid>
+                        @if (LandPlotId.HasValue || _addingPlot)
+                        {
+                            @if (_addingPlot)
+                            {
+                                <LandPlotEditor Modal="true" Show="@_addingPlot" editContext="_addPlotContext" OnCancel="PlotAddCancelled" OnSubmit="PlotAddSubmitted"></LandPlotEditor>
+                            }
+                            else
+                            {
+                                <CascadingValue Value="LandPlot">
+                                    <LandPlotNameplate ShowArea="true" ShowDescription="true" ShowUsage="true" ShowSubplots="true"
+                                                       ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LandPlotId))"
+                                                       ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LandPlotId))"
+                                                       NavigateText="back"
+                                                       OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), string.Empty } }))"
+                                                       ShowCreate=true
+                                                       >
+                                        <NavCrudButtons ShowCreate=true CreateText=@($"add {LandPlot.Usage}") Editting="@_addingPlot"
+                                                        OnCreateClick="@NavigateToAddUsage"></NavCrudButtons>
+                                        <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement" ></ScheduledDutyCommand>
+                                        @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
+                                        {
+                                            <Livestock ShowTree=false LocationId="@LandPlot.Id"></Livestock>
+                                        }
+                                    </LandPlotNameplate>
+                                </CascadingValue>
+                            }
+                        }
+                    </FarmNameplate>
+                </CascadingValue>
+
+        }*@
+            @if (!MeasurementId.HasValue)
+            {
+                <div>
+                    <MeasurementGrid Items="baseMeasurementQuery()">
+
+                    </MeasurementGrid>
+                </div>
+            } 
+        </div>
+    }
+    else
+    {
+        <span>Initializing application </span>
+    }
+</div>
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "MeasureId")] public long? MeasureId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "MeasurementId")] public long? MeasurementId { get; set; }
+    private long _measurementId = -1;
+    private int _measurementCount = 0;
+    private IQueryable<MeasurementModel> baseMeasurementQuery()
+    {
+        var query = appState.DbContext.Measurements.Include(p => p.Measure).ThenInclude(m=>m.Unit).Include(p => p.MeasurementUnit).AsQueryable();
+        if (_measurementId > 0)
+            query = query.Where(p => p.Id == _measurementId);
+        else
+        {
+            // if (ApplicationState.FarmSelectedFilter.Any())
+            //     query = query.Where(p => ApplicationState.FarmSelectedFilter.Contains(p.FarmLocationId));
+            // if (ApplicationState.UsageSelectedFilter.Any())
+            //     query = query.Where(p => ApplicationState.UsageSelectedFilter.Contains(p.Usage));
+            // if (!string.IsNullOrEmpty(plotNameFilter))
+            //     query = query.Where(p => p.Name.Contains(plotNameFilter));
+        }
+        _measurementCount = query.Count();
+        return query.ToList().AsQueryable();
+    }
+    protected override void OnInitialized()
+    {
+        appState.OnDbInitialized += Refresh;
+        appState.OnDbUpdate += Refresh;
+        appState.OnLocationChange += Refresh;
+    }
+    private void Refresh() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= Refresh;
+        appState.OnDbUpdate -= Refresh;
+        appState.OnLocationChange -= Refresh;
+    }
+}

@@ -1,73 +1,143 @@
-﻿@* @using Domain.Constants;
-@using Domain.Models;
-@using FrontEnd.Components.Unit;
-@using Microsoft.EntityFrameworkCore;
-@using FrontEnd.Components.Registrar;
-@inherits HasRecipientComponent<RegistrationModel>
-@if (editContext is not null && working is not null)
+﻿@using BackEnd.BusinessLogic.Registration
+@using Domain.Constants
+@using Domain.Interfaces
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits HasRecipientsEditor
+@if (registration is not null)
 {
-    <ValidatedForm editContext="editContext"
-                   FreshenData="FreshenData"
-                   OnValidSubmit="OnSubmit"
-                   Cancel="Cancel"
-                   showUpdateCancelButtons="showUpdateCancelButtons"
-                   Modal="Modal"
-                   Show="Show"
-    @ref=_validatedForm>
-        <ChildContent>
-            @if (ShowRecipient)
-            {
-                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => ((RegistrationModel)working).RecipientType)">
-                    <InputSelect @bind-Value="@(((RegistrationModel)working).RecipientType)">
-                        <option value="0">Select Recipient Type ...</option>
-                        <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
-                    </InputSelect>
-                </ValidatedField>
-                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => ((RegistrationModel)working).RecipientTypeId)">
-                    <InputSelect @bind-Value="@(((RegistrationModel)working).RecipientTypeId)">
-                        <option value="0">Select Recipient Type Instance ...</option>
-                        @foreach (var recipient in recipientTypeIds())
-                        {
-                            <option value="@recipient.Key">@recipient.Value</option>
-                        }
-                    </InputSelect>
-                </ValidatedField>
-                <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => ((RegistrationModel)working).RecipientId)">
-                    <InputSelect @bind-Value="@(((RegistrationModel)working).RecipientId)">
-                        <option value="0">Select Recipient Instance ...</option>
-                        @foreach (var recipient in recipientIds())
-                        {
-                            <option value="@recipient.Key">@recipient.Value</option>
-                        }
-                    </InputSelect>
-                </ValidatedField>
-            }
-            <ValidatedField ValidationMessageFor="@(() => ((RegistrationModel)working).RegistrarId)">
-                <LegendContent>
-                    <div style="display:inline-flex">
-                        <span>Registrar</span><button type="button" @onclick=ShowRegistrarEditor>+</button>
-                        <RegistrarEditor @ref=_registrarEditor Modal="true" Show="@(showRegistrarModal)" showUpdateCancelButtons="true" Submitted="RegistrarCreated" Cancelled="RegistrarCanceled"></RegistrarEditor>
-                    </div>
-                </LegendContent>
-                <ChildContent>
-                    <InputSelect @bind-Value="@(((RegistrationModel)working).RegistrarId)">
-                        <option value="0">Select Registrar ...</option>
-                        @foreach (var registrar in app.dbContext.Registrars.OrderBy(m => m.Name))
-                        {
-                            <option value="@registrar.Id">@($"{registrar.Name} ({registrar.RegistrarFarmID})")</option>
-                        }
-                    </InputSelect>
-                </ChildContent>
-                </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => ((RegistrationModel)working).Identifier)">
-                <InputText @bind-Value="@(((RegistrationModel)working).Identifier)"></InputText>
+        <ValidatedForm editContext="editContext"
+                   OnSubmit="OnRegistrationSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="@ShowUpdateCancel"
+                   Modal=Modal
+                   Show=Show>
+        <ValidatedField ValidationMessageFor="@(() =>registration.RegistrarId)">
+            <LegendContent>
+                <div style="display:inline-flex">
+                    <span>Registrar</span><button type="button" @onclick=ShowRegistrarEditor>+</button>
+                    <RegistrarEditor Modal="true" Show="@showRegistrarModal" editContext=registrarEditContext OnCancel=RegistrarCanceled OnSubmit=RegistrarSubmitted></RegistrarEditor>
+                </div>
+            </LegendContent>
+            <ChildContent>
+                <InputSelect @bind-Value="@registration.RegistrarId">
+                    <option value="0">Select Registrar ...</option>
+                    @foreach (var registrar in appState.DbContext.Registrars.OrderBy(m => m.Name))
+                    {
+                        <option value="@registrar.Id">@($"{registrar.Name} ({registrar.RegistrarFarmID})")</option>
+                    }
+                </InputSelect>
+            </ChildContent>
+        </ValidatedField>
+        @if (ShowRecipient)
+        {
+            <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => registration.RecipientType)">
+                <InputSelect @bind-Value="@registration.RecipientType">
+                    <option value="0">Select Recipient Type ...</option>
+                    <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
+                </InputSelect>
             </ValidatedField>
-            <ValidatedField ValidationMessageFor="@(() => ((RegistrationModel)working).DefaultIdentification)">
-                <InputCheckbox @bind-Value="@(((RegistrationModel)working).DefaultIdentification)"></InputCheckbox>
+            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => registration.RecipientTypeId)">
+                <InputSelect @bind-Value="@registration.RecipientTypeId">
+                    <option value="0">Select Recipient Type Instance ...</option>
+                    @foreach (var recipient in recipientTypeIds(appState.DbContext))
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Registration Date" ValidationMessageFor="@(() => ((RegistrationModel)working).RegistrationDate)">
-                <InputDate @bind-Value="@(((RegistrationModel)working).RegistrationDate)"></InputDate>
+            <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => registration.RecipientId)">
+                <InputSelect @bind-Value="@registration.RecipientId">
+                    <option value="0">Select Recipient Instance ...</option>
+                    @foreach (var recipient in recipientIds(appState.DbContext))
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
             </ValidatedField>
-        </ChildContent>
+        }
+        <ValidatedField ValidationMessageFor="@(() => registration.Identifier)">
+            <InputText @bind-Value="@registration.Identifier"></InputText>
+        </ValidatedField>
+        <ValidatedField ValidationMessageFor="@(() => registration.DefaultIdentification)">
+            <InputCheckbox @bind-Value="@registration.DefaultIdentification"></InputCheckbox>
+        </ValidatedField>
+        <ValidatedField Legend="Registration Date" ValidationMessageFor="@(() => registration.RegistrationDate)">
+            <InputDate @bind-Value="@registration.RegistrationDate"></InputDate>
+        </ValidatedField>
     </ValidatedForm>
-} *@
+}
+
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private RegistrationModel registration;
+    protected override void OnInitialized()
+    {
+        registration = editContext.Model as RegistrationModel;
+        if (registration is null) return;
+    }
+    public async override Task<IHasRecipient> SubmitEditContext()
+    {
+        await OnRegistrationSubmit(editContext);
+        return registration;
+    }
+
+    private async Task OnRegistrationSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (registration.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<RegistrationModel, CreateRegistration>("api/CreateRegistration", new CreateRegistration { Registration = registration }) :
+                await api.ProcessCommand<RegistrationModel, UpdateRegistration>("api/UpdateRegistration", new UpdateRegistration { Registration = registration });
+
+            if (id <= 0)
+                throw new Exception("Unable to save registration");
+            if (creating)
+            {
+                registration.Id = id;
+                appState.DbContext.Registrations.Add(registration);
+            }
+            else
+            {
+                var updated = await appState.DbContext.Registrations.FindAsync(registration.Id);
+                updated = registration.Map(updated) as RegistrationModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(registration);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    private bool showRegistrarModal = false;
+    private EditContext registrarEditContext = new EditContext(new RegistrarModel());
+    private void ShowRegistrarEditor()
+    {
+        showRegistrarModal = true;
+        StateHasChanged();
+    }
+    private void RegistrarSubmitted(EditContext e)
+    {
+        var model = e.Model as RegistrarModel;
+        showRegistrarModal = false;
+        if (model == null) return;
+        ((RegistrationModel)editContext.Model).RegistrarId = model.Id;
+        StateHasChanged();
+    }
+    private void RegistrarCanceled(object e)
+    {
+        showRegistrarModal = false;
+        StateHasChanged();
+    }
+}
+     

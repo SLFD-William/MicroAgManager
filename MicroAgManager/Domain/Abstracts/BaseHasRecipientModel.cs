@@ -8,5 +8,6 @@ namespace Domain.Abstracts
         [Required] public long RecipientTypeId { get; set; }
         [Required][MaxLength(40)] public string RecipientType { get; set; }
         [Required] public long RecipientId { get; set; }
+        public abstract BaseHasRecipientModel Map(BaseHasRecipientModel model);
     }
 }

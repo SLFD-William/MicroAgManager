@@ -20,8 +20,7 @@ namespace Domain.Models
                 Email = registrar.Email,
                 Website = registrar.Website,
                 API = registrar.API,
-                RegistrarFarmID = registrar.RegistrarFarmID,
-                Registrations = registrar.Registrations?.Select(RegistrationModel.Create).ToList() ?? new List<RegistrationModel>(),
+                RegistrarFarmID = registrar.RegistrarFarmID
             }) as RegistrarModel;
             return model;
         }

@@ -62,5 +62,10 @@ namespace Domain.Models
             ((TreatmentRecord)entity).ModifiedOn = DateTime.UtcNow;
             return entity;
         }
+
+        public override BaseHasRecipientModel Map(BaseHasRecipientModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
