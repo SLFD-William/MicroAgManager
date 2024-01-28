@@ -23,27 +23,42 @@
                         </NavLink>
                     </li>
                 @if (appState.DbContext?.Tenants.Any() == true)
+                {
+                    <li>
+                        <NavLink href="/Land" Match="NavLinkMatch.Prefix">
+                            @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Land
+                        </NavLink>
+                    </li>
+                    @if (appState.DbContext?.LandPlots.Any(l => l.Usage == LandPlotUseConstants.Livestock) == true)
                     {
                         <li>
-                            <NavLink href="/Land" Match="NavLinkMatch.Prefix">
-                                @* <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> *@ Land
+                            <NavLink href="/Livestock" Match="NavLinkMatch.Prefix">
+                                Livestock
                             </NavLink>
                         </li>
-                    @if (appState.DbContext?.LandPlots.Any(l => l.Usage == LandPlotUseConstants.Livestock) == true)
-                        { 
-                            <li>
-                                <NavLink href="/Livestock" Match="NavLinkMatch.Prefix">
-                                    Livestock
-                                </NavLink>
-                            </li>
                         <li>
-                            <NavLink href="/Measurements" Match="NavLinkMatch.Prefix">
-                                Measurements
-                            </NavLink>
+                            <button class="@AncillariesActive" @onclick="@AncillariesClicked">
+                                @AncillariesTitle
+                            </button>
+                            @if (ShowAncillaries)
+                            {
+                                <ul class="submenu">
+                                    <li>
+                                        <NavLink href="/Ancillaries/Measurements" Match="NavLinkMatch.Prefix">
+                                            Measurements
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink href="/Ancillaries/Registrations" Match="NavLinkMatch.Prefix">
+                                            Registrations
+                                        </NavLink>
+                                    </li>
+                                </ul>
+                            }
                         </li>
-                        }
                     }
-                    <li>
+                }
+                <li>
                      @context.User.Identity?.Name.
                     </li>
                     <li>
@@ -61,19 +76,50 @@
             </AuthorizeView>
         </ul>
     </nav>
-    @code{
+@code{
     [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] private NavigationManager _navigationManager { get; set; }
+    private bool ShowAncillaries { get; set; } = false;
+    private string AncillariesActive { get; set; } = string.Empty;
+    private string AncillariesTitle { get; set; } ="Ancillaries";
+    private void AncillariesClicked()
+    {
+        ShowAncillaries = !ShowAncillaries;
+        if (ShowAncillaries)
+        {
+            AncillariesTitle = "Ancillaries";
+            StateHasChanged();
+        }
+        else
+            RefreshAncillaries();
+
+    }
+    private void RefreshAncillaries()
+    {
+        var uri = new Uri(_navigationManager.Uri);
+        var location = uri.GetLeftPart(UriPartial.Path);
+        var active = location.Contains("Ancillaries");
+
+        AncillariesActive = active ? "active" : string.Empty;
+        AncillariesTitle = active ? location.Remove(0, location.IndexOf("Ancillaries")) : "Ancillaries";
+        ShowAncillaries = false;
+        StateHasChanged();
+    }
     protected override void OnInitialized()
     {
         appState.OnDbInitialized += appState_OnDbInitialized;
         appState.OnDbUpdate += appState_OnDbUpdate;
+        _navigationManager.LocationChanged += NavigationManager_LocationChanged;
+
     }
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e) => RefreshAncillaries();
     private void appState_OnDbUpdate() => StateHasChanged();
     private void appState_OnDbInitialized() => StateHasChanged();
     public void Dispose()
     {
         appState.OnDbInitialized -= appState_OnDbInitialized;
         appState.OnDbUpdate -= appState_OnDbUpdate;
+        _navigationManager.LocationChanged += NavigationManager_LocationChanged;
     }
-    }
+ }
     

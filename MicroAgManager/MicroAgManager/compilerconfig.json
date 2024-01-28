@@ -46,5 +46,13 @@
   {
     "outputFile": "Components/Shared/TabControl.razor.css",
     "inputFile": "Components/Shared/TabControl.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Measurements.razor.css",
+    "inputFile": "Pages/Measurements.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Registrations.razor.css",
+    "inputFile": "Pages/Registrations.razor.scss"
   }
 ]

@@ -1,1 +1,155 @@
-﻿
+﻿@using Domain.Models
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+
+<QuickGrid Theme="microagmanager" @ref=registrationGrid TGridItem=RegistrationModel Virtualize=true Items="Items">
+    <TemplateColumn Title="Registrar" Sortable="true" Context="registrar" SortBy="@OrderByRegistrarName">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrarNameFilter" @bind:event="oninput" placeholder="Registrar..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            @registrar.Registrar.Name
+            @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
+        </ChildContent>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Registrar.Email)" Title="Email" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Registrar.Website)" Title="Website" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Registrar.API)" Title="API Format" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Registrar.RegistrarFarmID)" Title="Farm Id" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    @if (ShowRecipientTypeColumn)
+    {
+        <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="registration" SortBy="@OrderByRegistrarName">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @HasRecipientHelper.RecipientTypeName(appState.DbContext, registration.RecipientType, registration.RecipientTypeId)
+            </ChildContent>
+        </TemplateColumn>
+    }
+    @if (ShowRecipientColumn)
+    {
+        <TemplateColumn Title="Recipient" Sortable="true" Context="registration" SortBy="@OrderByRegistrarName">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @HasRecipientHelper.RecipientName(appState.DbContext, registration.RecipientType, registration.RecipientId)
+            </ChildContent>
+        </TemplateColumn>
+    }
+    <PropertyColumn Property="@(p => p.Identifier)" Title="Identifier" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.DefaultIdentification)" Title="Default" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Default..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.RegistrationDate)" Title="Registration Date" Sortable="true">
+@*         <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Date..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+</QuickGrid>
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] required public IQueryable<RegistrationModel> Items { get; set; }
+    QuickGrid<RegistrationModel> registrationGrid;
+
+
+    private GridSort<RegistrationModel> OrderByRegistrarName = GridSort<RegistrationModel>.ByAscending(p => p.Registrar.Name);
+    [Parameter] public Action<string> registrarNameFilterChanged { get; set; }
+    private string _registrarNameFilter;
+    string registrarNameFilter
+    {
+        get => _registrarNameFilter; set
+        {
+            registrarNameFilterChanged.Invoke(value);
+            _registrarNameFilter = value;
+        }
+    }
+
+    [Parameter] public bool ShowRecipientTypeColumn { get; set; } = true;
+    [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
+    private string _recipientTypeFilter;
+    string recipientTypeFilter
+    {
+        get => _recipientTypeFilter; set
+        {
+            recipientTypeFilterChanged.Invoke(value);
+            _recipientTypeFilter = value;
+        }
+    }
+    [Parameter] public Action<string> recipientTypeInstanceFilterChanged { get; set; }
+    private string _recipientTypeInstanceFilter;
+    string recipientTypeInstanceFilter
+    {
+        get => _recipientTypeInstanceFilter; set
+        {
+            recipientTypeInstanceFilterChanged.Invoke(value);
+            _recipientTypeInstanceFilter = value;
+        }
+    }
+    [Parameter] public bool ShowRecipientColumn { get; set; } = true;
+    [Parameter] public Action<string> recipientFilterChanged { get; set; }
+    private string _recipientFilter;
+    string recipientFilter
+    {
+        get => _recipientFilter; set
+        {
+            recipientFilterChanged.Invoke(value);
+            _recipientFilter = value;
+        }
+    }
+    
+
+}

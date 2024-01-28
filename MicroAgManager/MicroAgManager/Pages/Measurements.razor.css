@@ -1,0 +1,43 @@
+﻿.Measurements {
+  width: 100%;
+  height: -webkit-fill-available;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+}
+.Measurements > div {
+  overflow: auto;
+}
+.Measurements ::deep > .TreeView {
+  height: 100%;
+  background-image: linear-gradient(180deg, var(--nav-gradient-start-color) 0%, var(--nav-gradient-end-color) 100%);
+  color: var(--typography-secondary-color);
+}
+.Measurements ::deep .nodeContent {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.25em;
+}
+.Measurements ::deep .nodeContent a {
+  color: inherit;
+}
+.Measurements .microagmanager {
+  width: 100%;
+}
+.Measurements ::deep .FarmNameplate, .Measurements ::deep .LandPlotNameplate, .Measurements ::deep .Livestock {
+  /*basic css card syling*/
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+}
+.Measurements ::deep .FarmNameplate:hover, .Measurements ::deep .LandPlotNameplate:hover, .Measurements ::deep .Livestock:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+.Measurements ::deep .LandPlotNameplate {
+  padding-inline-start: 0.5em;
+}
+.Measurements ::deep .Livestock {
+  padding-inline-start: 1em;
+  width: calc(100% - 1em);
+}

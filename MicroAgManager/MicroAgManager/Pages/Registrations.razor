@@ -1,16 +1,16 @@
-﻿@page "/Ancillaries/Measurements"
+﻿@page "/Ancillaries/Registrations"
 @using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Components.ScheduledDuty
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
-@using MicroAgManager.Components.Measurement
+@using MicroAgManager.Components.Registration
 @implements IDisposable
-<PageTitle>Measurements</PageTitle>
-<div class="Measurements">
+<PageTitle>Registrations</PageTitle>
+<div class="Registrations">
   @if (appState.DbContext?.Tenants.Any() == true)
     {
-        <TreeView Id="Measurement">
+        <TreeView Id="Registration">
     
         </TreeView>
         <div>
@@ -26,7 +26,7 @@
                                    >
                         <NavCrudButtons ShowCreate=true CreateText="add plot" Editting="@_addingPlot"
                             OnCreateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), "-1" } }))"></NavCrudButtons>
-                        <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement"></ScheduledDutyCommand>
+                        <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
                         <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
                         <ScheduledDutyGrid Items="baseScheduledDutyQuery()"></ScheduledDutyGrid>
                         @if (LandPlotId.HasValue || _addingPlot)
@@ -47,7 +47,7 @@
                                                        >
                                         <NavCrudButtons ShowCreate=true CreateText=@($"add {LandPlot.Usage}") Editting="@_addingPlot"
                                                         OnCreateClick="@NavigateToAddUsage"></NavCrudButtons>
-                                        <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement" ></ScheduledDutyCommand>
+                                        <ScheduledDutyCommand Command="@DutyCommandConstants.Registration" ></ScheduledDutyCommand>
                                         @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
                                         {
                                             <Livestock ShowTree=false LocationId="@LandPlot.Id"></Livestock>
@@ -60,13 +60,13 @@
                 </CascadingValue>
 
         }*@
-            @if (!MeasurementId.HasValue)
+            @if (!RegistrationId.HasValue)
             {
                 <div>
-                    <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement" ></ScheduledDutyCommand>
-                    <MeasurementGrid Items="baseMeasurementQuery()">
+                    <ScheduledDutyCommand Command="@DutyCommandConstants.Registration" ></ScheduledDutyCommand>
+                    <RegistrationGrid Items="baseRegistrationQuery()">
 
-                    </MeasurementGrid>
+                    </RegistrationGrid>
                 </div>
             } 
         </div>
@@ -79,15 +79,15 @@
 
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
-    [Parameter][SupplyParameterFromQuery(Name = "MeasureId")] public long? MeasureId { get; set; }
-    [Parameter][SupplyParameterFromQuery(Name = "MeasurementId")] public long? MeasurementId { get; set; }
-    private long _measurementId = -1;
-    private int _measurementCount = 0;
-    private IQueryable<MeasurementModel> baseMeasurementQuery()
+    [Parameter][SupplyParameterFromQuery(Name = "RegistrarId")] public long? RegistrarId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "RegistrationId")] public long? RegistrationId { get; set; }
+    private long _RegistrationId = -1;
+    private int _RegistrationCount = 0;
+    private IQueryable<RegistrationModel> baseRegistrationQuery()
     {
-        var query = appState.DbContext.Measurements.Include(p => p.Measure).ThenInclude(m=>m.Unit).Include(p => p.MeasurementUnit).AsQueryable();
-        if (_measurementId > 0)
-            query = query.Where(p => p.Id == _measurementId);
+        var query = appState.DbContext.Registrations.Include(p => p.Registrar).AsQueryable();
+        if (_RegistrationId > 0)
+            query = query.Where(p => p.Id == _RegistrationId);
         else
         {
             // if (ApplicationState.FarmSelectedFilter.Any())
@@ -97,7 +97,7 @@
             // if (!string.IsNullOrEmpty(plotNameFilter))
             //     query = query.Where(p => p.Name.Contains(plotNameFilter));
         }
-        _measurementCount = query.Count();
+        _RegistrationCount = query.Count();
         return query.ToList().AsQueryable();
     }
     protected override void OnInitialized()

@@ -26,19 +26,8 @@ namespace Domain.Models
             return model;
         }
 
-        public override BaseModel Map(BaseModel registration)
-        {
-            if (registration == null || registration is not RegistrationModel) return null;
-            ((RegistrationModel)registration).RegistrarId = RegistrarId;
-            ((RegistrationModel)registration).RecipientTypeId = RecipientTypeId;
-            ((RegistrationModel)registration).RecipientType = RecipientType;
-            ((RegistrationModel)registration).RecipientId = RecipientId;
-            ((RegistrationModel)registration).Identifier = Identifier;
-            ((RegistrationModel)registration).DefaultIdentification = DefaultIdentification;
-            ((RegistrationModel)registration).RegistrationDate = RegistrationDate;
-            ((RegistrationModel)registration).EntityModifiedOn = EntityModifiedOn;
-            return registration;
-        }
+        public override BaseModel Map(BaseModel registration)=> Map((BaseHasRecipientModel)registration);
+
 
         public override BaseEntity Map(BaseEntity registration)
         {
@@ -54,9 +43,18 @@ namespace Domain.Models
             return registration;
         }
 
-        public override BaseHasRecipientModel Map(BaseHasRecipientModel model)
+        public override BaseHasRecipientModel Map(BaseHasRecipientModel registration)
         {
-            throw new NotImplementedException();
+            if (registration == null || registration is not RegistrationModel) return null;
+            ((RegistrationModel)registration).RegistrarId = RegistrarId;
+            ((RegistrationModel)registration).RecipientTypeId = RecipientTypeId;
+            ((RegistrationModel)registration).RecipientType = RecipientType;
+            ((RegistrationModel)registration).RecipientId = RecipientId;
+            ((RegistrationModel)registration).Identifier = Identifier;
+            ((RegistrationModel)registration).DefaultIdentification = DefaultIdentification;
+            ((RegistrationModel)registration).RegistrationDate = RegistrationDate;
+            ((RegistrationModel)registration).EntityModifiedOn = EntityModifiedOn;
+            return registration;
         }
     }
 }

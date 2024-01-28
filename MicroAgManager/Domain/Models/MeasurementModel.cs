@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 
 namespace Domain.Models
 {
@@ -59,9 +60,6 @@ namespace Domain.Models
             return measurement;
         }
 
-        public override BaseModel Map(BaseModel model)
-        {
-            throw new NotImplementedException();
-        }
+        public override BaseModel Map(BaseModel model) => Map((BaseHasRecipientModel) model);
     }
 }
