@@ -1,0 +1,163 @@
+﻿@using BackEnd.BusinessLogic.Livestock
+@using Domain.Constants
+@using Domain.Interfaces
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.EntityFrameworkCore
+@inherits HasRecipientsEditor
+@if (serviceLivestock is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="OnServiceSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="@ShowUpdateCancel"
+                   @ref=_validatedForm
+                   Modal=Modal
+                   Show=Show>
+        <ChildContent>
+            <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => serviceLivestock.ServiceDate)">
+                <InputDate @bind-Value="@serviceLivestock.ServiceDate" />
+            </ValidatedField>
+            @if (serviceLivestock?.RecipientTypeId == null)
+            {
+                <ValidatedField ValidationMessageFor="@(() => serviceLivestock.RecipientTypeId)">
+                    <LegendContent>
+                        <div style="display:inline-flex">
+                            <span>Animal</span><button type="button" @onclick=ShowAnimalEditor>+</button>
+                            @if (_addingAnimal)
+                            {
+                                <LivestockAnimalEditor Modal="true" Show="@_addingAnimal" editContext="@_addAnimalContext" OnSubmit="AnimalAddSubmitted" OnCancel="AnimalAddCancelled"></LivestockAnimalEditor>
+                            }
+                        </div>
+                    </LegendContent>
+                    <ChildContent>
+                        <InputSelect @bind-Value="@serviceLivestock.RecipientTypeId">
+                            <option value="0">Select Animal ...</option>
+                            @foreach (var state in appState.DbContext.LivestockAnimals.OrderBy(a => a.Name))
+                            {
+                                <option value="@state.Id">@state.Name</option>
+                            }
+                        </InputSelect>
+                    </ChildContent>
+                </ValidatedField>
+            }
+            @if (serviceLivestock?.RecipientTypeId != null)
+            {
+                <ValidatedField CssClass="firstColumn" Legend="Male" ValidationMessageFor="@(() => serviceLivestock.StudId)">
+                    <InputText placeholder="Select Male..." @bind-Value="@StudName" list="studList" autocomplete="on" />
+                    <datalist id="studList">
+                        @foreach (var g in appState.DbContext.Livestocks.Include(b => b.Breed).Where(l => l.Breed.LivestockAnimalId == serviceLivestock.RecipientTypeId && !l.Sterile && l.Gender == GenderConstants.Male).OrderBy(m => m.Name))
+                        {
+                            <option value="@g.Name" />
+                        }
+                    </datalist>
+                </ValidatedField>
+                <ValidatedField CssClass="secondColumn" Legend="Females" ValidationMessageFor="@(() => serviceLivestock.DamIds)">
+                    <ul>
+                        @foreach (var g in appState.DbContext.Livestocks.Where(l => serviceLivestock.DamIds.Contains(l.Id)).OrderBy(f => f.Name))
+                        {
+                            <li onclick="@(()=>RemoveFemale(g.Id))">@g.Name</li>
+                        }
+                    </ul>
+                    <InputText placeholder="Select Female..." @bind-Value="@FemaleName" list="femaleList" autocomplete="on" />
+                    <datalist id="femaleList">
+                        @foreach (var g in appState.DbContext.Livestocks.Include(b => b.Breed).Where(l => l.Breed.LivestockAnimalId == serviceLivestock.RecipientTypeId && !l.Sterile && l.Gender == GenderConstants.Female && !serviceLivestock.DamIds.Contains(l.Id)).OrderBy(f => f.Name))
+                        {
+                            <option value="@g.Name" />
+                        }
+                    </datalist>
+                </ValidatedField>
+                <ValidatedField CssClass="fullWidth" Legend="Notes" ValidationMessageFor="@(() => serviceLivestock.Notes)">
+                    <InputTextArea @bind-Value="@serviceLivestock.Notes" />
+                </ValidatedField>
+            }
+        </ChildContent>
+    </ValidatedForm>
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private ValidatedForm _validatedForm;
+    private ServiceLivestock? serviceLivestock { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        serviceLivestock = editContext.Model as ServiceLivestock;
+        if (serviceLivestock is null) return;
+    }
+  
+    public async override Task<IHasRecipient> SubmitEditContext()
+    {
+        await OnServiceSubmit(editContext);
+        return serviceLivestock;
+    }
+    private async Task OnServiceSubmit(EditContext editContext)
+    {
+        try
+        {
+
+            await api.ProcessCommand<LivestockBreedModel, ServiceLivestock>("api/ServiceLivestock", serviceLivestock);
+           
+            editContext = new EditContext(serviceLivestock);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+
+    private string FemaleName { get => string.Empty; set => FemaleSelected(value); }
+    void FemaleSelected(string value)
+    {
+        var fem = appState.DbContext.Livestocks.FirstOrDefault(f => f.Name == value && f.Gender == GenderConstants.Female);
+        if (fem != null)
+            serviceLivestock.DamIds.Add(fem.Id);
+        editContext = new EditContext(serviceLivestock);
+        StateHasChanged();
+    }
+    private void RemoveFemale(long id)
+    {
+        serviceLivestock.DamIds.Remove(id);
+        editContext = new EditContext(serviceLivestock);
+        StateHasChanged();
+    }
+    private string StudName
+    {
+        get
+        {
+            return appState.DbContext.Livestocks.Find(serviceLivestock.StudId)?.Name ?? string.Empty;
+        }
+        set
+        {
+            var stud = appState.DbContext.Livestocks.FirstOrDefault(f => f.Name == value);
+            serviceLivestock.StudId = stud?.Id ?? 0;
+        }
+    }
+    private async Task Cancel()
+    {
+        //editContext = new EditContext(livestockBreed);
+        StateHasChanged();
+    }
+    private void ShowAnimalEditor()
+    {
+        LivestockAnimalModel animal = new();
+        _addAnimalContext = new EditContext(animal);
+        _addingAnimal = true;
+        StateHasChanged();
+    }
+    private bool _addingAnimal = false;
+    private EditContext _addAnimalContext;
+    private void AnimalAddCancelled(EditContext context) { _addingAnimal = false; }
+    private void AnimalAddSubmitted(EditContext context)
+    {
+        _addingAnimal = false;
+        serviceLivestock.RecipientTypeId = (context.Model as LivestockAnimalModel)?.Id ?? serviceLivestock.RecipientTypeId;
+        editContext = new EditContext(serviceLivestock);
+        StateHasChanged();
+    }
+}

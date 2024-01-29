@@ -1,7 +1,9 @@
-﻿@using BackEnd.BusinessLogic.ScheduledDuty
+﻿@using BackEnd.BusinessLogic.Livestock
+@using BackEnd.BusinessLogic.ScheduledDuty
 @using Domain
 @using Domain.Abstracts
 @using Domain.Constants
+@using Domain.Interfaces
 @using Domain.Models
 @using MicroAgManager.Components.Chore
 @using MicroAgManager.Components.Duty
@@ -104,6 +106,8 @@
                 return ((MeasurementModel)recordModel).DatePerformed;
             case nameof(RegistrationModel):
                 return ((RegistrationModel)recordModel).RegistrationDate;
+            case nameof(ServiceLivestock):
+                return ((ServiceLivestock)recordModel).ServiceDate;
             default:
                 return null;
         }
@@ -127,8 +131,10 @@
         if (!myComponent.editContext.Validate()) return;
 
         var recordModel = await myComponent.SubmitEditContext();
-        scheduledDuty.RecordId = ((BaseHasRecipientModel)recordModel).Id;
-        scheduledDuty.RecipientId = ((BaseHasRecipientModel)recordModel).RecipientId;
+        if (recordModel is BaseHasRecipientModel)
+            scheduledDuty.RecordId = ((BaseHasRecipientModel)recordModel).Id;
+
+        scheduledDuty.RecipientId = ((IHasRecipient)recordModel).RecipientId;
         scheduledDuty.Recipient = GetRecipientFromRecipientType(scheduledDuty.Duty);
         scheduledDuty.CompletedOn = GetDatePerformedFromRecord(recordModel);
 
@@ -306,18 +312,31 @@
                         { "editContext", string.Empty }
                     }
                 }
+            },
+            {
+                nameof(ServiceLivestockEditor),
+                new ComponentMetadata
+                {
+                    Name = "Service",
+                    Parameters = new() {
+                        { "Modal", false },
+                        { "Show", true },
+                        { "ShowUpdateCancel", false },
+                        { "editContext", string.Empty }
+                    }
+                }
             }
          };
     private bool ShowRecordEditor()
     {
         if (scheduledDuty.ScheduleSourceId < 1) return false;
-        BaseHasRecipientModel model = null;
+        IHasRecipient model = null;
         switch (scheduledDuty.Duty.Command)
         {
             case nameof(DutyCommandConstants.Registration):
                 scheduledDuty.Record = nameof(DutyCommandConstants.Registration);
                 model = appState.DbContext.Registrations.Find(scheduledDuty.RecordId) ?? new RegistrationModel();
-                if (model.Id < 1)
+                if (((BaseHasRecipientModel)model).Id < 1)
                 {
                     ((RegistrationModel)model).RegistrarId = scheduledDuty.Duty.CommandId;
                     ((RegistrationModel)model).Registrar = appState.DbContext.Registrars.Find(scheduledDuty.Duty.CommandId);
@@ -328,7 +347,7 @@
             case nameof(DutyCommandConstants.Measurement):
                 scheduledDuty.Record = nameof(DutyCommandConstants.Measurement);
                 model = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new MeasurementModel();
-                if (model.Id < 1)
+                if (((BaseHasRecipientModel)model).Id < 1)
                 {
                     ((MeasurementModel)model).MeasureId = scheduledDuty.Duty.CommandId;
                     ((MeasurementModel)model).Measure = appState.DbContext.Measures.Find(scheduledDuty.Duty.CommandId);
@@ -336,13 +355,17 @@
                 }
                 recordType = typeof(MeasurementEditor);
                 break;
+            case nameof(DutyCommandConstants.Service):
+                recordType = typeof(ServiceLivestockEditor);
+                model = new ServiceLivestock() { DamIds=new List<long>(), ServiceDate=DateTime.Now };
+                break;
             case nameof(DutyCommandConstants.Treatment):
                 break;
             default:
                 recordType = null;
                 break;
         }
-        if (recordType is not null)
+        if (recordType is not null )
         {
             model.RecipientType = scheduledDuty.Duty.RecipientType;
             model.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;

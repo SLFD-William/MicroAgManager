@@ -1,5 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
+using Domain.Interfaces;
 using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +10,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock
 {
-    public class ServiceLivestock : BaseCommand
+    public class ServiceLivestock : BaseCommand, IHasRecipient
     {
-        [Required]public long StudId { get; set; }
+        [Required] public long StudId { get; set; }
         public required DateTime ServiceDate { get; set; }
         [Required] public required List<long> DamIds { get; set; }
         public string Notes { get; set; }
         public bool GenerateScheduledDuties { get; set; } = true;
+        public long RecipientTypeId { get; set; }
+
+        private string _RecipientType = nameof(LivestockAnimal);
+        public string RecipientType { get => _RecipientType; set => _RecipientType= nameof(LivestockAnimal); }
+        public long RecipientId { get => StudId; set => StudId=value; }
+
         public class Handler : BaseCommandHandler<ServiceLivestock>
         {
             public Handler(IMediator mediator, ILogger log) : base(mediator, log)
