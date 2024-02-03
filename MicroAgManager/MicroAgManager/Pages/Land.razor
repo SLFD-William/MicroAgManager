@@ -104,6 +104,10 @@
                 </CascadingValue>
 
             }
+            else if(LandPlotId.HasValue && LandPlotId.Value==-1)
+            {
+                <LandPlotEditor Modal="true" Show="@_addingPlot" editContext="_addPlotContext" OnCancel="PlotAddCancelled" OnSubmit="PlotAddSubmitted"></LandPlotEditor>
+            }
             @if (!LandPlotId.HasValue)
             {
                 <div>

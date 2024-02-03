@@ -2,7 +2,6 @@
 using Domain.Interfaces;
 using FrontEnd.Persistence;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace MicroAgManager.Components.Shared

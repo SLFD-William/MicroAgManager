@@ -1,8 +1,6 @@
 ﻿using Domain.Constants;
-using Domain.Entity;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System.Net.NetworkInformation;
 
 namespace MicroAgManager.Data
 {

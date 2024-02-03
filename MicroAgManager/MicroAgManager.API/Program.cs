@@ -7,6 +7,7 @@ using MicroAgManager.API;
 using MicroAgManager.API.Hubs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -51,6 +52,15 @@ builder.Services.AddIdentityCore<ApplicationUser>()
     .AddApiEndpoints();
 
 builder.Services.AddTransient<IClaimsTransformation, ApiClaimsTransformation>();
+
+builder.Services.AddTransient<IEmailSender, EmailServices>(i =>
+                new EmailServices(
+                    builder.Configuration["EmailServices:Host"],
+                    builder.Configuration.GetValue<int>("EmailServices:Port"),
+                    builder.Configuration.GetValue<bool>("EmailServices:EnableSSL"),
+                    builder.Configuration["EmailServices:UserName"],
+                    builder.Configuration["EmailServices:Password"]
+                ));
 
 // add CORS policy for Wasm client
 builder.Services.AddCors(
