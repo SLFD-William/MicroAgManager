@@ -29,14 +29,14 @@
                    Title="@((scheduledDuty.Id< 1 ? "Create " : "Edit ") + scheduledDuty.Duty.Command)">
         <ValidatedField ValidationMessageFor="@(() => scheduledDuty.DutyId)">
             <LegendContent>
-                <div style="display:inline-flex">
+                <div style="display:inline-flex;gap:1rem;">
                     <span>Duty</span>
                     <button type="button" @onclick=ShowDutyEditor>+</button>
                     <DutyEditor Modal=true Show=@_showingDutyEditor editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
                 </div>
             </LegendContent>
             <ChildContent>
-                <InputSelect ValueExpression="@(()=>scheduledDuty.DutyId)" ValueChanged="@((long value) => OnDutyChanged(value ))">
+                <InputSelect @bind-Value="@DutyId">
                     <option value="">Select Duty ...</option>
                     @foreach (var unit in appState.DbContext.Duties.Where(d => d.Command == scheduledDuty.Duty.Command))
                     {
@@ -51,7 +51,7 @@
         { 
             <ValidatedField ValidationMessageFor="@(() => scheduledDuty.ScheduleSourceId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>@scheduledDuty.ScheduleSource</span>
                         <button type="button" @onclick=ShowSourceEditor>+</button>
                         @if (_showingSourceEditor)
@@ -61,7 +61,7 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect ValueExpression="@(()=>scheduledDuty.ScheduleSourceId)" ValueChanged="@((long value) => OnSourceChanged(value ))">
+                    <InputSelect @bind-Value="@ScheduleSourceId">
                         <option value="">Select Source ...</option>
                         @foreach (var unit in sourceIds())
                         {
@@ -87,15 +87,48 @@
 
     private DynamicComponent? recordComponent;
     private ScheduledDutyModel? scheduledDuty;
-
+    private long DutyId
+    {
+        get
+        {
+            return scheduledDuty.DutyId;
+        }
+        set
+        {
+            if (value != scheduledDuty.DutyId)
+            {
+                scheduledDuty.DutyId = value;
+                scheduledDuty.Duty = appState.DbContext.Duties.Find(value);
+                ShowRecordEditor();
+                StateHasChanged();
+            }
+        }
+    }
+    private long ScheduleSourceId
+    {
+        get
+        {
+            return scheduledDuty.ScheduleSourceId;
+        }
+        set
+        {
+            if (value != scheduledDuty.ScheduleSourceId)
+            {
+                scheduledDuty.ScheduleSourceId = value;
+                ShowRecordEditor();
+                StateHasChanged();
+            }
+        }
+    }
     protected override void OnInitialized()
     {
         scheduledDuty = editContext.Model as ScheduledDutyModel;
         if (scheduledDuty is null) return;
         if (string.IsNullOrEmpty(scheduledDuty.ScheduleSource)) scheduledDuty.ScheduleSource = ScheduledDutySourceConstants.Event;
         if (scheduledDuty.DueOn == DateTime.MinValue) scheduledDuty.DueOn = DateTime.Today;
-        ShowRecordEditor();
-
+        scheduledDuty.Duty = appState.DbContext.Duties.Find(scheduledDuty.DutyId);
+        DutyId = scheduledDuty.DutyId;
+        ScheduleSourceId = scheduledDuty.ScheduleSourceId;
     }
 
     private DateTime? GetDatePerformedFromRecord(object recordModel)
@@ -108,6 +141,8 @@
                 return ((RegistrationModel)recordModel).RegistrationDate;
             case nameof(ServiceLivestock):
                 return ((ServiceLivestock)recordModel).ServiceDate;
+            case nameof(BreedingRecordModel):
+                return ((BreedingRecordModel)recordModel).ResolutionDate;
             default:
                 return null;
         }
@@ -132,9 +167,18 @@
 
         var recordModel = await myComponent.SubmitEditContext();
         if (recordModel is BaseHasRecipientModel)
+        {
             scheduledDuty.RecordId = ((BaseHasRecipientModel)recordModel).Id;
+            scheduledDuty.RecipientId = ((BaseHasRecipientModel)recordModel).RecipientId;
+            scheduledDuty.Record = ((BaseHasRecipientModel)recordModel).GetEntityName();
+        }
+        if (recordModel is ServiceLivestock)
+        {
+            scheduledDuty.RecordId = -1;
+            scheduledDuty.Record = nameof(ServiceLivestock);
+            scheduledDuty.RecipientId = ((ServiceLivestock)recordModel).StudId;
+        }
 
-        scheduledDuty.RecipientId = ((IHasRecipient)recordModel).RecipientId;
         scheduledDuty.Recipient = GetRecipientFromRecipientType(scheduledDuty.Duty);
         scheduledDuty.CompletedOn = GetDatePerformedFromRecord(recordModel);
 
@@ -186,7 +230,9 @@
         var model = e.Model as DutyModel;
         _showingDutyEditor = false;
         if (model == null) return;
-        ((ScheduledDutyModel)editContext.Model).DutyId = model.Id;
+        scheduledDuty.DutyId = model.Id;
+        scheduledDuty.Duty = appState.DbContext.Duties.Find(model.Id);
+        editContext = new EditContext(scheduledDuty);
         StateHasChanged();
     }
     private void DutyCanceled(object e)
@@ -194,13 +240,7 @@
         _showingDutyEditor = false;
         StateHasChanged();
     }
-    private void OnDutyChanged(long value)
-    {
-        // Assign the selected value to the Model
-        scheduledDuty.DutyId = value;
-        scheduledDuty.Duty = appState.DbContext.Duties.Find(value);
-        StateHasChanged();
-    }
+
     #endregion
     #region Source
     private List<KeyValuePair<long, string>> sourceIds()
@@ -273,13 +313,7 @@
         _showingSourceEditor = false;
         StateHasChanged();
     }
-    private void OnSourceChanged(long value)
-    {
-        // Assign the selected value to the Model
-        scheduledDuty.ScheduleSourceId = value;
-        ShowRecordEditor();
-        StateHasChanged();
-    }
+   
     #endregion
     #region Record
     private bool _showingRecordEditor = false;
@@ -325,11 +359,24 @@
                         { "editContext", string.Empty }
                     }
                 }
+            },
+            {
+                nameof(BreedingRecordEditor),
+                new ComponentMetadata
+                {
+                    Name = "BreedingRecord",
+                    Parameters = new() {
+                        { "Modal", false },
+                        { "Show", true },
+                        { "ShowUpdateCancel", false },
+                        { "editContext", string.Empty }
+                    }
+                }
             }
          };
     private bool ShowRecordEditor()
     {
-        if (scheduledDuty.ScheduleSourceId < 1) return false;
+        if (scheduledDuty.ScheduleSourceId < 1 || scheduledDuty.DutyId<1) return false;
         IHasRecipient model = null;
         switch (scheduledDuty.Duty.Command)
         {
@@ -357,7 +404,17 @@
                 break;
             case nameof(DutyCommandConstants.Service):
                 recordType = typeof(ServiceLivestockEditor);
-                model = new ServiceLivestock() { DamIds=new List<long>(), ServiceDate=DateTime.Now };
+                model = new ServiceLivestock() 
+                    { DamIds = new List<long>(), 
+                      ServiceDate = DateTime.Now, 
+                      ScheduleSource = scheduledDuty.ScheduleSource, 
+                      ScheduleSourceId = scheduledDuty.ScheduleSourceId };
+                break;
+            case nameof(DutyCommandConstants.Birth):
+            case nameof(DutyCommandConstants.Breed):
+                scheduledDuty.Record = "BreedingRecord";
+                model = appState.DbContext.BreedingRecords.Find(scheduledDuty.RecordId) ?? new BreedingRecordModel();
+                recordType = typeof(BreedingRecordEditor);
                 break;
             case nameof(DutyCommandConstants.Treatment):
                 break;

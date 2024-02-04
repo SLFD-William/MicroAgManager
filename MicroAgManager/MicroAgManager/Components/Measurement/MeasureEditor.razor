@@ -27,7 +27,7 @@
         </ValidatedField>
                     <ValidatedField ValidationMessageFor="@(() =>measure.UnitId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                         <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
                     </div>
@@ -67,7 +67,10 @@
     {
         var model = e as UnitModel;
         showUnitModal = false;
-        ((MeasureModel)editContext.Model).UnitId = model.Id;
+        if (model is null) return;
+
+        measure.UnitId = model.Id;
+        editContext = new EditContext(measure);
         StateHasChanged();
     }
     private void UnitCanceled(object e)

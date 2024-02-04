@@ -18,13 +18,6 @@
             </div>
         </ColumnOptions>
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Duty.Name)" Title="Duty" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="sourceItemFilter" @bind:event="oninput" placeholder="Source Item..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn>
     <TemplateColumn Title="Duty" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyName">
         <ColumnOptions>
             <div class="search-box">
@@ -42,17 +35,14 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            <span>@scheduledDuty.Duty.Command</span>
-        </ChildContent>
-    </TemplateColumn>
-    <TemplateColumn Title="Command Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyCommandItem">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="dutyCommandItemFilter" @bind:event="oninput" placeholder="Animal..." />
-            </div>
-        </ColumnOptions>
-        <ChildContent>
-            <span>@scheduledDuty.Duty.CommandItem</span>
+            @if (scheduledDuty.CompletedOn.HasValue)
+            {
+                <span>@scheduledDuty.Duty.CommandItem</span>
+            }
+            else
+            {
+                <ScheduledDutyCommand Command="@scheduledDuty.Duty.Command" ScheduledDutyId="@scheduledDuty.Id"></ScheduledDutyCommand>
+            }
         </ChildContent>
     </TemplateColumn>
     <TemplateColumn Title="Recipient Type" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientType">

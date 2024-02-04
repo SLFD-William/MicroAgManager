@@ -18,7 +18,7 @@
 
             <ValidatedField ValidationMessageFor="@(() => measurement.MeasureId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Measure</span>
                         <button type="button" @onclick=ShowMeasureEditor>+</button>
                         <MeasureEditor Modal=true Show=@showMeasureModal editContext=measureEditContext OnCancel=MeasureCanceled OnSubmit=MeasureSubmitted></MeasureEditor>
@@ -69,7 +69,7 @@
         </ValidatedField>
         <ValidatedField ValidationMessageFor="@(() => measurement.MeasurementUnitId)">
             <LegendContent>
-                <div style="display:inline-flex">
+                <div style="display:inline-flex;gap:1rem;">
                     <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                     <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
                 </div>
@@ -111,7 +111,7 @@
         await OnMeasurementSubmit(editContext);
         return measurement;
     }
-     
+
     private async Task OnMeasurementSubmit(EditContext editContext)
     {
         if (!editContext.Validate()) return;
@@ -161,7 +161,8 @@
         var model = e.Model as MeasureModel;
         showMeasureModal = false;
         if (model == null) return;
-        ((MeasurementModel)editContext.Model).MeasureId = model.Id;
+        measurement.MeasureId = model.Id;
+        editContext = new EditContext(measurement);
         StateHasChanged();
     }
     private void MeasureCanceled(object e)
@@ -176,11 +177,13 @@
         showUnitModal = true;
         StateHasChanged();
     }
-    private void UnitSubmitted(object e)
+    private void UnitSubmitted(EditContext e)
     {
-        var model = e as UnitModel;
+        var model = e.Model as UnitModel;
         showUnitModal = false;
-        ((MeasurementModel)editContext.Model).MeasurementUnitId = model.Id;
+        if (model == null) return;
+        measurement.MeasurementUnitId = model.Id;
+        editContext = new EditContext(measurement);
         StateHasChanged();
     }
     private void UnitCanceled(object e)

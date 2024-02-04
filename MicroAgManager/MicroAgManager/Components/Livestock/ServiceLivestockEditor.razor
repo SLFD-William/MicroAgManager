@@ -25,7 +25,7 @@
             {
                 <ValidatedField ValidationMessageFor="@(() => serviceLivestock.RecipientTypeId)">
                     <LegendContent>
-                        <div style="display:inline-flex">
+                        <div style="display:inline-flex;gap:1rem;">
                             <span>Animal</span><button type="button" @onclick=ShowAnimalEditor>+</button>
                             @if (_addingAnimal)
                             {

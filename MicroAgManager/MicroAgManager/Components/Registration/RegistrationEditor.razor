@@ -16,7 +16,7 @@
                    Show=Show>
         <ValidatedField ValidationMessageFor="@(() =>registration.RegistrarId)">
             <LegendContent>
-                <div style="display:inline-flex">
+                <div style="display:inline-flex;gap:1rem;">
                     <span>Registrar</span><button type="button" @onclick=ShowRegistrarEditor>+</button>
                     <RegistrarEditor Modal="true" Show="@showRegistrarModal" editContext=registrarEditContext OnCancel=RegistrarCanceled OnSubmit=RegistrarSubmitted></RegistrarEditor>
                 </div>
@@ -131,7 +131,8 @@
         var model = e.Model as RegistrarModel;
         showRegistrarModal = false;
         if (model == null) return;
-        ((RegistrationModel)editContext.Model).RegistrarId = model.Id;
+        registration.RegistrarId = model.Id;
+        editContext = new EditContext(registration);
         StateHasChanged();
     }
     private void RegistrarCanceled(object e)

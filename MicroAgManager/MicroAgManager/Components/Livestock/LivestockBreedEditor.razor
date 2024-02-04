@@ -19,7 +19,7 @@
 
                 <ValidatedField ValidationMessageFor="@(() => breed.LivestockAnimalId)">
                     <LegendContent>
-                        <div style="display:inline-flex">
+                        <div style="display:inline-flex;gap:1rem;">
                             <span>Animal</span><button type="button" @onclick=ShowAnimalEditor>+</button>
                         @if (_addingAnimal)
                         {
@@ -63,8 +63,7 @@
 
     private long _LivestockAnimalId = 0;
     private long LivestockAnimalId { get => _LivestockAnimalId; set => _LivestockAnimalId = value; }
-
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
         breed = editContext.Model as LivestockBreedModel;
         if (breed is null) return;
@@ -119,8 +118,11 @@
     private void AnimalAddCancelled(EditContext context) { _addingAnimal = false; }
     private void AnimalAddSubmitted(EditContext context)
     {
+        var model = context.Model as LivestockAnimalModel;
         _addingAnimal = false;
-        breed.LivestockAnimalId = (context.Model as LivestockAnimalModel)?.Id ?? breed.LivestockAnimalId;
+        if (model == null) return;
+        breed.LivestockAnimalId = model.Id;
+        editContext = new EditContext(breed);
         StateHasChanged();
     }
 }

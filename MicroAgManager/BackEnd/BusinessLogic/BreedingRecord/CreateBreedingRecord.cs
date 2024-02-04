@@ -21,8 +21,12 @@ namespace BackEnd.BusinessLogic.BreedingRecord
 
             public override async Task<long> Handle(CreateBreedingRecord request, CancellationToken cancellationToken)
             {
+
                 var breedingRecord = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId) 
-                { FemaleId =request.BreedingRecord.FemaleId};
+                { RecipientId =request.BreedingRecord.RecipientId,
+                  RecipientType = request.BreedingRecord.RecipientType,
+                  RecipientTypeId = request.BreedingRecord.RecipientTypeId
+                };
                 breedingRecord = request.BreedingRecord.Map(breedingRecord) as Domain.Entity.BreedingRecord;
                 using (var context = new DbContextFactory().CreateDbContext())
                 {

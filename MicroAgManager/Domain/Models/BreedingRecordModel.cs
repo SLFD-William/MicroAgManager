@@ -2,12 +2,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
+using Domain.Interfaces;
 
 namespace Domain.Models
 {
-    public class BreedingRecordModel:BaseModel
+    public class BreedingRecordModel : BaseHasRecipientModel
     {
-        [Required][ForeignKey("Female")] public long FemaleId { get; set; }
+        [Required][ForeignKey("Female")] public long RecipientId { get; set; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -18,13 +19,18 @@ namespace Domain.Models
         [MaxLength(40)]public string? Resolution { get; set; }
 
         public string Notes { get; set; }
+        public long RecipientTypeId { get; set; }
+        public string RecipientType { get; set; }
+
 
         public static BreedingRecordModel? Create(BreedingRecord breedingRecord)
         {
             if(breedingRecord==null) return null;
             var model = PopulateBaseModel(breedingRecord, new BreedingRecordModel
             {
-                FemaleId = breedingRecord.FemaleId,
+                RecipientId = breedingRecord.RecipientId,
+                RecipientTypeId = breedingRecord.RecipientTypeId,
+                RecipientType = breedingRecord.RecipientType,
                 MaleId = breedingRecord.MaleId,
                 ServiceDate = breedingRecord.ServiceDate,
                 ResolutionDate = breedingRecord.ResolutionDate,
@@ -38,28 +44,14 @@ namespace Domain.Models
             return model;
         }
         
-        public override BaseModel Map(BaseModel breedingRecord)
-        {
-            if (breedingRecord == null || breedingRecord is not BreedingRecordModel) return null;
-
-            ((BreedingRecordModel)breedingRecord).FemaleId = FemaleId;
-            ((BreedingRecordModel)breedingRecord).MaleId = MaleId;
-            ((BreedingRecordModel)breedingRecord).ServiceDate = ServiceDate;
-            ((BreedingRecordModel)breedingRecord).ResolutionDate = ResolutionDate;
-            ((BreedingRecordModel)breedingRecord).StillbornMales = StillbornMales;
-            ((BreedingRecordModel)breedingRecord).StillbornFemales = StillbornFemales;
-            ((BreedingRecordModel)breedingRecord).Notes = Notes;
-            ((BreedingRecordModel)breedingRecord).BornMales = BornMales;
-            ((BreedingRecordModel)breedingRecord).BornFemales = BornFemales;
-            ((BreedingRecordModel)breedingRecord).Resolution = Resolution;
-            ((BreedingRecordModel)breedingRecord).EntityModifiedOn = EntityModifiedOn;
-            return breedingRecord;
-        }
+        public override BaseModel Map(BaseModel breedingRecord)=> Map((BaseHasRecipientModel)breedingRecord);
 
         public override BaseEntity Map(BaseEntity breedingRecord)
         {
 
-            ((BreedingRecord)breedingRecord).FemaleId = FemaleId;
+            ((BreedingRecord)breedingRecord).RecipientId = RecipientId;
+            ((BreedingRecord)breedingRecord).RecipientTypeId = RecipientTypeId;
+            ((BreedingRecord)breedingRecord).RecipientType = RecipientType;
             ((BreedingRecord)breedingRecord).MaleId = MaleId;
             ((BreedingRecord)breedingRecord).ServiceDate = ServiceDate;
             ((BreedingRecord)breedingRecord).ResolutionDate = ResolutionDate;
@@ -71,6 +63,26 @@ namespace Domain.Models
             ((BreedingRecord)breedingRecord).Resolution = Resolution;
             breedingRecord.ModifiedOn = DateTime.UtcNow;
             if (((BreedingRecord)breedingRecord).MaleId == 0) ((BreedingRecord)breedingRecord).MaleId = null;
+            return breedingRecord;
+        }
+
+        public override BaseHasRecipientModel Map(BaseHasRecipientModel breedingRecord)
+        {
+            if (breedingRecord == null || breedingRecord is not BreedingRecordModel) return null;
+
+            ((BreedingRecordModel)breedingRecord).RecipientId = RecipientId;
+            ((BreedingRecordModel)breedingRecord).RecipientTypeId = RecipientTypeId;
+            ((BreedingRecordModel)breedingRecord).RecipientType = RecipientType;
+            ((BreedingRecordModel)breedingRecord).MaleId = MaleId;
+            ((BreedingRecordModel)breedingRecord).ServiceDate = ServiceDate;
+            ((BreedingRecordModel)breedingRecord).ResolutionDate = ResolutionDate;
+            ((BreedingRecordModel)breedingRecord).StillbornMales = StillbornMales;
+            ((BreedingRecordModel)breedingRecord).StillbornFemales = StillbornFemales;
+            ((BreedingRecordModel)breedingRecord).Notes = Notes;
+            ((BreedingRecordModel)breedingRecord).BornMales = BornMales;
+            ((BreedingRecordModel)breedingRecord).BornFemales = BornFemales;
+            ((BreedingRecordModel)breedingRecord).Resolution = Resolution;
+            ((BreedingRecordModel)breedingRecord).EntityModifiedOn = EntityModifiedOn;
             return breedingRecord;
         }
     }

@@ -370,6 +370,8 @@ namespace MicroAgManager.Data
             if (!ShouldEntityBeUpdated(entityModels, nameof(ScheduledDutyModel))) return;
             
             var mostRecentUpdate = db.ScheduledDuties.OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn;
+            if (mostRecentUpdate > DateTime.MinValue.AddDays(1)) mostRecentUpdate = mostRecentUpdate.Value.AddDays(-1);
+
             long totalCount = 0;
             long expectedCount = 1;
             while (totalCount < expectedCount)

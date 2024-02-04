@@ -37,7 +37,7 @@
             </ValidatedField>
             <ValidatedField ValidationMessageFor="@(() => milestone.Duties)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Duties</span><button type="button" @onclick=ShowDutyEditor>+</button>
                         <DutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
                     </div>
@@ -119,8 +119,10 @@
     {
         var model = e.Model as DutyModel;
         showDutyModal = false;
-        milestone.Duties.Add(model);
         dutyEditContext = null;
+        if (model is null) return;
+        milestone.Duties.Add(model);
+        editContext = new EditContext(milestone);
         StateHasChanged();
     }
     private void DutyCanceled(object e)
@@ -131,11 +133,13 @@
     void DutyRemoved(DutyModel duty)
     {
         milestone.Duties.Remove(duty);
+        editContext = new EditContext(milestone);
         StateHasChanged();
     }
     void DutySelected(ChangeEventArgs e)
     {
         milestone.Duties.Add(appState.DbContext.Duties.Find(long.Parse(e.Value.ToString())));
+        editContext = new EditContext(milestone);
         StateHasChanged();
     }
     private List<KeyValuePair<long, string>> recipientIds()

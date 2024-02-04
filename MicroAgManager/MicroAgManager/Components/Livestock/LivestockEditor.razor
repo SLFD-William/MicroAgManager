@@ -5,6 +5,7 @@
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
 @using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
 @inherits BaseEditor
 
 @if (livestock is not null)
@@ -19,7 +20,7 @@
                     <ChildContent>
             <ValidatedField ValidationMessageFor="@(() => livestock.LivestockBreedId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Breed</span><button type="button" @onclick=ShowBreedEditor>+</button>
                         @if (_addingBreed)
                         { 
@@ -28,27 +29,33 @@
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@livestock.LivestockBreedId">
+                    <InputSelect @bind-Value="@BreedId">
                         <option value="0">Select Breed ...</option>
-                        @if (LivestockAnimalId.HasValue)
-                            foreach (var g in appState.DbContext.LivestockBreeds.Where(s => s.LivestockAnimalId == LivestockAnimalId).OrderBy(a => a.Name))
-                            {
-                                <option value="@g.Id">@g.Name</option>
-                            }
-                        else
-                            foreach (var g in appState.DbContext.LivestockBreeds.OrderBy(a=>a.Animal.Name).ThenBy(a => a.Name))
-                            {
-                                <option value="@g.Id">@($"{g.Animal.Name} {g.Name}")</option>
-                            }
+                        @if (appState.DbContext.LivestockBreeds.Any())
+                        {
+                            @if (LivestockAnimalId.HasValue)
+                                foreach (var g in appState.DbContext.LivestockBreeds.Where(s => s.LivestockAnimalId == LivestockAnimalId).OrderBy(a => a.Name))
+                                {
+                                    <option value="@g.Id">@g.Name</option>
+                                }
+                            else
+                                foreach (var g in appState.DbContext.LivestockBreeds.OrderBy(a=>a.Animal.Name).ThenBy(a => a.Name))
+                                {
+                                    <option value="@g.Id">@($"{g.Animal?.Name} {g.Name}")</option>
+                                }
+                        }
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
             <ValidatedField Legend="Variety" ValidationMessageFor="@(() => livestock.Variety)">
                 <InputText placeholder="Variety" @bind-Value="@(livestock.Variety)" list="varietyList" />
                 <datalist id="varietyList">
-                    @foreach (var g in appState.DbContext.Livestocks.Where(s => s.LivestockBreedId == livestock.LivestockBreedId).Select(a => a.Variety).Distinct().OrderBy(a => a))
+                    @if (appState.DbContext.Livestocks.Any())
                     {
-                        <option value="@g" />
+                        @foreach (var g in appState.DbContext.Livestocks.Where(s => s.LivestockBreedId == livestock.LivestockBreedId).Select(a => a.Variety).Distinct().OrderBy(a => a))
+                        {
+                            <option value="@g" />
+                        }
                     }
                 </datalist>
             </ValidatedField>
@@ -66,7 +73,7 @@
             </ValidatedField>
             <ValidatedField ValidationMessageFor="@(() => livestock.StatusId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Status</span><button type="button" @onclick=ShowStatusEditor>+</button>
                         @if (_addingStatus)
                         { 
@@ -126,28 +133,31 @@
             <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => livestock.ForSale)">
                 <InputCheckbox @bind-Value="@(livestock.ForSale)" />
             </ValidatedField>
-            <ValidatedField Legend="@animal?.ParentFemaleName" ValidationMessageFor="@(() => livestock.MotherId)">
-                <InputSelect @bind-Value="@(livestock.MotherId)">
-                    <option value="0">Select @animal?.ParentFemaleName ...</option>
-                    @foreach (var g in appState.DbContext.Livestocks.Where(s => s.LivestockBreedId == livestock.LivestockBreedId
-                && s.Gender == GenderConstants.Female
-                        && s.Id != livestock.Id).OrderBy(a => a.Name))
-                    {
-                        <option value="@g.Id" >@g.Name</option>
-                    }
-                </InputSelect>
-            </ValidatedField>
-            <ValidatedField Legend="@animal?.ParentMaleName" ValidationMessageFor="@(() => livestock.FatherId)">
-                <InputSelect @bind-Value="@(livestock.FatherId)">
-                    <option value="0">Select @animal?.ParentMaleName ...</option>
-                    @foreach (var g in appState.DbContext.Livestocks.Where(s => s.LivestockBreedId == livestock.LivestockBreedId
-                        && s.Gender == GenderConstants.Male
-                        && s.Id != livestock.Id).OrderBy(a => a.Name))
-                    {
-                        <option value="@g.Id">@g.Name</option>
-                    }
-                </InputSelect>
-            </ValidatedField>
+            @if(appState.DbContext.Livestocks.Any())
+            {
+                <ValidatedField Legend="@animal?.ParentFemaleName" ValidationMessageFor="@(() => livestock.MotherId)">
+                    <InputSelect @bind-Value="@(livestock.MotherId)">
+                        <option value="0">Select @animal?.ParentFemaleName ...</option>
+                        @foreach (var g in appState.DbContext.Livestocks.Where(s => s.LivestockBreedId == livestock.LivestockBreedId
+                    && s.Gender == GenderConstants.Female
+                            && s.Id != livestock.Id).OrderBy(a => a.Name))
+                        {
+                            <option value="@g.Id" >@g.Name</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+                <ValidatedField Legend="@animal?.ParentMaleName" ValidationMessageFor="@(() => livestock.FatherId)">
+                    <InputSelect @bind-Value="@(livestock.FatherId)">
+                        <option value="0">Select @animal?.ParentMaleName ...</option>
+                        @foreach (var g in appState.DbContext.Livestocks.Where(s => s.LivestockBreedId == livestock.LivestockBreedId
+                            && s.Gender == GenderConstants.Male
+                            && s.Id != livestock.Id).OrderBy(a => a.Name))
+                        {
+                            <option value="@g.Id">@g.Name</option>
+                        }
+                    </InputSelect>
+                </ValidatedField>
+            }
         </ChildContent>
     </ValidatedForm>
 }
@@ -162,7 +172,7 @@
     [Parameter] public long LivestockBreedId { get => _LivestockBreedId; set => _LivestockBreedId = value; }
     [Parameter] public long? LivestockAnimalId { get; set; }
     private LivestockAnimalModel? animal;
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
         livestock = editContext.Model as LivestockModel;
         if (livestock is null) return;
@@ -170,7 +180,7 @@
             LivestockBreedId = livestock.LivestockBreedId;
         if (LivestockBreedId > 0)
             livestock.Breed = appState.DbContext.LivestockBreeds.Find(LivestockBreedId);
-        
+
         if (livestock.Breed != null)
             LivestockAnimalId = livestock.Breed.LivestockAnimalId;
 
@@ -178,6 +188,21 @@
             animal = appState.DbContext.LivestockAnimals.Find(LivestockAnimalId);
     }
     private LivestockStatusEditor _livestockStatusEditor;
+    public long BreedId
+    {
+        get => livestock.LivestockBreedId;
+        set
+        {
+            if (value != livestock.LivestockBreedId)
+            {
+                livestock.LivestockBreedId = value;
+                livestock.Breed = appState.DbContext.LivestockBreeds.Include(b => b.Animal).First(c=>c.Id== value);
+                animal = livestock.Breed.Animal;
+                LivestockAnimalId = animal.Id;
+                StateHasChanged();
+            }
+        }
+    }
     public long StatusId
     {
         get => livestock.StatusId ?? 0;
@@ -244,8 +269,11 @@
     private void StatusAddCancelled(EditContext context) { _addingStatus = false; }
     private void StatusAddSubmitted(EditContext context)
     {
+        var model = context.Model as LivestockStatusModel;
         _addingStatus = false;
-        livestock.StatusId = (context.Model as LivestockStatusModel)?.Id;
+        if (model == null) return;
+        StatusId = model.Id;
+        editContext = new EditContext(livestock);
         StateHasChanged();
     }
 
@@ -261,8 +289,11 @@
     private void BreedAddCancelled(EditContext context) { _addingBreed = false; }
     private void BreedAddSubmitted(EditContext context)
     {
+        var model = context.Model as LivestockBreedModel;
         _addingBreed = false;
-        livestock.LivestockBreedId = (context.Model as LivestockBreedModel)?.Id ?? livestock.LivestockBreedId;
+        if (model == null) return;
+        BreedId = model.Id;
+        editContext = new EditContext(livestock);
         StateHasChanged();
     }
 

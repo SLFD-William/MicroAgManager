@@ -23,6 +23,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             public override async Task<long> Handle(CreateScheduledDuty request, CancellationToken cancellationToken)
             {
                 var duty = request.ScheduledDuty.Map(new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId)) as Domain.Entity.ScheduledDuty;
+                if (duty.CompletedOn.HasValue) duty.CompletedBy = request.CreatedBy;
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     context.ScheduledDuties.Add(duty);

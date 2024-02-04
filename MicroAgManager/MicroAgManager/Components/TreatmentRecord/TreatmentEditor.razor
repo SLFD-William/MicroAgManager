@@ -42,7 +42,7 @@
                 </ValidatedField>
                 <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).DosageUnitId)">
                     <LegendContent>
-                        <div style="display:inline-flex">
+                        <div style="display:inline-flex;gap:1rem;">
                             <span>Dosage Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                             <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="DosageUnitCreated" Cancelled="DosageUnitCanceled"></UnitEditor>
                         </div>
@@ -62,7 +62,7 @@
                 </ValidatedField>
                 <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).RecipientMassUnitId)">
                     <LegendContent>
-                        <div style="display:inline-flex">
+                        <div style="display:inline-flex;gap:1rem;">
                             <span>Mass Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                             <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="MassUnitCreated" Cancelled="MassUnitCanceled"></UnitEditor>
                         </div>
@@ -89,7 +89,7 @@
             </ValidatedField>
             <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).FrequencyUnitId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Frequency Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                         <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="FrequencyUnitCreated" Cancelled="FrequencyUnitCanceled"></UnitEditor>
                     </div>
@@ -109,7 +109,7 @@
             </ValidatedField>
             <ValidatedField ValidationMessageFor="@(() => ((TreatmentModel)working).DurationUnitId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Duration Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                         <UnitEditor Show=@showUnitModal showUpdateCancelButtons="true" @ref=_unitEditor Modal="true" Submitted="DurationUnitCreated" Cancelled="DurationUnitCanceled"></UnitEditor>
                     </div>

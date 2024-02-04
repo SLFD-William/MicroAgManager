@@ -38,7 +38,7 @@ namespace BackEnd.BusinessLogic
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
-                    Name = "Service",
+                    Name = $"Service {animalType.Name}",
                     CommandId = 0,
                     Command = DutyCommandConstants.Service
                 };
@@ -51,7 +51,7 @@ namespace BackEnd.BusinessLogic
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
-                    Name = "Birth",
+                    Name = $"Birth {animalType.Name}",
                     CommandId = 0,
                     Command = DutyCommandConstants.Birth
                 };
@@ -63,7 +63,7 @@ namespace BackEnd.BusinessLogic
                     TenantId = animalType.TenantId,
                     RecipientType = animalType.GetType().Name,
                     RecipientTypeId = animalType.Id,
-                    Name = MilestoneSystemRequiredConstants.Parturition,
+                    Name = $"{MilestoneSystemRequiredConstants.Parturition} {animalType.Name}",
                     Description= "The act of giving birth",
                 };
                 parturition.Duties.Add(birthDuty);
@@ -84,7 +84,7 @@ namespace BackEnd.BusinessLogic
                     TenantId = animalType.TenantId,
                     RecipientType = animalType.GetType().Name,
                     RecipientTypeId = animalType.Id,
-                    Name = MilestoneSystemRequiredConstants.Death,
+                    Name = $"{MilestoneSystemRequiredConstants.Death} {animalType.Name}",
                     Description = "The act of dying",
                 };
                 context.Milestones.Add(death);
@@ -104,7 +104,7 @@ namespace BackEnd.BusinessLogic
                     TenantId = animalType.TenantId,
                     RecipientType = animalType.GetType().Name,
                     RecipientTypeId = animalType.Id,
-                    Name = MilestoneSystemRequiredConstants.Birth.ToString(),
+                    Name = $"{MilestoneSystemRequiredConstants.Birth} {animalType.Name}",
                     Description = "The act of being born",
                 };
                 context.Milestones.Add(birth);
@@ -123,7 +123,7 @@ namespace BackEnd.BusinessLogic
                     DaysDue = 0,
                     Relationship = DutyRelationshipConstants.Self,
                     SystemRequired = true,
-                    Name = MilestoneSystemRequiredConstants.Breed,
+                    Name = $"{MilestoneSystemRequiredConstants.Breed} {animalType.Name}",
                     CommandId = 0,
                     Command = DutyCommandConstants.Breed,
                 };
@@ -135,8 +135,8 @@ namespace BackEnd.BusinessLogic
                     TenantId = animalType.TenantId,
                     RecipientType = animalType.GetType().Name,
                     RecipientTypeId = animalType.Id,
-                    Name = MilestoneSystemRequiredConstants.Breed,
-                    Description= "The act of breeding",
+                    Name = $"{MilestoneSystemRequiredConstants.Breed} {animalType.Name}",
+                    Description = "The act of breeding",
                 };
                 breed.Duties.Add(breedDuty);
                 context.Milestones.Add(breed);

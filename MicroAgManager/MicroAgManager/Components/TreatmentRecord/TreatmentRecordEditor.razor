@@ -43,7 +43,7 @@
             }
             <ValidatedField ValidationMessageFor="@(() => ((TreatmentRecordModel)working).TreatmentId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Treatment</span><button type="button" @onclick=ShowTreatmentEditor>+</button>
                         <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showTreatmentModal)" showUpdateCancelButtons="true" Submitted="TreatmentCreated" Cancelled="TreatmentCanceled"></TreatmentEditor>
                     </div>

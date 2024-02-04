@@ -6,6 +6,7 @@ using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock
@@ -18,9 +19,10 @@ namespace BackEnd.BusinessLogic.Livestock
         public string Notes { get; set; }
         public bool GenerateScheduledDuties { get; set; } = true;
         public long RecipientTypeId { get; set; }
+        [Required] public long ScheduleSourceId { get; set; }
+        [Required] public string ScheduleSource { get; set; } //Chore,Event,Milestone
 
-        private string _RecipientType = nameof(LivestockAnimal);
-        public string RecipientType { get => _RecipientType; set => _RecipientType= nameof(LivestockAnimal); }
+        public string RecipientType { get; set; }
         public long RecipientId { get => StudId; set => StudId=value; }
 
         public class Handler : BaseCommandHandler<ServiceLivestock>
@@ -36,7 +38,8 @@ namespace BackEnd.BusinessLogic.Livestock
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
                     var stud = await context.Livestocks.FirstAsync(s=>s.Id==request.StudId && s.TenantId==request.TenantId);
-                    var dams =await  context.Livestocks.Where(f => request.DamIds.Contains(f.Id)).ToListAsync();
+                    
+                    var dams =await  context.Livestocks.Include(b => b.Breed).ThenInclude(a=>a.LivestockAnimal).Where(f => request.DamIds.Contains(f.Id)).ToListAsync();
                     //await LivestockLogic.VerifyNoOpenBreedingRecord(dams.Select(d=>d.Id).ToList(),request.TenantId,context,cancellationToken);
                     var modified = new List<Domain.Entity.BreedingRecord>();
 
@@ -44,7 +47,9 @@ namespace BackEnd.BusinessLogic.Livestock
                     {
                         var service = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId)
                         {
-                            FemaleId = dam.Id,
+                            RecipientId = dam.Id,
+                            RecipientType=dam.Breed.LivestockAnimal.GetType().Name,
+                            RecipientTypeId=dam.Breed.LivestockAnimalId,
                             MaleId = stud?.Id,
                             ServiceDate = request.ServiceDate,
                             Notes = request.Notes ?? string.Empty
@@ -59,7 +64,7 @@ namespace BackEnd.BusinessLogic.Livestock
                             foreach (var dam in modified)
                             {
                                 try { 
-                                    var modifiedNotice = await LivestockLogic.OnLivestockBred(context, dam.Id, cancellationToken);
+                                    var modifiedNotice = await LivestockLogic.OnLivestockBred(context, dam.Id, request.ScheduleSource, request.ScheduleSourceId, cancellationToken);
                                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
                                 }
                                 catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }

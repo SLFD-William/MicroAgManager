@@ -34,7 +34,7 @@
             { 
             <ValidatedField ValidationMessageFor="@(() => eventModel.Duties)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Duties</span><button type="button" @onclick=ShowDutyEditor>+</button>
                         <DutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
                     </div>
@@ -133,8 +133,10 @@
     {
         var model = e.Model as DutyModel;
         showDutyModal = false;
+        if (model is null) return;
         eventModel.Duties.Add(model);
         dutyEditContext = null;
+        editContext = new EditContext(eventModel);
         StateHasChanged();
     }
     private void DutyCanceled(object e)
@@ -145,11 +147,13 @@
     void DutyRemoved(DutyModel duty)
     {
         eventModel.Duties.Remove(duty);
+        editContext = new EditContext(eventModel);
         StateHasChanged();
     }
     void DutySelected(ChangeEventArgs e)
     {
         eventModel.Duties.Add(appState.DbContext.Duties.Find(long.Parse(e.Value.ToString())));
+        editContext = new EditContext(eventModel);
         StateHasChanged();
     }
 }

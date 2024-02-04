@@ -18,7 +18,7 @@
         <ChildContent>
             <ValidatedField ValidationMessageFor="@(() => status.LivestockAnimalId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Animal</span><button type="button" @onclick=ShowAnimalEditor>+</button>
                         @if (_addingAnimal)
                         { 
@@ -96,7 +96,7 @@
     private long _LivestockAnimalId = 0;
     private long LivestockAnimalId { get => _LivestockAnimalId; set => _LivestockAnimalId = value; }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
         status = editContext.Model as LivestockStatusModel;
         if (status is null) return;

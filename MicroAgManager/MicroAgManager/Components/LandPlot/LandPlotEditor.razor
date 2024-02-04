@@ -21,7 +21,7 @@
         <ChildContent>
             <ValidatedField ValidationMessageFor="@(() => landPlot.FarmLocationId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Farm</span>
                         @if (ApplicationState.CanAddFarm())
                         { 
@@ -64,7 +64,7 @@
             </ValidatedField>
             <ValidatedField ValidationMessageFor="@(() => landPlot.AreaUnitId)">
                 <LegendContent>
-                    <div style="display:inline-flex">
+                    <div style="display:inline-flex;gap:1rem;">
                         <span>Area Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
                         <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
                     </div>
@@ -101,8 +101,8 @@
         var model = e.Model as FarmLocationModel;
         showFarmModal = false;
         if (model == null) return;
-        ((LandPlotModel)editContext.Model).FarmLocationId = model.Id;
-        // editContext = new EditContext(working);
+        landPlot.FarmLocationId = model.Id;
+        editContext = new EditContext(landPlot);
         StateHasChanged();
     }
     private void FarmCanceled(object e)
@@ -118,12 +118,14 @@
         showUnitModal = true;
         StateHasChanged();
     }
-    private void UnitSubmitted(object e)
+    private void UnitSubmitted(EditContext e)
     {
-        var model = e as UnitModel;
+        var model = e.Model as UnitModel;
         showUnitModal = false;
-        ((LandPlotModel)editContext.Model).AreaUnitId = model.Id;
-         StateHasChanged();
+        if (model == null) return;
+        landPlot.AreaUnitId = model.Id;
+        editContext = new EditContext(landPlot);
+        StateHasChanged();
     }
     private void UnitCanceled(object e)
     {

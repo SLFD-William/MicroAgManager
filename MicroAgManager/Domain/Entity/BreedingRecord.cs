@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,12 +8,14 @@ namespace Domain.Entity
 {
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
-    public class BreedingRecord : BaseEntity
+    public class BreedingRecord : BaseEntity, IHasRecipient
     {
         public BreedingRecord(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        [Required][ForeignKey("Female")] public required long FemaleId { get; set; }
+        public long RecipientTypeId { get; set; }
+        public string RecipientType { get; set; }
+        [Required][ForeignKey("Female")] public required long RecipientId { get; set; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -26,5 +29,6 @@ namespace Domain.Entity
         public string Notes { get; set; }
         public virtual Livestock? Male { get; set; }
         public virtual Livestock? Female { get; set; }
+
     }
 }
