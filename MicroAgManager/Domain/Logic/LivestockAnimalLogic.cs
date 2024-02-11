@@ -1,10 +1,9 @@
 ﻿using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
-using Domain.Logic;
 using Domain.ValueObjects;
 
-namespace BackEnd.BusinessLogic
+namespace Domain.Logic
 {
     public static class LivestockAnimalLogic
     {
@@ -30,7 +29,7 @@ namespace BackEnd.BusinessLogic
                 && e.RecipientTypeId == animalType.Id);
             if (parturition == null)
             {
-                var serviceDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
+                var serviceDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Male,
                     RecipientType = animalType.GetType().Name,
@@ -43,7 +42,7 @@ namespace BackEnd.BusinessLogic
                     Command = DutyCommandConstants.Service
                 };
                 context.Duties.Add(serviceDuty);
-                var birthDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
+                var birthDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
                     RecipientType=animalType.GetType().Name,
@@ -55,7 +54,7 @@ namespace BackEnd.BusinessLogic
                     CommandId = 0,
                     Command = DutyCommandConstants.Birth
                 };
-                parturition = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
+                parturition = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,
@@ -76,7 +75,7 @@ namespace BackEnd.BusinessLogic
                 && e.RecipientTypeId == animalType.Id);
             if (death == null)
             {
-                death = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
+                death = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,
@@ -96,7 +95,7 @@ namespace BackEnd.BusinessLogic
                 && e.RecipientTypeId == animalType.Id);
             if (birth == null)
             {
-                birth = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
+                birth = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,
@@ -115,7 +114,7 @@ namespace BackEnd.BusinessLogic
                 && e.RecipientTypeId == animalType.Id);
             if (breed == null)
             {
-                var breedDuty = new Domain.Entity.Duty(animalType.ModifiedBy, animalType.TenantId)
+                var breedDuty = new Duty(animalType.ModifiedBy, animalType.TenantId)
                 {
                     Gender = GenderConstants.Female,
                     RecipientType = animalType.GetType().Name,
@@ -127,7 +126,7 @@ namespace BackEnd.BusinessLogic
                     CommandId = 0,
                     Command = DutyCommandConstants.Breed,
                 };
-                breed = new Domain.Entity.Milestone(animalType.ModifiedBy, animalType.TenantId)
+                breed = new Milestone(animalType.ModifiedBy, animalType.TenantId)
                 {
                     SystemRequired = true,
                     ModifiedBy = animalType.ModifiedBy,

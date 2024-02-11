@@ -1,6 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
+using Domain.Logic;
 using Domain.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;

@@ -1,12 +1,11 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
-using Domain.Entity;
 using Domain.Interfaces;
+using Domain.Logic;
 using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock

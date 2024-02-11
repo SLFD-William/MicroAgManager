@@ -1,6 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
+using Domain.Logic;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
@@ -9,14 +10,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.Livestock
 {
-    public class CreateLivestock:BaseCommand,ICreateCommand
+    public class CreateLivestock : BaseCommand, ICreateCommand, ICreateLivestock
     {
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
         [Required] public LivestockModel Livestock { get; set; }
         public string CreationMode { get; set; } = "Create";
         public class Handler : BaseCommandHandler<CreateLivestock>
         {
-            public Handler(IMediator mediator, ILogger log) : base( mediator, log)
+            public Handler(IMediator mediator, ILogger log) : base(mediator, log)
             {
             }
 

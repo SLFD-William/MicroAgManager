@@ -1,6 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
+using Domain.Logic;
 using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
@@ -39,7 +40,12 @@ namespace BackEnd.BusinessLogic.BreedingRecord
                         {
                             var createLivestocks = await LivestockLogic.OnBreedingRecordResolved(context, breedingRecord.Id);
                             foreach (var livestock in createLivestocks)
-                                await _mediator.Send(livestock, cancellationToken);
+                            {
+                                var command = new Livestock.CreateLivestock() { CreatedBy = livestock.CreatedBy, CreationMode = livestock.CreationMode, Livestock = livestock.Livestock };
+                                command.ModifiedBy = request.ModifiedBy;
+                                command.TenantId = request.TenantId;
+                                await _mediator.Send(command, cancellationToken);
+                            }
                         }
                         await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy) }), cancellationToken);
                     }

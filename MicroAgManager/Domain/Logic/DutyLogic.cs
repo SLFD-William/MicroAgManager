@@ -1,10 +1,11 @@
 ﻿using Domain.Constants;
+using Domain.Entity;
 
-namespace BackEnd.BusinessLogic
+namespace Domain.Logic
 {
     public static class DutyLogic
     {
-        public static string GetRecordTypeFromCommand(Domain.Entity.Duty duty)
+        public static string GetRecordTypeFromCommand(Duty duty)
         { 
             switch (duty.Command)
             {

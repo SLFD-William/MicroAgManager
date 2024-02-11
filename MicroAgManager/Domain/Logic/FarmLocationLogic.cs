@@ -1,9 +1,8 @@
 ﻿using Domain.Constants;
 using Domain.Interfaces;
-using Domain.Logic;
 using Domain.ValueObjects;
 
-namespace BackEnd.BusinessLogic
+namespace Domain.Logic
 {
     public static class FarmLocationLogic
     {
@@ -20,24 +19,24 @@ namespace BackEnd.BusinessLogic
             
             return entitiesModified;
         }
-        private static void AddAncilliaries(Domain.Entity.FarmLocation farm, IMicroAgManagementDbContext context)
+        private static void AddAncilliaries(Entity.FarmLocation farm, IMicroAgManagementDbContext context)
         {
             if (context.Units.Any(u => u.TenantId == farm.TenantId)) return;
-            context.Units.Add(new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
             {
                 Name = "Acres",
                 Category = UnitCategoryConstants.Area.Key,
                 Symbol="acre",
                 ConversionFactorToSIUnit= 4046.85642
             });
-            context.Units.Add(new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
             {
                 Name = "Daily",
                 Category = UnitCategoryConstants.Frequency.Key,
                 Symbol = "daily",
                 ConversionFactorToSIUnit = 1/86400
             });
-            context.Units.Add(new Domain.Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
             {
                 Name = "Day",
                 Category = UnitCategoryConstants.Time.Key,

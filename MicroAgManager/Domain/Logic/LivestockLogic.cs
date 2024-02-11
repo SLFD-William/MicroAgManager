@@ -1,5 +1,4 @@
-﻿using BackEnd.BusinessLogic.Livestock;
-using Domain.Constants;
+﻿using Domain.Constants;
 using Domain.Entity;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -7,8 +6,14 @@ using Domain.Models;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
-namespace BackEnd.BusinessLogic
+namespace Domain.Logic
 {
+    public class CreateLivestock : ICreateLivestock
+    {
+        public Guid CreatedBy { get; set; }
+        public string CreationMode { get; set; }
+        public LivestockModel Livestock { get; set; }
+    }
     public static class LivestockLogic
     {
         public async static Task VerifyNoOpenBreedingRecord(IMicroAgManagementDbContext context,List<long> femaleId, Guid tenantId, CancellationToken cancellationToken)
@@ -26,9 +31,9 @@ namespace BackEnd.BusinessLogic
                 throw new IncompleteBreedingRecordException(nameList, existing.First().Id, "Open Breeding Record exists. Please Resolve");
             }
         }
-        public async static Task<List<CreateLivestock>> OnBreedingRecordResolved(IMicroAgManagementDbContext context, long breedingRecordId)
+        public async static Task<List<ICreateLivestock>> OnBreedingRecordResolved(IMicroAgManagementDbContext context, long breedingRecordId)
         {
-            var entitiesModified = new List<CreateLivestock>();
+            var entitiesModified = new List<ICreateLivestock>();
 
             var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
             if (breedingRecord == null) throw new Exception("Breeding Record not found");
@@ -42,7 +47,6 @@ namespace BackEnd.BusinessLogic
                 entitiesModified.Add(new CreateLivestock
                 {
                     CreatedBy = breedingRecord.ModifiedBy,
-                    TenantId = breedingRecord.TenantId,
                     CreationMode = "Birth",
                     Livestock = CreateBirthModel(i + 1, breedingRecord, female, status, GenderConstants.Female)
                 });
@@ -52,7 +56,6 @@ namespace BackEnd.BusinessLogic
                 entitiesModified.Add(new CreateLivestock
                 {
                     CreatedBy = breedingRecord.ModifiedBy,
-                    TenantId = breedingRecord.TenantId,
                     CreationMode = "Birth",
                     Livestock = CreateBirthModel(i + 1, breedingRecord, female, status, GenderConstants.Male)
                 });
@@ -74,7 +77,7 @@ namespace BackEnd.BusinessLogic
             var birthDuty = await context.Duties.FirstOrDefaultAsync(d => d.RecipientType == livestock.Breed.LivestockAnimal.GetType().Name && d.RecipientTypeId == livestock.Breed.LivestockAnimalId && d.Command == DutyCommandConstants.Birth);
             if (birthDuty == null) throw new Exception("Birth Duty not found");
 
-            var scheduledDuty = new Domain.Entity.ScheduledDuty(breedingRecord.ModifiedBy, breedingRecord.TenantId)
+            var scheduledDuty = new ScheduledDuty(breedingRecord.ModifiedBy, breedingRecord.TenantId)
             {
                 DutyId=birthDuty.Id,
                 DueOn = breedingRecord.ServiceDate.AddDays(livestock.Breed.GestationPeriod / 3),
@@ -116,7 +119,7 @@ namespace BackEnd.BusinessLogic
                         && s.Recipient == livestock.GetType().Name && !s.CompletedOn.HasValue))
                     continue;
 
-                var scheduledDuty = new Domain.Entity.ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
+                var scheduledDuty = new ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
                 {
                     Duty = duty,
                     DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
@@ -138,7 +141,7 @@ namespace BackEnd.BusinessLogic
                         && s.Recipient == mother.GetType().Name && !s.CompletedOn.HasValue))
                     continue;
 
-                var scheduledDuty = new Domain.Entity.ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
+                var scheduledDuty = new ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
                 {
                     Duty = duty,
                     DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
@@ -152,7 +155,7 @@ namespace BackEnd.BusinessLogic
             await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
         }
-        private static LivestockModel CreateBirthModel(int count, Domain.Entity.BreedingRecord breedingRecord, Domain.Entity.Livestock female, LivestockStatus status, string gender)
+        private static LivestockModel CreateBirthModel(int count, BreedingRecord breedingRecord, Livestock female, LivestockStatus status, string gender)
                 => new LivestockModel
                 {
                     BatchNumber = breedingRecord.ResolutionDate.Value.ToString("yyyyMMdd"),
