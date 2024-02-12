@@ -6,12 +6,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
-    public class MeasureModel : BaseModel
+    public class MeasureModel : BaseModel,IMeasure
     {
         [Required][MaxLength(20)] public string Method { get; set; } = nameof(MeasurementMethodConstants.Direct);
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][ForeignKey("Unit")] public long UnitId { get; set; }
         public virtual UnitModel Unit { get; set; }
+        [NotMapped] DateTime IMeasure.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+        [NotMapped] IUnit IMeasure.Unit { get => Unit; set => Unit =value as UnitModel ?? Unit; }
 
         public static MeasureModel Create(Measure measure)
         {

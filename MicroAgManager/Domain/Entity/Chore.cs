@@ -5,9 +5,27 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    public interface IChore
+    {
+        public long Id { get; set; }
+        public DateTime ModifiedOn { get; set; }
+        string Color { get; set; }
+        TimeSpan DueByTime { get; set; }
+       ICollection<IDuty>? Duties { get; set; }
+        decimal Frequency { get; set; }
+       IUnit FrequencyUnit { get; set; }
+        long FrequencyUnitId { get; set; }
+        string Name { get; set; }
+        decimal Period { get; set; }
+      IUnit? PeriodUnit { get; set; }
+        long? PeriodUnitId { get; set; }
+        string RecipientType { get; set; }
+        long RecipientTypeId { get; set; }
+    }
+
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
-    public class Chore : BaseEntity
+    public class Chore : BaseEntity, IChore
     {
         public Chore(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
@@ -26,6 +44,8 @@ namespace Domain.Entity
         [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
         public virtual Unit? PeriodUnit { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
-        
+        [NotMapped]ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>();}
+      [NotMapped]  IUnit? IChore.PeriodUnit { get => PeriodUnit; set => PeriodUnit =value as Unit; }
+      [NotMapped]  IUnit IChore.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit ?? FrequencyUnit; }
     }
 }

@@ -5,7 +5,7 @@ namespace Domain.Logic
 {
     public static class DutyLogic
     {
-        public static string GetRecordTypeFromCommand(Duty duty)
+        public static string GetRecordTypeFromCommand(IDuty duty)
         { 
             switch (duty.Command)
             {

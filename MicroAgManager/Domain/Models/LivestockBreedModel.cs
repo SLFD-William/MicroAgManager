@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
-    public class LivestockBreedModel : BaseModel
+    public class LivestockBreedModel : BaseModel,ILivestockBreed
     {
         [Required]
         [ForeignKey(nameof(Animal))]
@@ -17,6 +17,8 @@ namespace Domain.Models
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
         
         public virtual LivestockAnimalModel Animal { get; set; }
+        [NotMapped] DateTime ILivestockBreed.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+        [NotMapped] ICollection<ILivestock>? ILivestockBreed.Livestocks { get => Livestocks as ICollection<ILivestock>; set =>Livestocks=value as ICollection<LivestockModel> ?? new List<LivestockModel>(); }
 
         public static LivestockBreedModel Create(LivestockBreed livestockBreed)
         {

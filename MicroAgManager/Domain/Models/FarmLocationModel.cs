@@ -1,10 +1,11 @@
 ﻿using Domain.Entity;
 using Domain.Abstracts;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
-    public class FarmLocationModel:BaseModel
+    public class FarmLocationModel:BaseModel,IFarmLocation
     {
         [Required] public Guid TenantId { get; set; }
         [Required] public string? Name { get; set; }
@@ -18,6 +19,9 @@ namespace Domain.Models
         [MaxLength(2)]
         public string? CountryCode { get; set; }
         public virtual ICollection<LandPlotModel> Plots { get; set; } = new List<LandPlotModel>();
+        [NotMapped] DateTime IFarmLocation.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
+        [NotMapped] ICollection<ILandPlot>? IFarmLocation.Plots { get => Plots as ICollection<ILandPlot>; set => Plots = value as ICollection<LandPlotModel> ?? new List<LandPlotModel>(); }
+
         public static FarmLocationModel? Create(FarmLocation? farm)
         {
             if (farm == null) return null;

@@ -6,10 +6,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entity
 {
+    public interface IRegistration
+    {
+        public long Id { get; set; }
+        public DateTime ModifiedOn { get; set; }
+        bool DefaultIdentification { get; set; }
+        string Identifier { get; set; }
+        long RecipientId { get; set; }
+        string RecipientType { get; set; }
+        long RecipientTypeId { get; set; }
+        long RegistrarId { get; set; }
+        DateTime RegistrationDate { get; set; }
+    }
+
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
     [Index(nameof(RecipientType), nameof(RecipientTypeId))]
-    public class Registration : BaseEntity, IHasRecipient
+    public class Registration : BaseEntity, IHasRecipient, IRegistration
     {
         public Registration(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {

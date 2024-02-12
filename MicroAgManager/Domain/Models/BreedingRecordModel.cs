@@ -5,9 +5,10 @@ using Domain.Entity;
 
 namespace Domain.Models
 {
-    public class BreedingRecordModel : BaseHasRecipientModel
+    public class BreedingRecordModel : BaseHasRecipientModel,IBreedingRecord
     {
-        [Required][ForeignKey("Female")] public long RecipientId { get; set; }
+        [NotMapped] DateTime IBreedingRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
+        [Required][ForeignKey("Female")]new public long RecipientId { get; set; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -18,10 +19,7 @@ namespace Domain.Models
         [MaxLength(40)]public string? Resolution { get; set; }
 
         public string Notes { get; set; }
-        public long RecipientTypeId { get; set; }
-        public string RecipientType { get; set; }
-
-
+       
         public static BreedingRecordModel? Create(BreedingRecord breedingRecord)
         {
             if(breedingRecord==null) return null;

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class TreatmentRecordModel :  BaseHasRecipientModel
+    public class TreatmentRecordModel :  BaseHasRecipientModel,ITreatmentRecord
     {
         [Required][ForeignKey("Treatment")] public long TreatmentId { get; set; }
         public virtual TreatmentModel Treatment { get; set; }
@@ -17,6 +17,8 @@ namespace Domain.Models
         [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
         public virtual UnitModel DosageUnit { get; set; }
         public string AppliedMethod { get; set; } = TreatmentConstants.Grooming;
+        [NotMapped] DateTime ITreatmentRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+        [NotMapped] IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
 
         public static TreatmentRecordModel Create(TreatmentRecord treatmentRecord)
         {

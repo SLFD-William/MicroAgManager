@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
-    public class LivestockModel : BaseModel
+    public class LivestockModel : BaseModel,ILivestock
     {
         [ForeignKey(nameof(Mother))] public long? MotherId { get; set; }
         [ForeignKey(nameof(Father))] public long? FatherId { get; set; }
@@ -31,6 +31,7 @@ namespace Domain.Models
         public virtual LivestockStatusModel? Status { get; set; }
         public virtual LivestockBreedModel Breed { get; set; }
         public virtual LandPlotModel? Location { get; set; }
+        [NotMapped] DateTime ILivestock.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
 
         public static LivestockModel Create(Livestock livestock)
         {

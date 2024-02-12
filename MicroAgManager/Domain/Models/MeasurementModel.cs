@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Models
 {
-    public class MeasurementModel : BaseHasRecipientModel
+    public class MeasurementModel : BaseHasRecipientModel,IMeasurement
     {
         [Required][ForeignKey("Measure")] public long MeasureId { get; set; }
         public virtual MeasureModel Measure { get; set; }
@@ -16,6 +16,8 @@ namespace Domain.Models
         public virtual UnitModel MeasurementUnit { get; set; }
         public string Notes { get; set; }=string.Empty;
         [Required] public DateTime DatePerformed { get; set; }
+        [NotMapped] DateTime IMeasurement.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+        [NotMapped] IUnit IMeasurement.MeasurementUnit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public static MeasurementModel Create(Measurement measurement)
         {

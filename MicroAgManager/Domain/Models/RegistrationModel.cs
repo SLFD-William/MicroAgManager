@@ -5,13 +5,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
-    public class RegistrationModel : BaseHasRecipientModel
+    public class RegistrationModel : BaseHasRecipientModel,IRegistration
     {
         [Required][ForeignKey("Registrar")] public long RegistrarId { get; set; }
         public virtual RegistrarModel Registrar { get; set; }
         [Required][MaxLength(40)] public string Identifier { get; set; }
         [Required] public bool DefaultIdentification { get; set; } = false;
         [Required] public DateTime RegistrationDate { get; set; }
+        [NotMapped] DateTime IRegistration.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
 
         public static RegistrationModel Create(Registration? registration)
         {

@@ -10,7 +10,7 @@ namespace Domain.Models
     [Index(nameof(CompletedOn))]
     [Index(nameof(DueOn))]
     [Index(nameof(Dismissed))]
-    public class ScheduledDutyModel : BaseModel
+    public class ScheduledDutyModel : BaseModel,IScheduledDuty
     {
         [Required][ForeignKey(nameof(Duty))] public long DutyId { get; set; }
         public virtual DutyModel Duty { get; set; }
@@ -26,7 +26,7 @@ namespace Domain.Models
         [Precision(18,3)] public decimal ReminderDays { get; set; }
         public DateTime? CompletedOn { get; set; }
         public Guid? CompletedBy { get; set; }
-
+        [NotMapped] DateTime IScheduledDuty.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
         public static ScheduledDutyModel? Create(ScheduledDuty? duty)
         {
             if (duty == null) return null;
@@ -93,6 +93,6 @@ namespace Domain.Models
         }
         [NotMapped] public string ScheduleSourceItem { get; private set; } = string.Empty;
         [NotMapped] public string RecipientItem { get; private set; } = string.Empty;
-
+       
     }
 }

@@ -5,9 +5,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entity
 {
+    public interface ILivestockStatus
+    {
+        public long Id { get; set; }
+        public DateTime ModifiedOn { get; set; }
+        string BeingManaged { get; set; }
+        string BottleFed { get; set; }
+        bool DefaultStatus { get; set; }
+       ICollection<ILivestockFeedServing>? FeedServings { get; set; }
+        string ForSale { get; set; }
+        string InMilk { get; set; }
+        long LivestockAnimalId { get; set; }
+       ICollection<ILivestock>? Livestocks { get; set; }
+        string Status { get; set; }
+        string Sterile { get; set; }
+    }
+
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
-    public class LivestockStatus : BaseEntity
+    public class LivestockStatus : BaseEntity, ILivestockStatus
     {
         public LivestockStatus(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
@@ -23,5 +39,7 @@ namespace Domain.Entity
         public virtual LivestockAnimal LivestockAnimal { get; set; }
         public virtual ICollection<LivestockFeedServing> FeedServings { get; set; } = new List<LivestockFeedServing>();
         public virtual ICollection<Livestock> Livestocks { get; set; } = new List<Livestock>();
-    }
+        [NotMapped] ICollection<ILivestockFeedServing>? ILivestockStatus.FeedServings { get => FeedServings as ICollection<ILivestockFeedServing>; set =>FeedServings=value as ICollection<LivestockFeedServing>?? new List<LivestockFeedServing>(); }
+        [NotMapped] ICollection<ILivestock>? ILivestockStatus.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks = value as ICollection<Livestock> ?? new List<Livestock>(); }
+        }
 }

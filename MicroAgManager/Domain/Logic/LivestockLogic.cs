@@ -114,14 +114,14 @@ namespace Domain.Logic
             var birthMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Birth).SelectMany(m => m.Duties).ToListAsync();
             foreach (var duty in birthMilestoneDuties.Where(d => (d.Gender is null || d.Gender == livestock.Gender) && d.Relationship == DutyRelationshipConstants.Self))
             {
-                var record = DutyLogic.GetRecordTypeFromCommand(duty);
+                var record = DutyLogic.GetRecordTypeFromCommand(duty as Duty);
                 if (await context.ScheduledDuties.AnyAsync(s => s.Duty == duty && s.RecipientId == livestock.Id
                         && s.Recipient == livestock.GetType().Name && !s.CompletedOn.HasValue))
                     continue;
 
                 var scheduledDuty = new ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
                 {
-                    Duty = duty,
+                    Duty = duty as Duty,
                     DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
                     Record = record,
                     RecipientId = livestock.Id,
@@ -136,14 +136,14 @@ namespace Domain.Logic
             var parturitionMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Parturition).SelectMany(m => m.Duties).ToListAsync();
             foreach (var duty in parturitionMilestoneDuties.Where(d => (d.Gender is null || d.Gender == mother.Gender) && d.Relationship == DutyRelationshipConstants.Self))
             {
-                var record = DutyLogic.GetRecordTypeFromCommand(duty);
+                var record = DutyLogic.GetRecordTypeFromCommand(duty as Duty);
                 if (await context.ScheduledDuties.AnyAsync(s => s.Duty == duty && s.RecipientId == mother.Id
                         && s.Recipient == mother.GetType().Name && !s.CompletedOn.HasValue))
                     continue;
 
                 var scheduledDuty = new ScheduledDuty(livestock.ModifiedBy, livestock.TenantId)
                 {
-                    Duty = duty,
+                    Duty = duty as Duty,
                     DueOn = livestock.Birthdate.AddDays(duty.DaysDue),
                     Record = record,
                     RecipientId = mother.Id,
@@ -168,10 +168,10 @@ namespace Domain.Logic
                     Birthdate = breedingRecord.ResolutionDate.Value,
                     Name = $"{female.Name} {gender} {count}",
                     BeingManaged = status.BeingManaged == LivestockStatusModeConstants.True,
-                    InMilk = status.InMilk == LivestockStatusModeConstants.True,
-                    BottleFed = status.BottleFed == LivestockStatusModeConstants.True,
+                    InMilk = status.InMilk == LivestockStatusModeConstants.Unchanged,
+                    BottleFed = status.BottleFed == LivestockStatusModeConstants.Unchanged,
                     ForSale = status.ForSale == LivestockStatusModeConstants.True,
-                    Sterile = status.Sterile == LivestockStatusModeConstants.True,
+                    Sterile = status.Sterile == LivestockStatusModeConstants.False,
                     Variety = female.Variety,
                     Description = string.Empty
                 };

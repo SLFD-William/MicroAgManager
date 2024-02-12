@@ -15,6 +15,7 @@ namespace BackEnd.BusinessLogic.Livestock
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
         [Required] public LivestockModel Livestock { get; set; }
         public string CreationMode { get; set; } = "Create";
+        
         public class Handler : BaseCommandHandler<CreateLivestock>
         {
             public Handler(IMediator mediator, ILogger log) : base(mediator, log)

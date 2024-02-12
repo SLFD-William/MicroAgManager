@@ -8,7 +8,7 @@ namespace Domain.Models
 {
     //generate the model for the Chore Entity using the standard conventions of this code base.
     //please
-    public class ChoreModel : BaseModel
+    public class ChoreModel : BaseModel,IChore
     {
         [Required] public long RecipientTypeId { get; set; }
         [Required][MaxLength(40)] public string RecipientType { get; set; }
@@ -19,12 +19,16 @@ namespace Domain.Models
         [Required] public TimeSpan DueByTime { get; set; } = new TimeSpan(12, 0, 0);
         [Required][Precision(18, 3)] public decimal Frequency { get; set; } = 1;
         [Required][ForeignKey(nameof(FrequencyUnit))] public long FrequencyUnitId { get; set; }
-        [Required] public virtual Unit FrequencyUnit { get; set; }
+        [Required] public virtual UnitModel FrequencyUnit { get; set; }
 
-        [Precision(18, 3)] public decimal? Period { get; set; } = 1;
+        [Precision(18, 3)] public decimal Period { get; set; } = 1;
         [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
-        public virtual Unit? PeriodUnit { get; set; }
-        public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel>();
+        public virtual UnitModel? PeriodUnit { get; set; }
+        public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
+        [NotMapped] DateTime IChore.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+       [NotMapped] ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties=value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
+      [NotMapped]  IUnit IChore.FrequencyUnit { get => FrequencyUnit as IUnit; set => FrequencyUnit=value as UnitModel ?? FrequencyUnit; }
+      [NotMapped]  IUnit? IChore.PeriodUnit { get => PeriodUnit as IUnit; set => PeriodUnit=value as UnitModel; }
 
         public static ChoreModel? Create(Chore chore)
         {
@@ -68,7 +72,7 @@ namespace Domain.Models
             ((Chore)chore).DueByTime = DueByTime;
             ((Chore)chore).FrequencyUnitId = FrequencyUnitId;
             ((Chore)chore).Name = Name;
-            ((Chore)chore).Period = Period ?? 1;
+            ((Chore)chore).Period = Period;
             ((Chore)chore).PeriodUnitId = PeriodUnitId;
             ((Chore)chore).RecipientType = RecipientType;
             ((Chore)chore).RecipientTypeId = RecipientTypeId;

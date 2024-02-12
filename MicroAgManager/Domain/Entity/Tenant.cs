@@ -5,9 +5,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entity
 {
+    public interface ITenant
+    {
+        string AccessLevel { get; set; }
+        DateTime Created { get; set; }
+        Guid CreatedBy { get; set; }
+        DateTime? Deleted { get; set; }
+        Guid? DeletedBy { get; set; }
+        Guid GuidId { get; set; }
+        long Id { get; set; }
+        Guid ModifiedBy { get; set; }
+        DateTime ModifiedOn { get; set; }
+        string Name { get; set; }
+        Guid TenantUserAdminId { get; set; }
+        string? WeatherServiceQueryURL { get; set; }
+    }
+
     [Index(nameof(GuidId))]
     [Index(nameof(ModifiedOn))]
-    public class Tenant
+    public class Tenant : ITenant
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
@@ -26,7 +42,7 @@ namespace Domain.Entity
         public Guid? DeletedBy { get; set; }
         [Required]
         [MaxLength(40)]
-        public string Name { get; set; } 
+        public string Name { get; set; }
         [Required]
         public Guid TenantUserAdminId { get; set; }
         [Required]

@@ -3,11 +3,12 @@ using Domain.Constants;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
     [Index(nameof(Name), IsUnique = true)]
-    public class LivestockAnimalModel : BaseModel
+    public class LivestockAnimalModel : BaseModel,ILivestockAnimal
     {
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][MaxLength(40)] public string GroupName { get; set; }
@@ -17,6 +18,10 @@ namespace Domain.Models
         public virtual ICollection<LivestockBreedModel?> Breeds { get; set; } =new List<LivestockBreedModel?>();
         public virtual ICollection<LivestockStatusModel?> Statuses { get; set; } = new List<LivestockStatusModel?>();
         public virtual ICollection<LivestockFeedModel?> Feeds { get; set; } = new List<LivestockFeedModel?>();
+        [NotMapped] DateTime ILivestockAnimal.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
+        [NotMapped] ICollection<ILivestockBreed>? ILivestockAnimal.Breeds { get => Breeds as ICollection<ILivestockBreed>; set => Breeds = value as ICollection<LivestockBreedModel?> ?? new List<LivestockBreedModel?>(); }
+        [NotMapped] ICollection<ILivestockFeed>? ILivestockAnimal.Feeds { get => Feeds as ICollection<ILivestockFeed>; set => Feeds = value as ICollection<LivestockFeedModel?> ?? new List<LivestockFeedModel?>(); }
+        [NotMapped] ICollection<ILivestockStatus>? ILivestockAnimal.Statuses { get => Statuses as ICollection<ILivestockStatus>; set => Statuses = value as ICollection<LivestockStatusModel?> ?? new List<LivestockStatusModel?>(); }
 
         public static LivestockAnimalModel? Create(LivestockAnimal LivestockAnimal)
         {

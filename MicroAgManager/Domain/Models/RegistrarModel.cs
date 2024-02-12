@@ -1,10 +1,11 @@
 ﻿using Domain.Abstracts;
 using Domain.Entity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
-    public class RegistrarModel : BaseModel
+    public class RegistrarModel : BaseModel,IRegistrar
     {
         [Required][MaxLength(40)] public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -12,6 +13,8 @@ namespace Domain.Models
         public string API { get; set; } = string.Empty;
         [Required][MaxLength(40)] public string RegistrarFarmID { get; set; } = string.Empty;
         public virtual ICollection<RegistrationModel> Registrations { get; set; } = new List<RegistrationModel>();
+        [NotMapped] DateTime IRegistrar.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+        [NotMapped] ICollection<IRegistration>? IRegistrar.Registrations { get => Registrations as ICollection<IRegistration>; set => Registrations = value as ICollection<RegistrationModel> ?? new List<RegistrationModel>(); }
         public static RegistrarModel Create(Registrar registrar)
         {
             var model = PopulateBaseModel(registrar, new RegistrarModel

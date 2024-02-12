@@ -1,10 +1,11 @@
 ﻿using Domain.Abstracts;
 using Domain.Entity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {
-    public class MilestoneModel : BaseModel
+    public class MilestoneModel : BaseModel,IMilestone
     {
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][MaxLength(255)] public string Description { get; set; }
@@ -14,6 +15,10 @@ namespace Domain.Models
         [Range(1, long.MaxValue)] public long RecipientTypeId { get; set; }
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
+        [NotMapped] DateTime IMilestone.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
+        [NotMapped] ICollection<IDuty>? IMilestone.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
+       [NotMapped] ICollection<IEvent>? IMilestone.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<EventModel?> ?? new List<EventModel?>(); }
+
         public static MilestoneModel? Create(Milestone? milestone)
         {
             if (milestone == null) return null;

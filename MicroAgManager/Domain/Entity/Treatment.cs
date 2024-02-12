@@ -5,9 +5,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entity
 {
+    public interface ITreatment
+    {
+        public long Id { get; set; }
+        public DateTime ModifiedOn { get; set; }
+        string BrandName { get; set; }
+        decimal DosageAmount { get; set; }
+      IUnit? DosageUnit { get; set; }
+        long? DosageUnitId { get; set; }
+        decimal Duration { get; set; }
+      IUnit? DurationUnit { get; set; }
+        long? DurationUnitId { get; set; }
+        decimal Frequency { get; set; }
+      IUnit? FrequencyUnit { get; set; }
+        long? FrequencyUnitId { get; set; }
+        string LabelMethod { get; set; }
+        int MeatWithdrawal { get; set; }
+        int MilkWithdrawal { get; set; }
+        string Name { get; set; }
+        string Reason { get; set; }
+        decimal RecipientMass { get; set; }
+      IUnit? RecipientMassUnit { get; set; }
+        long? RecipientMassUnitId { get; set; }
+    }
+
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
-    public class Treatment : BaseEntity
+    public class Treatment : BaseEntity, ITreatment
     {
         public Treatment(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
@@ -19,7 +43,7 @@ namespace Domain.Entity
         public int MeatWithdrawal { get; set; } = 0;
         public int MilkWithdrawal { get; set; } = 0;
 
-        [Precision(18,3)]public decimal DosageAmount { get; set; } = 0;
+        [Precision(18, 3)] public decimal DosageAmount { get; set; } = 0;
         [ForeignKey(nameof(DosageUnit))] public long? DosageUnitId { get; set; }
         public virtual Unit? DosageUnit { get; set; }
 
@@ -35,5 +59,9 @@ namespace Domain.Entity
         [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
         public virtual Unit? DurationUnit { get; set; }
 
+        [NotMapped] IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as Unit; }
+        [NotMapped] IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as Unit; }
+        [NotMapped] IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit; }
+        [NotMapped] IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as Unit; }
     }
 }
