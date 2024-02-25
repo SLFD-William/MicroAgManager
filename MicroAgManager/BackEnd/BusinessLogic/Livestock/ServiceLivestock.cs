@@ -46,7 +46,7 @@ namespace BackEnd.BusinessLogic.Livestock
                     {
                         var service = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId)
                         {
-                            RecipientId = dam.Id,
+                            FemaleId = dam.Id,
                             RecipientType=dam.Breed.LivestockAnimal.GetType().Name,
                             RecipientTypeId=dam.Breed.LivestockAnimalId,
                             MaleId = stud?.Id,

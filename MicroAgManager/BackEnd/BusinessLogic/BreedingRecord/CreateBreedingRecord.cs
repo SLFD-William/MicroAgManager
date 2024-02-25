@@ -24,7 +24,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
             {
 
                 var breedingRecord = new Domain.Entity.BreedingRecord(request.ModifiedBy, request.TenantId) 
-                { RecipientId =request.BreedingRecord.RecipientId,
+                { FemaleId =request.BreedingRecord.FemaleId,
                   RecipientType = request.BreedingRecord.RecipientType,
                   RecipientTypeId = request.BreedingRecord.RecipientTypeId
                 };

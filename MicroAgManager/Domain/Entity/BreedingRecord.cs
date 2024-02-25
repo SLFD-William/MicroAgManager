@@ -14,9 +14,7 @@ namespace Domain.Entity
         int? BornMales { get; set; }
         long? MaleId { get; set; }
         string Notes { get; set; }
-        long RecipientId { get; set; }
-        string RecipientType { get; set; }
-        long RecipientTypeId { get; set; }
+        long FemaleId { get; set; }
         string? Resolution { get; set; }
         DateTime? ResolutionDate { get; set; }
         DateTime ServiceDate { get; set; }
@@ -31,9 +29,7 @@ namespace Domain.Entity
         public BreedingRecord(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
         }
-        public long RecipientTypeId { get; set; }
-        public string RecipientType { get; set; }
-        [Required][ForeignKey("Female")] public required long RecipientId { get; set; }
+        [Required][ForeignKey("Female")] public required long FemaleId { get; set; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -47,6 +43,8 @@ namespace Domain.Entity
         public string Notes { get; set; }
         public virtual Livestock? Male { get; set; }
         public virtual Livestock? Female { get; set; }
-
+        public long RecipientTypeId { get; set; }
+        public string RecipientType { get; set; }
+        [NotMapped]long IHasRecipient.RecipientId { get => FemaleId; set => FemaleId=value; }
     }
 }

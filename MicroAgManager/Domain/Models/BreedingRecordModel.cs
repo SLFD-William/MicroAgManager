@@ -2,13 +2,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
+using Domain.Interfaces;
 
 namespace Domain.Models
 {
-    public class BreedingRecordModel : BaseHasRecipientModel,IBreedingRecord
+    public class BreedingRecordModel :BaseModel, IHasRecipient, IBreedingRecord
     {
         [NotMapped] DateTime IBreedingRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
-        [Required][ForeignKey("Female")]new public long RecipientId { get; set; }
+        [Required][ForeignKey("Female")] public long FemaleId { get => RecipientId; set => RecipientId = value; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -19,13 +20,16 @@ namespace Domain.Models
         [MaxLength(40)]public string? Resolution { get; set; }
 
         public string Notes { get; set; }
-       
+        public long RecipientTypeId { get; set; }
+        public string RecipientType { get; set; }
+        [NotMapped]public long RecipientId { get => FemaleId; set => FemaleId=value; }
+                
         public static BreedingRecordModel? Create(BreedingRecord breedingRecord)
         {
             if(breedingRecord==null) return null;
             var model = PopulateBaseModel(breedingRecord, new BreedingRecordModel
             {
-                RecipientId = breedingRecord.RecipientId,
+                FemaleId = breedingRecord.FemaleId,
                 RecipientTypeId = breedingRecord.RecipientTypeId,
                 RecipientType = breedingRecord.RecipientType,
                 MaleId = breedingRecord.MaleId,
@@ -41,12 +45,10 @@ namespace Domain.Models
             return model;
         }
         
-        public override BaseModel Map(BaseModel breedingRecord)=> Map((BaseHasRecipientModel)breedingRecord);
-
         public override BaseEntity Map(BaseEntity breedingRecord)
         {
 
-            ((BreedingRecord)breedingRecord).RecipientId = RecipientId;
+            ((BreedingRecord)breedingRecord).FemaleId = FemaleId;
             ((BreedingRecord)breedingRecord).RecipientTypeId = RecipientTypeId;
             ((BreedingRecord)breedingRecord).RecipientType = RecipientType;
             ((BreedingRecord)breedingRecord).MaleId = MaleId;
@@ -63,11 +65,11 @@ namespace Domain.Models
             return breedingRecord;
         }
 
-        public override BaseHasRecipientModel Map(BaseHasRecipientModel breedingRecord)
+        public override BaseModel Map(BaseModel breedingRecord)
         {
             if (breedingRecord == null || breedingRecord is not BreedingRecordModel) return null;
 
-            ((BreedingRecordModel)breedingRecord).RecipientId = RecipientId;
+            ((BreedingRecordModel)breedingRecord).FemaleId = FemaleId;
             ((BreedingRecordModel)breedingRecord).RecipientTypeId = RecipientTypeId;
             ((BreedingRecordModel)breedingRecord).RecipientType = RecipientType;
             ((BreedingRecordModel)breedingRecord).MaleId = MaleId;

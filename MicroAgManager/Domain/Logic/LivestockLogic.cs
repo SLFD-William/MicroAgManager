@@ -23,7 +23,7 @@ namespace Domain.Logic
             var existing = await context.BreedingRecords
             .Where(b => b.RecipientType==animal.Breed.LivestockAnimal.GetType().Name && 
                     b.RecipientTypeId== animal.Breed.LivestockAnimalId && 
-                    femaleId.Contains(b.RecipientId) && b.TenantId == tenantId && !b.ResolutionDate.HasValue)
+                    femaleId.Contains(b.FemaleId) && b.TenantId == tenantId && !b.ResolutionDate.HasValue)
             .ToListAsync(cancellationToken);
             if (existing.Any())
             {
@@ -38,7 +38,7 @@ namespace Domain.Logic
             var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
             if (breedingRecord == null) throw new Exception("Breeding Record not found");
             if (breedingRecord.Resolution != BreedingResolutionConstants.Success || !breedingRecord.ResolutionDate.HasValue) return entitiesModified;
-            var female = await context.Livestocks.Include(b => b.Breed).FirstOrDefaultAsync(l => l.Id == breedingRecord.RecipientId);
+            var female = await context.Livestocks.Include(b => b.Breed).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
             var status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == female.Breed.LivestockAnimalId && l.DefaultStatus);
             if (status is null)
                 status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == female.Breed.LivestockAnimalId);
@@ -68,7 +68,7 @@ namespace Domain.Logic
 
             var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
             if (breedingRecord == null) throw new Exception("Breeding Record not found");
-            var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == breedingRecord.RecipientId);
+            var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
             if (livestock == null || livestock.Gender == GenderConstants.Male) throw new Exception("Female Livestock not found");
 
             entitiesModified.Add(new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Modified", breedingRecord.ModifiedBy));

@@ -3,10 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
+using Domain.Interfaces;
 
 namespace Domain.Models
 {
-    public class MeasurementModel : BaseHasRecipientModel,IMeasurement
+    public class MeasurementModel : BaseModel,IHasRecipient,IMeasurement
     {
         [Required][ForeignKey("Measure")] public long MeasureId { get; set; }
         public virtual MeasureModel Measure { get; set; }
@@ -16,8 +18,11 @@ namespace Domain.Models
         public virtual UnitModel MeasurementUnit { get; set; }
         public string Notes { get; set; }=string.Empty;
         [Required] public DateTime DatePerformed { get; set; }
+        public long RecipientTypeId { get; set; }
+        public string RecipientType { get; set; }
+        public long RecipientId { get; set; }
         [NotMapped] DateTime IMeasurement.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-        [NotMapped] IUnit IMeasurement.MeasurementUnit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [NotMapped] IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit = value as UnitModel ?? MeasurementUnit; }
 
         public static MeasurementModel Create(Measurement measurement)
         {
@@ -27,25 +32,12 @@ namespace Domain.Models
                 Value = measurement.Value,
                 MeasurementUnitId = measurement.MeasurementUnitId,
                 Notes = measurement.Notes,
-                DatePerformed = measurement.DatePerformed
+                DatePerformed = measurement.DatePerformed,
+                
             }) as MeasurementModel;
             return model;
         }
 
-        public override BaseHasRecipientModel Map(BaseHasRecipientModel measurement)
-        {
-            if (measurement == null || measurement is not MeasurementModel) return null;
-            ((MeasurementModel)measurement).MeasureId = MeasureId;
-            ((MeasurementModel)measurement).Value = Value;
-            ((MeasurementModel)measurement).MeasurementUnitId = MeasurementUnitId;
-            ((MeasurementModel)measurement).Notes = Notes;
-            ((MeasurementModel)measurement).DatePerformed = DatePerformed;
-            ((MeasurementModel)measurement).EntityModifiedOn = EntityModifiedOn;
-            ((MeasurementModel)measurement).RecipientId = RecipientId;
-            ((MeasurementModel)measurement).RecipientTypeId = RecipientTypeId;
-            ((MeasurementModel)measurement).RecipientType = RecipientType;
-            return measurement;
-        }
         public override BaseEntity Map(BaseEntity measurement)
         {
             if (measurement == null || measurement is not Measurement) return null;
@@ -61,6 +53,19 @@ namespace Domain.Models
             return measurement;
         }
 
-        public override BaseModel Map(BaseModel model) => Map((BaseHasRecipientModel) model);
+        public override BaseModel Map(BaseModel measurement)
+        {
+            if (measurement == null || measurement is not MeasurementModel) return null;
+            ((MeasurementModel)measurement).MeasureId = MeasureId;
+            ((MeasurementModel)measurement).Value = Value;
+            ((MeasurementModel)measurement).MeasurementUnitId = MeasurementUnitId;
+            ((MeasurementModel)measurement).Notes = Notes;
+            ((MeasurementModel)measurement).DatePerformed = DatePerformed;
+            ((MeasurementModel)measurement).EntityModifiedOn = EntityModifiedOn;
+            ((MeasurementModel)measurement).RecipientId = RecipientId;
+            ((MeasurementModel)measurement).RecipientTypeId = RecipientTypeId;
+            ((MeasurementModel)measurement).RecipientType = RecipientType;
+            return measurement;
+        }
     }
 }

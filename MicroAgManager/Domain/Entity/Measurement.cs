@@ -15,9 +15,6 @@ namespace Domain.Entity
        IUnit MeasurementUnit { get; set; }
         long MeasurementUnitId { get; set; }
         string Notes { get; set; }
-        long RecipientId { get; set; }
-        string RecipientType { get; set; }
-        long RecipientTypeId { get; set; }
         decimal Value { get; set; }
     }
 

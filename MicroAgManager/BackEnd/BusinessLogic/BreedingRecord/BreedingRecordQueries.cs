@@ -7,7 +7,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
     public class BreedingRecordQueries : BaseQuery
     {
         public BreedingRecordModel? NewBreedingRecord { get => (BreedingRecordModel?)NewModel; set => NewModel = value; }
-        public long? RecipientId { get; set; }
+        public long? FemaleId { get; set; }
         public long? MaleId { get; set; }
         public DateTime? ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }
@@ -17,7 +17,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
         {
             var query = PopulateBaseQuery(context.BreedingRecords.AsQueryable());
             if (query is null) throw new ArgumentNullException(nameof(query));
-            if (RecipientId.HasValue) query=query.Where(_ => _.RecipientId == RecipientId);
+            if (FemaleId.HasValue) query=query.Where(_ => _.FemaleId == FemaleId);
             if (MaleId.HasValue) query = query.Where(_ => _.MaleId == MaleId);
             if (ServiceDate.HasValue) query = query.Where(_ => _.ServiceDate == ServiceDate);
             if (ResolutionDate.HasValue) query = query.Where(_ => _.ResolutionDate == ResolutionDate);

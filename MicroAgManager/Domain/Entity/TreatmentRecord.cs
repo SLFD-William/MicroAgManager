@@ -17,9 +17,6 @@ namespace Domain.Entity
        IUnit DosageUnit { get; set; }
         long DosageUnitId { get; set; }
         string Notes { get; set; }
-        long RecipientId { get; set; }
-        string RecipientType { get; set; }
-        long RecipientTypeId { get; set; }
         long TreatmentId { get; set; }
     }
 

@@ -12,9 +12,6 @@ namespace Domain.Entity
         public DateTime ModifiedOn { get; set; }
         bool DefaultIdentification { get; set; }
         string Identifier { get; set; }
-        long RecipientId { get; set; }
-        string RecipientType { get; set; }
-        long RecipientTypeId { get; set; }
         long RegistrarId { get; set; }
         DateTime RegistrationDate { get; set; }
     }

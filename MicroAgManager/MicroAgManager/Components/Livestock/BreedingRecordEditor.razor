@@ -1,5 +1,177 @@
-﻿<h3>BreedingRecordEditor</h3>
+﻿@using BackEnd.BusinessLogic.BreedingRecord
+@using BackEnd.BusinessLogic.Measurement
+@using Domain.Abstracts
+@using Domain.Constants
+@using Domain.Interfaces
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.Unit
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits HasRecipientsEditor
+
+@if (breedingRecord is not null)
+{
+    <ValidatedForm editContext="editContext"
+                   OnSubmit="OnBreedingRecordSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="@ShowUpdateCancel"
+                   Modal=Modal
+                   Show=Show>
+        <ValidatedField Legend="Service Date" ValidationMessageFor="@(() => breedingRecord.ServiceDate)">
+            <InputDate @bind-Value="@breedingRecord.ServiceDate" />
+        </ValidatedField>
+        <ValidatedField ValidationMessageFor="@(() => breedingRecord.FemaleId)">
+           <LegendContent>
+                @RecipientTypeFemaleName
+            </LegendContent>
+            <ChildContent>
+                <InputSelect @bind-Value="@breedingRecord.FemaleId">
+                    <option value="0">Select @RecipientTypeFemaleName ...</option>
+                    @foreach (var g in FemaleSelections())
+                    {
+                        <option value="@g.Item1">@g.Item2</option>
+                    }
+                </InputSelect>
+            </ChildContent>
+        </ValidatedField>
+        <ValidatedField Legend="Male" ValidationMessageFor="@(() => breedingRecord.MaleId)">
+            <LegendContent>
+                @RecipientTypeFemaleName
+            </LegendContent>
+            <ChildContent>
+                <InputSelect @bind-Value="@breedingRecord.MaleId">
+                    <option value="0">Select @RecipientTypeFemaleName ...</option>
+                    @foreach (var g in MaleSelections())
+                    {
+                        <option value="@g.Item1">@g.Item2</option>
+                    }
+                </InputSelect>
+            </ChildContent>
+        </ValidatedField>
+        <ValidatedField Legend="Resolution" ValidationMessageFor="@(() => breedingRecord.Resolution)">
+            <InputSelect @bind-Value="@breedingRecord.Resolution">
+                <option value="">Select Resolution ...</option>
+                <option value="@BreedingResolutionConstants.Success">@BreedingResolutionConstants.Success</option>
+                <option value="@BreedingResolutionConstants.NotImpregnated">@BreedingResolutionConstants.NotImpregnated</option>
+            </InputSelect>
+        </ValidatedField>
+        @if (!string.IsNullOrEmpty(breedingRecord.Resolution))
+        {
+            <ValidatedField Legend="Resolution Date" ValidationMessageFor="@(() => breedingRecord.ResolutionDate)">
+                <InputDate @bind-Value="@breedingRecord.ResolutionDate" />
+            </ValidatedField>
+            @if (breedingRecord.Resolution == BreedingResolutionConstants.Success)
+            {
+                <ValidatedField CssClass="firstColumn" Legend="Males Born" ValidationMessageFor="@(() => breedingRecord.BornMales)">
+                    <InputNumber @bind-Value="@(breedingRecord.BornMales)" />
+                </ValidatedField>
+                <ValidatedField Legend="Stillborn Males" ValidationMessageFor="@(() => breedingRecord.StillbornMales)">
+                    <InputNumber @bind-Value="@(breedingRecord.StillbornMales)" />
+                </ValidatedField>
+                <ValidatedField CssClass="firstColumn" Legend="Females Born" ValidationMessageFor="@(() => breedingRecord.BornFemales)">
+                    <InputNumber @bind-Value="@(breedingRecord.BornFemales)" />
+                </ValidatedField>
+                <ValidatedField Legend="Stillborn Females" ValidationMessageFor="@(() => breedingRecord.StillbornFemales)">
+                    <InputNumber @bind-Value="@(breedingRecord.StillbornFemales)" />
+                </ValidatedField>
+            }
+        }
+        <ValidatedField CssClass="fullWidth" Legend="Notes" ValidationMessageFor="@(() => breedingRecord.Notes)">
+            <InputTextArea @bind-Value="breedingRecord.Notes"></InputTextArea>
+        </ValidatedField>
+     </ValidatedForm>
+}
+
+
 
 @code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private BreedingRecordModel? breedingRecord;
+    private BaseModel? recipientType;
+    protected override void OnInitialized()
+    {
+        breedingRecord = editContext.Model as BreedingRecordModel;
+        if (breedingRecord is null) return;
+        switch (breedingRecord.RecipientType)
+        {
+
+            case nameof(RecipientTypeConstants.LivestockBreed):
+                recipientType = appState.DbContext.LivestockBreeds.FirstOrDefault(b => b.Id == breedingRecord.RecipientTypeId)?.Animal;
+                break;
+            case nameof(RecipientTypeConstants.LivestockAnimal):
+                recipientType = appState.DbContext.LivestockAnimals.Find(breedingRecord.RecipientTypeId);
+                break;
+            default:
+                break;
+        }
+        if (recipientType is LivestockAnimalModel)
+        {
+            RecipientTypeFemaleName = ((LivestockAnimalModel)recipientType).ParentFemaleName;
+            RecipientTypeMaleName = ((LivestockAnimalModel)recipientType).ParentMaleName;
+            var femaleQuery = appState.DbContext.Livestocks.Where(l => !l.Sterile && l.Gender == GenderConstants.Female);
+            if (breedingRecord.RecipientType == nameof(RecipientTypeConstants.LivestockBreed))
+                femaleQuery = femaleQuery.Where(l => l.LivestockBreedId == breedingRecord.RecipientTypeId);
+            else
+                femaleQuery = femaleQuery.Where(l => l.Breed.LivestockAnimalId == breedingRecord.RecipientTypeId);
+
+            FemaleSelections = femaleQuery.Select(l => new Tuple<long,string>(l.Id, $"{l.Name}")).ToList(); 
+            var maleQuery = appState.DbContext.Livestocks.Where(l => !l.Sterile && l.Gender == GenderConstants.Male);
+            if (breedingRecord.RecipientType == nameof(RecipientTypeConstants.LivestockBreed))
+                maleQuery = maleQuery.Where(l => l.LivestockBreedId == breedingRecord.RecipientTypeId);
+            else
+                maleQuery = maleQuery.Where(l => l.Breed.LivestockAnimalId == breedingRecord.RecipientTypeId);
+            MaleSelections = maleQuery.Select(l => new Tuple<long, string>(l.Id, $"{l.Name}")).ToList();
+        }
+        StateHasChanged();
+    }
+    public async override Task<IHasRecipient> SubmitEditContext()
+    {
+        await OnBreedingRecordSubmit(editContext);
+        return breedingRecord;
+    }
+    private async Task OnBreedingRecordSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (breedingRecord.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<BreedingRecordModel, CreateBreedingRecord>("api/CreateBreedingRecord", new CreateBreedingRecord { BreedingRecord = breedingRecord }) :
+                await api.ProcessCommand<BreedingRecordModel, UpdateBreedingRecord>("api/UpdateBreedingRecord", new UpdateBreedingRecord { BreedingRecord = breedingRecord });
+
+            if (id <= 0)
+                throw new Exception("Unable to save breeding record");
+            if (creating)
+            {
+                breedingRecord.Id = id;
+                appState.DbContext.BreedingRecords.Add(breedingRecord);
+            }
+            else
+            {
+                var updated = await appState.DbContext.BreedingRecords.FindAsync(breedingRecord.Id);
+                updated = breedingRecord.Map(updated) as BreedingRecordModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(breedingRecord);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+
+    }
+    protected string RecipientTypeFemaleName { get; private set; } = string.Empty;
+    protected List<Tuple<long, string>> FemaleSelections { get; private set; } = new();
+    protected string RecipientTypeMaleName { get; private set; } = string.Empty;
+    protected List<Tuple<long, string>> MaleSelections { get; private set; } = new();
+
+
 
 }

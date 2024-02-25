@@ -4,10 +4,11 @@ using Domain.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Domain.Interfaces;
 
 namespace Domain.Models
 {
-    public class TreatmentRecordModel :  BaseHasRecipientModel,ITreatmentRecord
+    public class TreatmentRecordModel :  BaseModel,ITreatmentRecord,IHasRecipient
     {
         [Required][ForeignKey("Treatment")] public long TreatmentId { get; set; }
         public virtual TreatmentModel Treatment { get; set; }
@@ -17,6 +18,9 @@ namespace Domain.Models
         [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
         public virtual UnitModel DosageUnit { get; set; }
         public string AppliedMethod { get; set; } = TreatmentConstants.Grooming;
+        public long RecipientTypeId { get; set; }
+        public string RecipientType { get; set; }
+        public long RecipientId { get; set; }
         [NotMapped] DateTime ITreatmentRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
         [NotMapped] IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
 
@@ -63,11 +67,6 @@ namespace Domain.Models
             ((TreatmentRecord)entity).AppliedMethod = AppliedMethod;
             ((TreatmentRecord)entity).ModifiedOn = DateTime.UtcNow;
             return entity;
-        }
-
-        public override BaseHasRecipientModel Map(BaseHasRecipientModel model)
-        {
-            throw new NotImplementedException();
         }
     }
 }

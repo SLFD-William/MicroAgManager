@@ -166,11 +166,11 @@
         if (!myComponent.editContext.Validate()) return;
 
         var recordModel = await myComponent.SubmitEditContext();
-        if (recordModel is BaseHasRecipientModel)
+        if (recordModel is IHasRecipient)
         {
-            scheduledDuty.RecordId = ((BaseHasRecipientModel)recordModel).Id;
-            scheduledDuty.RecipientId = ((BaseHasRecipientModel)recordModel).RecipientId;
-            scheduledDuty.Record = ((BaseHasRecipientModel)recordModel).GetEntityName();
+            scheduledDuty.Record = ((BaseModel)recordModel).GetEntityName();
+            scheduledDuty.RecordId = ((BaseModel)recordModel).Id;
+            scheduledDuty.RecipientId = ((IHasRecipient)recordModel).RecipientId;
         }
         if (recordModel is ServiceLivestock)
         {
@@ -383,7 +383,7 @@
             case nameof(DutyCommandConstants.Registration):
                 scheduledDuty.Record = nameof(DutyCommandConstants.Registration);
                 model = appState.DbContext.Registrations.Find(scheduledDuty.RecordId) ?? new RegistrationModel();
-                if (((BaseHasRecipientModel)model).Id < 1)
+                if (((RegistrationModel)model).Id < 1)
                 {
                     ((RegistrationModel)model).RegistrarId = scheduledDuty.Duty.CommandId;
                     ((RegistrationModel)model).Registrar = appState.DbContext.Registrars.Find(scheduledDuty.Duty.CommandId);
@@ -394,7 +394,7 @@
             case nameof(DutyCommandConstants.Measurement):
                 scheduledDuty.Record = nameof(DutyCommandConstants.Measurement);
                 model = appState.DbContext.Measurements.Find(scheduledDuty.RecordId) ?? new MeasurementModel();
-                if (((BaseHasRecipientModel)model).Id < 1)
+                if (((MeasurementModel)model).Id < 1)
                 {
                     ((MeasurementModel)model).MeasureId = scheduledDuty.Duty.CommandId;
                     ((MeasurementModel)model).Measure = appState.DbContext.Measures.Find(scheduledDuty.Duty.CommandId);
