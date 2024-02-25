@@ -22,7 +22,7 @@ namespace Domain.Models
         public string RecipientType { get; set; }
         public long RecipientId { get; set; }
         [NotMapped] DateTime IMeasurement.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-        [NotMapped] IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit = value as UnitModel ?? MeasurementUnit; }
+         IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit = value as UnitModel ?? MeasurementUnit; }
 
         public static MeasurementModel Create(Measurement measurement)
         {

@@ -9,7 +9,7 @@ namespace Domain.Models
     public class BreedingRecordModel :BaseModel, IHasRecipient, IBreedingRecord
     {
         [NotMapped] DateTime IBreedingRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
-        [Required][ForeignKey("Female")] public long FemaleId { get => RecipientId; set => RecipientId = value; }
+        [Required][ForeignKey("Female")] public long FemaleId { get; set; }
         [ForeignKey("Male")] public long? MaleId { get; set; }
         public DateTime ServiceDate { get; set; }
         public DateTime? ResolutionDate { get; set; }

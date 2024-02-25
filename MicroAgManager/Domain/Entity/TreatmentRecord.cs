@@ -39,6 +39,6 @@ namespace Domain.Entity
         [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
         public virtual Unit DosageUnit { get; set; }
         public string AppliedMethod { get; set; } = TreatmentConstants.Grooming;
-       [NotMapped] IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit=value as Unit ?? DosageUnit; }
+        IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit=value as Unit ?? DosageUnit; }
     }
 }

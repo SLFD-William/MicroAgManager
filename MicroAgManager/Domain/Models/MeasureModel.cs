@@ -13,7 +13,7 @@ namespace Domain.Models
         [Required][ForeignKey("Unit")] public long UnitId { get; set; }
         public virtual UnitModel Unit { get; set; }
         [NotMapped] DateTime IMeasure.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-        [NotMapped] IUnit IMeasure.Unit { get => Unit; set => Unit =value as UnitModel ?? Unit; }
+         IUnit IMeasure.Unit { get => Unit; set => Unit =value as UnitModel ?? Unit; }
 
         public static MeasureModel Create(Measure measure)
         {

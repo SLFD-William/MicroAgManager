@@ -59,9 +59,9 @@ namespace Domain.Entity
         [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
         public virtual Unit? DurationUnit { get; set; }
 
-        [NotMapped] IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as Unit; }
-        [NotMapped] IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as Unit; }
-        [NotMapped] IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit; }
-        [NotMapped] IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as Unit; }
+         IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as Unit; }
+         IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as Unit; }
+         IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit; }
+         IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as Unit; }
     }
 }

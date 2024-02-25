@@ -3,6 +3,7 @@ using System;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    partial class FrontEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240225214540_InterfaceFixes")]
+    partial class InterfaceFixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -376,8 +379,6 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaUnitId");
 
                     b.HasIndex("FarmLocationId");
 
@@ -1483,12 +1484,6 @@ namespace FrontEnd.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Models.LandPlotModel", b =>
                 {
-                    b.HasOne("Domain.Models.UnitModel", "AreaUnit")
-                        .WithMany()
-                        .HasForeignKey("AreaUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Models.FarmLocationModel", "Farm")
                         .WithMany("Plots")
                         .HasForeignKey("FarmLocationId")
@@ -1498,8 +1493,6 @@ namespace FrontEnd.Persistence.Migrations
                     b.HasOne("Domain.Models.LandPlotModel", "ParentPlot")
                         .WithMany("Subplots")
                         .HasForeignKey("ParentPlotId");
-
-                    b.Navigation("AreaUnit");
 
                     b.Navigation("Farm");
 

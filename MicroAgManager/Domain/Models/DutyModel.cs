@@ -30,10 +30,10 @@ namespace Domain.Models
         public virtual ICollection<ChoreModel?> Chores { get; set; } = new List<ChoreModel?>();
         public virtual ICollection<ScheduledDutyModel?> ScheduledDuties { get; set; } = new List<ScheduledDutyModel?>();
         [NotMapped] DateTime IDuty.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-       [NotMapped] ICollection<IChore>? IDuty.Chores { get => Chores as ICollection<IChore>; set => Chores=value as ICollection<ChoreModel?> ?? new List<ChoreModel?>(); }
-       [NotMapped] ICollection<IEvent>? IDuty.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<EventModel?> ?? new List<EventModel?>(); }
-       [NotMapped] ICollection<IMilestone>? IDuty.Milestones { get => Milestones as ICollection<IMilestone>; set => Milestones = value as ICollection<MilestoneModel?> ?? new List<MilestoneModel?>(); }
-       [NotMapped] ICollection<IScheduledDuty>? IDuty.ScheduledDuties { get => ScheduledDuties as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDutyModel?> ?? new List<ScheduledDutyModel?>(); }
+        ICollection<IChore>? IDuty.Chores { get => Chores as ICollection<IChore>; set => Chores=value as ICollection<ChoreModel?> ?? new List<ChoreModel?>(); }
+        ICollection<IEvent>? IDuty.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<EventModel?> ?? new List<EventModel?>(); }
+        ICollection<IMilestone>? IDuty.Milestones { get => Milestones as ICollection<IMilestone>; set => Milestones = value as ICollection<MilestoneModel?> ?? new List<MilestoneModel?>(); }
+        ICollection<IScheduledDuty>? IDuty.ScheduledDuties { get => ScheduledDuties as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDutyModel?> ?? new List<ScheduledDutyModel?>(); }
 
         public static DutyModel? Create(Duty? duty)
         {

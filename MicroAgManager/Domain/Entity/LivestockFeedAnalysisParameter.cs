@@ -31,6 +31,6 @@ namespace Domain.Entity
         [Required] public int ReportOrder { get; set; }
         public virtual ICollection<LivestockFeedAnalysisResult> Results { get; private set; } = new List<LivestockFeedAnalysisResult>();
 
-       [NotMapped] ICollection<ILivestockFeedAnalysisResult> ILivestockFeedAnalysisParameter.Results => throw new NotImplementedException();
+        ICollection<ILivestockFeedAnalysisResult> ILivestockFeedAnalysisParameter.Results => throw new NotImplementedException();
     }
 }

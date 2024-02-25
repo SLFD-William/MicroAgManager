@@ -27,9 +27,9 @@ namespace Domain.Models
         public virtual ICollection<LandPlotModel> Subplots { get; set; }=new List<LandPlotModel>();
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
         [NotMapped] DateTime ILandPlot.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
-        [NotMapped] IUnit? ILandPlot.AreaUnit { get => AreaUnit; set => AreaUnit =value as UnitModel ?? AreaUnit; }
-        [NotMapped] ICollection<ILivestock>? ILandPlot.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks = value as ICollection<LivestockModel> ?? new List<LivestockModel>(); }
-        [NotMapped] ICollection<ILandPlot>? ILandPlot.Subplots { get => Subplots as ICollection<ILandPlot>; set => Subplots = value as ICollection<LandPlotModel> ?? new List<LandPlotModel>(); }
+        IUnit? ILandPlot.AreaUnit { get => AreaUnit; set => AreaUnit =value as UnitModel ?? AreaUnit; }
+         ICollection<ILivestock>? ILandPlot.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks = value as ICollection<LivestockModel> ?? new List<LivestockModel>(); }
+         ICollection<ILandPlot>? ILandPlot.Subplots { get => Subplots as ICollection<ILandPlot>; set => Subplots = value as ICollection<LandPlotModel> ?? new List<LandPlotModel>(); }
 
         public static LandPlotModel? Create(LandPlot plot)
         {

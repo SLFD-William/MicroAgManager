@@ -34,8 +34,8 @@ namespace Domain.Entity
         [Required] public bool SystemRequired { get; set; }
         [Required][MaxLength(255)] public string Description { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
-        [NotMapped] ICollection<IDuty>? IMilestone.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ?? new List<Duty>(); }
+        ICollection<IDuty>? IMilestone.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ?? new List<Duty>(); }
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
-        [NotMapped] ICollection<IEvent>? IMilestone.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<Event> ?? new List<Event>(); }
+        ICollection<IEvent>? IMilestone.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<Event> ?? new List<Event>(); }
     }
 }

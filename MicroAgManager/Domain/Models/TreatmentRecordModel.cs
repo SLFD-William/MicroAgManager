@@ -21,8 +21,8 @@ namespace Domain.Models
         public long RecipientTypeId { get; set; }
         public string RecipientType { get; set; }
         public long RecipientId { get; set; }
-        [NotMapped] DateTime ITreatmentRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-        [NotMapped] IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
+         DateTime ITreatmentRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+         IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
 
         public static TreatmentRecordModel Create(TreatmentRecord treatmentRecord)
         {

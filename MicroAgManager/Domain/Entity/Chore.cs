@@ -44,8 +44,8 @@ namespace Domain.Entity
         [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
         public virtual Unit? PeriodUnit { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
-        [NotMapped]ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>();}
-      [NotMapped]  IUnit? IChore.PeriodUnit { get => PeriodUnit; set => PeriodUnit =value as Unit; }
-      [NotMapped]  IUnit IChore.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit ?? FrequencyUnit; }
+       ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>();}
+       IUnit? IChore.PeriodUnit { get => PeriodUnit; set => PeriodUnit =value as Unit; }
+       IUnit IChore.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit ?? FrequencyUnit; }
     }
 }

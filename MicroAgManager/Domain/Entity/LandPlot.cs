@@ -44,8 +44,8 @@ namespace Domain.Entity
         public virtual FarmLocation FarmLocation { get; set; }
 
         public virtual ICollection<Livestock>? Livestocks { get; set; }
-      [NotMapped]  IUnit? ILandPlot.AreaUnit { get => AreaUnit; set => AreaUnit = value as Unit ?? AreaUnit; }
-       [NotMapped] ICollection<ILivestock>? ILandPlot.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks =value as ICollection<Livestock>; }
-       [NotMapped] ICollection<ILandPlot>? ILandPlot.Subplots { get => Subplots as ICollection<ILandPlot>; set => Subplots=value as ICollection<LandPlot>; }
+        IUnit? ILandPlot.AreaUnit { get => AreaUnit; set => AreaUnit = value as Unit ?? AreaUnit; }
+        ICollection<ILivestock>? ILandPlot.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks =value as ICollection<Livestock>; }
+        ICollection<ILandPlot>? ILandPlot.Subplots { get => Subplots as ICollection<ILandPlot>; set => Subplots=value as ICollection<LandPlot>; }
     }
 }

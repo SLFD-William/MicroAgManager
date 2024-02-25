@@ -31,7 +31,7 @@ namespace Domain.Entity
         [Required] public int HeatPeriod { get; set; }
         public virtual ICollection<Livestock> Livestocks { get; set; } = new List<Livestock>();
         public virtual LivestockAnimal LivestockAnimal { get; set; }
-       [NotMapped] ICollection<ILivestock>? ILivestockBreed.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks = value as ICollection<Livestock> ?? new List<Livestock>(); }
+        ICollection<ILivestock>? ILivestockBreed.Livestocks { get => Livestocks as ICollection<ILivestock>; set => Livestocks = value as ICollection<Livestock> ?? new List<Livestock>(); }
 
     }
 }

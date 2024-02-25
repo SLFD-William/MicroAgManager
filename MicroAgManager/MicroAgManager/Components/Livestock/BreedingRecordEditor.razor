@@ -28,7 +28,7 @@
             <ChildContent>
                 <InputSelect @bind-Value="@breedingRecord.FemaleId">
                     <option value="0">Select @RecipientTypeFemaleName ...</option>
-                    @foreach (var g in FemaleSelections())
+                    @foreach (var g in FemaleSelections)
                     {
                         <option value="@g.Item1">@g.Item2</option>
                     }
@@ -42,7 +42,7 @@
             <ChildContent>
                 <InputSelect @bind-Value="@breedingRecord.MaleId">
                     <option value="0">Select @RecipientTypeFemaleName ...</option>
-                    @foreach (var g in MaleSelections())
+                    @foreach (var g in MaleSelections)
                     {
                         <option value="@g.Item1">@g.Item2</option>
                     }

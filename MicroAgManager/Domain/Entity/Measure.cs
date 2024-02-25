@@ -27,6 +27,6 @@ namespace Domain.Entity
         [Required][MaxLength(20)] public string Method { get; set; } = nameof(MeasurementMethodConstants.Direct);
         [Required][MaxLength(40)] public string Name { get; set; }
         public virtual Unit Unit { get; set; }
-      [NotMapped]  IUnit IMeasure.Unit { get => Unit; set =>Unit=value as Unit ?? Unit; }
+        IUnit IMeasure.Unit { get => Unit; set =>Unit=value as Unit ?? Unit; }
     }
 }

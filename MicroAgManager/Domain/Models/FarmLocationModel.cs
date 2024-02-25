@@ -20,7 +20,7 @@ namespace Domain.Models
         public string? CountryCode { get; set; }
         public virtual ICollection<LandPlotModel> Plots { get; set; } = new List<LandPlotModel>();
         [NotMapped] DateTime IFarmLocation.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
-        [NotMapped] ICollection<ILandPlot>? IFarmLocation.Plots { get => Plots as ICollection<ILandPlot>; set => Plots = value as ICollection<LandPlotModel> ?? new List<LandPlotModel>(); }
+         ICollection<ILandPlot>? IFarmLocation.Plots { get => Plots as ICollection<ILandPlot>; set => Plots = value as ICollection<LandPlotModel> ?? new List<LandPlotModel>(); }
 
         public static FarmLocationModel? Create(FarmLocation? farm)
         {

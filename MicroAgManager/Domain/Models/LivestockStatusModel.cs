@@ -20,8 +20,8 @@ namespace Domain.Models
         [Required][MaxLength(10)] public string ForSale { get; set; }
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
         [NotMapped] DateTime ILivestockStatus.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-        [NotMapped] ICollection<ILivestockFeedServing>? ILivestockStatus.FeedServings { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [NotMapped] ICollection<ILivestock>? ILivestockStatus.Livestocks { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         ICollection<ILivestockFeedServing>? ILivestockStatus.FeedServings { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+         ICollection<ILivestock>? ILivestockStatus.Livestocks { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public static LivestockStatusModel? Create(LivestockStatus LivestockStatus)
         {

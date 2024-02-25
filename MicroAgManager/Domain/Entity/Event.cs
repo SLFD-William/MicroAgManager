@@ -30,15 +30,15 @@ namespace Domain.Entity
         [Required] public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
-        [NotMapped] ICollection<IDuty>? IEvent.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>(); }
+         ICollection<IDuty>? IEvent.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>(); }
 
 
         public virtual ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
-        [NotMapped] ICollection<IMilestone>? IEvent.Milestones { get => Milestones as ICollection<IMilestone>; set => Milestones = value as ICollection<Milestone> ?? new List<Milestone>(); }
+         ICollection<IMilestone>? IEvent.Milestones { get => Milestones as ICollection<IMilestone>; set => Milestones = value as ICollection<Milestone> ?? new List<Milestone>(); }
 
 
         public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
-        [NotMapped] ICollection<IScheduledDuty>? IEvent.ScheduledDuties { get => Milestones as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDuty> ?? new List<ScheduledDuty>(); }
+         ICollection<IScheduledDuty>? IEvent.ScheduledDuties { get => Milestones as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDuty> ?? new List<ScheduledDuty>(); }
 
     }
 }

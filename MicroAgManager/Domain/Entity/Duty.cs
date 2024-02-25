@@ -47,9 +47,9 @@ namespace Domain.Entity
         public virtual ICollection<Milestone> Milestones { get; set; } = new List<Milestone>();
         public virtual ICollection<ScheduledDuty> ScheduledDuties { get; set; } = new List<ScheduledDuty>();
         public virtual ICollection<Chore> Chores { get; set; } = new List<Chore>();
-        [NotMapped]ICollection<IChore>? IDuty.Chores { get => Chores as ICollection<IChore>; set => Chores = value as ICollection<Chore> ??  new List<Chore>(); }
-        [NotMapped] ICollection<IEvent>? IDuty.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<Event> ?? new List<Event>(); }
-        [NotMapped] ICollection<IMilestone>? IDuty.Milestones { get => Milestones as ICollection<IMilestone >; set => Milestones = value as ICollection<Milestone> ?? new List<Milestone>(); }
-        [NotMapped] ICollection<IScheduledDuty>? IDuty.ScheduledDuties { get => ScheduledDuties as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDuty> ?? new List<ScheduledDuty>(); }
+         ICollection<IChore>? IDuty.Chores { get => Chores as ICollection<IChore>; set => Chores = value as ICollection<Chore> ??  new List<Chore>(); }
+         ICollection<IEvent>? IDuty.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<Event> ?? new List<Event>(); }
+         ICollection<IMilestone>? IDuty.Milestones { get => Milestones as ICollection<IMilestone >; set => Milestones = value as ICollection<Milestone> ?? new List<Milestone>(); }
+         ICollection<IScheduledDuty>? IDuty.ScheduledDuties { get => ScheduledDuties as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDuty> ?? new List<ScheduledDuty>(); }
     }
 }

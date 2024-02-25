@@ -20,65 +20,75 @@
 @if (scheduledDuty is not null)
 {
     <ValidatedForm editContext="editContext"
-                   OnSubmit="@OnScheduledDutySubmit"
-                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
-                   showUpdateCancelButtons="true"
-                   createOnly="@(scheduledDuty.Id<1)"
                    Modal=Modal
                    Show=Show
                    Title="@((scheduledDuty.Id< 1 ? "Create " : "Edit ") + scheduledDuty.Duty.Command)">
-        <ValidatedField ValidationMessageFor="@(() => scheduledDuty.DutyId)">
-            <LegendContent>
-                <div style="display:inline-flex;gap:1rem;">
-                    <span>Duty</span>
-                    <button type="button" @onclick=ShowDutyEditor>+</button>
-                    <DutyEditor Modal=true Show=@_showingDutyEditor editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
-                </div>
-            </LegendContent>
-            <ChildContent>
-                <InputSelect @bind-Value="@DutyId">
-                    <option value="">Select Duty ...</option>
-                    @foreach (var unit in appState.DbContext.Duties.Where(d => d.Command == scheduledDuty.Duty.Command))
-                    {
-                        <option value="@unit.Id">
-                            @unit.Name
-                        </option>
-                    }
-                </InputSelect>
-            </ChildContent>
-        </ValidatedField>
-        @if (scheduledDuty.DutyId > 0)
-        { 
-            <ValidatedField ValidationMessageFor="@(() => scheduledDuty.ScheduleSourceId)">
+       
+         <ChildContent>
+            <ValidatedField ValidationMessageFor="@(() => scheduledDuty.DutyId)">
                 <LegendContent>
                     <div style="display:inline-flex;gap:1rem;">
-                        <span>@scheduledDuty.ScheduleSource</span>
-                        <button type="button" @onclick=ShowSourceEditor>+</button>
-                        @if (_showingSourceEditor)
-                        {
-                            <DynamicComponent Type="@sourceType" Parameters="@sourceComponents[sourceType.Name].Parameters" />
-                        }
+                        <span>Duty</span>
+                        <button type="button" @onclick=ShowDutyEditor>+</button>
+                        <DutyEditor Modal=true Show=@_showingDutyEditor editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></DutyEditor>
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@ScheduleSourceId">
-                        <option value="">Select Source ...</option>
-                        @foreach (var unit in sourceIds())
+                    <InputSelect @bind-Value="@DutyId">
+                        <option value="">Select Duty ...</option>
+                        @foreach (var unit in appState.DbContext.Duties.Where(d => d.Command == scheduledDuty.Duty.Command))
                         {
-                            <option value="@unit.Key">
-                                @unit.Value
+                            <option value="@unit.Id">
+                                @unit.Name
                             </option>
                         }
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
-        }
-        @if (ShowRecordEditor())
-        {
-            <section style="grid-column:1/-1;width:100%;">
-            <DynamicComponent @ref="recordComponent" Type="@recordType" Parameters="@recordComponents[recordType.Name].Parameters" />
+            @if (scheduledDuty.DutyId > 0)
+            {
+                <ValidatedField ValidationMessageFor="@(() => scheduledDuty.ScheduleSourceId)">
+                    <LegendContent>
+                        <div style="display:inline-flex;gap:1rem;">
+                            <span>@scheduledDuty.ScheduleSource</span>
+                            <button type="button" @onclick=ShowSourceEditor>+</button>
+                            @if (_showingSourceEditor)
+                            {
+                                <DynamicComponent Type="@sourceType" Parameters="@sourceComponents[sourceType.Name].Parameters" />
+                            }
+                        </div>
+                    </LegendContent>
+                    <ChildContent>
+                        <InputSelect @bind-Value="@ScheduleSourceId">
+                            <option value="">Select Source ...</option>
+                            @foreach (var unit in sourceIds())
+                            {
+                                <option value="@unit.Key">
+                                    @unit.Value
+                                </option>
+                            }
+                        </InputSelect>
+                    </ChildContent>
+                </ValidatedField>
+            }
+            @if (ShowRecordEditor())
+            {
+                <section style="grid-column:1/-1;width:100%;">
+                    <DynamicComponent @ref="recordComponent" Type="@recordType" Parameters="@recordComponents[recordType.Name].Parameters" />
+                </section>
+            }
+        </ChildContent>
+        <SecondaryContent>
+            <section style="display:flex;grid-column:1/-1;width:100%;">
+            <button type="button" @onclick="@(()=>OnScheduledDutySubmit(editContext))">@(scheduledDuty.Id <= 0 ? "Create" : "Update")</button>
+            @if(scheduledDuty.Id > 0)
+            {
+                <button type="button" @onclick="@OnScheduledDutySnooze">Snooze</button>
+                <button type="button" @onclick="@OnScheduledDutyDismiss">Dismiss</button>
+            }
+            <button type="button" @onclick="@(()=>OnCancel.InvokeAsync(editContext))">Cancel</button>
             </section>
-        }
+        </SecondaryContent>
     </ValidatedForm>
 }
 @code {
@@ -126,7 +136,8 @@
         if (scheduledDuty is null) return;
         if (string.IsNullOrEmpty(scheduledDuty.ScheduleSource)) scheduledDuty.ScheduleSource = ScheduledDutySourceConstants.Event;
         if (scheduledDuty.DueOn == DateTime.MinValue) scheduledDuty.DueOn = DateTime.Today;
-        scheduledDuty.Duty = appState.DbContext.Duties.Find(scheduledDuty.DutyId);
+        if(scheduledDuty.DutyId>0)
+            scheduledDuty.Duty = appState.DbContext.Duties.Find(scheduledDuty.DutyId);
         DutyId = scheduledDuty.DutyId;
         ScheduleSourceId = scheduledDuty.ScheduleSourceId;
     }
@@ -166,21 +177,23 @@
         if (!myComponent.editContext.Validate()) return;
 
         var recordModel = await myComponent.SubmitEditContext();
-        if (recordModel is IHasRecipient)
-        {
-            scheduledDuty.Record = ((BaseModel)recordModel).GetEntityName();
-            scheduledDuty.RecordId = ((BaseModel)recordModel).Id;
-            scheduledDuty.RecipientId = ((IHasRecipient)recordModel).RecipientId;
-        }
         if (recordModel is ServiceLivestock)
         {
             scheduledDuty.RecordId = -1;
             scheduledDuty.Record = nameof(ServiceLivestock);
             scheduledDuty.RecipientId = ((ServiceLivestock)recordModel).StudId;
         }
+        else if (recordModel is IHasRecipient)
+        {
+            scheduledDuty.Record = ((BaseModel)recordModel).GetEntityName();
+            scheduledDuty.RecordId = ((BaseModel)recordModel).Id;
+            scheduledDuty.RecipientId = ((IHasRecipient)recordModel).RecipientId;
+        }
+
 
         scheduledDuty.Recipient = GetRecipientFromRecipientType(scheduledDuty.Duty);
         scheduledDuty.CompletedOn = GetDatePerformedFromRecord(recordModel);
+        scheduledDuty.CompletedBy = appState.UserId;
 
         editContext = new EditContext(scheduledDuty);
 
@@ -214,7 +227,19 @@
         {
 
         }
+   }
+    private bool _showingSnoozeConfirmation = false;
+    private void OnScheduledDutySnooze()
+    {
+        _showingSnoozeConfirmation = true;
+        StateHasChanged();
+    }
 
+    private bool _showingDismissConfirmation = false;
+    private void OnScheduledDutyDismiss()
+    {
+        _showingDismissConfirmation = true;
+        StateHasChanged();
     }
 
     #region Duty

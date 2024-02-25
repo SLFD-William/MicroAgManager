@@ -39,6 +39,6 @@ namespace Domain.Entity
         [MaxLength(2)]
         public string? CountryCode { get; set; }
         public virtual ICollection<LandPlot> Plots { get; set; } = new List<LandPlot>();
-       [NotMapped] ICollection<ILandPlot>? IFarmLocation.Plots { get => Plots as ICollection<ILandPlot>; set => Plots=value as ICollection<LandPlot> ?? new List<LandPlot>(); }
+        ICollection<ILandPlot>? IFarmLocation.Plots { get => Plots as ICollection<ILandPlot>; set => Plots=value as ICollection<LandPlot> ?? new List<LandPlot>(); }
     }
 }

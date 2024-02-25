@@ -31,10 +31,10 @@ namespace Domain.Models
         [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
         public virtual UnitModel? DurationUnit { get; set; }
         [NotMapped] DateTime ITreatment.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-        [NotMapped] IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
-        [NotMapped] IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as UnitModel ?? DurationUnit; }
-        [NotMapped] IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as UnitModel ?? FrequencyUnit; }
-        [NotMapped] IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as UnitModel ?? RecipientMassUnit; }
+         IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
+         IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as UnitModel ?? DurationUnit; }
+         IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as UnitModel ?? FrequencyUnit; }
+         IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as UnitModel ?? RecipientMassUnit; }
 
         public static TreatmentModel Create(Treatment treatment)
         {

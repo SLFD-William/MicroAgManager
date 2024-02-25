@@ -19,9 +19,9 @@ namespace Domain.Models
         public virtual ICollection<LivestockStatusModel?> Statuses { get; set; } = new List<LivestockStatusModel?>();
         public virtual ICollection<LivestockFeedModel?> Feeds { get; set; } = new List<LivestockFeedModel?>();
         [NotMapped] DateTime ILivestockAnimal.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
-        [NotMapped] ICollection<ILivestockBreed>? ILivestockAnimal.Breeds { get => Breeds as ICollection<ILivestockBreed>; set => Breeds = value as ICollection<LivestockBreedModel?> ?? new List<LivestockBreedModel?>(); }
-        [NotMapped] ICollection<ILivestockFeed>? ILivestockAnimal.Feeds { get => Feeds as ICollection<ILivestockFeed>; set => Feeds = value as ICollection<LivestockFeedModel?> ?? new List<LivestockFeedModel?>(); }
-        [NotMapped] ICollection<ILivestockStatus>? ILivestockAnimal.Statuses { get => Statuses as ICollection<ILivestockStatus>; set => Statuses = value as ICollection<LivestockStatusModel?> ?? new List<LivestockStatusModel?>(); }
+         ICollection<ILivestockBreed>? ILivestockAnimal.Breeds { get => Breeds as ICollection<ILivestockBreed>; set => Breeds = value as ICollection<LivestockBreedModel?> ?? new List<LivestockBreedModel?>(); }
+         ICollection<ILivestockFeed>? ILivestockAnimal.Feeds { get => Feeds as ICollection<ILivestockFeed>; set => Feeds = value as ICollection<LivestockFeedModel?> ?? new List<LivestockFeedModel?>(); }
+         ICollection<ILivestockStatus>? ILivestockAnimal.Statuses { get => Statuses as ICollection<ILivestockStatus>; set => Statuses = value as ICollection<LivestockStatusModel?> ?? new List<LivestockStatusModel?>(); }
 
         public static LivestockAnimalModel? Create(LivestockAnimal LivestockAnimal)
         {

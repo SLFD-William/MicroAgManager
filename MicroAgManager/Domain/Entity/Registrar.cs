@@ -30,6 +30,6 @@ namespace Domain.Entity
         public string API { get; set; } = string.Empty;
         [Required][MaxLength(40)] public string RegistrarFarmID { get; set; } = string.Empty;
         public virtual ICollection<Registration> Registrations { get; set; } = new List<Registration>();
-        [NotMapped] ICollection<IRegistration>? IRegistrar.Registrations { get => Registrations as ICollection<IRegistration>; set => Registrations = value as ICollection<Registration> ?? new List<Registration>(); }
+         ICollection<IRegistration>? IRegistrar.Registrations { get => Registrations as ICollection<IRegistration>; set => Registrations = value as ICollection<Registration> ?? new List<Registration>(); }
     }
 }

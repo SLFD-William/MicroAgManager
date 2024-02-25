@@ -36,6 +36,6 @@ namespace Domain.Entity
         public virtual Unit MeasurementUnit { get; set; }
         public string Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
-      [NotMapped]  IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit=value as Unit ?? MeasurementUnit; }
+        IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit=value as Unit ?? MeasurementUnit; }
     }
 }

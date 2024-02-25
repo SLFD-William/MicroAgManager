@@ -47,12 +47,12 @@ namespace Domain.Entity
         public virtual ICollection<LivestockFeedDistribution> Distributions { get; private set; } = new List<LivestockFeedDistribution>();
         public virtual ICollection<LivestockFeedAnalysis> Analyses { get; private set; } = new List<LivestockFeedAnalysis>();
 
-       [NotMapped] ICollection<ILivestockFeedAnalysis>? ILivestockFeed.Analyses => Analyses as ICollection<ILivestockFeedAnalysis>;
+        ICollection<ILivestockFeedAnalysis>? ILivestockFeed.Analyses => Analyses as ICollection<ILivestockFeedAnalysis>;
 
-       [NotMapped] ICollection<ILivestockFeedDistribution> ILivestockFeed.Distributions => throw new NotImplementedException();
+        ICollection<ILivestockFeedDistribution> ILivestockFeed.Distributions => throw new NotImplementedException();
 
-      [NotMapped]  IUnit ILivestockFeed.QuantityUnit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        IUnit ILivestockFeed.QuantityUnit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-       [NotMapped] ICollection<ILivestockFeedServing> ILivestockFeed.Servings => throw new NotImplementedException();
+        ICollection<ILivestockFeedServing> ILivestockFeed.Servings => throw new NotImplementedException();
     }
 }

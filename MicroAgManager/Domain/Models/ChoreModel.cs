@@ -25,10 +25,10 @@ namespace Domain.Models
         [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
         public virtual UnitModel? PeriodUnit { get; set; }
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
-        [NotMapped] DateTime IChore.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
-       [NotMapped] ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties=value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
-      [NotMapped]  IUnit IChore.FrequencyUnit { get => FrequencyUnit as IUnit; set => FrequencyUnit=value as UnitModel ?? FrequencyUnit; }
-      [NotMapped]  IUnit? IChore.PeriodUnit { get => PeriodUnit as IUnit; set => PeriodUnit=value as UnitModel; }
+        DateTime IChore.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
+        ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties=value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
+        IUnit IChore.FrequencyUnit { get => FrequencyUnit as IUnit; set => FrequencyUnit=value as UnitModel ?? FrequencyUnit; }
+        IUnit? IChore.PeriodUnit { get => PeriodUnit as IUnit; set => PeriodUnit=value as UnitModel; }
 
         public static ChoreModel? Create(Chore chore)
         {

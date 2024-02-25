@@ -16,8 +16,8 @@ namespace Domain.Models
         public virtual ICollection<EventModel?> Events { get; set; } = new List<EventModel?>();
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
         [NotMapped] DateTime IMilestone.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
-        [NotMapped] ICollection<IDuty>? IMilestone.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
-       [NotMapped] ICollection<IEvent>? IMilestone.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<EventModel?> ?? new List<EventModel?>(); }
+         ICollection<IDuty>? IMilestone.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
+        ICollection<IEvent>? IMilestone.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<EventModel?> ?? new List<EventModel?>(); }
 
         public static MilestoneModel? Create(Milestone? milestone)
         {
