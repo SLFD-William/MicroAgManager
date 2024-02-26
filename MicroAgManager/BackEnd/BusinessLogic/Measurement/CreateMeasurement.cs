@@ -29,7 +29,7 @@ namespace BackEnd.BusinessLogic.Measurement
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measurement.Id.ToString(), measurement.GetType().Name, "Created", measurement.ModifiedBy) }), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measurement.Id.ToString(), measurement.GetType().Name, "Created", measurement.ModifiedBy, measurement.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Measurement"); }
                 }

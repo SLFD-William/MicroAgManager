@@ -71,8 +71,8 @@ namespace Domain.Logic
             var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
             if (livestock == null || livestock.Gender == GenderConstants.Male) throw new Exception("Female Livestock not found");
 
-            entitiesModified.Add(new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Modified", breedingRecord.ModifiedBy));
-            entitiesModified.Add(new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy));
+            entitiesModified.Add(new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Modified", livestock.ModifiedBy, livestock.ModifiedOn));
+            entitiesModified.Add(new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy, breedingRecord.ModifiedOn));
 
             var birthDuty = await context.Duties.FirstOrDefaultAsync(d => d.RecipientType == livestock.Breed.LivestockAnimal.GetType().Name && d.RecipientTypeId == livestock.Breed.LivestockAnimalId && d.Command == DutyCommandConstants.Birth);
             if (birthDuty == null) throw new Exception("Birth Duty not found");
@@ -92,7 +92,7 @@ namespace Domain.Logic
 
             await context.SaveChangesAsync(cancellationToken);
             
-            entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
+            entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy, scheduledDuty.ModifiedOn));
             return entitiesModified;
         }
         public async static Task<List<ModifiedEntity>> OnLivestockBorn(IMicroAgManagementDbContext context, long livestockId, CancellationToken cancellationToken)
@@ -101,6 +101,7 @@ namespace Domain.Logic
 
             var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == livestockId);
             if (livestock == null) throw new Exception("Livestock not found");
+            entitiesModified.Add(new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy, livestock.ModifiedOn));
             if (!livestock.StatusId.HasValue)
             { 
                 var status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == livestock.Breed.LivestockAnimalId && l.DefaultStatus);
@@ -128,11 +129,12 @@ namespace Domain.Logic
                     Recipient = livestock.GetType().Name,
                 };
                 context.ScheduledDuties.Add(scheduledDuty);
-                entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
+                entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy, scheduledDuty.ModifiedOn));
             }
 
             var mother = await context.Livestocks.FindAsync(livestock.MotherId);
             if (mother == null) throw new Exception("Livestock mother not found");
+            entitiesModified.Add(new ModifiedEntity(mother.Id.ToString(), mother.GetType().Name, "Modified", mother.ModifiedBy, mother.ModifiedOn));
             var parturitionMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Parturition).SelectMany(m => m.Duties).ToListAsync();
             foreach (var duty in parturitionMilestoneDuties.Where(d => (d.Gender is null || d.Gender == mother.Gender) && d.Relationship == DutyRelationshipConstants.Self))
             {
@@ -150,7 +152,7 @@ namespace Domain.Logic
                     Recipient = mother.GetType().Name,
                 };
                 context.ScheduledDuties.Add(scheduledDuty);
-                entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy));
+                entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy, scheduledDuty.ModifiedOn));
             }
             await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;
@@ -168,10 +170,10 @@ namespace Domain.Logic
                     Birthdate = breedingRecord.ResolutionDate.Value,
                     Name = $"{female.Name} {gender} {count}",
                     BeingManaged = status.BeingManaged == LivestockStatusModeConstants.True,
-                    InMilk = status.InMilk == LivestockStatusModeConstants.Unchanged,
-                    BottleFed = status.BottleFed == LivestockStatusModeConstants.Unchanged,
+                    InMilk = status.InMilk == LivestockStatusModeConstants.True,
+                    BottleFed = status.BottleFed == LivestockStatusModeConstants.True,
                     ForSale = status.ForSale == LivestockStatusModeConstants.True,
-                    Sterile = status.Sterile == LivestockStatusModeConstants.False,
+                    Sterile = status.Sterile == LivestockStatusModeConstants.True,
                     Variety = female.Variety,
                     Description = string.Empty
                 };

@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                     var duty = request.ScheduledDuty.Map(await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.ScheduledDuty.Id)) as Domain.Entity.ScheduledDuty;
                     duty.ModifiedBy = request.ModifiedBy;
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy) }), cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy, duty.ModifiedOn) }), cancellationToken);
                     return duty.Id;
                 }
             }

@@ -68,7 +68,7 @@ namespace BackEnd.BusinessLogic.Livestock
                                 }
                                 catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                             }
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b => new ModifiedEntity(b.Id.ToString(), b.GetType().Name, "Created", b.ModifiedBy)).ToList()), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b => new ModifiedEntity(b.Id.ToString(), b.GetType().Name, "Created", b.ModifiedBy, b.ModifiedOn)).ToList()), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                 }

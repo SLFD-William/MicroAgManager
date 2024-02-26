@@ -27,7 +27,7 @@ public class Handler: BaseCommandHandler<UpdateTreatment>
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Modified", treatment.ModifiedBy) }), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Modified", treatment.ModifiedBy, treatment.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Update Treatment"); }
 

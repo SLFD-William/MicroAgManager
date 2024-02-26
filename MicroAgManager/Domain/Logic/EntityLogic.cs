@@ -13,12 +13,16 @@ namespace Domain.Logic
             var changes = ((DbContext)context).ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
             foreach (var change in changes)
             {
-                if (change.Entity as BaseEntity is null) continue;
+                var changedEntity = change.Entity as BaseEntity;
+                if (changedEntity is null) continue;
                 var modification = change.State == EntityState.Added ? "Created" : "Modified";
-                var entityName = change.Entity.GetType().Name;
-                var entityId = change.Entity.GetType().GetProperty("Id").GetValue(change.Entity);
-                var modifiedBy = change.Entity.GetType().GetProperty("ModifiedBy").GetValue(change.Entity);
-                entitiesModified.Add(new ModifiedEntity(entityId.ToString(), entityName, modification, (Guid)modifiedBy));
+                entitiesModified.Add(
+                    new ModifiedEntity(
+                        changedEntity.Id.ToString(), 
+                        changedEntity.GetType().Name, 
+                        modification,
+                        changedEntity.ModifiedBy, 
+                        changedEntity.ModifiedOn));
             }
             return Task.FromResult(entitiesModified);
         }

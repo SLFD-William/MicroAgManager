@@ -13,7 +13,7 @@ namespace Domain.Logic
 
                 var LivestockAnimal = await context.LivestockAnimals.FindAsync(id);
                 if (LivestockAnimal == null) throw new Exception("LivestockAnimal not found");
-                entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created", LivestockAnimal.ModifiedBy));
+                entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created", LivestockAnimal.ModifiedBy, LivestockAnimal.ModifiedOn));
 
                 AddRequiredMilestones(LivestockAnimal, context);
                 entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));

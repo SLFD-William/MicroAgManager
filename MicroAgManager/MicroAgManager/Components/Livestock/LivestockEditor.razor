@@ -16,7 +16,8 @@
                    showUpdateCancelButtons="true"
                    @ref=_validatedForm
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+                   Title="@FormTitle()">
                     <ChildContent>
             <ValidatedField ValidationMessageFor="@(() => livestock.LivestockBreedId)">
                 <LegendContent>
@@ -172,6 +173,7 @@
     [Parameter] public long LivestockBreedId { get => _LivestockBreedId; set => _LivestockBreedId = value; }
     [Parameter] public long? LivestockAnimalId { get; set; }
     private LivestockAnimalModel? animal;
+    private string FormTitle() => $"{animal?.Name} {livestock?.Breed?.Name} {livestock?.Name}".Trim();
     protected override void OnInitialized()
     {
         livestock = editContext.Model as LivestockModel;
@@ -293,7 +295,9 @@
         _addingBreed = false;
         if (model == null) return;
         BreedId = model.Id;
+        LivestockAnimalId = model.LivestockAnimalId;
         editContext = new EditContext(livestock);
+        OnInitialized();
         StateHasChanged();
     }
 

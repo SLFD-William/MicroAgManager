@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockStatus.Id.ToString(), livestockStatus.GetType().Name, "Created", livestockStatus.ModifiedBy) }), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockStatus.Id.ToString(), livestockStatus.GetType().Name, "Created", livestockStatus.ModifiedBy, livestockStatus.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Livestock Status"); }
                 }

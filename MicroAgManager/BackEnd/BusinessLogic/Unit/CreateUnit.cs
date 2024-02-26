@@ -29,7 +29,7 @@ namespace BackEnd.BusinessLogic.Unit
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(unit.Id.ToString(), unit.GetType().Name, "Created", unit.ModifiedBy) }), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(unit.Id.ToString(), unit.GetType().Name, "Created", unit.ModifiedBy, unit.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Unit"); }
                 }

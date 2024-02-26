@@ -38,7 +38,7 @@ namespace BackEnd.BusinessLogic.Livestock
                             await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
                         }
                         else
-                            await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy) }), cancellationToken);
+                            await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Created", livestock.ModifiedBy, livestock.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }

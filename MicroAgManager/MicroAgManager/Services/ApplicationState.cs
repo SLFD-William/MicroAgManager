@@ -133,7 +133,7 @@ namespace MicroAgManager.Services
             _hubConnection.Closed += _hubConnection_Closed;
             _hubConnection.Reconnected += _hubConnection_Reconnected;
             _hubConnection.Reconnecting += _hubConnection_Reconnecting;
-            _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage", (notifications) => { _notifications.Add(notifications); InvokeAsync(UpdateClientModels); } );
+            _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",async (notifications) => { _notifications.Add(notifications); await UpdateClientModels(); } );
             try
             {
                 Console.WriteLine("Starting Signalr Listener");

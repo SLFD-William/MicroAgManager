@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.Treatment
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Created", treatment.ModifiedBy) }), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatment.Id.ToString(), treatment.GetType().Name, "Created", treatment.ModifiedBy, treatment.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Treatment"); }
                 }

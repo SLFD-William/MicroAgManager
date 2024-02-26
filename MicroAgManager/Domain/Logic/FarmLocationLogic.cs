@@ -12,7 +12,7 @@ namespace Domain.Logic
             
             var farmLocation = await context.Farms.FindAsync(id);
             if (farmLocation == null) throw new Exception("FarmLocation not found");
-            entitiesModified.Add(new ModifiedEntity(farmLocation.Id.ToString(), farmLocation.GetType().Name, "Created", farmLocation.ModifiedBy));
+            entitiesModified.Add(new ModifiedEntity(farmLocation.Id.ToString(), farmLocation.GetType().Name, "Created", farmLocation.ModifiedBy,farmLocation.ModifiedOn));
             AddAncilliaries(farmLocation, context);
             entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));
             await context.SaveChangesAsync(cancellationToken);

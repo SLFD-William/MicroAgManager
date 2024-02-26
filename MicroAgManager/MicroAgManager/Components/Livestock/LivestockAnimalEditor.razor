@@ -13,7 +13,8 @@
                    showUpdateCancelButtons="true"
                    @ref=_validatedForm
                    Modal=Modal
-                   Show=Show>
+                   Show=Show
+    Title="Animal">
         <ChildContent>
             <ValidatedField Legend="Name" ValidationMessageFor="@(() => animal.Name)">
                 <InputText placeholder="Name" @bind-Value="@animal.Name" />
@@ -42,7 +43,8 @@
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private LivestockAnimalModel? animal;
-    protected override void OnAfterRender(bool firstRender)
+  
+    protected override void OnInitialized()
     {
         animal = editContext.Model as LivestockAnimalModel;
         if (animal is null) return;

@@ -81,7 +81,7 @@
         <SecondaryContent>
             <section style="display:flex;grid-column:1/-1;width:100%;">
             <button type="button" @onclick="@(()=>OnScheduledDutySubmit(editContext))">@(scheduledDuty.Id <= 0 ? "Create" : "Update")</button>
-            @if(scheduledDuty.Id > 0)
+            @if(scheduledDuty.Id > 0 && !scheduledDuty.CompletedOn.HasValue)
             {
                 <button type="button" @onclick="@OnScheduledDutySnooze">Snooze</button>
                 <button type="button" @onclick="@OnScheduledDutyDismiss">Dismiss</button>

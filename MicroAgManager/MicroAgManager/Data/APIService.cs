@@ -117,7 +117,7 @@ namespace MicroAgManager.Data
             var result = await SendTheRequest(HttpMethod.Post, address, queryString);
             if (result.StatusCode == HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
             result.EnsureSuccessStatusCode();
-            return await DomainFetcher.ParseTheJSON<T>(result);
+            return await DataSynchronizer.ParseTheJSON<T>(result);
         }
         private async Task<HttpResponseMessage> SendTheRequest(HttpMethod method, string address, StringContent? content)
         {

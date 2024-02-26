@@ -29,7 +29,7 @@ namespace BackEnd.BusinessLogic.TreatmentRecord
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatmentRecord.Id.ToString(), treatmentRecord.GetType().Name, "Created", treatmentRecord.ModifiedBy) }), cancellationToken);
+                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatmentRecord.Id.ToString(), treatmentRecord.GetType().Name, "Created", treatmentRecord.ModifiedBy, treatmentRecord.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create TreatmentRecord"); }
                 }

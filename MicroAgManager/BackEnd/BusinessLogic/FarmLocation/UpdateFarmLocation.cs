@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
                     farm.ModifiedBy = request.ModifiedBy;
 
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(farm.Id.ToString(), farm.GetType().Name, "Modified", farm.ModifiedBy) }), cancellationToken);
+                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(farm.Id.ToString(), farm.GetType().Name, "Modified", farm.ModifiedBy, farm.ModifiedOn) }), cancellationToken);
                     return farm.Id;
                 }
             }
