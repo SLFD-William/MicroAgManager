@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
+using Domain.Interfaces;
 
 namespace Domain.Entity
 {
@@ -31,7 +32,7 @@ namespace Domain.Entity
 
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
-    public class Treatment : BaseEntity, ITreatment
+    public class Treatment : BaseEntity, ITreatment, IHasFrequencyAndDuration
     {
         public Treatment(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {

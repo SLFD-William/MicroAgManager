@@ -1,0 +1,114 @@
+﻿@using Domain.Models
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+
+<QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel Virtualize=true Items="Items">
+    @if (ShowRecipientTypeColumn)
+    {
+        <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
+  @*           <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+                </div>
+            </ColumnOptions> *@
+        </PropertyColumn>
+        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="breedingRecord">
+@*             <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                </div>
+            </ColumnOptions> *@
+            <ChildContent>
+                @HasRecipientHelper.RecipientTypeName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.RecipientTypeId)
+            </ChildContent>
+        </TemplateColumn>
+    }
+
+    <TemplateColumn Title="Female" Sortable="true" Context="breedingRecord" >
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+            </div>
+        </ColumnOptions> *@
+        <ChildContent>
+            @HasRecipientHelper.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.FemaleId)
+        </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Male" Sortable="true" Context="breedingRecord">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions> *@
+        <ChildContent>
+            @HasRecipientHelper.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.MaleId)
+        </ChildContent>
+    </TemplateColumn>
+
+    <PropertyColumn Property="@(p => p.ServiceDate)" Title="Service Date" Sortable="true">
+        @*     <ColumnOptions>
+        <div class="search-box">
+        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+        </div>
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Resolution)" Title="Resolution" Sortable="true">
+        @*     <ColumnOptions>
+        <div class="search-box">
+        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+        </div>
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.ResolutionDate)" Title="Resolution Date" Sortable="true">
+        @*     <ColumnOptions>
+            <div class="search-box">
+                <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+            </div> 
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.BornMales)" Title="Males Born" Sortable="true">
+        @*     <ColumnOptions>
+        <div class="search-box">
+        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+        </div>
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.BornFemales)" Title="Females Born" Sortable="true">
+        @*     <ColumnOptions>
+        <div class="search-box">
+        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+        </div>
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.StillbornMales)" Title="Males Stillborn" Sortable="true">
+        @*     <ColumnOptions>
+        <div class="search-box">
+        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+        </div>
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.StillbornFemales)" Title="Females Stillborn" Sortable="true">
+        @*     <ColumnOptions>
+        <div class="search-box">
+        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
+        </div>
+        </ColumnOptions>*@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="notesFilter" @bind:event="oninput" placeholder="Notes..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn> 
+</QuickGrid>
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] required public IQueryable<BreedingRecordModel> Items { get; set; }
+    QuickGrid<BreedingRecordModel> breedingRecordGrid;
+    [Parameter] public bool ShowRecipientTypeColumn { get; set; } = true;
+    [Parameter] public bool ShowRecipientColumn { get; set; } = true;
+}

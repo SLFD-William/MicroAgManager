@@ -16,8 +16,9 @@ namespace MicroAgManager.Data
 
             return string.Empty;
         }
-        public static string RecipientName(FrontEndDbContext db, string recipientType, long recipientId)
+        public static string RecipientName(FrontEndDbContext db, string recipientType, long? recipientId)
         {
+            if(!recipientId.HasValue) return string.Empty;
             if (recipientType == RecipientTypeConstants.LivestockAnimal ||
                 recipientType == RecipientTypeConstants.LivestockBreed)
                 return db.Livestocks.Find(recipientId).Name ?? string.Empty;

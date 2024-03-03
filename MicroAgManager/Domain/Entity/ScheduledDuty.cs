@@ -26,7 +26,7 @@ namespace Domain.Entity
     [Index(nameof(TenantId))]
     [Index(nameof(ModifiedOn))]
     [Index(nameof(Recipient), nameof(RecipientId))]
-    public class ScheduledDuty : BaseEntity, IScheduledDuty
+    public class ScheduledDuty : BaseEntity, IScheduledDuty,ICloneable
     {
         public ScheduledDuty(Guid createdBy, Guid tenantId) : base(createdBy, tenantId)
         {
@@ -46,5 +46,20 @@ namespace Domain.Entity
         public Guid? CompletedBy { get; set; }
         public virtual Duty Duty { get; set; }
 
+        public object Clone() => new ScheduledDuty(this.CreatedBy, this.TenantId)
+        {
+            DutyId = this.DutyId,
+            RecordId = this.RecordId,
+            Record = this.Record,
+            RecipientId = this.RecipientId,
+            Recipient = this.Recipient,
+            ScheduleSourceId = this.ScheduleSourceId,
+            ScheduleSource = this.ScheduleSource,
+            Dismissed = this.Dismissed,
+            DueOn = this.DueOn,
+            ReminderDays = this.ReminderDays,
+            CompletedOn = this.CompletedOn,
+            CompletedBy = this.CompletedBy,
+        };
     }
 }

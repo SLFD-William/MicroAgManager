@@ -16,6 +16,7 @@
 @using MicroAgManager.Components.TreatmentRecord
 @using MicroAgManager.Data
 @using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
 @inherits BaseEditor
 @if (scheduledDuty is not null)
 {
@@ -74,17 +75,20 @@
             @if (ShowRecordEditor())
             {
                 <section style="grid-column:1/-1;width:100%;">
-                    <DynamicComponent @ref="recordComponent" Type="@recordType" Parameters="@recordComponents[recordType.Name].Parameters" />
+                    <DynamicComponent @ref="recordComponent" Type="@_recordType" Parameters="@recordComponents[_recordType.Name].Parameters" />
                 </section>
             }
         </ChildContent>
         <SecondaryContent>
             <section style="display:flex;grid-column:1/-1;width:100%;">
             <button type="button" @onclick="@(()=>OnScheduledDutySubmit(editContext))">@(scheduledDuty.Id <= 0 ? "Create" : "Update")</button>
+                <TimePrompt @ref=_rescheduleEditor Legend="@($"Reschedule {scheduledDuty.Duty.Name}")" Show=showReschedule Cancelled="RescheduleCancel" Submitted="RescheduleSubmitted" SuggestedTime="newDue"></TimePrompt>
             @if(scheduledDuty.Id > 0 && !scheduledDuty.CompletedOn.HasValue)
             {
-                <button type="button" @onclick="@OnScheduledDutySnooze">Snooze</button>
-                <button type="button" @onclick="@OnScheduledDutyDismiss">Dismiss</button>
+                  <button type="button" @onclick="Snooze">@SnoozeLabel()</button>
+                    <TimePrompt @ref=_snoozeEditor Show=showSnooze Cancelled="SnoozeCancel" Submitted="SnoozeSubmitted" SuggestedTime="SuggestedSnooze"></TimePrompt>
+                    <button type="button" @onclick="Dismiss">Dismiss</button>
+                    <ConfirmationYesNo Prompt="Are you sure you want to Dismiss this Duty?" Show=showDismiss Cancelled="DismissCancel" Submitted="DismissedConfirmed"></ConfirmationYesNo>
             }
             <button type="button" @onclick="@(()=>OnCancel.InvokeAsync(editContext))">Cancel</button>
             </section>
@@ -97,6 +101,8 @@
 
     private DynamicComponent? recordComponent;
     private ScheduledDutyModel? scheduledDuty;
+    private bool reschedule = false;
+    private DateTime? newDue = null;
     private long DutyId
     {
         get
@@ -194,7 +200,11 @@
         scheduledDuty.Recipient = GetRecipientFromRecipientType(scheduledDuty.Duty);
         scheduledDuty.CompletedOn = GetDatePerformedFromRecord(recordModel);
         scheduledDuty.CompletedBy = appState.UserId;
-
+        if (RescheduleIsNeeded()) return;
+        await SubmitScheduledDutyChange();
+    }
+    private async Task SubmitScheduledDutyChange()
+    {
         editContext = new EditContext(scheduledDuty);
 
         if (!editContext.Validate()) return;
@@ -204,8 +214,8 @@
             var creating = (scheduledDuty.Id <= 0);
 
             var id = creating ?
-                await api.ProcessCommand<ScheduledDutyModel, CreateScheduledDuty>("api/CreateScheduledDuty", new CreateScheduledDuty { ScheduledDuty = scheduledDuty }) :
-                await api.ProcessCommand<ScheduledDutyModel, UpdateScheduledDuty>("api/UpdateScheduledDuty", new UpdateScheduledDuty { ScheduledDuty = scheduledDuty });
+                await api.ProcessCommand<ScheduledDutyModel, CreateScheduledDuty>("api/CreateScheduledDuty", new CreateScheduledDuty { ScheduledDuty = scheduledDuty, Reschedule = reschedule,RescheduleDueOn=newDue }) :
+                await api.ProcessCommand<ScheduledDutyModel, UpdateScheduledDuty>("api/UpdateScheduledDuty", new UpdateScheduledDuty { ScheduledDuty = scheduledDuty, Reschedule = reschedule, RescheduleDueOn = newDue });
 
             if (id <= 0)
                 throw new Exception("Unable to save scheduled duty");
@@ -227,21 +237,87 @@
         {
 
         }
-   }
-    private bool _showingSnoozeConfirmation = false;
-    private void OnScheduledDutySnooze()
+    }
+    #region Reschedule
+    private bool showReschedule = false;
+    private TimePrompt? _rescheduleEditor;
+    private async Task RescheduleCancel()
     {
-        _showingSnoozeConfirmation = true;
+        showReschedule = false;
+        newDue = null;
+        reschedule = false;
+        await SubmitScheduledDutyChange();
+
+    }
+
+    private async Task RescheduleSubmitted(DateTime e)
+    {
+        showReschedule = false;
+        newDue = e.Date;
+        reschedule = true;
+        await SubmitScheduledDutyChange();
+    }
+    private bool RescheduleIsNeeded()
+    {
+        showReschedule = scheduledDuty?.Duty is IHasFrequencyAndDuration;
+        if (!showReschedule) return showReschedule;
+         _rescheduleEditor.SuggestedTime = DateTime.Today.AddDays(1);
+        return showReschedule;
+    }
+    #endregion
+    #region Snooze
+    private bool showSnooze = false;
+    private TimePrompt? _snoozeEditor;
+    private void Snooze() => showSnooze = true;
+    private void SnoozeCancel() => showSnooze = false;
+
+    private async Task SetSuggestedSnooze()
+    {
+        var snoozeTime = DateTime.Today;
+        if (_recordType == typeof(BreedingRecordEditor))
+        {
+            var breedingRecord = await appState.DbContext.BreedingRecords.FindAsync(scheduledDuty?.RecordId);
+            if (breedingRecord is not null)
+            {
+                var animal = await appState.DbContext.Livestocks
+                    .Include(p => p.Breed)
+                    .FirstOrDefaultAsync(i => i.Id == breedingRecord.FemaleId);
+                double.TryParse(animal?.Breed?.GestationPeriod.ToString(), out var days);
+                snoozeTime= breedingRecord.ServiceDate.AddDays(days);
+
+            }
+        }
+        if (snoozeTime <= DateTime.Today) return;
+        _snoozeEditor.SuggestedTime = snoozeTime;
+        SuggestedSnooze = snoozeTime;
         StateHasChanged();
     }
 
-    private bool _showingDismissConfirmation = false;
-    private void OnScheduledDutyDismiss()
+    private string SnoozeLabel() => SuggestedSnooze.HasValue ? $"Snooze until {SuggestedSnooze.Value.ToShortDateString()}" : "Snooze";
+    public DateTime? SuggestedSnooze { get; private set; }
+    private async Task SnoozeSubmitted(DateTime e)
     {
-        _showingDismissConfirmation = true;
-        StateHasChanged();
+        showSnooze = false;
+        scheduledDuty.DueOn = e.Date;
+        scheduledDuty.CompletedOn = null;
+        scheduledDuty.CompletedBy = null;
+        await SubmitScheduledDutyChange();
     }
 
+    #endregion
+    #region Dismiss
+    private bool showDismiss = false;
+    private void Dismiss() => showDismiss = true;
+    private void DismissCancel() => showDismiss = false;
+    private async Task DismissedConfirmed()
+    {
+        showDismiss = false;
+        scheduledDuty.Dismissed = true;
+        scheduledDuty.CompletedOn = DateTime.Now;
+        scheduledDuty.CompletedBy = appState.UserId;
+        await SubmitScheduledDutyChange();
+    }
+    #endregion
     #region Duty
     private bool _showingDutyEditor = false;
     private EditContext dutyEditContext = new EditContext(new DutyModel());
@@ -338,11 +414,11 @@
         _showingSourceEditor = false;
         StateHasChanged();
     }
-   
+
     #endregion
     #region Record
     private bool _showingRecordEditor = false;
-    Type? recordType;
+    Type? _recordType;
     private Dictionary<string, ComponentMetadata> recordComponents =
      new()
         {
@@ -414,7 +490,7 @@
                     ((RegistrationModel)model).Registrar = appState.DbContext.Registrars.Find(scheduledDuty.Duty.CommandId);
                     ((RegistrationModel)model).RegistrationDate = DateTime.Today;
                 }
-                recordType = typeof(RegistrationEditor);
+                _recordType = typeof(RegistrationEditor);
                 break;
             case nameof(DutyCommandConstants.Measurement):
                 scheduledDuty.Record = nameof(DutyCommandConstants.Measurement);
@@ -425,10 +501,10 @@
                     ((MeasurementModel)model).Measure = appState.DbContext.Measures.Find(scheduledDuty.Duty.CommandId);
                     ((MeasurementModel)model).DatePerformed = DateTime.Today;
                 }
-                recordType = typeof(MeasurementEditor);
+                _recordType = typeof(MeasurementEditor);
                 break;
             case nameof(DutyCommandConstants.Service):
-                recordType = typeof(ServiceLivestockEditor);
+                _recordType = typeof(ServiceLivestockEditor);
                 model = new ServiceLivestock() 
                     { DamIds = new List<long>(), 
                       ServiceDate = DateTime.Now, 
@@ -439,19 +515,19 @@
             case nameof(DutyCommandConstants.Breed):
                 scheduledDuty.Record = "BreedingRecord";
                 model = appState.DbContext.BreedingRecords.Find(scheduledDuty.RecordId) ?? new BreedingRecordModel();
-                recordType = typeof(BreedingRecordEditor);
+                _recordType = typeof(BreedingRecordEditor);
                 break;
             case nameof(DutyCommandConstants.Treatment):
                 break;
             default:
-                recordType = null;
+                _recordType = null;
                 break;
         }
-        if (recordType is not null )
+        if (_recordType is not null )
         {
             model.RecipientType = scheduledDuty.Duty.RecipientType;
             model.RecipientTypeId = scheduledDuty.Duty.RecipientTypeId;
-            recordComponents[recordType.Name].Parameters["editContext"] = new EditContext(model);
+            recordComponents[_recordType.Name].Parameters["editContext"] = new EditContext(model);
             return true;
         }
         return false;

@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
+using Domain.Interfaces;
 
 namespace Domain.Models
 {
-    public class TreatmentModel : BaseModel,ITreatment
+    public class TreatmentModel : BaseModel,ITreatment,IHasFrequencyAndDuration
     {
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][MaxLength(40)] public string BrandName { get; set; }

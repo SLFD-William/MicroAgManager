@@ -275,7 +275,7 @@
     }
     private IQueryable<ScheduledDutyModel> baseScheduledDutyQuery()
     {
-        var query = appState.DbContext.ScheduledDuties.Include(p => p.Duty).ToList();
+        var query = appState.DbContext.ScheduledDuties.Include(p => p.Duty).Where(d => !d.CompletedOn.HasValue).ToList();
         foreach (var sd in query)
         {
             sd.PopulateDynamicRelations(appState.DbContext);

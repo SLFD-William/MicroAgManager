@@ -1,0 +1,34 @@
+﻿@if(Show)
+{ 
+<div class="modalContainer">
+    <dialog open="true">
+            <ValidatedField Legend=@Legend ValidationMessageFor="@(() => SetTime)">
+                <InputDate @bind-Value="@SetTime" />
+        </ValidatedField>
+        <button type="button" @onclick="Submit">Snooze</button>
+        <button type="button" @onclick="Cancel">Cancel</button>
+    </dialog>
+</div>
+}
+@code {
+    [Parameter] public string Legend { get; set; } = "Snooze Until";
+    [Parameter] public EventCallback<DateTime> Submitted { get; set; }
+    [Parameter] public EventCallback Cancelled { get; set; }
+    private DateTime? _SuggestedTime = null;
+    [Parameter] public DateTime? SuggestedTime { get => _SuggestedTime; set { _SuggestedTime = value; SetTime = value; } }
+    [Parameter] public bool Show { get; set; }
+    private DateTime? SetTime { get; set; }
+
+    private async Task Cancel()
+    {
+        SetTime = null;
+        await Cancelled.InvokeAsync();
+        StateHasChanged();
+    }
+    private async Task Submit()
+    {
+        if (!SetTime.HasValue) return;
+        await Submitted.InvokeAsync(SetTime.Value);
+        StateHasChanged();
+    }
+}

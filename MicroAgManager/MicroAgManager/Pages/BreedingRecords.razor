@@ -1,0 +1,57 @@
+﻿@page "/Ancillaries/BreedingRecords"
+@using Domain.Models
+@using MicroAgManager.Components.Livestock
+@using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
+@implements IDisposable
+<PageTitle>Breeding Records</PageTitle>
+<div class="BreedingRecords">
+      @if (appState.DbContext?.Tenants.Any() == true)
+    {
+        <TreeView Id="BreedingRecord">
+    
+        </TreeView>
+        <div>
+            @if (!BreedingRecordId.HasValue)
+            {
+                <div>
+                    <BreedingRecordGrid Items="baseBreedingRecordQuery()">
+
+                    </BreedingRecordGrid>
+                </div>
+            } 
+        </div>
+    }
+    else
+    {
+        <span>Initializing application </span>
+    }
+</div>
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "BreedingRecordId")] public long? BreedingRecordId { get; set; }
+    private long _breedingRecordId = -1;
+    private int _breedingRecordCount = 0;
+    private IQueryable<BreedingRecordModel> baseBreedingRecordQuery()
+    {
+        var query = appState.DbContext.BreedingRecords.AsQueryable();
+        if (_breedingRecordId > 0)
+            query = query.Where(p => p.Id == _breedingRecordId);
+
+        _breedingRecordCount = query.Count();
+        return query.ToList().AsQueryable();
+    }
+    protected override void OnInitialized()
+    {
+        appState.OnDbInitialized += Refresh;
+        appState.OnDbUpdate += Refresh;
+        appState.OnLocationChange += Refresh;
+    }
+    private void Refresh() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= Refresh;
+        appState.OnDbUpdate -= Refresh;
+        appState.OnLocationChange -= Refresh;
+    }
+}
