@@ -235,7 +235,7 @@
     private IQueryable<LivestockModel> baseLivestockQuery()
     {
         var query = appState.DbContext.Livestocks.Include(l=>l.Breed).ThenInclude(b=>b.Animal)
-            .Include(s => s.Status).Include(p => p.Father).Include(p => p.Mother).AsQueryable();
+            .Include(s => s.Status).Include(p => p.Father).Include(p => p.Mother).Include(l=>l.Location).AsQueryable();
         if (_livestockId > 0)
             query = query.Where(p => p.Id == _livestockId);
         else

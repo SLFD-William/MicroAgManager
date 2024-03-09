@@ -13,7 +13,7 @@ namespace Domain.Entity
         int? BornFemales { get; set; }
         int? BornMales { get; set; }
         long? MaleId { get; set; }
-        string Notes { get; set; }
+        string? Notes { get; set; }
         long FemaleId { get; set; }
         string? Resolution { get; set; }
         DateTime? ResolutionDate { get; set; }
@@ -40,7 +40,7 @@ namespace Domain.Entity
         public int? BornFemales { get; set; }
         [MaxLength(40)] public string? Resolution { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
         public virtual Livestock? Male { get; set; }
         public virtual Livestock? Female { get; set; }
         public long RecipientTypeId { get; set; }

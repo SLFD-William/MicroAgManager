@@ -25,7 +25,7 @@
                 <option value="@MeasurementMethodConstants.Direct">@MeasurementMethodConstants.Direct</option>
             </InputSelect>
         </ValidatedField>
-                    <ValidatedField ValidationMessageFor="@(() =>measure.UnitId)">
+        <ValidatedField ValidationMessageFor="@(() =>measure.UnitId)">
                 <LegendContent>
                     <div style="display:inline-flex;gap:1rem;">
                         <span>Units</span><button type="button" @onclick=ShowUnitEditor>+</button>

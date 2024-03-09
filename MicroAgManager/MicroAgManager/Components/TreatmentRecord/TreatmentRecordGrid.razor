@@ -1,45 +1,239 @@
-﻿@* @using Domain.Models;
-@inherits DataComponent<TreatmentModel>
-@if (app != null)
-{
+﻿@using Domain.Models
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
 
-    <CascadingValue Value="_editTreatment">
-        <TreatmentEditor Show=@(_editTreatment is not null) Modal=true @ref="_treatmentEditor" Submitted="@TreatmentUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></TreatmentEditor>
-    </CascadingValue>
-    <TableTemplate @ref="_listComponent" PageSize="0" TItem="TreatmentSummary"
-                   Items="@Items"
-                   MultiSelect="@Multiselect"
-                   Selectable="@Selectable"
-                   OnSelectionChange="@TableItemSelected"
-                   CanDelete="@CanDelete"
-                   RowDetailsShowing="@app.RowDetailsShowing["TreatmentList"]"
-                   NewItemName="Treatment"
-                   AddItemClicked="@(async ()=>await EditTreatment(0))">
-        <ColumnContent>
-            <Column TableItem="TreatmentSummary" Field="@(x => x.Id)" Title="ControlColumn">
-                <Template Context="e">
-                    <button type="button" onclick="@(()=> EditTreatment(e.Id))">Edit</button>
-                    @if (CanDelete)
-                    {
-                        <button type="button">Delete</button>
-                    }
-                </Template>
-            </Column>
-            <Column TableItem="TreatmentSummary" Field="@(x => x.Name)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.BrandName)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.Reason)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.LabelMethod)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.DosageAmount)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.DosageUnit)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.MeatWithdrawal)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.MilkWithdrawal)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.Frequency)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.FrequencyUnit)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.Duration)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.DurationUnit)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.RecipientMass)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-            <Column TableItem="TreatmentSummary" Field="@(x => x.RecipientMassUnit)" Sortable="true" Filterable="true" UseInSuperSearch="true" />
-        </ColumnContent>
-    </TableTemplate>
+<QuickGrid Theme="microagmanager" @ref=treatmentRecordGrid TGridItem=TreatmentRecordModel Virtualize=true Items="Items">
+  <TemplateColumn Title="Treatment" Sortable="true" Context="treatmentRecord" SortBy="@OrderByTreatmentName">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="treatmentNameFilter" @bind:event="oninput" placeholder="Treatment..." />
+            </div>
+        </ColumnOptions>
+        <ChildContent>
+            @treatmentRecord.Treatment.Name
+        </ChildContent>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Treatment.BrandName)" Title="Brand Name" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="brandNameFilter" @bind:event="oninput" placeholder="Brand Name..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.Reason)" Title="Reason" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="reasonFilter" @bind:event="oninput" placeholder="Reason..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    @if (ShowRecipientTypeColumn)
+    {
+        <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
+        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="treatment">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @HasRecipientHelper.RecipientTypeName(appState.DbContext, treatment.RecipientType, treatment.RecipientTypeId)
+            </ChildContent>
+        </TemplateColumn>
+    }
+    @if (ShowRecipientColumn)
+    {
+        <TemplateColumn Title="Recipient" Sortable="true" Context="treatment" >
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @HasRecipientHelper.RecipientName(appState.DbContext, treatment.RecipientType, treatment.RecipientId)
+            </ChildContent>
+        </TemplateColumn>
+    }
+    <PropertyColumn Property="@(p => p.Treatment.LabelMethod)" Title="Label Method" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="labelMethodFilter" @bind:event="oninput" placeholder="Label Method..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.DosageAmount)" Title="Dosage Amount" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dosageAmountFilter" @bind:event="oninput" placeholder="Dosage Amount..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.DosageUnitId)" Title="Dosage Unit" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="dosageUnitFilter" @bind:event="oninput" placeholder="Dosage Unit..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.RecipientMass)" Title="Recipient Mass" Sortable="true">
+       @*  <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="recipientMassFilter" @bind:event="oninput" placeholder="Recipient Mass..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.RecipientMassUnitId)" Title="Recipient Mass Unit" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="recipientMassUnitFilter" @bind:event="oninput" placeholder="Recipient Mass Unit..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.MeatWithdrawal)" Title="Meat Withdrawal" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="meatWithdrawalFilter" @bind:event="oninput" placeholder="Meat Withdrawal..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.MilkWithdrawal)" Title="Milk Withdrawal" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="milkWithdrawalFilter" @bind:event="oninput" placeholder="Milk Withdrawal..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.Frequency)" Title="Frequency" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="frequencyFilter" @bind:event="oninput" placeholder="Frequency..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.FrequencyUnitId)" Title="Frequency Unit" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="frequencyUnitFilter" @bind:event="oninput" placeholder="Frequency Unit..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.Duration)" Title="Duration" Sortable="true">
+       @*  <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="durationFilter" @bind:event="oninput" placeholder="Duration..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Treatment.DurationUnitId)" Title="Duration Unit" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.AppliedMethod)" Title="Applied Method" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="labelMethodFilter" @bind:event="oninput" placeholder="Label Method..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.DosageAmount)" Title="Applied Dosage Amount" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="dosageAmountFilter" @bind:event="oninput" placeholder="Dosage Amount..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.DosageUnitId)" Title="Applied Dosage Unit" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="dosageUnitFilter" @bind:event="oninput" placeholder="Dosage Unit..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+</QuickGrid>
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] required public IQueryable<TreatmentRecordModel> Items { get; set; }
+    QuickGrid<TreatmentRecordModel> treatmentRecordGrid;
+
+    private GridSort<TreatmentRecordModel> OrderByTreatmentName = GridSort<TreatmentRecordModel>.ByAscending(p => p.Treatment.Name);
+    [Parameter] public Action<string> treatmentNameFilterChanged { get; set; }
+    private string _treatmentNameFilter;
+    string treatmentNameFilter
+    {
+        get => _treatmentNameFilter; set
+        {
+            treatmentNameFilterChanged.Invoke(value);
+            _treatmentNameFilter = value;
+        }
+    }
+
+    [Parameter] public Action<string> brandNameFilterChanged { get; set; }
+    private string _brandNameFilter;
+    string brandNameFilter
+    {
+        get => _brandNameFilter; set
+        {
+            brandNameFilterChanged.Invoke(value);
+            _brandNameFilter = value;
+        }
+    }
+    [Parameter] public bool ShowRecipientTypeColumn { get; set; } = true;
+    [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
+    private string _recipientTypeFilter;
+    string recipientTypeFilter
+    {
+        get => _recipientTypeFilter; set
+        {
+            recipientTypeFilterChanged.Invoke(value);
+            _recipientTypeFilter = value;
+        }
+    }
+    [Parameter] public Action<string> recipientTypeInstanceFilterChanged { get; set; }
+    private string _recipientTypeInstanceFilter;
+    string recipientTypeInstanceFilter
+    {
+        get => _recipientTypeInstanceFilter; set
+        {
+            recipientTypeInstanceFilterChanged.Invoke(value);
+            _recipientTypeInstanceFilter = value;
+        }
+    }
+    [Parameter] public bool ShowRecipientColumn { get; set; } = true;
+    [Parameter] public Action<string> recipientFilterChanged { get; set; }
+    private string _recipientFilter;
+    string recipientFilter
+    {
+        get => _recipientFilter; set
+        {
+            recipientFilterChanged.Invoke(value);
+            _recipientFilter = value;
+        }
+    }
+
 }
- *@

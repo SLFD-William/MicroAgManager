@@ -37,11 +37,11 @@
         </ValidatedField>
         <ValidatedField Legend="Male" ValidationMessageFor="@(() => breedingRecord.MaleId)">
             <LegendContent>
-                @RecipientTypeFemaleName
+                @RecipientTypeMaleName
             </LegendContent>
             <ChildContent>
                 <InputSelect @bind-Value="@breedingRecord.MaleId">
-                    <option value="0">Select @RecipientTypeFemaleName ...</option>
+                    <option value="0">Select @RecipientTypeMaleName ...</option>
                     @foreach (var g in MaleSelections)
                     {
                         <option value="@g.Item1">@g.Item2</option>

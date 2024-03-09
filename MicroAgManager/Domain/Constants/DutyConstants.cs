@@ -12,7 +12,7 @@
         public static string Birth { get; private set; } = "Birth";
         public static string Feed { get; private set; } = "Feed";
         public static string Reap { get; private set; } = "Reap";
-        public static List<string> NonRecordCommands { get; private set; } = new List<string>()
+        public static readonly List<string> NonRecordCommands = new List<string>()
         {
             Birth,Breed,Complete,Reap,Service
         };

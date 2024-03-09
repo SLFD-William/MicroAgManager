@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace BackEnd.Persistence.Migrations
 {
     [DbContext(typeof(MicroAgManagementDbContext))]
-    partial class MicroAgManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240309174112_Treatments")]
+    partial class Treatments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,6 +153,7 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RecipientType")
@@ -1358,6 +1362,7 @@ namespace BackEnd.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("RecipientId")
@@ -1845,11 +1850,11 @@ namespace BackEnd.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("DosageAmount")
+                    b.Property<decimal>("DosageAmount")
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<long?>("DosageUnitId")
+                    b.Property<long>("DosageUnitId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("ModifiedBy")
@@ -2443,7 +2448,8 @@ namespace BackEnd.Persistence.Migrations
                     b.HasOne("Domain.Entity.Unit", "DosageUnit")
                         .WithMany()
                         .HasForeignKey("DosageUnitId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entity.Treatment", "Treatment")
                         .WithMany()

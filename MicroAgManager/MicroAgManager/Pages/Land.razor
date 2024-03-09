@@ -71,6 +71,7 @@
                             OnCreateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), "-1" } }))"></NavCrudButtons>
                         <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement"></ScheduledDutyCommand>
                         <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
+                        <ScheduledDutyCommand Command="@DutyCommandConstants.Treatment"></ScheduledDutyCommand>
                         <ScheduledDutyGrid Items="baseScheduledDutyQuery()"></ScheduledDutyGrid>
                         @if (LandPlotId.HasValue || _addingPlot)
                         {

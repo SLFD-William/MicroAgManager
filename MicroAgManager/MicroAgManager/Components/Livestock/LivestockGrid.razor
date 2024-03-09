@@ -45,16 +45,27 @@
                 </div>
             </ColumnOptions> *@
         </PropertyColumn>
-    @if (ShowLocationColumn)
+       @if (ShowLocationColumn)
     { 
-        <PropertyColumn Property="@(p => p.Location.Name)" Title="Location" Sortable="true">
-@*             <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="locationFilter" @bind:event="oninput" placeholder="Location..." />
-                </div>
-            </ColumnOptions> *@
-        </PropertyColumn>   
+        <TemplateColumn Title="Location" Sortable="false" Context="landplot" >
+            @*             <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
+        </div>
+        </ColumnOptions> *@
+            <ChildContent>
+                @if (landplot.LocationId.HasValue)
+                {
+                    <NavLink href=@($"/Land?LandPlotId={landplot.LocationId.Value}") >
+                        @landplot.Location?.Name
+                    </NavLink>
+    
+                }
+            </ChildContent>
+        </TemplateColumn>
     }
+    
+
         <PropertyColumn Property="@(p => p.BatchNumber)" Title="Batch Number" Sortable="true">
 @*             <ColumnOptions>
                 <div class="search-box">

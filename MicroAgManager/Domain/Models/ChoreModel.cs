@@ -26,8 +26,8 @@ namespace Domain.Models
         [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
         public virtual UnitModel? PeriodUnit { get; set; }
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
-        public decimal Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public long? DurationUnitId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [Precision(18, 3)] decimal IHasFrequencyAndDuration.Duration { get; set; }
+        long? IHasFrequencyAndDuration.DurationUnitId { get; set; }
         DateTime IChore.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
         ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties=value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
         IUnit IChore.FrequencyUnit { get => FrequencyUnit as IUnit; set => FrequencyUnit=value as UnitModel ?? FrequencyUnit; }

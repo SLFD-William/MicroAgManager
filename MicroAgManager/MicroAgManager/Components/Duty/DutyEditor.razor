@@ -5,6 +5,7 @@
 @using MicroAgManager.Components.Measurement
 @using MicroAgManager.Components.Registration
 @using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.TreatmentRecord
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
@@ -218,6 +219,8 @@
                 commandType = typeof(MeasureEditor);
                 break;
             case nameof(DutyCommandConstants.Treatment):
+                model = appState.DbContext.Treatments.Find(duty.CommandId) ?? new TreatmentModel();
+                commandType = typeof(TreatmentEditor);
                 break;
             default:
                 commandType = null;
@@ -239,6 +242,19 @@
          new()
          {
             {
+                nameof(TreatmentEditor),
+                new ComponentMetadata
+                {
+                    Name = "Treatment",
+                    Parameters = new() {
+                        { "Modal", true },
+                        { "Show", true },
+                        { "editContext", string.Empty },
+                        { "OnCancel", string.Empty },
+                        { "OnSubmit", string.Empty }
+                    }
+                }
+            },{
                 nameof(MeasureEditor),
                 new ComponentMetadata
                 {

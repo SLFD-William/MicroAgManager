@@ -12,10 +12,10 @@ namespace Domain.Models
     {
         [Required][ForeignKey("Treatment")] public long TreatmentId { get; set; }
         public virtual TreatmentModel Treatment { get; set; }
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
-        [Precision(18, 3)] public decimal DosageAmount { get; set; } = 0;
-        [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
+        [Precision(18, 3)] public decimal? DosageAmount { get; set; }
+        [ForeignKey(nameof(DosageUnit))] public long? DosageUnitId { get; set; }
         public virtual UnitModel DosageUnit { get; set; }
         public string AppliedMethod { get; set; } = TreatmentConstants.Grooming;
         public long RecipientTypeId { get; set; }

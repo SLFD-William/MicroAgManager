@@ -13,9 +13,9 @@ namespace Domain.Entity
         public DateTime ModifiedOn { get; set; }
         string AppliedMethod { get; set; }
         DateTime DatePerformed { get; set; }
-        decimal DosageAmount { get; set; }
+        decimal? DosageAmount { get; set; }
        IUnit DosageUnit { get; set; }
-        long DosageUnitId { get; set; }
+        long? DosageUnitId { get; set; }
         string Notes { get; set; }
         long TreatmentId { get; set; }
     }
@@ -33,10 +33,10 @@ namespace Domain.Entity
         [Required] public long RecipientTypeId { get; set; }
         [Required][MaxLength(40)] public string RecipientType { get; set; }
         [Required] public long RecipientId { get; set; }
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
-        [Precision(18, 3)] public decimal DosageAmount { get; set; } = 0;
-        [Required][ForeignKey(nameof(DosageUnit))] public long DosageUnitId { get; set; }
+        [Precision(18, 3)] public decimal? DosageAmount { get; set; } = 0;
+        [ForeignKey(nameof(DosageUnit))] public long? DosageUnitId { get; set; }
         public virtual Unit DosageUnit { get; set; }
         public string AppliedMethod { get; set; } = TreatmentConstants.Grooming;
         IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit=value as Unit ?? DosageUnit; }

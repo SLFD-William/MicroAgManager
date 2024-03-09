@@ -58,10 +58,10 @@
                 </InputSelect>
             </ValidatedField>
         }
-        <ValidatedField ValidationMessageFor="@(() => registration.Identifier)">
+        <ValidatedField Legend="Identification Number" ValidationMessageFor="@(() => registration.Identifier)">
             <InputText @bind-Value="@registration.Identifier"></InputText>
         </ValidatedField>
-        <ValidatedField ValidationMessageFor="@(() => registration.DefaultIdentification)">
+        <ValidatedField Legend="Default Identification" ValidationMessageFor="@(() => registration.DefaultIdentification)">
             <InputCheckbox @bind-Value="@registration.DefaultIdentification"></InputCheckbox>
         </ValidatedField>
         <ValidatedField Legend="Registration Date" ValidationMessageFor="@(() => registration.RegistrationDate)">

@@ -160,6 +160,8 @@
                 return ((ServiceLivestock)recordModel).ServiceDate;
             case nameof(BreedingRecordModel):
                 return ((BreedingRecordModel)recordModel).ResolutionDate;
+            case nameof(TreatmentRecordModel):
+                return ((TreatmentRecordModel)recordModel).DatePerformed;
             default:
                 return null;
         }
@@ -423,6 +425,18 @@
      new()
         {
             {
+                nameof(TreatmentRecordEditor),
+                new ComponentMetadata
+                {
+                    Name = "TreatmentRecord",
+                    Parameters = new() {
+                        { "Modal", false },
+                        { "Show", true },
+                        { "ShowUpdateCancel", false },
+                        { "editContext", string.Empty }
+                    }
+                }
+            },{
                 nameof(MeasurementEditor),
                 new ComponentMetadata
                 {
@@ -518,7 +532,16 @@
                 _recordType = typeof(BreedingRecordEditor);
                 break;
             case nameof(DutyCommandConstants.Treatment):
-                break;
+                scheduledDuty.Record = nameof(DutyCommandConstants.Treatment);
+                model = appState.DbContext.TreatmentRecords.Find(scheduledDuty.RecordId) ?? new TreatmentRecordModel();
+                if (((TreatmentRecordModel)model).Id < 1)
+                {
+                    ((TreatmentRecordModel)model).TreatmentId = scheduledDuty.Duty.CommandId;
+                    ((TreatmentRecordModel)model).Treatment = appState.DbContext.Treatments.Find(scheduledDuty.Duty.CommandId);
+                    ((TreatmentRecordModel)model).DatePerformed = DateTime.Today;
+                }
+                _recordType = typeof(TreatmentRecordEditor);
+            break;
             default:
                 _recordType = null;
                 break;

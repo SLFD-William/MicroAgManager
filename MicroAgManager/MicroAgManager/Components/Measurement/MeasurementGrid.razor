@@ -71,7 +71,13 @@
             </div>
         </ColumnOptions> *@
     </PropertyColumn>
-
+    <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
     <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
 @*         <ColumnOptions>
             <div class="search-box">

@@ -19,7 +19,7 @@ namespace Domain.Models
         public int? BornFemales { get; set; }
         [MaxLength(40)]public string? Resolution { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
         public long RecipientTypeId { get; set; }
         public string RecipientType { get; set; }
         [NotMapped]public long RecipientId { get => FemaleId; set => FemaleId=value; }

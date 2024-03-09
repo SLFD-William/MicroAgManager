@@ -1,96 +1,203 @@
-﻿@* @using Domain.Constants;
-@using Domain.Models;
-@using FrontEnd.Components.Unit;
-@inherits HasRecipientComponent<TreatmentRecordModel>
-@if (editContext is not null)
+﻿@using BackEnd.BusinessLogic.TreatmentRecord
+@using Domain.Constants
+@using Domain.Interfaces
+@using Domain.Models
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.Unit
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@inherits HasRecipientsEditor
+@if (treatmentRecord is not null)
 {
     <ValidatedForm editContext="editContext"
-                   FreshenData="FreshenData"
-                   OnValidSubmit="OnSubmit"
-                   Cancel="Cancel"
-                   showUpdateCancelButtons="showUpdateCancelButtons"
-                   createOnly="@(((TreatmentRecordModel)working).Id<1)"
-                   Modal="Modal"
-                   Show="Show"
-    @ref=_validatedForm>
-        <ChildContent>
-            @if (ShowRecipient)
-            {
-                <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).RecipientType)">
-                    <InputSelect @bind-Value="@(((TreatmentRecordModel)working).RecipientType)">
-                        <option value="0">Select Recipient Type ...</option>
-                        <option value="@RecipientTypeConstants.LivestockAnimal">@nameof(RecipientTypeConstants.LivestockAnimal)</option>
-                    </InputSelect>
-                </ValidatedField>
-                <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).RecipientTypeId)">
-                    <InputSelect @bind-Value="@(((TreatmentRecordModel)working).RecipientTypeId)">
-                        <option value="0">Select Recipient Type Instance ...</option>
-                        @foreach (var recipient in recipientTypeIds())
-                        {
-                            <option value="@recipient.Key">@recipient.Value</option>
-                        }
-                    </InputSelect>
-                </ValidatedField>
-                <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).RecipientId)">
-                    <InputSelect @bind-Value="@(((TreatmentRecordModel)working).RecipientId)">
-                        <option value="0">Select Recipient Instance ...</option>
-                        @foreach (var recipient in recipientIds())
-                        {
-                            <option value="@recipient.Key">@recipient.Value</option>
-                        }
-                    </InputSelect>
-                </ValidatedField>
-            }
-            <ValidatedField ValidationMessageFor="@(() => ((TreatmentRecordModel)working).TreatmentId)">
+                   OnSubmit="OnTreatmentRecordSubmit"
+                   OnCancel="@(()=> OnCancel.InvokeAsync(editContext))"
+                   showUpdateCancelButtons="@ShowUpdateCancel"
+                   Modal=Modal
+                   Show=Show>
+
+        <ValidatedField ValidationMessageFor="@(() => treatmentRecord.TreatmentId)">
                 <LegendContent>
                     <div style="display:inline-flex;gap:1rem;">
-                        <span>Treatment</span><button type="button" @onclick=ShowTreatmentEditor>+</button>
-                        <TreatmentEditor @ref=_treatmentEditor Modal="true" Show="@(showTreatmentModal)" showUpdateCancelButtons="true" Submitted="TreatmentCreated" Cancelled="TreatmentCanceled"></TreatmentEditor>
+                        <span>Treatment</span>
+                        <button type="button" @onclick=ShowTreatmentEditor>+</button>
+                        <TreatmentEditor Modal=true Show=@showTreatmentModal editContext=treatmentEditContext OnCancel=TreatmentCanceled OnSubmit=TreatmentSubmitted></TreatmentEditor>
                     </div>
                 </LegendContent>
                 <ChildContent>
-                    <InputSelect @bind-Value="@(((TreatmentRecordModel)working).TreatmentId)">
-                        <option value="0">Select Treatment ...</option>
-                        @foreach (var treatment in app.dbContext.Treatments.OrderBy(m => m.LabelMethod).ThenBy(m => m.Name))
+                <InputSelect @bind-Value="@treatmentRecord.TreatmentId">
+                        <option value="">Select Treatment ...</option>
+                        @foreach (var unit in appState.DbContext.Treatments)
                         {
-                            <option value="@treatment.Id">@($"{treatment.Name} ({treatment.LabelMethod})")</option>
+                            <option value="@unit.Id">
+                                @unit.Name
+                            </option>
                         }
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>
-            <ValidatedField Legend="Label Method" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).AppliedMethod)">
-                <InputSelect @bind-Value="@(((TreatmentRecordModel)working).AppliedMethod)">
-                    <option value="">Select Method ...</option>
-                    <option value="@TreatmentConstants.Grooming">@TreatmentConstants.Grooming</option>
-                    <option value="@TreatmentConstants.Intramuscular">@TreatmentConstants.Intramuscular</option>
-                    <option value="@TreatmentConstants.Intravenous">@TreatmentConstants.Intravenous</option>
-                    <option value="@TreatmentConstants.Oral">@TreatmentConstants.Oral</option>
-                    <option value="@TreatmentConstants.Subcutaneous">@TreatmentConstants.Subcutaneous</option>
-                    <option value="@TreatmentConstants.Surgical">@TreatmentConstants.Surgical</option>
-                    <option value="@TreatmentConstants.Topical">@TreatmentConstants.Topical</option>
+        @if (ShowRecipient)
+        {
+            <ValidatedField Legend="Recipient Type" ValidationMessageFor="@(() => treatmentRecord.RecipientType)">
+                <InputSelect @bind-Value="@treatmentRecord.RecipientType">
+                    <option value="0">Select Recipient Type ...</option>
+                    <option value="@RecipientTypeConstants.LivestockAnimal">@RecipientTypeConstants.LivestockAnimal</option>
+                    <option value="@RecipientTypeConstants.LivestockBreed">@RecipientTypeConstants.LivestockBreed</option>
                 </InputSelect>
             </ValidatedField>
-            @if (!string.IsNullOrEmpty(((TreatmentRecordModel)working).AppliedMethod) && !TreatmentConstants.NonWithdrawalTreatments.Contains(((TreatmentRecordModel)working).AppliedMethod))
-            {
-                <ValidatedField Legend="Dose" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).DosageAmount)">
-                    <InputNumber @bind-Value="((TreatmentRecordModel)working).DosageAmount"></InputNumber>
-                </ValidatedField>
-                <ValidatedField Legend="Dose Unit" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).DosageUnitId)">
-                    <InputSelect @bind-Value="@(((TreatmentRecordModel)working).DosageUnitId)">
-                        <option value="0">Select Dose Unit ...</option>
-                        @foreach (var unit in app.dbContext.Units.Where(u => UnitCategoryConstants.DosageUnits.ContainsKey(u.Category)).OrderBy(u => u.Category).ThenBy(u => u.Symbol))
-                        {
-                            <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")"</option>
-                        }
-                    </InputSelect>
+            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => treatmentRecord.RecipientTypeId)">
+                <InputSelect @bind-Value="@treatmentRecord.RecipientTypeId">
+                    <option value="0">Select Recipient Type Instance ...</option>
+                    @foreach (var recipient in recipientTypeIds(appState.DbContext))
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
             </ValidatedField>
-            }
-            <ValidatedField Legend="Notes" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).Notes)">
-                <InputTextArea placeholder="Notes" @bind-Value="@(((TreatmentRecordModel)working).Notes)" />
+            <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => treatmentRecord.RecipientId)">
+                <InputSelect @bind-Value="@treatmentRecord.RecipientId">
+                    <option value="0">Select Recipient Instance ...</option>
+                    @foreach (var recipient in recipientIds(appState.DbContext))
+                    {
+                        <option value="@recipient.Key">@recipient.Value</option>
+                    }
+                </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Treatment Date" ValidationMessageFor="@(() => ((TreatmentRecordModel)working).DatePerformed)">
-                <InputDate @bind-Value="@(((TreatmentRecordModel)working).DatePerformed)" />
+        }
+       <ValidatedField Legend="Label Method" ValidationMessageFor="@(() => treatmentRecord.AppliedMethod)">
+            <InputSelect @bind-Value="@treatmentRecord.AppliedMethod">
+                <option value="">Select Method ...</option>
+                @foreach (var method in TreatmentConstants.MethodsByInvasiveness)
+                {
+                    <option value="@method">@method</option>
+                }
+            </InputSelect>
+        </ValidatedField>
+         @if (!string.IsNullOrEmpty(treatmentRecord.AppliedMethod) && !TreatmentConstants.NonWithdrawalTreatments.Contains(treatmentRecord.AppliedMethod))
+        {
+            <ValidatedField Legend="Dose" ValidationMessageFor="@(() => treatmentRecord.DosageAmount)">
+                <InputNumber @bind-Value="@treatmentRecord.DosageAmount"></InputNumber>
             </ValidatedField>
-        </ChildContent>
+            <ValidatedField ValidationMessageFor="@(() => treatmentRecord.DosageUnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex;gap:1rem;">
+                        <span>Dose Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=UnitSubmitted></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                <InputSelect @bind-Value="@treatmentRecord.DosageUnitId">
+                    <option value="0">Select Dose Unit ...</option>
+                    @foreach (var unit in appState.DbContext.Units.Where(u => UnitCategoryConstants.DosageUnits.ContainsKey(u.Category)).OrderBy(u => u.Category).ThenBy(u => u.Symbol))
+                    {
+                        <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")"</option>
+                    }
+                </InputSelect>
+                </ChildContent>
+            </ValidatedField>
+        }
+        <ValidatedField Legend="Notes" ValidationMessageFor="@(() => treatmentRecord.Notes)">
+            <InputTextArea placeholder="Notes" @bind-Value="@treatmentRecord.Notes" />
+        </ValidatedField>
+        <ValidatedField Legend="Treatment Date" ValidationMessageFor="@(() => treatmentRecord.DatePerformed)">
+            <InputDate @bind-Value="@treatmentRecord.DatePerformed" />
+        </ValidatedField>
     </ValidatedForm>
-} *@
+}
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Inject] protected IAPIService api { get; set; }
+    private TreatmentRecordModel? treatmentRecord;
+    protected override void OnInitialized()
+    {
+        treatmentRecord = editContext.Model as TreatmentRecordModel;
+        if (treatmentRecord is null) return;
+        // Initialize other properties of treatmentRecord if needed
+    }
+    public async override Task<IHasRecipient> SubmitEditContext()
+    {
+        await OnTreatmentRecordSubmit(editContext);
+        return treatmentRecord;
+    }
+
+    private async Task OnTreatmentRecordSubmit(EditContext editContext)
+    {
+        if (!editContext.Validate()) return;
+
+        try
+        {
+            var creating = (treatmentRecord.Id <= 0);
+
+            var id = creating ?
+                await api.ProcessCommand<TreatmentRecordModel, CreateTreatmentRecord>("api/CreateTreatmentRecord", new CreateTreatmentRecord { TreatmentRecord = treatmentRecord }) :
+                await api.ProcessCommand<TreatmentRecordModel, UpdateTreatmentRecord>("api/UpdateTreatmentRecord", new UpdateTreatmentRecord { TreatmentRecord = treatmentRecord });
+
+            if (id <= 0)
+                throw new Exception("Unable to save treatment");
+            if (creating)
+            {
+                treatmentRecord.Id = id;
+                appState.DbContext.TreatmentRecords.Add(treatmentRecord);
+            }
+            else
+            {
+                var updated = await appState.DbContext.TreatmentRecords.FindAsync(treatmentRecord.Id);
+                updated = treatmentRecord.Map(updated) as TreatmentRecordModel;
+            }
+            await appState.DbContext.SaveChangesAsync();
+            editContext = new EditContext(treatmentRecord);
+            await OnSubmit.InvokeAsync(editContext);
+        }
+        catch (Exception ex)
+        {
+            // Handle exception
+        }
+    }
+#region Treatment
+    private bool showTreatmentModal = false;
+    private EditContext treatmentEditContext = new EditContext(new TreatmentModel());
+    private void ShowTreatmentEditor()
+    {
+        showTreatmentModal = true;
+        StateHasChanged();
+    }
+    private void TreatmentSubmitted(EditContext e)
+    {
+        var model = e.Model as TreatmentModel;
+        showTreatmentModal = false;
+        if (model == null) return;
+        treatmentRecord.TreatmentId = model.Id;
+        editContext = new EditContext(treatmentRecord);
+        StateHasChanged();
+    }
+    private void TreatmentCanceled(object e)
+    {
+        showTreatmentModal = false;
+        StateHasChanged();
+    }
+#endregion
+#region Unit
+    private bool showUnitModal = false;
+    private EditContext unitEditContext = new EditContext(new UnitModel());
+    private void ShowUnitEditor()
+    {
+        showUnitModal = true;
+        StateHasChanged();
+    }
+    private void UnitSubmitted(EditContext e)
+    {
+        var model = e.Model as UnitModel;
+        showUnitModal = false;
+        if (model == null) return;
+        treatmentRecord.DosageUnitId = model.Id;
+        editContext = new EditContext(treatmentRecord);
+        StateHasChanged();
+    }
+    private void UnitCanceled(object e)
+    {
+        showUnitModal = false;
+        StateHasChanged();
+    }
+    #endregion
+}

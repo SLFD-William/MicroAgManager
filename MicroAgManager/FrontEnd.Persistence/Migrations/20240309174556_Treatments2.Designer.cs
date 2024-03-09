@@ -3,6 +3,7 @@ using System;
 using FrontEnd.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FrontEnd.Persistence.Migrations
 {
     [DbContext(typeof(FrontEndDbContext))]
-    partial class FrontEndDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240309174556_Treatments2")]
+    partial class Treatments2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -93,6 +96,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RecipientType")
@@ -967,6 +971,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<long>("RecipientId")
@@ -1330,6 +1335,7 @@ namespace FrontEnd.Persistence.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<long?>("DosageUnitId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EntityModifiedOn")
@@ -1677,7 +1683,9 @@ namespace FrontEnd.Persistence.Migrations
                 {
                     b.HasOne("Domain.Models.UnitModel", "DosageUnit")
                         .WithMany()
-                        .HasForeignKey("DosageUnitId");
+                        .HasForeignKey("DosageUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Models.TreatmentModel", "Treatment")
                         .WithMany()

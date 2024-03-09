@@ -14,7 +14,7 @@ namespace Domain.Entity
         long MeasureId { get; set; }
        IUnit MeasurementUnit { get; set; }
         long MeasurementUnitId { get; set; }
-        string Notes { get; set; }
+        string? Notes { get; set; }
         decimal Value { get; set; }
     }
 
@@ -34,7 +34,7 @@ namespace Domain.Entity
         [Precision(18, 3)][Required] public decimal Value { get; set; }
         [Required][ForeignKey("MeasurementUnit")] public long MeasurementUnitId { get; set; }
         public virtual Unit MeasurementUnit { get; set; }
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
         IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit=value as Unit ?? MeasurementUnit; }
     }

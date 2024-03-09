@@ -1,6 +1,8 @@
 ﻿@page "/Ancillaries/BreedingRecords"
+@using Domain.Constants
 @using Domain.Models
 @using MicroAgManager.Components.Livestock
+@using MicroAgManager.Components.ScheduledDuty
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
 @implements IDisposable
@@ -15,6 +17,8 @@
             @if (!BreedingRecordId.HasValue)
             {
                 <div>
+                    <ScheduledDutyCommand Command="@DutyCommandConstants.Service"></ScheduledDutyCommand>
+                    <ScheduledDutyCommand Command="@DutyCommandConstants.Breed"></ScheduledDutyCommand>
                     <BreedingRecordGrid Items="baseBreedingRecordQuery()">
 
                     </BreedingRecordGrid>

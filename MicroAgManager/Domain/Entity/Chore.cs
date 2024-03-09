@@ -45,8 +45,8 @@ namespace Domain.Entity
         [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
         public virtual Unit? PeriodUnit { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
-        public decimal Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public long? DurationUnitId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        [Precision(18, 3)] decimal IHasFrequencyAndDuration.Duration { get; set; }
+        long? IHasFrequencyAndDuration.DurationUnitId { get; set; }
         ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>();}
        IUnit? IChore.PeriodUnit { get => PeriodUnit; set => PeriodUnit =value as Unit; }
        IUnit IChore.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit ?? FrequencyUnit; }
