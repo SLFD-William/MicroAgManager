@@ -3,8 +3,14 @@
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Services
 <section class="LivestockNameplate">
+    <NavCrudButtons Editting="@showLivestockModal"
+                    ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Livestock.Id>0)"
+                    OnEditClick="ShowLivestockEditor"
+                    ShowNavigate="@((ShowNavigate || OnNavigateClick.HasDelegate))"
+                    OnNavigateClick="@OnNavigateClick"
+                    NavigateText="@NavigateText"></NavCrudButtons>
     <section class="name">
-        @if (ShowEmoji)
+        @if (ShowEmoji || ShowAll)
         {
             <span class="emoji">
                 @Livestock.Breed?.EmojiChar
@@ -14,43 +20,37 @@
                 }
             </span>
         }
-        @if (ShowGender)
+        @if (ShowGender || ShowAll)
         {
             <span class="fa-stack gender">
                 <i class="fas fa-stack-1x @(Livestock.Gender==GenderConstants.Female?"fa-venus female":"fa-mars male")"></i>
                 @if (Livestock.Sterile)
                 {
-                    <i class="fas fa-ban fa-stack-1x"></i>
+                    <i class="fas fa-ban fa-stack-1x ban"></i>
                 }
             </span>
         }
         <h3>@Livestock.Name</h3>
-        <NavCrudButtons Editting="@showLivestockModal"
-                        ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Livestock.Id>0)"
-                        OnEditClick="ShowLivestockEditor"
-                        ShowNavigate="@((ShowNavigate || OnNavigateClick.HasDelegate))"
-                        OnNavigateClick="@OnNavigateClick"
-                        NavigateText="@NavigateText"
-                        ></NavCrudButtons>
     </section>
-    @if (ShowGeneral)
+    @if (ShowGeneral || ShowAll)
     {
-        <p class="variety">@Livestock.Variety</p>
         <p class="breed">@Livestock.Breed?.Name</p>
+        <p class="variety">@Livestock.Variety</p>
     }
 
-    @if (ShowStatus)
+    @if (ShowStatus || ShowAll)
     {
         <p class="status">@Livestock.Status?.Status</p>
     }
-    @if (ShowAge)
+    @if (ShowAge || ShowAll)
     {
         <p class="age">@Age()</p>
     }
-    @if (ShowGeneral && !ShowEmoji)
+    @if ((ShowGeneral && !ShowEmoji) || ShowAll)
     {
         <p class="animal">@Livestock.Breed?.Animal?.Name</p>
     }
+    
 
     @if (ShowParents)
             {
@@ -84,7 +84,6 @@
     [Parameter] public bool ShowFather { get; set; } = true;
     [Parameter] public bool ShowMother { get; set; } = true;
     [Parameter] public bool ShowParents { get; set; } = false;
-
 
     [Parameter] public bool ShowEdit { get; set; } = false;
     [Parameter] public EventCallback<long> OnEditClick { get; set; }

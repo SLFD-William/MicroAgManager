@@ -13,17 +13,17 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            @measure.Measure.Name
+            @measure.Measure?.Name
             @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
         </ChildContent>
     </TemplateColumn>
-    <PropertyColumn Property="@(p => p.Measure.Unit.Name)" Title="Measure Unit" Sortable="true">
+    @* <PropertyColumn Property="@(p => p.Measure.Unit.Name)" Title="Measure Unit" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="measureUnitFilter" @bind:event="oninput" placeholder="Unit..." />
             </div>
         </ColumnOptions>
-    </PropertyColumn>
+    </PropertyColumn> *@
     @if (ShowRecipientType)
     {
         <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
@@ -64,13 +64,13 @@
             </div>
         </ColumnOptions> *@
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.MeasurementUnit.Name)" Title="Measurement Unit" Sortable="true">
-        @* <ColumnOptions>
+    @* <PropertyColumn Property="@(p => p.MeasurementUnit.Name)" Title="Measurement Unit" Sortable="true">
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="measurementUnitFilter" @bind:event="oninput" placeholder="Measurement  Unit..." />
             </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
+        </ColumnOptions>
+    </PropertyColumn> *@
     <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
         @* <ColumnOptions>
         <div class="search-box">

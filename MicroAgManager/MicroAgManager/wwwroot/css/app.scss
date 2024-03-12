@@ -24,6 +24,7 @@
     --logo-bg-color: var(--dark-brand);
     --nav-gradient-start-color: var(--light-brand);
     --nav-gradient-end-color: var(--pale-brand);
+    --border-color: color-mix(in lab,currentColor 15%,var(--typography-primary-color));
 }
 html, body {
 height: 100vh;
@@ -39,15 +40,50 @@ select, input {
 #app{
     height:100%;
 }
+i {
+    text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);
 
-i.male {
-    color: var(--masculine);
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    &.male {
+        color: var(--masculine);
+    }
+
+    &.female {
+        color: var(--feminine);
+    }
+
+    &.ban {
+        color: var(--red);
+    }
+
+    &.fa-list-check {
+        color: var(--medium-brand);
+    }
+
+    &.fa-heart-crack {
+        color: var(--feminine);
+    }
+
+    &.fa-bottle-droplet {
+        color: var(--pale-brand);
+    }
+
+    &.fa-dollar-sign {
+        color: var(--green);
+    }
+
+    &.fa-droplet {
+        color: var(--yellow);
+    }
+
+    &.fa-drumstick-bite {
+        color: var(--dark-brand);
+    }
+
+    &.fa-glass-water-droplet {
+        color: white;
+    }
 }
-i.female {
-    color: var(--feminine);
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

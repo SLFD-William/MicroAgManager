@@ -1,8 +1,8 @@
 .LivestockNameplate {
-    display: grid;
-    grid-template-columns: 30ch repeat(auto-fill,minmax(29%, 1fr));
+    display: flex;
+    flex-wrap:wrap;
     align-items: center;
-    grid-gap: .5em;
+    gap: .5em;
     justify-items: baseline;
 
 
@@ -17,8 +17,3 @@
     }
 }
 
-@container (width < 405px) {
-    .LivestockNameplate {
-        grid-template-columns: max-content;
-    }
-}

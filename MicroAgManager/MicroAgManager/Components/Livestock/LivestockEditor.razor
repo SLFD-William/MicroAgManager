@@ -128,9 +128,12 @@
             <ValidatedField Legend="Sterile" ValidationMessageFor="@(() => livestock.Sterile)">
                 <InputCheckbox @bind-Value="@(livestock.Sterile)" />
             </ValidatedField>
-            <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => livestock.InMilk)">
-                <InputCheckbox @bind-Value="@(livestock.InMilk)" />
-            </ValidatedField>
+            @if (livestock.Gender == GenderConstants.Female)
+            {
+                <ValidatedField Legend="In Milk" ValidationMessageFor="@(() => livestock.InMilk)">
+                    <InputCheckbox @bind-Value="@(livestock.InMilk)" />
+                </ValidatedField>
+            }
             <ValidatedField Legend="For Sale" ValidationMessageFor="@(() => livestock.ForSale)">
                 <InputCheckbox @bind-Value="@(livestock.ForSale)" />
             </ValidatedField>
@@ -234,9 +237,11 @@
         {
             var creating = (livestock.Id <= 0);
 
+            var sending = livestock.Map(new LivestockModel() { Id = livestock.Id }) as LivestockModel;
+
             var id = creating ?
-                await api.ProcessCommand<LivestockModel, CreateLivestock>("api/CreateLivestock", new CreateLivestock { Livestock = livestock }) :
-                await api.ProcessCommand<LivestockModel, UpdateLivestock>("api/UpdateLivestock", new UpdateLivestock { Livestock = livestock });
+                await api.ProcessCommand<LivestockModel, CreateLivestock>("api/CreateLivestock", new CreateLivestock { Livestock = sending }) :
+                await api.ProcessCommand<LivestockModel, UpdateLivestock>("api/UpdateLivestock", new UpdateLivestock { Livestock = sending });
 
             if (id <= 0)
                 throw new Exception("Unable to save livestock");
@@ -251,6 +256,7 @@
                 updated = livestock.Map(updated) as LivestockModel;
             }
             await appState.DbContext.SaveChangesAsync();
+
             editContext = new EditContext(livestock);
             await OnSubmit.InvokeAsync(editContext);
         }

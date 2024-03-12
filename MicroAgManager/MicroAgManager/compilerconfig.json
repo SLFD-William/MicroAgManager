@@ -62,5 +62,9 @@
   {
     "outputFile": "Components/Livestock/LivestockProgeny.razor.css",
     "inputFile": "Components/Livestock/LivestockProgeny.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockNameplate.razor.css",
+    "inputFile": "Components/Livestock/LivestockNameplate.razor.scss"
   }
 ]

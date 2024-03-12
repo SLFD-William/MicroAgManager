@@ -101,12 +101,16 @@ namespace MicroAgManager.Data
             where TCommand : BaseCommand
         {
             if (command is null) return -1;
+                    try { 
             var commandString = new StringContent(JsonSerializer.Serialize(command, _jsonOptions), Encoding.UTF8, "application/json");
             var result = await SendTheRequest(HttpMethod.Post, address, commandString);
             if (result.StatusCode == HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
             result.EnsureSuccessStatusCode();
             var list = await result.Content.ReadFromJsonAsync<long>();
             return list;
+            }
+            catch (Exception ex) { Console.WriteLine(ex); }
+            return -1;
         }
 
         public async Task<Tuple<long, ICollection<T?>>> ProcessQuery<T, TQuery>(string address, TQuery query)

@@ -37,6 +37,7 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@DutyId">
                         <option value="">Select Duty ...</option>
+                        @* TODO Make parameters for REcipientType and Recipient *@
                         @foreach (var unit in appState.DbContext.Duties.Where(d => d.Command == scheduledDuty.Duty.Command))
                         {
                             <option value="@unit.Id">

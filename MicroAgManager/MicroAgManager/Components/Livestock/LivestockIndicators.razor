@@ -1,0 +1,84 @@
+﻿@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
+<section class="LivestockIndicators">
+
+    <span class="fa-stack">
+        <i class="fas fa-stack-1x fa-list-check"></i>
+        @if (!livestock.BeingManaged)
+        {
+            <i class="fas fa-ban fa-stack-1x ban"></i>
+        }
+    </span>
+    @if (livestock.BornDefective)
+    {
+        <span class="fa-stack">
+            <i class="fas fa-stack-1x fa-heart-crack"></i>
+        </span>
+    }
+    @if(livestock.BottleFed)
+    {
+        <span class="fa-stack">
+            <i class="fas fa-stack-1x fa-bottle-droplet"></i>
+        </span>
+    }
+    @if (livestock.ForSale)
+    {
+        <span class="fa-stack">
+            <i class="fas fa-stack-1x fa-dollar-sign"></i>
+        </span>
+    }
+    @if (livestock.InMilk)
+    {
+        <span class="fa-stack">
+            <i class="fas fa-stack-1x fa-droplet"></i>
+        </span>
+    }
+    @if (HasMeatWithdrawal())
+    {
+        <span class="fa-stack">
+             <i class="fas fa-stack-1x fa-drumstick-bite"></i>
+            <i class="fas fa-ban fa-stack-1x ban"></i>
+        </span>
+    }
+    @if (HasMilkWithdrawal())
+    {
+        <span class="fa-stack">
+            <i class="fas fa-stack-1x fa-glass-water-droplet"></i>
+            <i class="fas fa-ban fa-stack-1x ban"></i>
+        </span>
+    }
+</section>
+@code{
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [CascadingParameter] private LivestockModel Livestock { get; set; }
+    [Parameter] public long? livestockId { get; set; }
+
+    private LivestockModel livestock { get; set; }
+    protected override void OnInitialized()
+    {
+        appState.OnLocationChange += Refresh;
+    }
+    private void Refresh() => InvokeAsync(OnInitializedAsync);
+    public void Dispose()
+    {
+        appState.OnLocationChange -= Refresh;
+    }
+    private bool HasMeatWithdrawal()=>LivestockBaseQueries.baseTreatmentRecordQuery(livestock.Id, appState)
+        .Any(tr => tr.Treatment.MeatWithdrawal > 0 && DateTime.Now.AddDays(-tr.Treatment.MeatWithdrawal) >= tr.DatePerformed);
+
+    private bool HasMilkWithdrawal() => LivestockBaseQueries.baseTreatmentRecordQuery(livestock.Id, appState)
+        .Any(tr => tr.Treatment.MilkWithdrawal > 0 && DateTime.Now.AddDays(-tr.Treatment.MilkWithdrawal) >= tr.DatePerformed);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Livestock is not null)
+            livestock = Livestock;
+        if (Livestock is null && livestockId.HasValue)
+            livestock = await appState.DbContext.Livestocks.FindAsync(livestockId);
+
+        StateHasChanged();
+    }
+}

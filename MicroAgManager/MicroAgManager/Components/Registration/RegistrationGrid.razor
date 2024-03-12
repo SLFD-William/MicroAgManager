@@ -45,7 +45,7 @@
         </div>
         </ColumnOptions> *@
     </PropertyColumn>
-    @if (ShowRecipientTypeColumn)
+    @if (ShowRecipientType)
     {
         <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
             <ColumnOptions>
@@ -65,7 +65,7 @@
             </ChildContent>
         </TemplateColumn>
     }
-    @if (ShowRecipientColumn)
+    @if (ShowRecipient)
     {
         <TemplateColumn Title="Recipient" Sortable="true" Context="registration" SortBy="@OrderByRegistrarName">
             <ColumnOptions>
@@ -118,7 +118,7 @@
         }
     }
 
-    [Parameter] public bool ShowRecipientTypeColumn { get; set; } = true;
+    [Parameter] public bool ShowRecipientType { get; set; } = true;
     [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
     private string _recipientTypeFilter;
     string recipientTypeFilter
@@ -139,7 +139,7 @@
             _recipientTypeInstanceFilter = value;
         }
     }
-    [Parameter] public bool ShowRecipientColumn { get; set; } = true;
+    [Parameter] public bool ShowRecipient { get; set; } = true;
     [Parameter] public Action<string> recipientFilterChanged { get; set; }
     private string _recipientFilter;
     string recipientFilter

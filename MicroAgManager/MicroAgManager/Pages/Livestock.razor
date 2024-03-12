@@ -155,17 +155,15 @@
                                             {
                                                 @if (LivestockId.Value > 0)
                                                 {
-                                                    <CascadingValue Value="@appState.DbContext.Livestocks.Find(LivestockId.Value)">
-                                                        <LivestockNameplate ShowAll="true" ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
-                                                                            ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
-                                                                            NavigateText="back"
-                                                                            OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockId), string.Empty } }))">
+                                            <CascadingValue Value="@appState.DbContext.Livestocks.Find(LivestockId.Value)">
+                                                <LivestockNameplate ShowAll="true" ShowEdit="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
+                                                                    ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
+                                                                    NavigateText="back"
+                                                                    OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockId), string.Empty } }))">
+                                                    <LivestockIndicators></LivestockIndicators>
                                                     <LivestockSubTabs></LivestockSubTabs>
-                                                   
-                                         
-                                                    
                                                 </LivestockNameplate>
-                                                    </CascadingValue>
+                                            </CascadingValue>
                                                 }
                                                 else
                                                 {

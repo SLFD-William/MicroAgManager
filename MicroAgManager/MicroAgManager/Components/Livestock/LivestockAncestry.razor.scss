@@ -12,12 +12,12 @@
         height: 100%;
 
         &.male {
-            border: 1px solid var(--male-bo-color);
+            border: 1px solid var(--border-color);
             background-color: var(--masculine);
         }
 
         &.female {
-            border: 1px solid var(--female-bo-color);
+            border: 1px solid var(--border-color);
             background-color: var(--feminine);
         }
     }

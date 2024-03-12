@@ -10297,6 +10297,7 @@ readers do not read off random characters that represent icons */
   --logo-bg-color: var(--dark-brand);
   --nav-gradient-start-color: var(--light-brand);
   --nav-gradient-end-color: var(--pale-brand);
+  --border-color: color-mix(in lab,currentColor 15%,var(--typography-primary-color));
 }
 
 html, body {
@@ -10315,14 +10316,38 @@ select, input {
   height: 100%;
 }
 
+i {
+  text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);
+}
 i.male {
   color: var(--masculine);
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
-
 i.female {
   color: var(--feminine);
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+i.ban {
+  color: var(--red);
+}
+i.fa-list-check {
+  color: var(--medium-brand);
+}
+i.fa-heart-crack {
+  color: var(--feminine);
+}
+i.fa-bottle-droplet {
+  color: var(--pale-brand);
+}
+i.fa-dollar-sign {
+  color: var(--green);
+}
+i.fa-droplet {
+  color: var(--yellow);
+}
+i.fa-drumstick-bite {
+  color: var(--dark-brand);
+}
+i.fa-glass-water-droplet {
+  color: white;
 }
 
 #blazor-error-ui {
