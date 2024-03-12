@@ -1,10 +1,13 @@
 ﻿@page "/Livestock"
+@using Domain.Constants
 @using Domain.Models
 @using FrontEnd.Persistence
+@using MicroAgManager.Components.ScheduledDuty
 @using MicroAgManager.Services
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Components.Livestock
 @using Microsoft.EntityFrameworkCore
+@using MicroAgManager.Components.Measurement
 <PageTitle>Livestock</PageTitle>
 <div class="Livestock">
     @if (appState.DbContext.Tenants.Any())
@@ -157,8 +160,11 @@
                                                                             ShowNavigate="@ApplicationState.FieldIsInQueryString(nameof(LivestockId))"
                                                                             NavigateText="back"
                                                                             OnNavigateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LivestockId), string.Empty } }))">
-
-                                                        </LivestockNameplate>
+                                                    <LivestockSubTabs></LivestockSubTabs>
+                                                   
+                                         
+                                                    
+                                                </LivestockNameplate>
                                                     </CascadingValue>
                                                 }
                                                 else
@@ -219,7 +225,7 @@
         appState.OnDbUpdate -= Refresh;
         appState.OnLocationChange -= Refresh;
     }
-
+   
     [Parameter][SupplyParameterFromQuery(Name = "LivestockId")] public long? LivestockId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LocationId")] public long? LocationId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockAnimalId")] public long? LivestockAnimalId { get; set; }

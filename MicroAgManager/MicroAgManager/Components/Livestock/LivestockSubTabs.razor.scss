@@ -1,0 +1,18 @@
+.ancestry {
+    width: 100%;
+    overflow: auto;
+
+    & ::deep .unknown.female {
+        width: 100%;
+        border: 1px solid var(--female-bo-color);
+        background-color: var(--female-color);
+        padding: 0.25rem 0.5rem;
+    }
+
+    & ::deep .unknown.male {
+        width: 100%;
+        border: 1px solid var(--male-bo-color);
+        background-color: var(--male-color);
+        padding: 0.25rem 0.5rem;
+    }
+}

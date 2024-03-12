@@ -17,7 +17,7 @@
         @if (ShowGender)
         {
             <span class="fa-stack gender">
-                
+                <i class="fas fa-stack-1x @(Livestock.Gender==GenderConstants.Female?"fa-venus female":"fa-mars male")"></i>
                 @if (Livestock.Sterile)
                 {
                     <i class="fas fa-ban fa-stack-1x"></i>
@@ -28,7 +28,7 @@
         <NavCrudButtons Editting="@showLivestockModal"
                         ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && Livestock.Id>0)"
                         OnEditClick="ShowLivestockEditor"
-                        ShowNavigate="@((ShowNavigate || OnEditClick.HasDelegate))" 
+                        ShowNavigate="@((ShowNavigate || OnNavigateClick.HasDelegate))"
                         OnNavigateClick="@OnNavigateClick"
                         NavigateText="@NavigateText"
                         ></NavCrudButtons>

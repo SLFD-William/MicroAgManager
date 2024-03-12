@@ -5,7 +5,7 @@
 @using Microsoft.EntityFrameworkCore
 
 <QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel Virtualize=true Items="Items">
-    @if (ShowRecipientTypeColumn)
+    @if (ShowRecipientType)
     {
         <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
   @*           <ColumnOptions>
@@ -25,9 +25,10 @@
             </ChildContent>
         </TemplateColumn>
     }
-
-    <TemplateColumn Title="Female" Sortable="true" Context="breedingRecord" >
-        @* <ColumnOptions>
+    @if (ShowFemale)
+    {
+        <TemplateColumn Title="Female" Sortable="true" Context="breedingRecord" >
+            @* <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
             </div>
@@ -36,8 +37,11 @@
             @HasRecipientHelper.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.FemaleId)
         </ChildContent>
     </TemplateColumn>
-    <TemplateColumn Title="Male" Sortable="true" Context="breedingRecord">
-        @* <ColumnOptions>
+    }
+    @if (ShowMale)
+    {
+        <TemplateColumn Title="Male" Sortable="true" Context="breedingRecord">
+            @* <ColumnOptions>
         <div class="search-box">
         <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
         </div>
@@ -46,7 +50,7 @@
             @HasRecipientHelper.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.MaleId)
         </ChildContent>
     </TemplateColumn>
-
+    }
     <PropertyColumn Property="@(p => p.ServiceDate)" Title="Service Date" Sortable="true">
         @*     <ColumnOptions>
         <div class="search-box">
@@ -109,6 +113,8 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<BreedingRecordModel> Items { get; set; }
     QuickGrid<BreedingRecordModel> breedingRecordGrid;
-    [Parameter] public bool ShowRecipientTypeColumn { get; set; } = true;
-    [Parameter] public bool ShowRecipientColumn { get; set; } = true;
+    [Parameter] public bool ShowRecipientType { get; set; } = true;
+    [Parameter] public bool ShowRecipient { get; set; } = true;
+    [Parameter] public bool ShowMale { get; set; } = true;
+    [Parameter] public bool ShowFemale { get; set; } = true;
 }

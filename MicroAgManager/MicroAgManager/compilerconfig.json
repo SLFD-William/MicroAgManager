@@ -54,5 +54,13 @@
   {
     "outputFile": "Pages/Registrations.razor.css",
     "inputFile": "Pages/Registrations.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockAncestry.razor.css",
+    "inputFile": "Components/Livestock/LivestockAncestry.razor.scss"
+  },
+  {
+    "outputFile": "Components/Livestock/LivestockProgeny.razor.css",
+    "inputFile": "Components/Livestock/LivestockProgeny.razor.scss"
   }
 ]

@@ -1,0 +1,53 @@
+﻿@using Domain.Constants;
+@using Domain.Models;
+@using MicroAgManager.Services
+@if (Livestock is not null)
+{
+    <div class="LivestockAncestry @GenderClass() @SelfClass()">
+        @if (ShowSelf)
+        {
+            <CascadingValue Value ="Livestock">
+                <LivestockButton OnClick="@(()=> ApplicationState.NavigateTo(new() { { "LivestockId", Livestock.Id.ToString() } }))" ShowEmoji=false ShowAge=false ShowGeneral=false ShowStatus=false ButtonCss="@GenderClass()"></LivestockButton>
+            </CascadingValue>
+        }
+        
+        @if (Livestock.Mother is not null)
+        {
+            <CascadingValue Value="Livestock.Mother">
+                <LivestockAncestry ></LivestockAncestry>
+            </CascadingValue>
+        }
+        else
+        {
+            <div class="unknown female">
+            <span class="fa-stack">
+                <i class="fas fa-stack-1x fa-venus female"></i>
+            </span>
+            Unknown
+        </div>
+        }
+        @if (Livestock?.Father is not null)
+        {
+            <CascadingValue Value="Livestock?.Father">
+                <LivestockAncestry ></LivestockAncestry>
+            </CascadingValue>
+        }
+        else
+        {
+
+            <div class="unknown male">
+                <span class="fa-stack">
+                    <i class="fas fa-stack-1x fa-mars male"></i>
+                </span>
+                Unknown
+            </div>
+        }
+    </div>
+}
+@code{
+    [CascadingParameter] public LivestockModel? Livestock { get; set; }
+    [Parameter] public bool ShowSelf { get; set; } = true;
+    private string GenderClass() => Livestock?.Gender == GenderConstants.Male ? "male" : "female";
+    private string SelfClass() => ShowSelf ? string.Empty : "ancestorsonly";
+    
+}

@@ -1,0 +1,133 @@
+﻿@using Domain.Constants
+@using Domain.Models
+@using MicroAgManager.Components.Measurement
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Components.ScheduledDuty
+@using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
+
+<TabControl @ref="_tabControl" TabSelected="@(async() => await OnInitializedAsync())">
+        <TabPage @ref="_closeTab" Text="x">
+        </TabPage>
+        <TabPage @ref="_scheduledDutiesTab">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_scheduledDutiesTab)" @onclick="@(() =>_tabControl.ActivatePage(_scheduledDutiesTab))">
+                    Scheduled Duties
+                </button>
+            </ButtonContent>
+            <ChildContent>
+                <ScheduledDutyGrid Items="baseScheduledDutyQuery(livestock.Id)" ShowRecipientType=false ShowRecipient=false></ScheduledDutyGrid>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_progenyTab">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_progenyTab)" @onclick="@(() =>_tabControl.ActivatePage(_progenyTab))">
+                    Progeny
+                </button>
+            </ButtonContent>
+            <ChildContent>
+            <CascadingValue Value="livestock">
+                <LivestockProgeny></LivestockProgeny>
+            </CascadingValue>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_ancestryTab">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_ancestryTab)" @onclick="@(() =>_tabControl.ActivatePage(_ancestryTab))">
+                    Ancestry
+                </button>
+            </ButtonContent>
+            <ChildContent>
+                <CascadingValue Value="livestock">
+                    <LivestockAncestry ShowSelf=false></LivestockAncestry>
+                </CascadingValue>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_measurementsTab">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_measurementsTab)" @onclick="@(() =>_tabControl.ActivatePage(_measurementsTab))">
+                    Measurements
+                </button>
+            </ButtonContent>
+            <ChildContent>
+                <MeasurementGrid Items="baseMeasurementQuery(livestock.Id)" ShowRecipientType=false ShowRecipient=false></MeasurementGrid>
+            </ChildContent>
+        </TabPage>
+        <TabPage @ref="_breedingRecordsTab">
+            <ButtonContent>
+                <button type="button" class="@_tabControl.GetButtonClass(_breedingRecordsTab)" @onclick="@(() =>_tabControl.ActivatePage(_breedingRecordsTab))">
+                    Breeding Records
+                </button>
+            </ButtonContent>
+            <ChildContent>
+                <BreedingRecordGrid Items="baseBreedingRecordQuery(livestock.Id)"
+                                    ShowRecipientType="false"
+                                    ShowFemale="@(livestock.Gender == GenderConstants.Male)"
+                                    ShowMale="@(livestock.Gender == GenderConstants.Female)">
+                </BreedingRecordGrid>
+            </ChildContent>
+        </TabPage>
+    </TabControl>
+
+@code{
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [CascadingParameter] public LivestockModel? Livestock { get; set; }
+    [Parameter] public long? livestockId { get; set; }
+    private LivestockModel livestock { get; set; } = new LivestockModel();
+
+
+    protected TabControl _tabControl;
+    protected TabPage _closeTab;
+    protected TabPage _scheduledDutiesTab;
+    protected TabPage _ancestryTab;
+    protected TabPage _progenyTab;
+    protected TabPage _breedingRecordsTab;
+    protected TabPage _measurementsTab;
+    protected TabPage _treatmentsTab;
+    protected TabPage _regisrationsTab;
+    private static readonly List<string> _animalTypes = new List<string>() { "LivestockAnimal", "LivestockBreed" };
+    private IQueryable<ScheduledDutyModel> baseScheduledDutyQuery(long livestockId)
+    {
+        var query = appState.DbContext.ScheduledDuties.Include(p => p.Duty).Where(d => !d.CompletedOn.HasValue
+            && d.RecipientId == livestockId
+            && _animalTypes.Contains(d.Duty.RecipientType)).ToList();
+        foreach (var sd in query)
+        {
+            sd.PopulateDynamicRelations(appState.DbContext);
+            sd.Duty.PopulateDynamicRelations(appState.DbContext);
+        }
+        return query.AsQueryable();
+    }
+    private IQueryable<MeasurementModel> baseMeasurementQuery(long livestockId) => appState.DbContext.Measurements.Include(p => p.Measure).Where(d => d.RecipientId == livestockId
+     && _animalTypes.Contains(d.RecipientType)).AsQueryable();
+    private IQueryable<BreedingRecordModel> baseBreedingRecordQuery(long livestockId)
+    {
+        var livestock = appState.DbContext.Livestocks.Find(livestockId);
+
+        var query = appState.DbContext.BreedingRecords.AsQueryable();
+        query = (livestock.Gender == GenderConstants.Male) ? query.Where(b => b.MaleId == livestock.Id) : query.Where(b => b.FemaleId == livestock.Id);
+
+        return query.AsQueryable();
+    }
+    protected override void OnInitialized()
+    {
+        appState.OnLocationChange += Refresh;
+    }
+    private void Refresh() => InvokeAsync(OnInitializedAsync);
+    public void Dispose()
+    {
+        appState.OnLocationChange -= Refresh;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        livestock = Livestock is LivestockModel ? Livestock :
+                  await appState.DbContext.Livestocks
+                   .Include(p => p.Status)
+                   .Include(p => p.Breed).ThenInclude(p => p.Animal)
+                   .Include(p => p.Mother).Include(p => p.Father)
+                   .FirstOrDefaultAsync(i => i.Id == livestockId);
+
+        StateHasChanged();
+    }
+
+}

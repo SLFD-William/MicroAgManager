@@ -45,6 +45,8 @@
             }
         </ChildContent>
     </TemplateColumn>
+    @if (ShowRecipientType)
+    {
     <TemplateColumn Title="Recipient Type" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientType">
         <ColumnOptions>
             <div class="search-box">
@@ -65,13 +67,16 @@
             <span>@scheduledDuty.Duty.RecipientTypeItem</span>
         </ChildContent>
     </TemplateColumn>
-    <PropertyColumn Property="@(p => p.Recipient)" Title="Recipient" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Source..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn>
+    }
+    @if (ShowRecipient)
+    {
+        <PropertyColumn Property="@(p => p.Recipient)" Title="Recipient" Sortable="true">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Source..." />
+                </div>
+            </ColumnOptions>
+        </PropertyColumn>
     <TemplateColumn Title="Recipient Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientItem">
         <ColumnOptions>
             <div class="search-box">
@@ -82,6 +87,7 @@
             <span>@scheduledDuty.RecipientItem</span>
         </ChildContent>
     </TemplateColumn>
+    }
     <PropertyColumn Property="@(p => p.DueOn)" Title="DueOn" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
@@ -115,6 +121,8 @@
     </TemplateColumn>
 </QuickGrid>
 @code {
+    [Parameter] public bool ShowRecipientType { get; set; } = true;
+    [Parameter] public bool ShowRecipient { get; set; } = true;
     [Parameter] required public IQueryable<ScheduledDutyModel> Items { get; set; }
     QuickGrid<ScheduledDutyModel> scheduleDutyGrid;
    
