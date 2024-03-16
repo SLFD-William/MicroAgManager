@@ -51,7 +51,7 @@ namespace Domain.Entity
 
         ICollection<ILivestockFeedDistribution> ILivestockFeed.Distributions => throw new NotImplementedException();
 
-        IUnit ILivestockFeed.QuantityUnit { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        IUnit ILivestockFeed.QuantityUnit { get; set; }
 
         ICollection<ILivestockFeedServing> ILivestockFeed.Servings => throw new NotImplementedException();
     }

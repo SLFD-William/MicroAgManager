@@ -2,13 +2,16 @@
 using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Logic
 {
-    public class CreateScheduledDuty : ICreateScheduledDuty
+    public class CreateScheduledDuty : ICreateScheduledDuty, IBaseCommand
     {
         public Guid CreatedBy { get; set; }
         public ScheduledDutyModel ScheduledDuty { get; set ; }
+        public Guid ModifiedBy { get; set; }
+        public Guid TenantId { get; set; }
     }
     public static class DutyLogic
     {
@@ -24,18 +27,56 @@ namespace Domain.Logic
                     return string.Empty;
             }
         }
-        public async static Task<ICreateScheduledDuty> RescheduleDuty(IMicroAgManagementDbContext context, long scheduledDutyId, DateTime RescheduledDue)
+
+        public async static Task<DateTime?> GetNextChoreDueDate(IFrontEndDbContext context, IScheduledDuty completedScheduledDuty)
         {
-            var currentDuty = await context.ScheduledDuties.FindAsync(scheduledDutyId);
+            if (completedScheduledDuty.ScheduleSource != ScheduledDutySourceConstants.Chore || !completedScheduledDuty.CompletedOn.HasValue) return null;
+            
+            var chore = await context.Chores.FindAsync(completedScheduledDuty.ScheduleSourceId);
+            if(chore == null) return null;
+            var completedDate = completedScheduledDuty.CompletedOn.Value;
+            // 1 per day every 1 day
+
+            var per = chore.PerUnit?.ConversionFactorToSIUnit / (double)chore.PerScalar ?? 0;
+            var every = chore.EveryUnit?.ConversionFactorToSIUnit * (double)chore.EveryScalar ?? 0;
+            var lookback = chore.PerUnit?.ConversionFactorToSIUnit ?? 0;
+            var newTime = completedDate.AddSeconds(per);
+            var newDate = completedDate.AddSeconds(every);
+
+         
+            if (newTime == newDate) return newDate.Date + chore.DueByTime;
+
+            var completedChores= await context.ScheduledDuties.Where(s =>
+                   s.ScheduleSource == completedScheduledDuty.ScheduleSource &&
+                   s.ScheduleSourceId == completedScheduledDuty.ScheduleSourceId &&
+                   s.CompletedOn.HasValue &&
+                   s.CompletedOn >= DateTime.Now.AddSeconds(-lookback)).ToListAsync();
+
+            if (completedChores.Count < chore.PerScalar)
+                return (completedDate.Date + chore.DueByTime).AddSeconds((completedChores.Count + 1)*per);
+
+            return newDate.Date + chore.DueByTime;
+
+        }
+        public async static Task<ICreateScheduledDuty?> OnScheduledDutyCompleted(IMicroAgManagementDbContext context, IHasReschedule command, IScheduledDuty duty)
+        {
+            if (!(command.Reschedule == true && command.RescheduleDueOn.HasValue && duty.CompletedOn.HasValue)) return null;
+            var currentDuty = await context.ScheduledDuties.FindAsync(duty.Id);
             if (currentDuty is null) return null;
 
-            var newDuty = currentDuty.Clone() as ScheduledDuty;
-            newDuty.DueOn = RescheduledDue;
+            var newDuty = (ScheduledDuty)currentDuty.Clone();
+            newDuty.DueOn = command.RescheduleDueOn.Value;
             newDuty.CompletedBy = null;
             newDuty.CompletedOn = null;
             newDuty.Dismissed = false;
             newDuty.RecordId = null;
-            return new CreateScheduledDuty { CreatedBy = newDuty.CreatedBy, ScheduledDuty =ScheduledDutyModel.Create(newDuty) };
+            return new CreateScheduledDuty
+            {
+                CreatedBy = newDuty.CreatedBy,
+                ScheduledDuty = ScheduledDutyModel.Create(newDuty),
+                TenantId = ((IBaseCommand)command).TenantId,
+                ModifiedBy = ((IBaseCommand)command).ModifiedBy
+            };
 
         }
     }

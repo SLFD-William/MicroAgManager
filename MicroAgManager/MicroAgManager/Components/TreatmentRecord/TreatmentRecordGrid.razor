@@ -111,21 +111,21 @@
             </div>
         </ColumnOptions> *@
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.Frequency)" Title="Frequency" Sortable="true">
-        @* <ColumnOptions>
+    @* <PropertyColumn Property="@(p => p.Treatment.Frequency)" Title="Frequency" Sortable="true">
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="frequencyFilter" @bind:event="oninput" placeholder="Frequency..." />
             </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
+        </ColumnOptions>
+    </PropertyColumn> 
     <PropertyColumn Property="@(p => p.Treatment.FrequencyUnitId)" Title="Frequency Unit" Sortable="true">
-        @* <ColumnOptions>
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="frequencyUnitFilter" @bind:event="oninput" placeholder="Frequency Unit..." />
             </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.Duration)" Title="Duration" Sortable="true">
+        </ColumnOptions> 
+    </PropertyColumn> *@
+    <PropertyColumn Property="@(p => p.Treatment.DurationScalar)" Title="Duration" Sortable="true">
        @*  <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="durationFilter" @bind:event="oninput" placeholder="Duration..." />

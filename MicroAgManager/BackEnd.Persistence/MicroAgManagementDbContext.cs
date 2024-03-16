@@ -65,11 +65,18 @@ namespace Persistence
             modelBuilder.Entity<Treatment>()
                 .HasOne(u => u.DurationUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Treatment>()
-                .HasOne(u => u.FrequencyUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+                .HasOne(u => u.EveryUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Treatment>()
+                .HasOne(u => u.PerUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<TreatmentRecord>()
                 .HasOne(u => u.DosageUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<LandPlot>()
                 .HasOne(u => u.AreaUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Chore>()
+                .HasOne(u => u.EveryUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Chore>()
+                .HasOne(u => u.PerUnit).WithMany().OnDelete(DeleteBehavior.NoAction);
 
 
             //EntitySeeder.Seed(modelBuilder);

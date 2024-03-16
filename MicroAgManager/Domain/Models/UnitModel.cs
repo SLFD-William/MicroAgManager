@@ -24,6 +24,9 @@ namespace Domain.Models
             }) as UnitModel;
             return model;
         }
+
+        public double ConvertToSI(double rawValue) => rawValue * ConversionFactorToSIUnit;
+
         public override BaseModel Map(BaseModel unit)
         {
             if (unit is not UnitModel || unit is null) return null;
@@ -45,6 +48,9 @@ namespace Domain.Models
             unit.ModifiedOn = DateTime.UtcNow;
             return unit;
         }
+
+
+
     }
    
 }

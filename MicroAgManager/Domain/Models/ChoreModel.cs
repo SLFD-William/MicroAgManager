@@ -18,35 +18,38 @@ namespace Domain.Models
         //chore is due by noon once a day,
         //chode is due by 6:00am 2x a week every 2.5 days
         [Required] public TimeSpan DueByTime { get; set; } = new TimeSpan(12, 0, 0);
-        [Required][Precision(18, 3)] public decimal Frequency { get; set; } = 1;
-        [Required][ForeignKey(nameof(FrequencyUnit))] public long FrequencyUnitId { get; set; }
-        [Required] public virtual UnitModel FrequencyUnit { get; set; }
 
-        [Precision(18, 3)] public decimal Period { get; set; } = 1;
-        [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
-        public virtual UnitModel? PeriodUnit { get; set; }
+        public decimal DurationScalar { get; set; } = 0;
+        [Precision(18, 3)] public long? DurationUnitId { get; set; }
+        public virtual UnitModel? DurationUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal PerScalar { get; set; } = 1;
+        [ForeignKey(nameof(PerUnit))][Required] public long? PerUnitId { get; set; }
+        public virtual UnitModel? PerUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal EveryScalar { get; set; } = 1;
+        [ForeignKey(nameof(EveryUnit))][Required] public long? EveryUnitId { get; set; }
+        public virtual UnitModel? EveryUnit { get; set; }
+
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
-        [Precision(18, 3)] decimal IHasFrequencyAndDuration.Duration { get; set; }
-        long? IHasFrequencyAndDuration.DurationUnitId { get; set; }
+        
+        
         DateTime IChore.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
         ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties=value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
-        IUnit IChore.FrequencyUnit { get => FrequencyUnit as IUnit; set => FrequencyUnit=value as UnitModel ?? FrequencyUnit; }
-        IUnit? IChore.PeriodUnit { get => PeriodUnit as IUnit; set => PeriodUnit=value as UnitModel; }
-        long? IHasFrequencyAndDuration.FrequencyUnitId { get => FrequencyUnitId; set => FrequencyUnitId = value is null ? FrequencyUnitId : (long)value; }
-
+        
         public static ChoreModel? Create(Chore chore)
         {
             if (chore == null) return null;
             var model=PopulateBaseModel(chore, new ChoreModel {
                 Name = chore.Name,
                 Color = chore.Color,
-                Frequency = chore.Frequency,
-                FrequencyUnitId = chore.FrequencyUnitId,
                 RecipientType = chore.RecipientType,
                 RecipientTypeId = chore.RecipientTypeId,
                 DueByTime = chore.DueByTime,
-                PeriodUnitId = chore.PeriodUnitId,
-                Period = chore.Period,
+                DurationScalar = chore.DurationScalar,
+                DurationUnitId = chore.DurationUnitId,
+                PerScalar = chore.PerScalar,
+                PerUnitId = chore.PerUnitId,
+                EveryScalar = chore.EveryScalar,
+                EveryUnitId = chore.EveryUnitId,
                 Duties = chore.Duties?.Select(DutyModel.Create).ToList() ?? new List<DutyModel?>()
             }) as ChoreModel;
             return model;
@@ -56,15 +59,17 @@ namespace Domain.Models
         {
             if (chore is not ChoreModel) return null;
             ((ChoreModel)chore).Color = Color;
-            ((ChoreModel)chore).Frequency = Frequency;
             ((ChoreModel)chore).DueByTime = DueByTime;
-            ((ChoreModel)chore).FrequencyUnitId = FrequencyUnitId;
             ((ChoreModel)chore).Name=Name;
-            ((ChoreModel)chore).Period = Period;
-            ((ChoreModel)chore).PeriodUnitId = PeriodUnitId;
             ((ChoreModel)chore).RecipientType = RecipientType;
             ((ChoreModel)chore).RecipientTypeId = RecipientTypeId;
             ((ChoreModel)chore).EntityModifiedOn = EntityModifiedOn;
+            ((ChoreModel)chore).DurationScalar = DurationScalar;
+            ((ChoreModel)chore).DurationUnitId = DurationUnitId;
+            ((ChoreModel)chore).PerUnitId = PerUnitId;
+            ((ChoreModel)chore).PerScalar = PerScalar;
+            ((ChoreModel)chore).EveryUnitId = EveryUnitId;
+            ((ChoreModel)chore).EveryScalar = EveryScalar;
             return chore;
         }
 
@@ -72,14 +77,16 @@ namespace Domain.Models
         {
             if (chore is not Chore) return null;
             ((Chore)chore).Color = Color;
-            ((Chore)chore).Frequency = Frequency;
             ((Chore)chore).DueByTime = DueByTime;
-            ((Chore)chore).FrequencyUnitId = FrequencyUnitId;
             ((Chore)chore).Name = Name;
-            ((Chore)chore).Period = Period;
-            ((Chore)chore).PeriodUnitId = PeriodUnitId;
             ((Chore)chore).RecipientType = RecipientType;
             ((Chore)chore).RecipientTypeId = RecipientTypeId;
+            ((Chore)chore).DurationScalar = DurationScalar;
+            ((Chore)chore).DurationUnitId = DurationUnitId;
+            ((Chore)chore).PerUnitId = PerUnitId;
+            ((Chore)chore).PerScalar = PerScalar;
+            ((Chore)chore).EveryUnitId = EveryUnitId;
+            ((Chore)chore).EveryScalar = EveryScalar;
             chore.ModifiedOn = DateTime.UtcNow;
             return chore;
 

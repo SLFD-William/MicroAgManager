@@ -12,14 +12,8 @@ namespace Domain.Entity
         public DateTime ModifiedOn { get; set; }
         string Color { get; set; }
         TimeSpan DueByTime { get; set; }
-       ICollection<IDuty>? Duties { get; set; }
-        decimal Frequency { get; set; }
-       IUnit FrequencyUnit { get; set; }
-        long FrequencyUnitId { get; set; }
+        ICollection<IDuty>? Duties { get; set; }
         string Name { get; set; }
-        decimal Period { get; set; }
-      IUnit? PeriodUnit { get; set; }
-        long? PeriodUnitId { get; set; }
         string RecipientType { get; set; }
         long RecipientTypeId { get; set; }
     }
@@ -38,18 +32,16 @@ namespace Domain.Entity
         //chore is due by noon once a day,
         //chode is due by 6:00am 2x a week every 2.5 days
         [Required] public TimeSpan DueByTime { get; set; } = new TimeSpan(12, 0, 0);
-        [Required][Precision(18, 3)] public decimal Frequency { get; set; } = 1;
-        [Required][ForeignKey(nameof(FrequencyUnit))] public long FrequencyUnitId { get; set; }
-        [Required] public virtual Unit FrequencyUnit { get; set; }
-        [Precision(18, 3)] public decimal Period { get; set; } = 1;
-        [ForeignKey(nameof(PeriodUnit))] public long? PeriodUnitId { get; set; }
-        public virtual Unit? PeriodUnit { get; set; }
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
-        [Precision(18, 3)] decimal IHasFrequencyAndDuration.Duration { get; set; }
-        long? IHasFrequencyAndDuration.DurationUnitId { get; set; }
+        [Precision(18, 3)] public decimal DurationScalar { get; set; } = 0;
+        public long? DurationUnitId { get; set; }
+        [Required][Precision(18, 3)] public decimal PerScalar { get; set; } = 1;
+        [Required][ForeignKey(nameof(PerUnit))] public long? PerUnitId { get; set; }
+        [Required] public virtual Unit? PerUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal EveryScalar { get; set; } = 1;
+        [Required][ForeignKey(nameof(EveryUnit))] public long? EveryUnitId { get; set; }
+        [Required] public virtual Unit? EveryUnit { get; set; }
         ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties = value as ICollection<Duty> ??  new List<Duty>();}
-       IUnit? IChore.PeriodUnit { get => PeriodUnit; set => PeriodUnit =value as Unit; }
-       IUnit IChore.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit ?? FrequencyUnit; }
-        long? IHasFrequencyAndDuration.FrequencyUnitId { get => FrequencyUnitId; set { FrequencyUnitId= value is null ? FrequencyUnitId : (long)value;  } }
+       
     }
 }

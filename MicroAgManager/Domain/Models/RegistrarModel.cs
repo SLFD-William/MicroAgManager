@@ -1,7 +1,6 @@
 ﻿using Domain.Abstracts;
 using Domain.Entity;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models
 {

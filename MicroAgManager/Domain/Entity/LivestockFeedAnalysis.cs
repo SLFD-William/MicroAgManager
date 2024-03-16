@@ -36,6 +36,6 @@ namespace Domain.Entity
         public DateTime? DatePrinted { get; set; }
         public virtual ICollection<LivestockFeedAnalysisResult> Results { get; set; } = new List<LivestockFeedAnalysisResult>();
         public virtual LivestockFeed LivestockFeed { get; set; }
-        ICollection<ILivestockFeedAnalysisResult> ILivestockFeedAnalysis.Results { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        ICollection<ILivestockFeedAnalysisResult> ILivestockFeedAnalysis.Results { get; set; }
     }
 }

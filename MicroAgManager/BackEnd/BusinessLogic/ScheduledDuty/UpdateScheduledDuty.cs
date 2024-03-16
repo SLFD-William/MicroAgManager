@@ -1,6 +1,5 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
-using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BackEnd.BusinessLogic.ScheduledDuty
 {
-    public class UpdateScheduledDuty : BaseCommand, IUpdateCommand
+    public class UpdateScheduledDuty : BaseCommand, IUpdateCommand, IHasReschedule
     {
         public ScheduledDutyModel ScheduledDuty { get; set; }
         public bool? Reschedule { get; set; }
@@ -26,18 +25,15 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    var duty = request.ScheduledDuty.Map(await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.ScheduledDuty.Id)) as Domain.Entity.ScheduledDuty;
+                    var originalDuty = await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.ScheduledDuty.Id);
+                    var duty = request.ScheduledDuty.Map(originalDuty) as Domain.Entity.ScheduledDuty;
                     duty.ModifiedBy = request.ModifiedBy;
                     await context.SaveChangesAsync(cancellationToken);
-                    if (request.Reschedule == true && request.RescheduleDueOn.HasValue && duty.CompletedOn.HasValue)
-                    {
-                        var newDuty = await DutyLogic.RescheduleDuty(context, duty.Id, request.RescheduleDueOn.Value);
-                        var command = new CreateScheduledDuty() { 
-                            CreatedBy = newDuty.CreatedBy, 
-                            ScheduledDuty = newDuty.ScheduledDuty, 
-                            TenantId = request.TenantId,
-                            ModifiedBy=request.ModifiedBy};
-                        await _mediator.Send(command, cancellationToken);
+                    if (originalDuty.CompletedOn != duty.CompletedOn && duty.CompletedOn.HasValue)
+                    { 
+                        var command = await DutyLogic.OnScheduledDutyCompleted(context, request, duty);
+                        if (command is ICreateScheduledDuty)
+                            await _mediator.Send(command, cancellationToken);
                     }
                     await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy, duty.ModifiedOn) }), cancellationToken);
                     return duty.Id;

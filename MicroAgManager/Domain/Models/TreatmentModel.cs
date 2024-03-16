@@ -24,17 +24,17 @@ namespace Domain.Models
         [ForeignKey(nameof(RecipientMassUnit))] public long? RecipientMassUnitId { get; set; }
         public virtual UnitModel? RecipientMassUnit { get; set; }
 
-
-        [Required][Precision(18, 3)] public decimal Frequency { get; set; } = 0;
-        [ForeignKey(nameof(FrequencyUnit))] public long? FrequencyUnitId { get; set; }
-        public virtual UnitModel? FrequencyUnit { get; set; }
-        [Required][Precision(18, 3)] public decimal Duration { get; set; } = 0;
-        [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
+        [Required] public decimal DurationScalar { get; set; } = 1;
+        [ForeignKey(nameof(DurationUnit))][Required] public long? DurationUnitId { get; set; }
         public virtual UnitModel? DurationUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal PerScalar { get; set; } = 1;
+        [ForeignKey(nameof(PerUnit))][Required] public long? PerUnitId { get; set; }
+        public virtual UnitModel? PerUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal EveryScalar { get; set; } = 1;
+        [ForeignKey(nameof(EveryUnit))][Required] public long? EveryUnitId { get; set; }
+        public virtual UnitModel? EveryUnit { get; set; }
         [NotMapped] DateTime ITreatment.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
          IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as UnitModel ?? DosageUnit; }
-         IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as UnitModel ?? DurationUnit; }
-         IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as UnitModel ?? FrequencyUnit; }
          IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as UnitModel ?? RecipientMassUnit; }
 
         public static TreatmentModel Create(Treatment treatment)
@@ -51,10 +51,13 @@ namespace Domain.Models
                 DosageUnitId = treatment.DosageUnitId,
                 RecipientMass = treatment.RecipientMass,
                 RecipientMassUnitId = treatment.RecipientMassUnitId,
-                Frequency = treatment.Frequency,
-                FrequencyUnitId = treatment.FrequencyUnitId,
-                Duration = treatment.Duration,
-                DurationUnitId = treatment.DurationUnitId
+                DurationScalar=treatment.DurationScalar,
+                DurationUnitId=treatment.DurationUnitId,
+                PerScalar=treatment.PerScalar,
+                PerUnitId=treatment.PerUnitId,
+                EveryScalar=treatment.EveryScalar,
+                EveryUnitId=treatment.EveryUnitId
+      
                 }) as TreatmentModel;
             return model;
         }
@@ -72,11 +75,13 @@ namespace Domain.Models
             ((TreatmentModel)model).DosageUnitId = DosageUnitId;
             ((TreatmentModel)model).RecipientMass = RecipientMass;
             ((TreatmentModel)model).RecipientMassUnitId = RecipientMassUnitId;
-            ((TreatmentModel)model).Frequency = Frequency;
-            ((TreatmentModel)model).FrequencyUnitId = FrequencyUnitId;
-            ((TreatmentModel)model).Duration = Duration;
-            ((TreatmentModel)model).DurationUnitId = DurationUnitId;
             ((TreatmentModel)model).EntityModifiedOn = EntityModifiedOn;
+            ((TreatmentModel)model).DurationUnitId = DurationUnitId;
+            ((TreatmentModel)model).DurationScalar=DurationScalar;
+            ((TreatmentModel)model).PerUnitId = PerUnitId;
+            ((TreatmentModel)model).PerScalar = PerScalar;
+            ((TreatmentModel)model).EveryUnitId = EveryUnitId;
+            ((TreatmentModel)model).EveryScalar = EveryScalar;
             return model;
         }
 
@@ -93,10 +98,12 @@ namespace Domain.Models
             ((Treatment)entity).DosageUnitId = DosageUnitId;
             ((Treatment)entity).RecipientMass = RecipientMass;
             ((Treatment)entity).RecipientMassUnitId = RecipientMassUnitId;
-            ((Treatment)entity).Frequency = Frequency;
-            ((Treatment)entity).FrequencyUnitId = FrequencyUnitId;
-            ((Treatment)entity).Duration = Duration;
             ((Treatment)entity).DurationUnitId = DurationUnitId;
+            ((Treatment)entity).DurationScalar = DurationScalar;
+            ((Treatment)entity).PerUnitId = PerUnitId;
+            ((Treatment)entity).PerScalar = PerScalar;
+            ((Treatment)entity).EveryUnitId = EveryUnitId;
+            ((Treatment)entity).EveryScalar = EveryScalar;
             ((Treatment)entity).ModifiedOn = DateTime.UtcNow;
             return entity;
         }

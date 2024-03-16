@@ -12,6 +12,8 @@ namespace Domain.Entity
         double ConversionFactorToSIUnit { get; set; }
         string Name { get; set; }
         string Symbol { get; set; }
+
+        double ConvertToSI(double rawValue);
     }
 
     [Index(nameof(TenantId))]
@@ -25,5 +27,6 @@ namespace Domain.Entity
         [Required][MaxLength(20)] public string Category { get; set; }
         [Required][MaxLength(20)] public string Symbol { get; set; }
         [Required] required public double ConversionFactorToSIUnit { get; set; } = 1;
+        public double ConvertToSI(double rawValue) => rawValue * ConversionFactorToSIUnit;
     }
 }

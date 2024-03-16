@@ -31,17 +31,45 @@ namespace Domain.Logic
             });
             context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
             {
-                Name = "Daily",
-                Category = UnitCategoryConstants.Frequency.Key,
-                Symbol = "daily",
-                ConversionFactorToSIUnit = 1/86400
-            });
-            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
-            {
                 Name = "Day",
                 Category = UnitCategoryConstants.Time.Key,
                 Symbol = "day",
                 ConversionFactorToSIUnit = 86400
+            });
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Hour",
+                Category = UnitCategoryConstants.Time.Key,
+                Symbol = "hour",
+                ConversionFactorToSIUnit = 3600
+            });
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Week",
+                Category = UnitCategoryConstants.Time.Key,
+                Symbol = "week",
+                ConversionFactorToSIUnit = 604800
+            });
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Month",
+                Category = UnitCategoryConstants.Time.Key,
+                Symbol = "month",
+                ConversionFactorToSIUnit = 2592000
+            });
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Year",
+                Category = UnitCategoryConstants.Time.Key,
+                Symbol = "year",
+                ConversionFactorToSIUnit = 31536000
+            });
+            context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
+            {
+                Name = "Minute",
+                Category = UnitCategoryConstants.Time.Key,
+                Symbol = "minute",
+                ConversionFactorToSIUnit = 60
             });
         }
     }

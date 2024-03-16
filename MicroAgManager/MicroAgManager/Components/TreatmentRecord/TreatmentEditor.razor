@@ -83,7 +83,7 @@
                 <InputNumber @bind-Value="@(treatment.MilkWithdrawal)" />
             </ValidatedField>
         }
-        <ValidatedField Legend="Frequency" ValidationMessageFor="@(() => treatment.Frequency)">
+        @* <ValidatedField Legend="Frequency" ValidationMessageFor="@(() => treatment.Frequency)">
             <InputNumber @bind-Value="@(treatment.Frequency)" />
         </ValidatedField>
         <ValidatedField ValidationMessageFor="@(() => treatment.FrequencyUnitId)">
@@ -102,9 +102,9 @@
                     }
                 </InputSelect>
             </ChildContent>
-        </ValidatedField>
-        <ValidatedField Legend="Duration" ValidationMessageFor="@(() => treatment.Duration)">
-            <InputNumber @bind-Value="@(treatment.Duration)" />
+        </ValidatedField> *@
+        <ValidatedField Legend="Duration" ValidationMessageFor="@(() => treatment.DurationScalar)">
+            <InputNumber @bind-Value="@(treatment.DurationScalar)" />
         </ValidatedField>
         <ValidatedField ValidationMessageFor="@(() => treatment.DurationUnitId)">
             <LegendContent>

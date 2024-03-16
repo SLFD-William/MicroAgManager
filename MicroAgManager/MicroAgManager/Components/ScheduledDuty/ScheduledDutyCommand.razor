@@ -9,26 +9,25 @@
 
     <button type="button" @onclick=ShowDutyEditor>Do @Command</button>
     @if (showDutyModal)
-    { 
-        <ScheduledDutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext OnCancel=DutyCanceled OnSubmit=DutySubmitted></ScheduledDutyEditor>
+    {
+    <ScheduledDutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext
+                         OnCancel=DutyCanceled OnSubmit=DutySubmitted
+                         RecipientTypes=@RecipientTypes ></ScheduledDutyEditor>
     }
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     [Parameter] public long? ScheduledDutyId { get; set; }
     [Parameter] public string Command { get; set; }
-
+    [Parameter] public Dictionary<string, long>? RecipientTypes { get; set; }
+    [Parameter] public long RecipientId { get; set; }
     private ScheduledDutyModel _scheduledDuty;
-    private EventModel? _sourceEvent;
-    private DutyModel _duty;
 
     private void InitializeScheduledDuty()
     {
-        _scheduledDuty = new();
+        _scheduledDuty = new() { RecipientId = RecipientId, Duty = new() {Command = Command} };
         if (ScheduledDutyId.HasValue)
             _scheduledDuty = appState.DbContext.ScheduledDuties.Include(d => d.Duty).First(s => s.Id == ScheduledDutyId);
-        if (_scheduledDuty.Id < 1)
-            _scheduledDuty.Duty = new() { Command = Command };
     }
     private bool showDutyModal = false;
     private EditContext dutyEditContext = new EditContext(new ScheduledDutyModel());

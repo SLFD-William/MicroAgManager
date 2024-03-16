@@ -58,7 +58,7 @@
                 </button>
             </ButtonContent>
             <ChildContent>
-                <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement"></ScheduledDutyCommand>
+            <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement" RecipientTypes="@RecipientTypes" RecipientId="@livestock.Id"></ScheduledDutyCommand>
                 <MeasurementGrid Items="LivestockBaseQueries.baseMeasurementQuery(livestock.Id,appState)" ShowRecipientType=false ShowRecipient=false></MeasurementGrid>
             </ChildContent>
         </TabPage>
@@ -69,7 +69,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <ScheduledDutyCommand Command="@DutyCommandConstants.Treatment"></ScheduledDutyCommand>
+            <ScheduledDutyCommand Command="@DutyCommandConstants.Treatment" RecipientTypes="@RecipientTypes" RecipientId="@livestock.Id"></ScheduledDutyCommand>
             <TreatmentRecordGrid Items="LivestockBaseQueries.baseTreatmentRecordQuery(livestock.Id,appState)" ShowRecipientType=false ShowRecipient=false></TreatmentRecordGrid>
         </ChildContent>
     </TabPage>
@@ -80,7 +80,7 @@
             </button>
         </ButtonContent>
         <ChildContent>
-            <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
+            <ScheduledDutyCommand Command="@DutyCommandConstants.Registration" RecipientTypes="@RecipientTypes" RecipientId="@livestock.Id"></ScheduledDutyCommand>
             <RegistrationGrid Items="LivestockBaseQueries.baseRegistrationQuery(livestock.Id,appState)" ShowRecipientType=false ShowRecipient=false></RegistrationGrid>
         </ChildContent>
     </TabPage>
@@ -93,11 +93,11 @@
             <ChildContent>
             @if (livestock.Gender == GenderConstants.Male)
             {
-                <ScheduledDutyCommand Command="@DutyCommandConstants.Service"></ScheduledDutyCommand>
+                <ScheduledDutyCommand Command="@DutyCommandConstants.Service" RecipientTypes="@RecipientTypes" RecipientId="@livestock.Id"></ScheduledDutyCommand>
             }
             @if (livestock.Gender == GenderConstants.Female)
             {
-                <ScheduledDutyCommand Command="@DutyCommandConstants.Breed"></ScheduledDutyCommand>
+                <ScheduledDutyCommand Command="@DutyCommandConstants.Breed" RecipientTypes="@RecipientTypes" RecipientId="@livestock.Id"></ScheduledDutyCommand>
             }
             <BreedingRecordGrid Items="LivestockBaseQueries.baseBreedingRecordQuery(livestock.Id,appState)"
                                     ShowRecipientType="false"
@@ -114,6 +114,7 @@
     [Parameter] public long? livestockId { get; set; }
     private LivestockModel livestock { get; set; } = new LivestockModel();
 
+    private Dictionary<string, long>? RecipientTypes { get; set; }
 
     protected TabControl _tabControl;
     protected TabPage _closeTab;
@@ -124,7 +125,7 @@
     protected TabPage _measurementsTab;
     protected TabPage _treatmentsTab;
     protected TabPage _regisrationsTab;
-    
+
     protected override void OnInitialized()
     {
         appState.OnLocationChange += Refresh;
@@ -143,6 +144,11 @@
                    .Include(p => p.Mother).Include(p => p.Father)
                    .FirstOrDefaultAsync(i => i.Id == livestockId);
 
+        RecipientTypes = new Dictionary<string, long>()
+        {
+            {"LivestockAnimal",livestock.Breed.LivestockAnimalId },
+            {"LivestockBreed",livestock.LivestockBreedId }
+        };
         StateHasChanged();
     }
 

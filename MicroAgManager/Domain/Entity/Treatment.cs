@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Constants;
 using Microsoft.EntityFrameworkCore;
 using Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entity
 {
@@ -14,12 +15,6 @@ namespace Domain.Entity
         decimal DosageAmount { get; set; }
       IUnit? DosageUnit { get; set; }
         long? DosageUnitId { get; set; }
-        decimal Duration { get; set; }
-      IUnit? DurationUnit { get; set; }
-        long? DurationUnitId { get; set; }
-        decimal Frequency { get; set; }
-      IUnit? FrequencyUnit { get; set; }
-        long? FrequencyUnitId { get; set; }
         string LabelMethod { get; set; }
         int MeatWithdrawal { get; set; }
         int MilkWithdrawal { get; set; }
@@ -51,18 +46,19 @@ namespace Domain.Entity
         [Precision(18, 3)] public decimal RecipientMass { get; set; } = 0;
         [ForeignKey(nameof(RecipientMassUnit))] public long? RecipientMassUnitId { get; set; }
         public virtual Unit? RecipientMassUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal DurationScalar { get; set; } = 1;
+        [Required][ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
+        [Required] public virtual Unit? DurationUnit { get; set; }
+
+        [Required][Precision(18, 3)] public decimal PerScalar { get; set; } = 1;
+        [Required][ForeignKey(nameof(PerUnit))] public long? PerUnitId { get; set; }
+        [Required] public virtual Unit? PerUnit { get; set; }
+        [Required][Precision(18, 3)] public decimal EveryScalar { get; set; }=1;
+        [Required][ForeignKey(nameof(EveryUnit))] public long? EveryUnitId { get; set; }
+        [Required] public virtual Unit? EveryUnit { get; set; }
 
 
-        [Precision(18, 3)] public decimal Frequency { get; set; }
-        [ForeignKey(nameof(FrequencyUnit))] public long? FrequencyUnitId { get; set; }
-        public virtual Unit? FrequencyUnit { get; set; }
-        [Precision(18, 3)] public decimal Duration { get; set; }
-        [ForeignKey(nameof(DurationUnit))] public long? DurationUnitId { get; set; }
-        public virtual Unit? DurationUnit { get; set; }
-
-         IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as Unit; }
-         IUnit? ITreatment.DurationUnit { get => DurationUnit; set => DurationUnit = value as Unit; }
-         IUnit? ITreatment.FrequencyUnit { get => FrequencyUnit; set => FrequencyUnit = value as Unit; }
+        IUnit? ITreatment.DosageUnit { get => DosageUnit; set => DosageUnit = value as Unit; }
          IUnit? ITreatment.RecipientMassUnit { get => RecipientMassUnit; set => RecipientMassUnit = value as Unit; }
     }
 }

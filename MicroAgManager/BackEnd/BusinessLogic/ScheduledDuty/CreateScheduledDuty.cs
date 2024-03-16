@@ -1,6 +1,5 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
-using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
@@ -11,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.BusinessLogic.ScheduledDuty
 {
-    public class CreateScheduledDuty : BaseCommand, ICreateCommand, ICreateScheduledDuty
+    public class CreateScheduledDuty : BaseCommand, ICreateCommand, ICreateScheduledDuty, IHasReschedule
     {
         public Guid CreatedBy { get => ModifiedBy; set => ModifiedBy = value; }
         [Required] public ScheduledDutyModel ScheduledDuty { get; set; }
@@ -34,19 +33,12 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        if (request.Reschedule == true && request.RescheduleDueOn.HasValue && duty.CompletedOn.HasValue)
-                        {
-                            var newDuty = await DutyLogic.RescheduleDuty(context, duty.Id, request.RescheduleDueOn.Value);
-                            var command = new CreateScheduledDuty()
-                            {
-                                CreatedBy = newDuty.CreatedBy,
-                                ScheduledDuty = newDuty.ScheduledDuty,
-                                TenantId = request.TenantId,
-                                ModifiedBy = request.ModifiedBy
-                            };
-                            await _mediator.Send(command, cancellationToken);
+                        if (duty.CompletedOn.HasValue)
+                        { 
+                            var command = await DutyLogic.OnScheduledDutyCompleted(context, request,duty);
+                            if(command is ICreateScheduledDuty)
+                                await _mediator.Send(command, cancellationToken);
                         }
-
                         await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy, duty.ModifiedOn) }), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Scheduled Duty"); }

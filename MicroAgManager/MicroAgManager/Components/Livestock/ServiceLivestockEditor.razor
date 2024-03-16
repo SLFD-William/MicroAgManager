@@ -83,7 +83,7 @@
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private ServiceLivestock? serviceLivestock { get; set; }
-    
+
     protected override void OnInitialized()
     {
         serviceLivestock = editContext.Model as ServiceLivestock;
