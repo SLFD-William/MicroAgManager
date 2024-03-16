@@ -30,8 +30,8 @@ namespace Domain.Models
         public virtual UnitModel? EveryUnit { get; set; }
 
         public virtual ICollection<DutyModel?> Duties { get; set; } = new List<DutyModel?>();
-        
-        
+        public bool Enabled { get; set; } = true;
+
         DateTime IChore.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value== EntityModifiedOn ? EntityModifiedOn: EntityModifiedOn; }
         ICollection<IDuty>? IChore.Duties { get => Duties as ICollection<IDuty>; set => Duties=value as ICollection<DutyModel?> ?? new List<DutyModel?>(); }
         
@@ -50,6 +50,7 @@ namespace Domain.Models
                 PerUnitId = chore.PerUnitId,
                 EveryScalar = chore.EveryScalar,
                 EveryUnitId = chore.EveryUnitId,
+                Enabled=chore.Enabled,
                 Duties = chore.Duties?.Select(DutyModel.Create).ToList() ?? new List<DutyModel?>()
             }) as ChoreModel;
             return model;
@@ -70,6 +71,7 @@ namespace Domain.Models
             ((ChoreModel)chore).PerScalar = PerScalar;
             ((ChoreModel)chore).EveryUnitId = EveryUnitId;
             ((ChoreModel)chore).EveryScalar = EveryScalar;
+            ((ChoreModel)chore).Enabled = Enabled;
             return chore;
         }
 
@@ -87,6 +89,7 @@ namespace Domain.Models
             ((Chore)chore).PerScalar = PerScalar;
             ((Chore)chore).EveryUnitId = EveryUnitId;
             ((Chore)chore).EveryScalar = EveryScalar;
+            ((Chore)chore).Enabled = Enabled;
             chore.ModifiedOn = DateTime.UtcNow;
             return chore;
 

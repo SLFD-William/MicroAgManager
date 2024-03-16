@@ -33,6 +33,41 @@ namespace Domain.Logic.Tests
             // Assert
             Assert.IsNull(result);
         }
+        [TestMethod()]
+        public async Task GetNextChoreDueDateTest_ChoreNotEnabled()
+        {
+            // Arrange
+            var context = new TestFrontEndDbContext().CreateContext();
+
+            var completedOn = DateTime.Now;
+            var chore = new ChoreModel
+            {
+                RecipientTypeId = 1,
+                RecipientType = "LivestockAnimal",
+                Name = "Test Chore",
+                Color = "transparent",
+                DueByTime = TimeSpan.FromHours(9),
+                PerScalar = 1,
+                PerUnitId = 1,
+                EveryScalar = 1,
+                EveryUnitId = 1,
+                Enabled=false
+            };
+            context.Chores.Add(chore);
+            context.SaveChanges();
+            var scheduledDuty = new ScheduledDutyModel
+            {
+                Id = 1,
+                ScheduleSourceId = chore.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Chore,
+                CompletedOn = completedOn
+            };
+            // Act
+            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+
+            // Assert
+            Assert.IsNull(result);
+        }
 
         [TestMethod()]
         public async Task GetNextChoreDueDateTest_ValidChore_OnceADay()
@@ -50,7 +85,8 @@ namespace Domain.Logic.Tests
                 PerScalar=1,
                 PerUnitId=1, 
                 EveryScalar=1, 
-                EveryUnitId=1  
+                EveryUnitId=1
+                
             };
             context.Chores.Add(chore);
             context.SaveChanges();
@@ -100,6 +136,52 @@ namespace Domain.Logic.Tests
 
             // Assert
             Assert.AreEqual(completedOn.Date + chore.DueByTime + TimeSpan.FromSeconds(86400/2), result);
+            // Add more assertions based on the expected result
+        }
+        [TestMethod()]
+        public async Task GetNextChoreDueDateTest_ValidChore_TwiceADayTwoOfTwo()
+        {
+            // Arrange
+            var context = new TestFrontEndDbContext().CreateContext();
+            var chore = new ChoreModel
+            {
+                RecipientTypeId = 1,
+                RecipientType = "LivestockAnimal",
+                Name = "Test Chore",
+                Color = "transparent",
+                DueByTime = TimeSpan.FromHours(9),
+                PerScalar = 2,
+                PerUnitId = 1,
+                EveryScalar = 1,
+                EveryUnitId = 1
+            };
+            context.Chores.Add(chore);
+            context.SaveChanges();
+            var scheduledDuty = new ScheduledDutyModel
+            {
+                Id = 1,
+                ScheduleSourceId = chore.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Chore,
+                CompletedOn = DateTime.Today + chore.DueByTime,
+                DutyId=1,
+                Record="Test Record",
+                RecipientId=1,
+                Recipient="Test Recipient",
+            };
+            context.ScheduledDuties.Add(scheduledDuty);
+            context.SaveChanges();
+            scheduledDuty = new ScheduledDutyModel
+            {
+                Id = 2,
+                ScheduleSourceId = chore.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Chore,
+                CompletedOn = DateTime.Today + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2)
+            };
+            // Act
+            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+
+            // Assert
+            Assert.AreEqual(DateTime.Today.AddDays(1) + chore.DueByTime, result);
             // Add more assertions based on the expected result
         }
     }

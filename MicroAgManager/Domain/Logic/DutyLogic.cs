@@ -33,7 +33,7 @@ namespace Domain.Logic
             if (completedScheduledDuty.ScheduleSource != ScheduledDutySourceConstants.Chore || !completedScheduledDuty.CompletedOn.HasValue) return null;
             
             var chore = await context.Chores.FindAsync(completedScheduledDuty.ScheduleSourceId);
-            if(chore == null) return null;
+            if(chore?.Enabled != true) return null;
             var completedDate = completedScheduledDuty.CompletedOn.Value;
             // 1 per day every 1 day
 

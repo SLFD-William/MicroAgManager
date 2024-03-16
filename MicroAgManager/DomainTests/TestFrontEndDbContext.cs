@@ -181,6 +181,18 @@ public class TestFrontEndDbContext : IDisposable
             EveryScalar = 1,
             EveryUnitId = 1
         });
+        context.Duties.Add(new DutyModel
+        {
+            Id = 1,
+            Name="Test Duty",
+            DaysDue=0,
+            Command="Test Command",
+            CommandId=0,
+            RecipientType="Test Recipient Type",
+            RecipientTypeId=0,
+            Relationship="Test Relationship",
+            SystemRequired=false,
+        });
 
     }
 

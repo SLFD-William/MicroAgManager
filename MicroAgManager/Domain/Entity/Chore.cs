@@ -16,6 +16,7 @@ namespace Domain.Entity
         string Name { get; set; }
         string RecipientType { get; set; }
         long RecipientTypeId { get; set; }
+        bool Enabled { get; set; }
     }
 
     [Index(nameof(TenantId))]
@@ -29,8 +30,7 @@ namespace Domain.Entity
         [Required][MaxLength(40)] public string RecipientType { get; set; }
         [Required][MaxLength(40)] public string Name { get; set; }
         [Required][MaxLength(40)] public string Color { get; set; } = "transparent";
-        //chore is due by noon once a day,
-        //chode is due by 6:00am 2x a week every 2.5 days
+        [Required] public bool Enabled { get; set; } = true;
         [Required] public TimeSpan DueByTime { get; set; } = new TimeSpan(12, 0, 0);
         public virtual ICollection<Duty> Duties { get; set; } = new List<Duty>();
         [Precision(18, 3)] public decimal DurationScalar { get; set; } = 0;
