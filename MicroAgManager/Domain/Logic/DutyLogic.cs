@@ -35,13 +35,13 @@ namespace Domain.Logic
             var chore = await context.Chores.FindAsync(completedScheduledDuty.ScheduleSourceId);
             if(chore?.Enabled != true) return null;
             var completedDate = completedScheduledDuty.CompletedOn.Value;
-            // 1 per day every 1 day
+            // 1 per day every 2 day
 
             var per = chore.PerUnit?.ConversionFactorToSIUnit / (double)chore.PerScalar ?? 0;
             var every = chore.EveryUnit?.ConversionFactorToSIUnit * (double)chore.EveryScalar ?? 0;
             var lookback = chore.PerUnit?.ConversionFactorToSIUnit ?? 0;
             var newTime = completedDate.AddSeconds(per);
-            var newDate = completedDate.AddSeconds(every);
+            var newDate = completedDate.AddSeconds(every );
 
          
             if (newTime == newDate) return newDate.Date + chore.DueByTime;
@@ -52,7 +52,7 @@ namespace Domain.Logic
                    s.CompletedOn.HasValue &&
                    s.CompletedOn >= DateTime.Now.AddSeconds(-lookback)).ToListAsync();
 
-            if (completedChores.Count < chore.PerScalar)
+            if (chore.PerScalar >  1 && completedChores.Count % chore.PerScalar == 0)
                 return (completedDate.Date + chore.DueByTime).AddSeconds((completedChores.Count + 1)*per);
 
             return newDate.Date + chore.DueByTime;
