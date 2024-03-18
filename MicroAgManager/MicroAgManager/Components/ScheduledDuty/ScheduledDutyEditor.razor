@@ -1,4 +1,5 @@
-﻿@using MicroAgManager.Components.Duty
+﻿@using Domain.Logic
+@using MicroAgManager.Components.Duty
 @using MicroAgManager.Components.Shared
 @inherits BaseEditor
 @if (scheduledDuty is not null)
@@ -46,7 +47,7 @@
                     <ChildContent>
                         <InputSelect @bind-Value="@ScheduleSourceId">
                             <option value="">Select Source ...</option>
-                            @foreach (var unit in sourceIds())
+                            @foreach (var unit in DutyLogic.SourceIds(appState.DbContext,scheduledDuty))
                             {
                                 <option value="@unit.Key">
                                     @unit.Value

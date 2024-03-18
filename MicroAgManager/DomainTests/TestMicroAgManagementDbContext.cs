@@ -11,10 +11,10 @@ namespace DomainTests
 {
     public class TestMicroAgManagementDbContext : IDisposable
     {
-        private static DbConnection _dbConnection;
-        private static DbContextOptions<MicroAgManagementDbContext> _dbContextOptions;
-        private static MicroAgManagementDbContext _dbContext;
-        public void Dispose() => _dbConnection.Dispose();
+        private DbConnection? _dbConnection;
+        private static DbContextOptions<MicroAgManagementDbContext>? _dbContextOptions;
+        private MicroAgManagementDbContext? _dbContext;
+        public void Dispose() => _dbConnection?.Dispose();
         public IMicroAgManagementDbContext CreateContext()
         {
             _dbConnection = new SqliteConnection("Data Source=Server;Mode=Memory;");

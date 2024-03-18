@@ -8,10 +8,10 @@ using System.Data.Common;
 
 public class TestFrontEndDbContext : IDisposable
 {
-    private static DbConnection _dbConnection;
-    private static DbContextOptions<FrontEndDbContext> _dbContextOptions;
-    private static FrontEndDbContext _dbContext;
-    public void Dispose() => _dbConnection.Dispose();
+    private DbConnection? _dbConnection;
+    private static DbContextOptions<FrontEndDbContext>? _dbContextOptions;
+    private FrontEndDbContext? _dbContext;
+    public void Dispose() => _dbConnection?.Dispose();
 
     public IFrontEndDbContext CreateContext()
     {
@@ -34,6 +34,7 @@ public class TestFrontEndDbContext : IDisposable
     private static void SeedTesting(IFrontEndDbContext context)
     {
         SeedUnits(context);
+        SeedAncillary(context);
         SeedPlots(context);
         SeedLivestock(context);
         SeedScheduling(context);
@@ -193,7 +194,31 @@ public class TestFrontEndDbContext : IDisposable
             Relationship="Test Relationship",
             SystemRequired=false,
         });
+        context.Events.Add(new EventModel
+        {
+            Id = 1,
+            Name = "Test Event",
+            StartDate = DateTime.Now,
+            Color="pink"
+        });
 
     }
 
+    private static void SeedAncillary(IFrontEndDbContext context)
+    {
+        
+        context.Treatments.Add(new TreatmentModel
+        {
+            Name = "Test Treatment",
+            BrandName = "Test Brand",
+            Reason = "Test Reason",
+            DurationScalar = 1,
+            DurationUnitId = 1,
+            DosageUnitId = 1,
+            PerScalar = 1,
+            PerUnitId = 1,
+            EveryScalar = 1,
+            EveryUnitId = 1,
+        });
+    }
 }

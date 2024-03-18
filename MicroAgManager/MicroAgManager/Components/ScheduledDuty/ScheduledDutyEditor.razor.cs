@@ -175,7 +175,6 @@ namespace MicroAgManager.Components.ScheduledDuty
             newDue = null;
             reschedule = false;
             await SubmitScheduledDutyChange();
-
         }
 
         private async Task RescheduleSubmitted(DateTime e)
@@ -196,7 +195,7 @@ namespace MicroAgManager.Components.ScheduledDuty
         {
             if (scheduledDuty?.ScheduleSource == ScheduledDutySourceConstants.Chore)
                 return await DutyLogic.GetNextChoreDueDate(appState.DbContext, scheduledDuty);
-            return null;
+            return await DutyLogic.GetNextFreqAndDurationDueDate(appState.DbContext, scheduledDuty);
         }
 
 
@@ -293,17 +292,7 @@ namespace MicroAgManager.Components.ScheduledDuty
 
         #endregion
         #region Source
-        private List<KeyValuePair<long, string>> sourceIds()
-        {
-            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
-                return appState.DbContext.Milestones.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Chore)
-                return appState.DbContext.Chores.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Event)
-                return appState.DbContext.Events.OrderByDescending(a => a.StartDate).ThenBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-
-            return new List<KeyValuePair<long, string>>();
-        }
+        
         private bool _showingSourceEditor = false;
         Type? sourceType;
         private EditContext sourceEditContext;
