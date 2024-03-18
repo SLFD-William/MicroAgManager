@@ -176,7 +176,8 @@ namespace Domain.Logic.Tests
                 Id = 2,
                 ScheduleSourceId = chore.Id,
                 ScheduleSource = ScheduledDutySourceConstants.Chore,
-                CompletedOn = DateTime.Today + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2)
+                CompletedOn = DateTime.Today + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2),
+                DutyId = 1
             };
             // Act
             var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
@@ -293,7 +294,8 @@ namespace Domain.Logic.Tests
                 Id = 2,
                 ScheduleSourceId = chore.Id,
                 ScheduleSource = ScheduledDutySourceConstants.Chore,
-                CompletedOn = completedOn + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2)
+                CompletedOn = completedOn + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2),
+                DutyId = 1
             };            // Act
             var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
 
@@ -423,7 +425,8 @@ namespace Domain.Logic.Tests
                 Id = 4,
                 ScheduleSourceId = chore.Id,
                 ScheduleSource = ScheduledDutySourceConstants.Chore,
-                CompletedOn = completedOn.AddDays(2) + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2)
+                CompletedOn = completedOn.AddDays(2) + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2),
+                DutyId = 1
             };
             // Act
             var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
