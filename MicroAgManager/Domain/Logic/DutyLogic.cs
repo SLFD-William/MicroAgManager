@@ -4,8 +4,6 @@ using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Net.NetworkInformation;
 
 namespace Domain.Logic
 {
@@ -54,7 +52,6 @@ namespace Domain.Logic
             return null;
 
         }
-
         public static IQueryable<BaseModel>? GetDutyCommandRecordPerformedAfter(IFrontEndDbContext context, IDuty? duty,DateTime startDate)
         {
             if (!(duty is IDuty)) return null;
@@ -66,8 +63,7 @@ namespace Domain.Logic
                 return context.Registrations.Where(t => t.RegistrationDate >= startDate).AsQueryable();
             return null;
         }
-
-        public static List<KeyValuePair<long, string>> SourceIds(IFrontEndDbContext context, IScheduledDuty scheduledDuty)
+        public static List<KeyValuePair<long, string>> ScheduledDutySourceIds(IFrontEndDbContext context, IScheduledDuty scheduledDuty)
         {
             if (!(scheduledDuty is IScheduledDuty)) return new List<KeyValuePair<long, string>>();
             if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
@@ -129,7 +125,6 @@ namespace Domain.Logic
                 commandItem.DurationScalar == 1)
                 return null;
 
-
             var startDate =DateTime.Now;
             var source = await GetScheduledDutySourceRecord(context, completedScheduledDuty);
             if(source is EventModel)
@@ -143,10 +138,9 @@ namespace Domain.Logic
             var per = perUnit?.ConversionFactorToSIUnit / (double)commandItem.PerScalar ?? 0;
             var every = everyUnit?.ConversionFactorToSIUnit * (double)commandItem.EveryScalar ?? 0;
             var duration = durationUnit?.ConversionFactorToSIUnit * (double)commandItem.DurationScalar ?? 0;
-         
-            
             var lookback = perUnit?.ConversionFactorToSIUnit ?? 0;
             var completedPer = 0;
+
             if (duty.Command == DutyCommandConstants.Treatment)
                 completedPer= completedRecords.Where(t => ((TreatmentRecordModel)t).DatePerformed >= DateTime.Now.AddSeconds(-lookback)).Count();
 
@@ -157,10 +151,8 @@ namespace Domain.Logic
 
             if (totalNeeded > completedRecords.Count + 1)
                 return (completedDate.Date).AddSeconds(every);
-
-           
+          
             return null;
-
         }
         public async static Task<ICreateScheduledDuty?> OnScheduledDutyCompleted(IMicroAgManagementDbContext context, IHasReschedule command, IScheduledDuty duty)
         {

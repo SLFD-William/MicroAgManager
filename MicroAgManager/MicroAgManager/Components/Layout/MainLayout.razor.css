@@ -7,10 +7,13 @@
 }
 
 main {
+  height: 100%;
+  display: grid;
+  place-items: center;
   grid-row: main;
   position: relative;
-  width: inherit;
-  margin-inline: auto;
+  /*width: inherit;*/
+  /*margin-inline: auto;*/
   overflow: auto;
   container: mainlayout_main/inline-size;
 }

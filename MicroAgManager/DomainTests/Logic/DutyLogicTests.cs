@@ -1,9 +1,7 @@
 ﻿using Domain.Constants;
-using Domain.Entity;
 using Domain.Models;
 using DomainTests;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Domain.Logic.Tests
 {

@@ -1,0 +1,13 @@
+﻿.IdentityForm {
+  display: grid;
+  margin-inline: auto;
+  grid-template-columns: max-content 1fr;
+  grid-gap: 1rem;
+}
+.IdentityForm h1, .IdentityForm .alert {
+  grid-column: 1/-1;
+}
+.IdentityForm label {
+  grid-column: 1;
+  text-align: right;
+}

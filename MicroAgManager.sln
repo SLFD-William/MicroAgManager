@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroAgManager.API", "Micro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroAgManager", "MicroAgManager\MicroAgManager\MicroAgManager.csproj", "{720C8BC2-A912-4EFD-AD1E-3D7742FAC1AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainTests", "MicroAgManager\DomainTests\DomainTests.csproj", "{9F43CA12-AD88-4802-AA96-961349A08E7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainTests", "MicroAgManager\DomainTests\DomainTests.csproj", "{9F43CA12-AD88-4802-AA96-961349A08E7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -27,7 +27,7 @@
     --border-color: color-mix(in lab,currentColor 15%,var(--typography-primary-color));
 }
 html, body {
-height: 100vh;
+    height: 100vh;
     margin:unset;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: var(--typography-primary-bg-color);
@@ -37,8 +37,10 @@ select, input {
     background-color: var(--typography-primary-alternate-bg-color);
 }
 
-#app{
-    height:100%;
+#app {
+    height: 100%;
+    display: grid;
+    place-items: center;
 }
 i {
     text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);
@@ -103,38 +105,22 @@ i {
     top: 0.5rem;
 }
 form {
+    display: grid;
     margin-inline: auto;
-    width: 100%;
-    max-width: 125ch;
-    min-width: 40ch;
-    padding: 1em;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
-    align-items: center;
-    justify-content: center;
+    grid-gap: 1rem;
 
     & .dataSection {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(auto-fill, 40ch);
+        grid-template-columns: repeat(auto-fill, 30ch);
         grid-gap: 1em;
         justify-items: center;
         justify-content: center;
     }
 
-    &.flexDataSection > .dataSection {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1em;
-    }
-
     & .TabControl {
         width: 100%;
     }
-
-
-
     & .secondaryContent {
         width: 100%;
         display: grid;
@@ -146,7 +132,7 @@ form {
         display: flex;
         flex-wrap: wrap;
         gap: 0.25em;
-        justify-items: center;
+        justify-content:end;
     }
 }
 .modalContainer {

@@ -10314,6 +10314,8 @@ select, input {
 
 #app {
   height: 100%;
+  display: grid;
+  place-items: center;
 }
 
 i {
@@ -10370,29 +10372,17 @@ i.fa-glass-water-droplet {
 }
 
 form {
+  display: grid;
   margin-inline: auto;
-  width: 100%;
-  max-width: 125ch;
-  min-width: 40ch;
-  padding: 1em;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em;
-  align-items: center;
-  justify-content: center;
+  grid-gap: 1rem;
 }
 form .dataSection {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 40ch);
+  grid-template-columns: repeat(auto-fill, 30ch);
   grid-gap: 1em;
   justify-items: center;
   justify-content: center;
-}
-form.flexDataSection > .dataSection {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em;
 }
 form .TabControl {
   width: 100%;
@@ -10407,7 +10397,7 @@ form .updateCancelButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25em;
-  justify-items: center;
+  justify-content: end;
 }
 
 .modalContainer {

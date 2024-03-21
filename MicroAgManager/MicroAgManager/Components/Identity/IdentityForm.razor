@@ -1,0 +1,166 @@
+﻿@page "/login"
+@page "/register"
+
+@using MicroAgManager.Identity
+@inject IAccountManagement Acct
+@inject NavigationManager nm
+@implements IDisposable
+<PageTitle>@PageName</PageTitle>
+<section class="IdentityForm">
+    <h1>@PageName</h1>
+
+    <AuthorizeView>
+        <Authorized>
+            <div class="alert alert-success">You're logged in as @context.User.Identity?.Name.</div>
+        </Authorized>
+        <NotAuthorized>
+            @if (isLogin)
+            {
+                <label for="email">
+                    Email:
+                </label>
+                <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+                <label for="password">
+                    Password:
+                </label>
+                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
+                <button class="btn btn-primary" @onclick="DoLoginAsync">Login</button>
+            }
+            else
+            {
+                <label for="email">
+                    Email:
+                </label>
+                <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+                <label for="password">
+                    Password:
+                </label>
+                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
+                <label for="confirmPassword">
+                    Retype password:
+                </label>
+                <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Re-enter your password" type="password" @bind-value="confirmPassword" />
+                <button class="btn btn-primary" @onclick="DoRegisterAsync">Register</button>
+            }
+            @if (errors)
+            {
+                @foreach (var error in errorList)
+                {
+                    <div class="alert alert-danger">@error</div>
+                }
+            }
+        </NotAuthorized>
+    </AuthorizeView>
+</section>
+@code {
+    private string PageName => isLogin ? "Login" : "Register";
+    private bool isLogin = true;
+    protected override void OnInitialized()
+    {
+        isLogin = nm.Uri.Contains("login");
+        nm.LocationChanged += NavigationManager_LocationChanged;
+        base.OnInitialized();
+    }
+    public void Dispose()=>nm.LocationChanged -= NavigationManager_LocationChanged;
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        success = errors = false;
+        email = string.Empty;
+        password = string.Empty;
+        confirmPassword = string.Empty;
+        isLogin = e.Location.Contains("login");
+        StateHasChanged();
+    }
+
+    private bool success, errors;
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private string confirmPassword = string.Empty;
+    private string[] errorList = [];
+    public async Task DoRegisterAsync()
+    {
+        success = errors = false;
+        errorList = [];
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            errors = true;
+            errorList = ["Email is required."];
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            errors = true;
+            errorList = ["Password is required."];
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(confirmPassword))
+        {
+            errors = true;
+            errorList = ["Please confirm your password."];
+
+            return;
+        }
+
+        if (password != confirmPassword)
+        {
+            errors = true;
+            errorList = ["Passwords don't match."];
+
+            return;
+        }
+
+        var result = await Acct.RegisterAsync(email!, password!);
+
+        if (result.Succeeded)
+        {
+            success = true;
+            email = password = confirmPassword = string.Empty;
+            nm.NavigateTo("/Home");
+        }
+        else
+        {
+            errors = true;
+            errorList = result.ErrorList;
+        }
+    }
+    public async Task DoLoginAsync()
+    {
+        success = errors = false;
+        errorList = [];
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            errors = true;
+            errorList = ["Email is required."];
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            errors = true;
+            errorList = ["Password is required."];
+
+            return;
+        }
+
+        var result = await Acct.LoginAsync(email!, password!);
+
+        if (result.Succeeded)
+        {
+            success = true;
+            email = password = string.Empty;
+            nm.NavigateTo("/Home");
+        }
+        else
+        {
+            errors = true;
+            errorList = result.ErrorList;
+        }
+    }
+}

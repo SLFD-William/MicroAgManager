@@ -47,7 +47,7 @@
                     <ChildContent>
                         <InputSelect @bind-Value="@ScheduleSourceId">
                             <option value="">Select Source ...</option>
-                            @foreach (var unit in DutyLogic.SourceIds(appState.DbContext,scheduledDuty))
+                            @foreach (var unit in DutyLogic.ScheduledDutySourceIds(appState.DbContext,scheduledDuty))
                             {
                                 <option value="@unit.Key">
                                     @unit.Value

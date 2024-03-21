@@ -66,5 +66,9 @@
   {
     "outputFile": "Components/Livestock/LivestockNameplate.razor.css",
     "inputFile": "Components/Livestock/LivestockNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Components/Identity/IdentityForm.razor.css",
+    "inputFile": "Components/Identity/IdentityForm.razor.scss"
   }
 ]

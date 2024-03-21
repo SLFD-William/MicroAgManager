@@ -1,7 +1,6 @@
 ﻿using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
-using Domain.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Persistence;

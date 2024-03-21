@@ -4,7 +4,7 @@
 @inject NavigationManager nm
 
 <PageTitle>Logout</PageTitle>
-
+<form>
 <h1>Logout</h1>
 
 <AuthorizeView @ref="authView">
@@ -15,7 +15,7 @@
         <div class="alert alert-success">You're logged out. <a href="/login">Log in.</a></div>
     </NotAuthorized>
 </AuthorizeView>
-
+</form>
 @code {
     private AuthorizeView? authView;
 
