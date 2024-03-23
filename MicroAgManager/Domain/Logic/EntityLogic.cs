@@ -7,10 +7,10 @@ namespace Domain.Logic
 {
     public static class EntityLogic
     {
-        public static Task<List<ModifiedEntity>> GetModifiedEntities(IMicroAgManagementDbContext context)
+        public static Task<List<ModifiedEntity>> GetModifiedEntities(DbContext context)
         {
             var entitiesModified = new List<ModifiedEntity>();
-            var changes = ((DbContext)context).ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
+            var changes = context.ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
             foreach (var change in changes)
             {
                 var changedEntity = change.Entity as BaseEntity;

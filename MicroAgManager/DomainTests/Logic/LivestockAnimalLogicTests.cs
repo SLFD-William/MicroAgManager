@@ -1,5 +1,6 @@
 ﻿using Domain.Entity;
 using DomainTests;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Logic.Tests
 {
@@ -27,7 +28,7 @@ namespace Domain.Logic.Tests
             await context.SaveChangesAsync(cancellationToken);
 
             // Act
-            var result = await LivestockAnimalLogic.OnLivestockAnimalCreated(context, id, cancellationToken);
+            var result = await LivestockAnimalLogic.OnLivestockAnimalCreated(context as DbContext, id, cancellationToken);
 
             // Assert
             Assert.IsNotNull(result);
@@ -43,7 +44,7 @@ namespace Domain.Logic.Tests
             var cancellationToken = new CancellationToken();
 
             // Act and Assert
-            await Assert.ThrowsExceptionAsync<Exception>(() => LivestockAnimalLogic.OnLivestockAnimalCreated(context, id, cancellationToken));
+            await Assert.ThrowsExceptionAsync<Exception>(() => LivestockAnimalLogic.OnLivestockAnimalCreated(context as DbContext, id, cancellationToken));
         }
     }
 }

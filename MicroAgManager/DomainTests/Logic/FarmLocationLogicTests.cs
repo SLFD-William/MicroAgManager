@@ -1,4 +1,5 @@
 ﻿using DomainTests;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Logic.Tests
 {
@@ -18,7 +19,7 @@ namespace Domain.Logic.Tests
             dbContext.SaveChanges();
 
             // Act
-            var result = await FarmLocationLogic.OnFarmLocationCreated(dbContext, 1, new CancellationToken());
+            var result = await FarmLocationLogic.OnFarmLocationCreated(dbContext as DbContext, 1, new CancellationToken());
 
             // Assert
             Assert.IsNotNull(result);
@@ -34,7 +35,7 @@ namespace Domain.Logic.Tests
             var dbContext = new TestMicroAgManagementDbContext().CreateContext();
 
             // Act & Assert
-            await Assert.ThrowsExceptionAsync<Exception>(() => FarmLocationLogic.OnFarmLocationCreated(dbContext, 1, new CancellationToken()));
+            await Assert.ThrowsExceptionAsync<Exception>(() => FarmLocationLogic.OnFarmLocationCreated(dbContext as DbContext, 1, new CancellationToken()));
         }
 
     }

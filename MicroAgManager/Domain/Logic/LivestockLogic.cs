@@ -16,8 +16,10 @@ namespace Domain.Logic
     }
     public static class LivestockLogic
     {
-        public async static Task VerifyNoOpenBreedingRecord(IMicroAgManagementDbContext context,List<long> femaleId, Guid tenantId, CancellationToken cancellationToken)
+        public async static Task VerifyNoOpenBreedingRecord(DbContext genericContext, List<long> femaleId, Guid tenantId, CancellationToken cancellationToken)
         {
+            var context = genericContext as IMicroAgManagementDbContext;
+            if (context is null) return;
             var animal = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstAsync(a=>a.Id==femaleId[0]);
 
             var existing = await context.BreedingRecords
@@ -31,9 +33,12 @@ namespace Domain.Logic
                 throw new IncompleteBreedingRecordException(nameList, existing.First().Id, "Open Breeding Record exists. Please Resolve");
             }
         }
-        public async static Task<List<ICreateLivestock>> OnBreedingRecordResolved(IMicroAgManagementDbContext context, long breedingRecordId)
+        public async static Task<List<ICreateLivestock>> OnBreedingRecordResolved(DbContext genericContext, long breedingRecordId)
         {
+            var context = genericContext as IMicroAgManagementDbContext;
             var entitiesModified = new List<ICreateLivestock>();
+            if (context is null) return entitiesModified;
+            
 
             var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
             if (breedingRecord == null) throw new Exception("Breeding Record not found");
@@ -62,9 +67,12 @@ namespace Domain.Logic
             }
             return entitiesModified;
         }
-        public async static Task<List<ModifiedEntity>> OnLivestockBred(IMicroAgManagementDbContext context, long breedingRecordId, string source, long sourceId, CancellationToken cancellationToken)
+        public async static Task<List<ModifiedEntity>> OnLivestockBred(DbContext genericContext, long breedingRecordId, string source, long sourceId, CancellationToken cancellationToken)
         {
+            var context = genericContext as IMicroAgManagementDbContext;
             var entitiesModified = new List<ModifiedEntity>();
+            if (context is null) return entitiesModified;
+
 
             var breedingRecord = await context.BreedingRecords.FindAsync(breedingRecordId);
             if (breedingRecord == null) throw new Exception("Breeding Record not found");
@@ -95,9 +103,12 @@ namespace Domain.Logic
             entitiesModified.Add(new ModifiedEntity(scheduledDuty.Id.ToString(), scheduledDuty.GetType().Name, "Created", scheduledDuty.ModifiedBy, scheduledDuty.ModifiedOn));
             return entitiesModified;
         }
-        public async static Task<List<ModifiedEntity>> OnLivestockBorn(IMicroAgManagementDbContext context, long livestockId, CancellationToken cancellationToken)
+        public async static Task<List<ModifiedEntity>> OnLivestockBorn(DbContext genericContext, long livestockId, CancellationToken cancellationToken)
         {
+            var context = genericContext as IMicroAgManagementDbContext;
             var entitiesModified = new List<ModifiedEntity>();
+            if (context is null) return entitiesModified;
+
 
             var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == livestockId);
             if (livestock == null) throw new Exception("Livestock not found");

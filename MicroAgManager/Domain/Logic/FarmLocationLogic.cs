@@ -1,26 +1,31 @@
 ﻿using Domain.Constants;
 using Domain.Interfaces;
 using Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Logic
 {
     public static class FarmLocationLogic
     {
-        public async static Task<List<ModifiedEntity>> OnFarmLocationCreated(IMicroAgManagementDbContext context,long id, CancellationToken cancellationToken)
-        { 
+        public async static Task<List<ModifiedEntity>> OnFarmLocationCreated(DbContext genericContext, long id, CancellationToken cancellationToken)
+        {
+            var context = genericContext as IMicroAgManagementDbContext;
             var entitiesModified = new List<ModifiedEntity>();
-            
+            if (context is null) return entitiesModified;
+
             var farmLocation = await context.Farms.FindAsync(id);
             if (farmLocation == null) throw new Exception("FarmLocation not found");
             entitiesModified.Add(new ModifiedEntity(farmLocation.Id.ToString(), farmLocation.GetType().Name, "Created", farmLocation.ModifiedBy,farmLocation.ModifiedOn));
-            AddAncilliaries(farmLocation, context);
-            entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context));
+            AddAncilliaries(farmLocation, context as DbContext);
+            entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context as DbContext));
             await context.SaveChangesAsync(cancellationToken);
             
             return entitiesModified;
         }
-        private static void AddAncilliaries(Entity.FarmLocation farm, IMicroAgManagementDbContext context)
+        private static void AddAncilliaries(Entity.FarmLocation farm, DbContext genericContext)
         {
+            var context = genericContext as IMicroAgManagementDbContext;
+             if (context is null) return;
             if (context.Units.Any(u => u.TenantId == farm.TenantId)) return;
             context.Units.Add(new Entity.Unit(farm.ModifiedBy, farm.TenantId)
             {

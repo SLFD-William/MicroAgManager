@@ -29,9 +29,11 @@ namespace Domain.Logic
             }
         }
 
-        public async static Task<BaseModel?> GetDutyCommandItem(IFrontEndDbContext context, IDuty? duty)
+        public async static Task<BaseModel?> GetDutyCommandItem(DbContext genericContext, IDuty? duty)
         {
             if (!(duty is IDuty)) return null;
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null;
             if (duty.Command == DutyCommandConstants.Treatment)
                 return await context.Treatments.FindAsync(duty.CommandId);
             if (duty.Command == DutyCommandConstants.Measurement)
@@ -40,9 +42,11 @@ namespace Domain.Logic
                 return await context.Registrars.FindAsync(duty.CommandId);
             return null;
         }
-        public async static Task<BaseModel?> GetScheduledDutySourceRecord(IFrontEndDbContext context, IScheduledDuty scheduledDuty)
+        public async static Task<BaseModel?> GetScheduledDutySourceRecord(DbContext genericContext, IScheduledDuty scheduledDuty)
         {
             if (!(scheduledDuty is IScheduledDuty)) return null;
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null;
             if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
                 return await context.Milestones.FindAsync(scheduledDuty.ScheduleSourceId);
             if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Event)
@@ -52,10 +56,11 @@ namespace Domain.Logic
             return null;
 
         }
-        public static IQueryable<BaseModel>? GetDutyCommandRecordPerformedAfter(IFrontEndDbContext context, IDuty? duty,DateTime startDate)
+        public static IQueryable<BaseModel>? GetDutyCommandRecordPerformedAfter(DbContext genericContext, IDuty? duty,DateTime startDate)
         {
             if (!(duty is IDuty)) return null;
-            if (duty.Command == DutyCommandConstants.Treatment)
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null; if (duty.Command == DutyCommandConstants.Treatment)
                 return context.TreatmentRecords.Where(t=>t.DatePerformed>=startDate).AsQueryable();
             if (duty.Command == DutyCommandConstants.Measurement)
                 return context.Measurements.Where(t => t.DatePerformed >= startDate).AsQueryable();
@@ -63,10 +68,11 @@ namespace Domain.Logic
                 return context.Registrations.Where(t => t.RegistrationDate >= startDate).AsQueryable();
             return null;
         }
-        public static List<KeyValuePair<long, string>> ScheduledDutySourceIds(IFrontEndDbContext context, IScheduledDuty scheduledDuty)
+        public static List<KeyValuePair<long, string>> ScheduledDutySourceIds(DbContext genericContext, IScheduledDuty scheduledDuty)
         {
             if (!(scheduledDuty is IScheduledDuty)) return new List<KeyValuePair<long, string>>();
-            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null; if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
                 return context.Milestones.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
             if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Chore)
                 return context.Chores.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
@@ -75,11 +81,13 @@ namespace Domain.Logic
 
             return new List<KeyValuePair<long, string>>();
         }
-        public async static Task<DateTime?> GetNextChoreDueDate(IFrontEndDbContext context, IScheduledDuty completedScheduledDuty)
+        public async static Task<DateTime?> GetNextChoreDueDate(DbContext genericContext, IScheduledDuty completedScheduledDuty)
         {
             if (completedScheduledDuty.ScheduleSource != ScheduledDutySourceConstants.Chore || !completedScheduledDuty.CompletedOn.HasValue) return null;
+            var context = genericContext as IFrontEndDbContext;
+            if(context is null) return null;
 
-            var chore = await GetScheduledDutySourceRecord(context, completedScheduledDuty) as ChoreModel;
+            var chore = await GetScheduledDutySourceRecord(context as DbContext, completedScheduledDuty) as ChoreModel;
             if(chore?.Enabled != true) return null;
             var completedDate = completedScheduledDuty.CompletedOn.Value;
 
@@ -106,11 +114,13 @@ namespace Domain.Logic
             return newDate.Date + chore.DueByTime;
 
         }
-        public async static Task<DateTime?> GetNextFreqAndDurationDueDate(IFrontEndDbContext context, IScheduledDuty completedScheduledDuty)
+        public async static Task<DateTime?> GetNextFreqAndDurationDueDate(DbContext genericContext, IScheduledDuty completedScheduledDuty)
         {
             if (completedScheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Chore || !completedScheduledDuty.CompletedOn.HasValue) return null;
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null;
             var duty = await context.Duties.FindAsync(completedScheduledDuty.DutyId);
-            var commandItem =await GetDutyCommandItem(context, duty) as IHasFrequencyAndDuration;
+            var commandItem =await GetDutyCommandItem(context as DbContext, duty) as IHasFrequencyAndDuration;
             if (!(commandItem is IHasFrequencyAndDuration)) return null;
 
             var perUnit = await context.Units.FindAsync(commandItem.PerUnitId);
@@ -126,11 +136,11 @@ namespace Domain.Logic
                 return null;
 
             var startDate =DateTime.Now;
-            var source = await GetScheduledDutySourceRecord(context, completedScheduledDuty);
+            var source = await GetScheduledDutySourceRecord(context as DbContext, completedScheduledDuty);
             if(source is EventModel)
                 startDate=((EventModel)source).StartDate;
 
-            var recordQuery = GetDutyCommandRecordPerformedAfter(context, duty, startDate);
+            var recordQuery = GetDutyCommandRecordPerformedAfter(context as DbContext, duty, startDate);
             var completedRecords = await recordQuery?.ToListAsync() ?? new List<BaseModel>();
 
             var completedDate = completedScheduledDuty.CompletedOn.Value;
@@ -154,9 +164,12 @@ namespace Domain.Logic
           
             return null;
         }
-        public async static Task<ICreateScheduledDuty?> OnScheduledDutyCompleted(IMicroAgManagementDbContext context, IHasReschedule command, IScheduledDuty duty)
+        public async static Task<ICreateScheduledDuty?> OnScheduledDutyCompleted(DbContext genericContext, IHasReschedule command, IScheduledDuty duty)
         {
             if (!(command.Reschedule == true && command.RescheduleDueOn.HasValue && duty.CompletedOn.HasValue)) return null;
+            var context = genericContext as IMicroAgManagementDbContext;
+            if (context is null) return null;
+
             var currentDuty = await context.ScheduledDuties.FindAsync(duty.Id);
             if (currentDuty is null) return null;
 

@@ -16,7 +16,7 @@ namespace Domain.Logic.Tests
             var scheduledDuty = new ScheduledDutyModel { Id = 1 , ScheduleSource=ScheduledDutySourceConstants.Event};
             
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -30,7 +30,7 @@ namespace Domain.Logic.Tests
              var scheduledDuty = new ScheduledDutyModel { Id = 1, ScheduleSourceId=2, ScheduleSource = ScheduledDutySourceConstants.Chore, CompletedOn=DateTime.Now };
 
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -65,7 +65,7 @@ namespace Domain.Logic.Tests
                 CompletedOn = completedOn
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -100,7 +100,7 @@ namespace Domain.Logic.Tests
                 CompletedOn = completedOn
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.AddDays(1).Date+ chore.DueByTime, result);
@@ -134,7 +134,7 @@ namespace Domain.Logic.Tests
                 CompletedOn = completedOn
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.Date + chore.DueByTime + TimeSpan.FromSeconds(86400/2), result);
@@ -182,7 +182,7 @@ namespace Domain.Logic.Tests
                 RecipientId = 1,
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(DateTime.Today.AddDays(1) + chore.DueByTime, result);
@@ -218,7 +218,7 @@ namespace Domain.Logic.Tests
                 CompletedOn = completedOn
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.AddDays(2).Date + chore.DueByTime, result);
@@ -252,7 +252,7 @@ namespace Domain.Logic.Tests
                 CompletedOn = completedOn
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.Date + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2), result);
@@ -300,7 +300,7 @@ namespace Domain.Logic.Tests
                 DutyId = 1,
                 RecipientId = 1,
             };            // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.AddDays(2).Date + chore.DueByTime, result);
@@ -360,7 +360,7 @@ namespace Domain.Logic.Tests
                 CompletedOn = completedOn.AddDays(2) + chore.DueByTime
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.AddDays(2).Date + chore.DueByTime + TimeSpan.FromSeconds(86400 / 2), result);
@@ -433,7 +433,7 @@ namespace Domain.Logic.Tests
                 RecipientId = 1,
             };
             // Act
-            var result = await DutyLogic.GetNextChoreDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextChoreDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.AddDays(4).Date + chore.DueByTime , result);
@@ -447,7 +447,7 @@ namespace Domain.Logic.Tests
             var duty = new ScheduledDutyModel();
 
             // Act
-            var result = await DutyLogic.OnScheduledDutyCompleted(context, command, duty);
+            var result = await DutyLogic.OnScheduledDutyCompleted(context as DbContext, command, duty);
 
             // Assert
             Assert.IsNull(result);
@@ -462,7 +462,7 @@ namespace Domain.Logic.Tests
             var duty = new ScheduledDutyModel { Id = 2, CompletedOn = DateTime.Now };
 
             // Act
-            var result = await DutyLogic.OnScheduledDutyCompleted(context, command, duty);
+            var result = await DutyLogic.OnScheduledDutyCompleted(context as DbContext, command, duty);
 
             // Assert
             Assert.IsNull(result);
@@ -479,7 +479,7 @@ namespace Domain.Logic.Tests
             var duty = new ScheduledDutyModel { Id = 1, CompletedOn = completedOn };
 
             // Act
-            var result = await DutyLogic.OnScheduledDutyCompleted(context, command, duty);
+            var result = await DutyLogic.OnScheduledDutyCompleted(context as DbContext, command, duty);
 
             // Assert
             Assert.IsNotNull(result);
@@ -494,7 +494,7 @@ namespace Domain.Logic.Tests
             var scheduledDuty = new ScheduledDutyModel { Id = 1, ScheduleSource = ScheduledDutySourceConstants.Chore };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -507,7 +507,7 @@ namespace Domain.Logic.Tests
             var scheduledDuty = new ScheduledDutyModel { Id = 1, ScheduleSource = ScheduledDutySourceConstants.Event };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -535,7 +535,7 @@ namespace Domain.Logic.Tests
             var scheduledDuty = new ScheduledDutyModel { Id = 1, ScheduleSource = ScheduledDutySourceConstants.Event, DutyId=duty.Id,CompletedOn=completedOn };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -556,7 +556,7 @@ namespace Domain.Logic.Tests
             var scheduledDuty = new ScheduledDutyModel { Id = 1,ScheduleSourceId= eventModel.Id, ScheduleSource = ScheduledDutySourceConstants.Event, DutyId = duty.Id, CompletedOn = completedOn };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -583,7 +583,7 @@ namespace Domain.Logic.Tests
             };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.Date + TimeSpan.FromSeconds(86400 / 2), result);
@@ -636,7 +636,7 @@ namespace Domain.Logic.Tests
             };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -667,7 +667,7 @@ namespace Domain.Logic.Tests
             };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.Date + TimeSpan.FromSeconds(86400 *2 ), result);
@@ -722,7 +722,7 @@ namespace Domain.Logic.Tests
             };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
@@ -754,7 +754,7 @@ namespace Domain.Logic.Tests
             };
 
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.Date + TimeSpan.FromSeconds(86400 / 2), result);
@@ -808,7 +808,7 @@ namespace Domain.Logic.Tests
                 Recipient = "Livestock",
             };
                         // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(completedOn.Date + TimeSpan.FromSeconds(86400 * 2), result);
@@ -881,7 +881,7 @@ namespace Domain.Logic.Tests
                 Recipient = "Livestock",
             };
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.AreEqual(DateTime.Today + TimeSpan.FromSeconds(86400 / 2), result);
@@ -971,7 +971,7 @@ namespace Domain.Logic.Tests
                 Recipient = "Livestock",
             };
             // Act
-            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context, scheduledDuty);
+            var result = await DutyLogic.GetNextFreqAndDurationDueDate(context as DbContext, scheduledDuty);
 
             // Assert
             Assert.IsNull(result);
