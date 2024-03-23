@@ -1,0 +1,21 @@
+.ScheduledDutyNameplate {
+    display: grid;
+    grid-template-columns: max-content;
+    border: 2px solid black;
+    padding:.25em;
+    border-radius:1em;
+
+    & .schedule {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        grid-gap: 0.5rem;
+
+        & > * {
+            align-self: center;
+        }
+
+        & > label {
+            justify-self: end;
+        }
+    }
+}

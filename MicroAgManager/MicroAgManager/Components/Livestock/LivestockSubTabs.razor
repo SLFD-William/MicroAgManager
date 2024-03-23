@@ -24,7 +24,8 @@
                 </button>
             </ButtonContent>
             <ChildContent>
-            <ScheduledDutyGrid Items="LivestockBaseQueries.baseScheduledDutyQuery(livestock.Id,appState)" ShowRecipientType=false ShowRecipient=false></ScheduledDutyGrid>
+            <ScheduledDutyCarousel ShowRecipient=false Items="@LivestockBaseQueries.baseScheduledDutyQuery(livestock.Id, appState)"></ScheduledDutyCarousel>
+            @* <ScheduledDutyGrid Items="LivestockBaseQueries.baseScheduledDutyQuery(livestock.Id,appState)" ShowRecipientType=false ShowRecipient=false></ScheduledDutyGrid> *@
             </ChildContent>
         </TabPage>
         <TabPage @ref="_progenyTab">

@@ -2,6 +2,7 @@
 using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -90,8 +91,10 @@ namespace Domain.Models
             duty.ModifiedOn = DateTime.UtcNow;
             return duty;
         }
-        public void PopulateDynamicRelations(IFrontEndDbContext db)
+        public void PopulateDynamicRelations(DbContext genericContext)
         {
+            var db = genericContext as IFrontEndDbContext;
+            if (db is null) return;
             if (RecipientType == nameof(LivestockAnimal))
                 RecipientTypeItem = db.LivestockAnimals.Find(RecipientTypeId)?.Name;
             if (Command == DutyCommandConstants.Measurement)

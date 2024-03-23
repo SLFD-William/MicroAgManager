@@ -1,0 +1,16 @@
+.ScheduledDutyCarousel {
+    width: 100%;
+    overflow-x: auto;
+
+    & > ul {
+        list-style-type: none;
+        display: flex;
+        flex-direction: row;
+        white-space: nowrap;
+        margin: unset;
+
+        & > li {
+            flex: 0 0 auto;
+        }
+    }
+}

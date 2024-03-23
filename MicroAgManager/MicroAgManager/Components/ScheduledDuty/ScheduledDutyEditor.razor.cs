@@ -2,6 +2,7 @@
 using BackEnd.BusinessLogic.ScheduledDuty;
 using Domain.Abstracts;
 using Domain.Constants;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
@@ -254,13 +255,8 @@ namespace MicroAgManager.Components.ScheduledDuty
         }
         #endregion
         #region Duty
-        private List<DutyModel> dutySelections()
-        {
-            var query = appState.DbContext.Duties.Where(d => d.Command == scheduledDuty.Duty.Command);
-            if (RecipientTypes?.Any() == true)
-                query = query.Where(d => RecipientTypes.Any(rt => rt.Key == d.RecipientType && rt.Value == d.RecipientTypeId));
-
-            var result = query.ToList();
+        private List<IDuty> dutySelections()
+        {var result = DutyLogic.DutySelections(appState.DbContext, scheduledDuty.Duty, RecipientTypes);
 
             if (result.Count() == 1)
                 DutyId = result.First().Id;

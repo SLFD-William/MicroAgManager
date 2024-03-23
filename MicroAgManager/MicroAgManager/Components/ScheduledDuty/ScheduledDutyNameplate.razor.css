@@ -1,0 +1,18 @@
+﻿.ScheduledDutyNameplate {
+  display: grid;
+  grid-template-columns: max-content;
+  border: 2px solid black;
+  padding: 0.25em;
+  border-radius: 1em;
+}
+.ScheduledDutyNameplate .schedule {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 0.5rem;
+}
+.ScheduledDutyNameplate .schedule > * {
+  align-self: center;
+}
+.ScheduledDutyNameplate .schedule > label {
+  justify-self: end;
+}

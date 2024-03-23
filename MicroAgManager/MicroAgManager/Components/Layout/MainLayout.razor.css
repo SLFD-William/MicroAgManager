@@ -1,4 +1,5 @@
 ﻿.MainLayout {
+  max-height: 100vh;
   height: 100%;
   width: 100%;
   position: relative;
@@ -9,11 +10,8 @@
 main {
   height: 100%;
   display: grid;
-  place-items: center;
   grid-row: main;
   position: relative;
-  /*width: inherit;*/
-  /*margin-inline: auto;*/
   overflow: auto;
   container: mainlayout_main/inline-size;
 }

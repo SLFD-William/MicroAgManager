@@ -70,5 +70,17 @@
   {
     "outputFile": "Components/Identity/IdentityForm.razor.css",
     "inputFile": "Components/Identity/IdentityForm.razor.scss"
+  },
+  {
+    "outputFile": "Components/ScheduledDuty/ScheduledDutyNameplate.razor.css",
+    "inputFile": "Components/ScheduledDuty/ScheduledDutyNameplate.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Home.razor.css",
+    "inputFile": "Pages/Home.razor.scss"
+  },
+  {
+    "outputFile": "Components/ScheduledDuty/ScheduledDutyCarousel.razor.css",
+    "inputFile": "Components/ScheduledDuty/ScheduledDutyCarousel.razor.scss"
   }
 ]

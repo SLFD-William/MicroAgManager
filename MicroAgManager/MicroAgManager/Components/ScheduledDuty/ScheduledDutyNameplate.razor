@@ -1,0 +1,117 @@
+﻿@using Domain.Logic
+@using Domain.Models
+@using Domain.Constants
+@using MicroAgManager.Components.Shared
+@using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
+<section class="ScheduledDutyNameplate">
+    
+        
+    <section>
+        <label>
+        <span class="fa-stack">
+            <i class="fas fa-stack-1x @DutyLogic.GetDutyCommandIcon(ScheduledDuty.Duty)"></i>
+        </span>
+        </label>
+        @ScheduledDuty.Duty.Name
+               
+
+    </section>
+    <section class="schedule">
+        <label>
+            <span class="fa-stack">
+                <i class="fas fa-stack-1x @DutyLogic.GetScheduledDutySourceIcon(ScheduledDuty)"></i>
+            </span>
+        </label>
+        <span>@ScheduledDuty.ScheduleSourceItem</span>
+        
+        
+        @if (ScheduledDuty.CompletedOn.HasValue)
+        {
+            <label>
+                <span class="fa-stack">
+                    <i class="fas fa-stack-1x fa-circle-check"></i>
+                    @if (ScheduledDuty.Dismissed)
+                    {
+                        <i class="fas fa-ban fa-stack-1x ban"></i>
+                    }
+                </span>
+            </label>
+            <span>@ScheduledDuty.CompletedOn.Value.ToShortDateString() </span>
+        }
+        else
+        {
+            <label>Due:</label> 
+            <span>@ScheduledDuty.DueOn</span>
+@*             <label>Reminder:</label>
+        <span>@ScheduledDuty.ReminderDays Days Before</span>*@
+         }
+    </section>
+    @if (ShowRecipient)
+    {
+        <section>
+            <label>@ScheduledDuty.Duty.RecipientTypeItem</label>
+            <span>@ScheduledDuty.RecipientItem</span>
+        </section>
+    }
+    @if (ScheduledDuty.RecordId > 0 && ScheduledDuty.CompletedOn.HasValue)
+    {
+        <span>@ScheduledDuty.Record</span>
+    }
+    @if (!ScheduledDuty.CompletedOn.HasValue)
+    {
+    <NavCrudButtons Editting="@showScheduledDutyModal"
+                    ShowEdit="@((ShowEdit || OnEditClick.HasDelegate) && ScheduledDuty.Id>0)"
+                    EditText="Complete Duty"
+                    OnEditClick="ShowScheduledDutyEditor"></NavCrudButtons>
+    }
+    @if (showScheduledDutyModal)
+    {
+        <ScheduledDutyEditor Modal=true Show=@showScheduledDutyModal editContext=scheduledDutyEditContext
+                             OnCancel=ScheduledDutyCanceled OnSubmit=ScheduledDutySubmitted></ScheduledDutyEditor>
+    }
+</section>
+@ChildContent
+@code {
+    [CascadingParameter] ScheduledDutyModel ScheduledDuty { get; set; }
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public bool ShowEdit { get; set; } = true;
+    [Parameter] public EventCallback<long> OnEditClick { get; set; }
+
+    [Parameter] public string NavigateText { get; set; } = "back";
+    [Parameter] public bool ShowNavigate { get; set; } = false;
+    [Parameter] public EventCallback OnNavigateClick { get; set; }
+
+    [Parameter] public bool ShowRecipient { get; set; } = true;
+
+    private bool showScheduledDutyModal = false;
+    protected override void OnInitialized()
+    {
+        ScheduledDuty.Duty?.PopulateDynamicRelations(appState.DbContext);
+        ScheduledDuty.PopulateDynamicRelations(appState.DbContext);
+        scheduledDutyEditContext = new EditContext(ScheduledDuty);
+    }
+    private EditContext scheduledDutyEditContext;
+    private void ShowScheduledDutyEditor()
+    {
+        var scheduledDuty = ApplicationState._dbContext.ScheduledDuties.Find(ScheduledDuty.Id) ?? new ScheduledDutyModel();
+        scheduledDutyEditContext = new EditContext(scheduledDuty);
+        showScheduledDutyModal = true;
+        OnEditClick.InvokeAsync();
+        StateHasChanged();
+    }
+    private void ScheduledDutySubmitted(EditContext e)
+    {
+        var model = e.Model as ScheduledDutyModel;
+        showScheduledDutyModal = false;
+        if (model == null) return;
+        StateHasChanged();
+    }
+    private void ScheduledDutyCanceled(object e)
+    {
+        showScheduledDutyModal = false;
+        StateHasChanged();
+    }
+}

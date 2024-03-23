@@ -1,0 +1,19 @@
+﻿@using Domain.Models
+@using MicroAgManager.Services
+<section class="ScheduledDutyCarousel">
+    <ul>
+        @foreach (var sd in Items.OrderBy(s => s.DueOn))
+        {
+            <li>
+                <CascadingValue Value="@sd">
+                    <ScheduledDutyNameplate></ScheduledDutyNameplate>
+                </CascadingValue>
+            </li>
+        }
+    </ul>
+</section>
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] required public IQueryable<ScheduledDutyModel> Items { get; set; }
+    [Parameter] public bool ShowRecipient { get; set; } = true;
+}

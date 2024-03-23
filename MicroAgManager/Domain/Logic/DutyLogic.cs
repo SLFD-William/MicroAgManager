@@ -16,6 +16,17 @@ namespace Domain.Logic
     }
     public static class DutyLogic
     {
+        public static List<IDuty> DutySelections(DbContext genericContext, IDuty duty, Dictionary<string, long>? recipientTypes)
+        {
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null;
+            var query = context.Duties.Where(d => d.Command == duty.Command);
+            if (recipientTypes?.Any() == true)
+            {
+                query.AsEnumerable().Where(d => recipientTypes.Any(rt => rt.Key == d.RecipientType && rt.Value == d.RecipientTypeId));
+            }
+            return query.Select(c=>c as IDuty).ToList();
+        }
         public static string GetRecordTypeFromCommand(IDuty duty)
         { 
             switch (duty.Command)
@@ -28,7 +39,34 @@ namespace Domain.Logic
                     return string.Empty;
             }
         }
-
+        public static string GetDutyCommandIcon(IDuty? duty)
+        {
+            if (!(duty is IDuty)) return null;
+            if (duty.Command == DutyCommandConstants.Treatment)
+                return "fa-kit-medical";
+            if (duty.Command == DutyCommandConstants.Measurement)
+                return "fa-scale-unbalanced";
+            if (duty.Command == DutyCommandConstants.Registration)
+                return "fa-newspaper";
+            if (duty.Command == DutyCommandConstants.Birth)
+                return "fa-cake-candles";
+            if (duty.Command == DutyCommandConstants.Breed)
+                return "fa-venus-mars";
+            if (duty.Command == DutyCommandConstants.Service)
+                return "fa-mars-and-venus-burst";
+            return null;
+        }
+        public static string GetScheduledDutySourceIcon(IScheduledDuty scheduledDuty)
+        {
+            if (!(scheduledDuty is IScheduledDuty)) return null;
+            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Milestone)
+                return "fa-star-of-life";
+            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Event)
+                return "fa-calendar-days";
+            if (scheduledDuty.ScheduleSource == ScheduledDutySourceConstants.Chore)
+                return "fa-person-digging";
+            return null;
+        }
         public async static Task<BaseModel?> GetDutyCommandItem(DbContext genericContext, IDuty? duty)
         {
             if (!(duty is IDuty)) return null;

@@ -16,6 +16,10 @@
         {
             Birth,Breed,Complete,Reap,Service
         };
+        public static readonly List<string> AllCommands = new List<string>()
+        {
+            Birth,Breed,Complete,Reap,Service,Measurement,Treatment,Photograph,Registration
+        };
     }
     public static class DutyRelationshipConstants
     {

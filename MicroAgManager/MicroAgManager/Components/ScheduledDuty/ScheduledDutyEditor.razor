@@ -21,7 +21,6 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@DutyId">
                         <option value="">Select Duty ...</option>
-                        @* TODO Make parameters for REcipientType and Recipient *@
                         @foreach (var unit in dutySelections())
                         {
                             <option value="@unit.Id">

@@ -1,10 +1,14 @@
 ﻿@page "/Home"
+@using Domain.Constants
+@using Domain.Models
 @using FrontEnd.Persistence
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
+@using MicroAgManager.Components.ScheduledDuty
 @implements IDisposable
 
 <PageTitle>Home</PageTitle>
+<div class="Home">
 @if (appState.DbContext == null)
 {
     <span>Initializing DB</span>
@@ -15,7 +19,18 @@ else
     {
         <NavLink href="/Land?LandPlotId=-1">Create a Plot of Land</NavLink>
     }
+    else{
+        @foreach (var command in DutyCommandConstants.AllCommands.OrderBy(x => x))
+        {
+            @if (appState.DbContext.ScheduledDuties.Include(s => s.Duty).Any(s => !s.CompletedOn.HasValue && s.Duty.Command == command))
+            {
+                <span>@command Due</span>
+                <ScheduledDutyCarousel Items="@CommandDuties(command)"></ScheduledDutyCarousel>
+            }
+        }
+    }
 }
+</div>
 
 @code{
     [CascadingParameter] private ApplicationState appState { get; set; }
@@ -31,6 +46,7 @@ else
         appState.OnDbInitialized -= appState_OnDbInitialized;
         appState.OnDbUpdate -= appState_OnDbUpdate;
     }
-    
+    private IQueryable<ScheduledDutyModel> CommandDuties(string command)=> appState.DbContext.ScheduledDuties.Include(s => s.Duty)
+                                .Where(s => !s.CompletedOn.HasValue && s.Duty.Command == command);
 
 }

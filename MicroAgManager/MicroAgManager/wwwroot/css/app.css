@@ -10319,7 +10319,7 @@ select, input {
 }
 
 i {
-  text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);
+  /*text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);*/
 }
 i.male {
   color: var(--masculine);
@@ -10430,6 +10430,10 @@ form .updateCancelButtons {
   max-width: calc(100% - 1em);
   z-index: 100;
 }
+.modalContainer dialog > form {
+  max-height: 80vh;
+  overflow: auto;
+}
 
 .quickgrid[theme=microagmanager] {
   margin-inline: auto;
@@ -10465,30 +10469,6 @@ form .updateCancelButtons {
 }
 .quickgrid[theme=microagmanager] tr:nth-child(even) {
   background-color: var(--typography-primary-alternate-bg-color);
-}
-
-.AccountLayout {
-  max-width: 650px;
-  margin-inline: auto;
-}
-.AccountLayout form {
-  display: grid;
-  grid-gap: 0.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(30ch, 1fr));
-}
-.AccountLayout form h1 {
-  grid-column: 1/-1;
-}
-.AccountLayout form hr {
-  display: none;
-}
-.AccountLayout form h2 {
-  grid-column: 1/-1;
-}
-.AccountLayout form div:has(p) {
-  display: flex;
-  gap: 1em;
-  grid-column: 1/-1;
 }
 
 .firstColumn {

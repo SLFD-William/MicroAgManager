@@ -84,10 +84,16 @@ namespace Domain.Models
             return duty;
         }
 
-        public void PopulateDynamicRelations(IFrontEndDbContext db)
+        public void PopulateDynamicRelations(DbContext genericContext)
         {
+            var db = genericContext as IFrontEndDbContext;
+            if (db is null) return;
             if (ScheduleSource == nameof(Chore))
                 ScheduleSourceItem = db.Chores.Find(ScheduleSourceId)?.Name;
+            if (ScheduleSource == nameof(Event))
+                ScheduleSourceItem = db.Events.Find(ScheduleSourceId)?.Name;
+            if (ScheduleSource == nameof(Milestone))
+                ScheduleSourceItem = db.Milestones.Find(ScheduleSourceId)?.Name;
             if (Recipient == nameof(Livestock))
                 RecipientItem = db.Livestocks.Find(RecipientId)?.Name;
         }

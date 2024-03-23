@@ -43,7 +43,7 @@ select, input {
     place-items: center;
 }
 i {
-    text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);
+    /*text-shadow: -1px 0 var(--border-color), 0 1px var(--border-color), 1px 0 var(--border-color), 0 -1px var(--border-color);*/
 
     &.male {
         color: var(--masculine);
@@ -165,6 +165,11 @@ form {
         min-width: 50%;
         max-width: calc(100% - 1em);
         z-index: 100;
+
+        & > form {
+            max-height:80vh;
+            overflow:auto;
+        }
     }
 }
 .quickgrid[theme=microagmanager] {
@@ -211,35 +216,6 @@ form {
 
     & tr:nth-child(even) {
         background-color: var(--typography-primary-alternate-bg-color);
-    }
-}
-
-.AccountLayout {
-    max-width: 650px;
-    margin-inline: auto;
-
-    & form {
-        display: grid;
-        grid-gap: .5rem;
-        grid-template-columns: repeat( auto-fill, minmax(30ch, 1fr) );
-
-        & h1 {
-            grid-column: 1/-1;
-        }
-
-        & hr {
-            display: none;
-        }
-
-        & h2 {
-            grid-column: 1/-1;
-        }
-
-        & div:has(p) {
-            display: flex;
-            gap: 1em;
-            grid-column: 1/-1;
-        }
     }
 }
 
