@@ -27,7 +27,7 @@ namespace Domain.Abstracts
         }
         public abstract BaseModel Map(BaseModel model);
         public abstract BaseEntity Map(BaseEntity entity);
-        public object Clone()
+        public virtual object Clone()
         {
             return MemberwiseClone();
         }

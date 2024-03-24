@@ -1,5 +1,6 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
+using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
@@ -33,13 +34,19 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
+                        var notice = new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy, duty.ModifiedOn) });
                         if (duty.CompletedOn.HasValue)
                         { 
                             var command = await ScheduledDutyLogic.OnCompleted(context, request,duty);
-                            if(command is ICreateScheduledDuty)
-                                await _mediator.Send(command, cancellationToken);
+                            if (command is ICreateScheduledDuty)
+                            {
+                                var rescheduled=command.ScheduledDuty.Map(new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId)) as Domain.Entity.ScheduledDuty;
+                                context.ScheduledDuties.Add(rescheduled);
+                                await context.SaveChangesAsync(cancellationToken);
+                                notice.EntitiesModified.Add( new ModifiedEntity(rescheduled.Id.ToString(), rescheduled.GetType().Name, "Created", rescheduled.ModifiedBy, rescheduled.ModifiedOn));
+                            }
                         }
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy, duty.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(notice, cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Scheduled Duty"); }
                 }

@@ -1,5 +1,6 @@
 ﻿@using BackEnd.BusinessLogic.FarmLocation.LandPlots
 @using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using FrontEnd.Persistence
 @using MicroAgManager.Components.Shared
@@ -72,7 +73,7 @@
                 <ChildContent>
                     <InputSelect disabled="@(landPlot.FarmLocationId<=0)" @bind-Value="@landPlot.AreaUnitId">
                         <option value="">Select Units ...</option>
-                        @foreach (var unit in ApplicationState._dbContext.Units.Where(u => u.Category == UnitCategoryConstants.Area.Key))
+                        @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, new Dictionary<string, string>() { { UnitCategoryConstants.Area.Key, UnitCategoryConstants.Area.Value } }))
                         {
                             <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
                         }

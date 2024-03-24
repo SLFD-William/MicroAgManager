@@ -1,6 +1,7 @@
 ﻿@using BackEnd.BusinessLogic.Registration
 @using Domain.Constants
 @using Domain.Interfaces
+@using Domain.Logic
 @using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
@@ -42,7 +43,7 @@
             <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => registration.RecipientTypeId)">
                 <InputSelect @bind-Value="@registration.RecipientTypeId">
                     <option value="0">Select Recipient Type Instance ...</option>
-                    @foreach (var recipient in recipientTypeIds(appState.DbContext))
+                    @foreach (var recipient in RecipientLogic.RecipientTypeIds(appState.DbContext, registration.RecipientType))
                     {
                         <option value="@recipient.Key">@recipient.Value</option>
                     }
@@ -51,7 +52,7 @@
             <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => registration.RecipientId)">
                 <InputSelect @bind-Value="@registration.RecipientId">
                     <option value="0">Select Recipient Instance ...</option>
-                    @foreach (var recipient in recipientIds(appState.DbContext))
+                    @foreach (var recipient in RecipientLogic.RecipientIds(appState.DbContext, registration.RecipientType))
                     {
                         <option value="@recipient.Key">@recipient.Value</option>
                     }
@@ -75,10 +76,14 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private RegistrationModel registration;
+    private RegistrationModel original;
     protected override void OnInitialized()
     {
         registration = editContext.Model as RegistrationModel;
         if (registration is null) return;
+        original = registration.Clone() as RegistrationModel;
+        if (registration.RegistrationDate == DateTime.MinValue)
+            registration.RegistrationDate = DateTime.Now;
     }
     public async override Task<IHasRecipient> SubmitEditContext()
     {
@@ -92,6 +97,8 @@
 
         try
         {
+            if (original.RegistrationDate != registration.RegistrationDate)
+                registration.RegistrationDate = registration.RegistrationDate.Date + DateTime.Now.TimeOfDay;
             var creating = (registration.Id <= 0);
 
             var id = creating ?

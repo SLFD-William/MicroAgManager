@@ -1,6 +1,7 @@
 ﻿@using BackEnd.BusinessLogic.TreatmentRecord
 @using Domain.Constants
 @using Domain.Interfaces
+@using Domain.Logic
 @using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Components.Unit
@@ -48,7 +49,7 @@
             <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => treatmentRecord.RecipientTypeId)">
                 <InputSelect @bind-Value="@treatmentRecord.RecipientTypeId">
                     <option value="0">Select Recipient Type Instance ...</option>
-                    @foreach (var recipient in recipientTypeIds(appState.DbContext))
+                    @foreach (var recipient in RecipientLogic.RecipientTypeIds(appState.DbContext, treatmentRecord.RecipientType))
                     {
                         <option value="@recipient.Key">@recipient.Value</option>
                     }
@@ -57,7 +58,7 @@
             <ValidatedField Legend="Recipient" ValidationMessageFor="@(() => treatmentRecord.RecipientId)">
                 <InputSelect @bind-Value="@treatmentRecord.RecipientId">
                     <option value="0">Select Recipient Instance ...</option>
-                    @foreach (var recipient in recipientIds(appState.DbContext))
+                    @foreach (var recipient in RecipientLogic.RecipientIds(appState.DbContext, treatmentRecord.RecipientType))
                     {
                         <option value="@recipient.Key">@recipient.Value</option>
                     }
@@ -88,9 +89,9 @@
                 <ChildContent>
                 <InputSelect @bind-Value="@treatmentRecord.DosageUnitId">
                     <option value="0">Select Dose Unit ...</option>
-                    @foreach (var unit in appState.DbContext.Units.Where(u => UnitCategoryConstants.DosageUnits.ContainsKey(u.Category)).OrderBy(u => u.Category).ThenBy(u => u.Symbol))
+                    @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext,UnitCategoryConstants.DosageUnits))
                     {
-                        <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")"</option>
+                        <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")</option>
                     }
                 </InputSelect>
                 </ChildContent>
@@ -109,10 +110,18 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private TreatmentRecordModel? treatmentRecord;
+    private TreatmentRecordModel original;
     protected override void OnInitialized()
     {
         treatmentRecord = editContext.Model as TreatmentRecordModel;
         if (treatmentRecord is null) return;
+        treatmentRecord.AppliedMethod = treatmentRecord.Treatment.LabelMethod;
+        treatmentRecord.DosageAmount = treatmentRecord.Treatment.DosageAmount;
+        treatmentRecord.DosageUnitId = treatmentRecord.Treatment.DosageUnitId;
+
+        original = treatmentRecord.Clone() as TreatmentRecordModel;
+        if (treatmentRecord.DatePerformed == DateTime.MinValue)
+            treatmentRecord.DatePerformed = DateTime.Now;
         // Initialize other properties of treatmentRecord if needed
     }
     public async override Task<IHasRecipient> SubmitEditContext()
@@ -127,6 +136,8 @@
 
         try
         {
+            if (original.DatePerformed != treatmentRecord.DatePerformed)
+                treatmentRecord.DatePerformed = treatmentRecord.DatePerformed.Date + DateTime.Now.TimeOfDay;
             var creating = (treatmentRecord.Id <= 0);
 
             var id = creating ?

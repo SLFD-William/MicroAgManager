@@ -1,8 +1,5 @@
-﻿using Domain.Constants;
-using Domain.Interfaces;
-using FrontEnd.Persistence;
+﻿using Domain.Interfaces;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 
 namespace MicroAgManager.Components.Shared
 {
@@ -12,22 +9,6 @@ namespace MicroAgManager.Components.Shared
         [Parameter] public bool ShowUpdateCancel { get; set; } = true;
 
         public abstract Task<IHasRecipient> SubmitEditContext();
-        protected List<KeyValuePair<long, string>> recipientTypeIds(FrontEndDbContext db)
-        {
-            if (((IHasRecipient)editContext.Model).RecipientType == RecipientTypeConstants.LivestockAnimal) 
-                return db.LivestockAnimals.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-            if (((IHasRecipient)editContext.Model).RecipientType == RecipientTypeConstants.LivestockBreed)
-                return db.LivestockBreeds.Include(a=>a.Animal).OrderBy(a => a.Animal.Name).ThenBy(a=>a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-            return new List<KeyValuePair<long, string>>();
-        }
-        protected List<KeyValuePair<long, string>> recipientIds(FrontEndDbContext db)
-        {
-            if(((IHasRecipient)editContext.Model).RecipientType == RecipientTypeConstants.LivestockAnimal)
-                return db.Livestocks.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
-            if (((IHasRecipient)editContext.Model).RecipientType == RecipientTypeConstants.LivestockBreed)
-                return db.Livestocks.OrderBy(a => a.Name).Select(x => new KeyValuePair<long, string>(x.Id, x.Name)).ToList();
 
-            return new List<KeyValuePair<long, string>>();
-        }
     }
 }

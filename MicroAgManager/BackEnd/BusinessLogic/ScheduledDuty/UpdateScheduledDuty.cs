@@ -25,17 +25,24 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    var originalDuty = await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.ScheduledDuty.Id);
-                    var duty = request.ScheduledDuty.Map(originalDuty) as Domain.Entity.ScheduledDuty;
+                    var duty = await context.ScheduledDuties.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.ScheduledDuty.Id);
+                    var originalDuty = duty.Clone() as Domain.Entity.ScheduledDuty;
+                    request.ScheduledDuty.Map(duty);
                     duty.ModifiedBy = request.ModifiedBy;
                     await context.SaveChangesAsync(cancellationToken);
+                    var notice = new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy, duty.ModifiedOn) });
                     if (originalDuty.CompletedOn != duty.CompletedOn && duty.CompletedOn.HasValue)
-                    { 
+                    {
                         var command = await ScheduledDutyLogic.OnCompleted(context, request, duty);
                         if (command is ICreateScheduledDuty)
-                            await _mediator.Send(command, cancellationToken);
+                        {
+                            var rescheduled = command.ScheduledDuty.Map(new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId)) as Domain.Entity.ScheduledDuty;
+                            context.ScheduledDuties.Add(rescheduled);
+                            await context.SaveChangesAsync(cancellationToken);
+                            notice.EntitiesModified.Add(new ModifiedEntity(rescheduled.Id.ToString(), rescheduled.GetType().Name, "Created", rescheduled.ModifiedBy, rescheduled.ModifiedOn));
+                        }
                     }
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy, duty.ModifiedOn) }), cancellationToken);
+                    await _mediator.Publish(notice, cancellationToken);
                     return duty.Id;
                 }
             }

@@ -70,16 +70,16 @@ namespace Domain.Logic
             return null;
         }
        
-        public static IQueryable<BaseModel>? GetCommandRecordPerformedAfter(DbContext genericContext, IDuty? duty,DateTime startDate)
+        public static IQueryable<BaseModel>? GetCommandRecordPerformedAfter(DbContext genericContext, IDuty? duty,DateTime startDate, long recipientId)
         {
             if (!(duty is IDuty)) return null;
             var context = genericContext as IFrontEndDbContext;
             if (context is null) return null; if (duty.Command == DutyCommandConstants.Treatment)
-                return context.TreatmentRecords.Where(t=>t.DatePerformed>=startDate).AsQueryable();
+                return context.TreatmentRecords.Where(t=>t.DatePerformed>=startDate && t.RecipientId==recipientId && t.RecipientType==duty.RecipientType).AsQueryable();
             if (duty.Command == DutyCommandConstants.Measurement)
-                return context.Measurements.Where(t => t.DatePerformed >= startDate).AsQueryable();
+                return context.Measurements.Where(t => t.DatePerformed >= startDate && t.RecipientId == recipientId && t.RecipientType == duty.RecipientType).AsQueryable();
             if (duty.Command == DutyCommandConstants.Registration)
-                return context.Registrations.Where(t => t.RegistrationDate >= startDate).AsQueryable();
+                return context.Registrations.Where(t => t.RegistrationDate >= startDate && t.RecipientId == recipientId && t.RecipientType == duty.RecipientType).AsQueryable();
             return null;
         }
         

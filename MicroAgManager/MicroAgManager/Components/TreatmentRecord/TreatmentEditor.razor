@@ -1,5 +1,6 @@
 ﻿@using BackEnd.BusinessLogic.Treatment
 @using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Components.Unit
@@ -49,9 +50,9 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@treatment.DosageUnitId">
                         <option value="0">Select Dose Unit ...</option>
-                        @foreach (var unit in appState.DbContext.Units.Where(u => UnitCategoryConstants.DosageUnits.ContainsKey(u.Category)).OrderBy(u => u.Category).ThenBy(u => u.Symbol))
+                    @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, UnitCategoryConstants.DosageUnits))
                         {
-                            <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")"</option>
+                            <option value="@unit.Id">@($"{unit.Category} {unit.Symbol}")</option>
                         }
                     </InputSelect>
                 </ChildContent>
@@ -69,7 +70,7 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@(treatment.RecipientMassUnitId)">
                         <option value="">Select Mass Unit ...</option>
-                        @foreach (var unit in appState.DbContext.Units.Where(u => u.Category == UnitCategoryConstants.Mass.Key).OrderBy(u => u.Name))
+                        @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, new Dictionary<string, string>() { { UnitCategoryConstants.Mass.Key, UnitCategoryConstants.Mass.Value } }))
                         {
                             <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
                         }
@@ -82,27 +83,47 @@
             <ValidatedField Legend="Milk Withdrawal (Days)" ValidationMessageFor="@(() => treatment.MilkWithdrawal)">
                 <InputNumber @bind-Value="@(treatment.MilkWithdrawal)" />
             </ValidatedField>
-        }
-        @* <ValidatedField Legend="Frequency" ValidationMessageFor="@(() => treatment.Frequency)">
-            <InputNumber @bind-Value="@(treatment.Frequency)" />
+        
+        <ValidatedField Legend="Per" ValidationMessageFor="@(() => treatment.PerScalar)">
+            <InputNumber @bind-Value="@(treatment.PerScalar)" />
         </ValidatedField>
-        <ValidatedField ValidationMessageFor="@(() => treatment.FrequencyUnitId)">
+        <ValidatedField ValidationMessageFor="@(() => treatment.PerUnitId)">
             <LegendContent>
                 <div style="display:inline-flex">
-                    <span>Frequency Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
-                    <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=@((e) => UnitSubmitted(e, nameof(treatment.FrequencyUnitId)))></UnitEditor>
+                    <span>Per Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=@((e) => UnitSubmitted(e, nameof(treatment.PerUnitId)))></UnitEditor>
                 </div>
             </LegendContent>
             <ChildContent>
-                <InputSelect @bind-Value="@(treatment.FrequencyUnitId)">
-                    <option value="">Select Frequency Unit ...</option>
-                    @foreach (var unit in appState.DbContext.Units.Where(u => u.Category == UnitCategoryConstants.Time.Key).OrderBy(u => u.Name))
+                    <InputSelect @bind-Value="@(treatment.PerUnitId)">
+                    <option value="">Select Per Unit ...</option>
+                    @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, new Dictionary<string, string>() { { UnitCategoryConstants.Time.Key, UnitCategoryConstants.Time.Value } }))
                     {
                         <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
                     }
                 </InputSelect>
             </ChildContent>
-        </ValidatedField> *@
+        </ValidatedField>
+            <ValidatedField Legend="Every" ValidationMessageFor="@(() => treatment.EveryScalar)">
+                <InputNumber @bind-Value="@(treatment.EveryScalar)" />
+            </ValidatedField>
+            <ValidatedField ValidationMessageFor="@(() => treatment.EveryUnitId)">
+                <LegendContent>
+                    <div style="display:inline-flex">
+                        <span>Every Units</span><button type="button" @onclick=ShowUnitEditor>+</button>
+                        <UnitEditor Modal=true Show=@showUnitModal editContext=unitEditContext OnCancel=UnitCanceled OnSubmit=@((e) => UnitSubmitted(e, nameof(treatment.EveryUnitId)))></UnitEditor>
+                    </div>
+                </LegendContent>
+                <ChildContent>
+                    <InputSelect @bind-Value="@(treatment.EveryUnitId)">
+                        <option value="">Select Every Unit ...</option>
+                        @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, new Dictionary<string, string>() { { UnitCategoryConstants.Time.Key, UnitCategoryConstants.Time.Value } }))
+                        {
+                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                        }
+                    </InputSelect>
+                </ChildContent>
+            </ValidatedField>
         <ValidatedField Legend="Duration" ValidationMessageFor="@(() => treatment.DurationScalar)">
             <InputNumber @bind-Value="@(treatment.DurationScalar)" />
         </ValidatedField>
@@ -116,13 +137,14 @@
             <ChildContent>
                 <InputSelect @bind-Value="@(treatment.DurationUnitId)">
                     <option value="">Select Duration Unit ...</option>
-                    @foreach (var unit in appState.DbContext.Units.Where(u => u.Category == UnitCategoryConstants.Time.Key).OrderBy(u => u.Name))
-                    {
-                        <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
-                    }
+                        @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, new Dictionary<string, string>() { { UnitCategoryConstants.Time.Key, UnitCategoryConstants.Time.Value } }))
+                        {
+                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                        }
                 </InputSelect>
             </ChildContent>
         </ValidatedField>
+        }
     </ValidatedForm>
 }
 
@@ -140,6 +162,18 @@
 
     private async Task OnTreatmentSubmit(EditContext editContext)
     {
+        if (TreatmentConstants.NonWithdrawalTreatments.Contains(treatment.LabelMethod))
+        {
+            var unit = appState.DbContext.Units.Where(u => u.Category == UnitCategoryConstants.Time.Key).First();
+            treatment.DurationScalar=1;
+            treatment.DurationUnitId = unit.Id;
+            treatment.EveryScalar=1;
+            treatment.EveryUnitId=unit.Id;
+            treatment.PerScalar=1;
+            treatment.PerUnitId = unit.Id;
+            editContext = new EditContext(treatment);
+        }
+        
         if (!editContext.Validate()) return;
 
         try
@@ -176,6 +210,7 @@
     private EditContext unitEditContext = new EditContext(new UnitModel());
     private void ShowUnitEditor()
     {
+        unitEditContext = new EditContext(new UnitModel());
         showUnitModal = true;
         StateHasChanged();
     }

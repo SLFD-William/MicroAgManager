@@ -14,11 +14,13 @@
     [Parameter] public string Legend { get; set; } = "Snooze Until";
     [Parameter] public EventCallback<DateTime> Submitted { get; set; }
     [Parameter] public EventCallback Cancelled { get; set; }
-    private DateTime? _SuggestedTime = null;
-    [Parameter] public DateTime? SuggestedTime { get => _SuggestedTime; set { _SuggestedTime = value; SetTime = value; } }
     [Parameter] public bool Show { get; set; }
     private DateTime? SetTime { get; set; }
-
+    public void SetSuggestedTime(DateTime time)
+    {
+        SetTime = time;
+        StateHasChanged();
+    }
     private async Task Cancel()
     {
         SetTime = null;

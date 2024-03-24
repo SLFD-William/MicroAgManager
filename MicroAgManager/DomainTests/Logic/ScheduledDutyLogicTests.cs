@@ -1,7 +1,7 @@
 ﻿    using Domain.Constants;
-    using Domain.Models;
-    using DomainTests;
-    using Microsoft.EntityFrameworkCore;
+using Domain.Models;
+using DomainTests;
+using Microsoft.EntityFrameworkCore;
 
     namespace Domain.Logic.Tests
     {
@@ -602,13 +602,16 @@
                 eventModel.StartDate= DateTime.Today;
                 duty.Command = DutyCommandConstants.Treatment;
                 duty.CommandId = treatment.Id;
-                context.TreatmentRecords.Add(new TreatmentRecordModel
-                {
-                    DatePerformed= DateTime.Today + TimeSpan.FromHours(9),
-                    TreatmentId=treatment.Id,
-                    RecipientType="LivestockAnimal",
-                    RecipientTypeId=1
-                });
+                duty.RecipientType = "LivestockAnimal";
+                duty.RecipientTypeId = 1;
+            context.TreatmentRecords.Add(new TreatmentRecordModel
+            {
+                DatePerformed = DateTime.Today + TimeSpan.FromHours(9),
+                TreatmentId = treatment.Id,
+                RecipientType = "LivestockAnimal",
+                RecipientTypeId = 1,
+                RecipientId = 1
+            }); ;
 
                 context.ScheduledDuties.Add(new ScheduledDutyModel
                 {
@@ -657,13 +660,14 @@
                 duty.Command = DutyCommandConstants.Treatment;
                 duty.CommandId = treatment.Id;
                 context.SaveChanges();
-                var scheduledDuty = new ScheduledDutyModel
-                {
-                    Id = 1,
-                    ScheduleSourceId = eventModel.Id,
-                    ScheduleSource = ScheduledDutySourceConstants.Event,
-                    DutyId = duty.Id,
-                    CompletedOn = completedOn
+            var scheduledDuty = new ScheduledDutyModel
+            {
+                Id = 1,
+                ScheduleSourceId = eventModel.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Event,
+                DutyId = duty.Id,
+                CompletedOn = completedOn,
+                RecipientId = 1
                 };
 
                 // Act
@@ -688,13 +692,16 @@
                 eventModel.StartDate=completedOn;
                 duty.Command = DutyCommandConstants.Treatment;
                 duty.CommandId = treatment.Id;
-                context.TreatmentRecords.Add(new TreatmentRecordModel
+            duty.RecipientType = "LivestockAnimal";
+            duty.RecipientTypeId = 1;
+            context.TreatmentRecords.Add(new TreatmentRecordModel
                 {
                     DatePerformed = completedOn,
                     TreatmentId = treatment.Id,
-                    RecipientType = "LivestockAnimal",
-                    RecipientTypeId = 1
-                });
+                RecipientType = "LivestockAnimal",
+                RecipientTypeId = 1,
+                RecipientId = 1
+            });
 
                 context.ScheduledDuties.Add(new ScheduledDutyModel
                 {
@@ -775,13 +782,16 @@
                 eventModel.StartDate = completedOn;
                 duty.Command = DutyCommandConstants.Treatment;
                 duty.CommandId = treatment.Id;
-                context.TreatmentRecords.Add(new TreatmentRecordModel
+            duty.RecipientType = "LivestockAnimal";
+            duty.RecipientTypeId = 1;
+            context.TreatmentRecords.Add(new TreatmentRecordModel
                 {
                     DatePerformed = completedOn,
                     TreatmentId = treatment.Id,
-                    RecipientType = "LivestockAnimal",
-                    RecipientTypeId = 1
-                });
+                RecipientType = "LivestockAnimal",
+                RecipientTypeId = 1,
+                RecipientId = 1
+            });
 
                 context.ScheduledDuties.Add(new ScheduledDutyModel
                 {
@@ -902,13 +912,16 @@
                 eventModel.StartDate = completedOn;
                 duty.Command = DutyCommandConstants.Treatment;
                 duty.CommandId = treatment.Id;
-                context.TreatmentRecords.Add(new TreatmentRecordModel
+            duty.RecipientType = "LivestockAnimal";
+            duty.RecipientTypeId = 1;
+            context.TreatmentRecords.Add(new TreatmentRecordModel
                 {
                     DatePerformed = completedOn,
                     TreatmentId = treatment.Id,
-                    RecipientType = "LivestockAnimal",
-                    RecipientTypeId = 1
-                });
+                RecipientType = "LivestockAnimal",
+                RecipientTypeId = 1,
+                RecipientId = 1
+            });
 
                 context.ScheduledDuties.Add(new ScheduledDutyModel
                 {
@@ -926,7 +939,8 @@
                     DatePerformed = completedOn + TimeSpan.FromHours(8),
                     TreatmentId = treatment.Id,
                     RecipientType = "LivestockAnimal",
-                    RecipientTypeId = 1
+                    RecipientTypeId = 1,
+                    RecipientId = 1
                 });
 
                 context.ScheduledDuties.Add(new ScheduledDutyModel
@@ -945,7 +959,8 @@
                     DatePerformed = completedOn.AddDays(2),
                     TreatmentId = treatment.Id,
                     RecipientType = "LivestockAnimal",
-                    RecipientTypeId = 1
+                    RecipientTypeId = 1,
+                    RecipientId = 1
                 });
                 context.ScheduledDuties.Add(new ScheduledDutyModel
                 {
@@ -976,5 +991,66 @@
                 // Assert
                 Assert.IsNull(result);
             }
+        [TestMethod()]
+        public async Task OpenScheduledDutyQueryTest_MultipleDuties()
+        {
+            // Arrange
+            var completedOn = DateTime.Today;
+
+            var context = new TestFrontEndDbContext().CreateContext();
+            var treatment = await context.Treatments.FirstAsync();
+            treatment.PerScalar = 2;
+            treatment.EveryScalar = 2;
+            treatment.DurationScalar = 2;
+            var duty = await context.Duties.FirstAsync();
+            var eventModel = await context.Events.FirstAsync();
+            eventModel.StartDate = completedOn;
+            duty.Command = DutyCommandConstants.Treatment;
+            duty.CommandId = treatment.Id;
+
+
+            context.ScheduledDuties.Add(new ScheduledDutyModel { CompletedOn = completedOn,
+                ScheduleSourceId = eventModel.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Event,
+                DutyId = duty.Id,
+                Record = "TreatmentRecord",
+                RecipientId = 1,
+                Recipient = "Livestock",
+            });
+            context.ScheduledDuties.Add(new ScheduledDutyModel { CompletedOn = null,
+                ScheduleSourceId = eventModel.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Event,
+                DutyId = duty.Id,
+                Record = "TreatmentRecord",
+                RecipientId = 1,
+                Recipient = "Livestock",
+            });
+            context.ScheduledDuties.Add(new ScheduledDutyModel { CompletedOn = completedOn,
+                ScheduleSourceId = eventModel.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Event,
+                DutyId = duty.Id,
+                Record = "TreatmentRecord",
+                RecipientId = 1,
+                Recipient = "Livestock",
+            });
+            context.ScheduledDuties.Add(new ScheduledDutyModel { CompletedOn = null,
+                ScheduleSourceId = eventModel.Id,
+                ScheduleSource = ScheduledDutySourceConstants.Event,
+                DutyId = duty.Id,
+                Record = "TreatmentRecord",
+                RecipientId = 1,
+                Recipient = "Livestock",
+            });
+            context.SaveChanges();
+
+
+            // Act
+            var result = ScheduledDutyLogic.OpenScheduledDutyQuery(context as DbContext);
+
+            // Assert
+            Assert.AreEqual(2, result.Count());
+
         }
     }
+
+}

@@ -1,4 +1,5 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -17,13 +18,16 @@
             @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
         </ChildContent>
     </TemplateColumn>
-    @* <PropertyColumn Property="@(p => p.Measure.Unit.Name)" Title="Measure Unit" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="measureUnitFilter" @bind:event="oninput" placeholder="Unit..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn> *@
+    <TemplateColumn Title="Measure Unit" Context="measurement">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions>*@
+        <ChildContent>
+            @UnitLogic.UnitName(appState.DbContext, measurement.Measure.UnitId)
+        </ChildContent>
+    </TemplateColumn>
     @if (ShowRecipientType)
     {
         <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
@@ -40,7 +44,7 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @HasRecipientHelper.RecipientTypeName(appState.DbContext, measurement.RecipientType, measurement.RecipientTypeId)
+                @RecipientLogic.RecipientTypeName(appState.DbContext, measurement.RecipientType, measurement.RecipientTypeId)
             </ChildContent> 
         </TemplateColumn>
     }
@@ -53,24 +57,20 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @HasRecipientHelper.RecipientName(appState.DbContext, measurement.RecipientType, measurement.RecipientId)
+                @RecipientLogic.RecipientName(appState.DbContext, measurement.RecipientType, measurement.RecipientId)
             </ChildContent>
         </TemplateColumn>
     }
-    <PropertyColumn Property="@(p => p.Value)" Title="Value" Sortable="true">
+    <TemplateColumn Title="Measured Value" Context="measurement">
         @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="measurementValueFilter" @bind:event="oninput" placeholder="Value..." />
-            </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    @* <PropertyColumn Property="@(p => p.MeasurementUnit.Name)" Title="Measurement Unit" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="measurementUnitFilter" @bind:event="oninput" placeholder="Measurement  Unit..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn> *@
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions>*@
+        <ChildContent>
+            @($"{measurement.Value} {UnitLogic.UnitName(appState.DbContext, measurement.MeasurementUnitId)}")
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
         @* <ColumnOptions>
         <div class="search-box">

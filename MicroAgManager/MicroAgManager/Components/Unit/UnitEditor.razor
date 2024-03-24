@@ -53,6 +53,8 @@
     }
     private async Task OnUnitSubmit(EditContext editContext)
     {
+
+        editContext = new EditContext(unit);
         if (!editContext.Validate()) return;
         try
         {

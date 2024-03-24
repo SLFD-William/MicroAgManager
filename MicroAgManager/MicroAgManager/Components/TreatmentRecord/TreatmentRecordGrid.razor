@@ -1,4 +1,5 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -45,7 +46,7 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @HasRecipientHelper.RecipientTypeName(appState.DbContext, treatment.RecipientType, treatment.RecipientTypeId)
+                @RecipientLogic.RecipientTypeName(appState.DbContext, treatment.RecipientType, treatment.RecipientTypeId)
             </ChildContent>
         </TemplateColumn>
     }
@@ -58,7 +59,7 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @HasRecipientHelper.RecipientName(appState.DbContext, treatment.RecipientType, treatment.RecipientId)
+                @RecipientLogic.RecipientName(appState.DbContext, treatment.RecipientType, treatment.RecipientId)
             </ChildContent>
         </TemplateColumn>
     }
@@ -69,34 +70,27 @@
             </div>
         </ColumnOptions> *@
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.DosageAmount)" Title="Dosage Amount" Sortable="true">
+    <TemplateColumn Title="Dosage" Context="treatment">
         @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="dosageAmountFilter" @bind:event="oninput" placeholder="Dosage Amount..." />
-            </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.DosageUnitId)" Title="Dosage Unit" Sortable="true">
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions>*@
+        <ChildContent>
+            @($"{treatment.Treatment.DosageAmount} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.DosageUnitId)}")
+         </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Mass" Context="treatment">
         @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="dosageUnitFilter" @bind:event="oninput" placeholder="Dosage Unit..." />
-            </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.RecipientMass)" Title="Recipient Mass" Sortable="true">
-       @*  <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="recipientMassFilter" @bind:event="oninput" placeholder="Recipient Mass..." />
-            </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.RecipientMassUnitId)" Title="Recipient Mass Unit" Sortable="true">
-        @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="recipientMassUnitFilter" @bind:event="oninput" placeholder="Recipient Mass Unit..." />
-            </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions>*@
+        <ChildContent>
+            @($"{treatment.Treatment.RecipientMass} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.RecipientMassUnitId)}")
+            @UnitLogic.UnitName(appState.DbContext, treatment.Treatment.RecipientMassUnitId)
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.Treatment.MeatWithdrawal)" Title="Meat Withdrawal" Sortable="true">
         @* <ColumnOptions>
             <div class="search-box">
@@ -111,34 +105,37 @@
             </div>
         </ColumnOptions> *@
     </PropertyColumn>
-    @* <PropertyColumn Property="@(p => p.Treatment.Frequency)" Title="Frequency" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="frequencyFilter" @bind:event="oninput" placeholder="Frequency..." />
-            </div>
-        </ColumnOptions>
-    </PropertyColumn> 
-    <PropertyColumn Property="@(p => p.Treatment.FrequencyUnitId)" Title="Frequency Unit" Sortable="true">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="frequencyUnitFilter" @bind:event="oninput" placeholder="Frequency Unit..." />
-            </div>
-        </ColumnOptions> 
-    </PropertyColumn> *@
-    <PropertyColumn Property="@(p => p.Treatment.DurationScalar)" Title="Duration" Sortable="true">
-       @*  <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="durationFilter" @bind:event="oninput" placeholder="Duration..." />
-            </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.DurationUnitId)" Title="Duration Unit" Sortable="true">
+    <TemplateColumn Title="Per" Context="treatment">
         @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions>*@
+        <ChildContent>
+            @($"{treatment.Treatment.PerScalar} per {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.PerUnitId)}")
+        </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Every" Context="treatment">
+        @* <ColumnOptions>
+           <div class="search-box">
+            <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
             </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
+        </ColumnOptions>*@
+
+        <ChildContent>
+            @($"every {treatment.Treatment.EveryScalar} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.EveryUnitId)}")
+        </ChildContent>
+    </TemplateColumn>
+    <TemplateColumn Title="Duration" Context="treatment">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
+        </div>
+        </ColumnOptions>*@
+        <ChildContent>
+            @($"for {treatment.Treatment.DurationScalar} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.DurationUnitId)}")
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.AppliedMethod)" Title="Applied Method" Sortable="true">
         @* <ColumnOptions>
         <div class="search-box">
@@ -146,20 +143,16 @@
         </div>
         </ColumnOptions> *@
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.DosageAmount)" Title="Applied Dosage Amount" Sortable="true">
+    <TemplateColumn Title="Applied Dosage" Context="treatment">
         @* <ColumnOptions>
         <div class="search-box">
-        <input type="search" autofocus @bind="dosageAmountFilter" @bind:event="oninput" placeholder="Dosage Amount..." />
+        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
         </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
-    <PropertyColumn Property="@(p => p.DosageUnitId)" Title="Applied Dosage Unit" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="dosageUnitFilter" @bind:event="oninput" placeholder="Dosage Unit..." />
-        </div>
-        </ColumnOptions> *@
-    </PropertyColumn>
+        </ColumnOptions>*@
+        <ChildContent>
+            @($"{treatment.DosageAmount} {UnitLogic.UnitName(appState.DbContext, treatment.DosageUnitId)}")
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
         @* <ColumnOptions>
         <div class="search-box">

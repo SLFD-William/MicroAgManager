@@ -1,6 +1,7 @@
 ﻿@using BackEnd.BusinessLogic.Duty
 @using Domain
 @using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using MicroAgManager.Components.Measurement
 @using MicroAgManager.Components.Registration
@@ -188,7 +189,7 @@
         return new List<KeyValuePair<long, string>>();
     }
     private List<KeyValuePair<long, string>> recipientTypeIds()
-    => HasRecipientHelper.RecipientTypeIds(appState.DbContext, duty.RecipientType);
+    => RecipientLogic.RecipientTypeIds(appState.DbContext, duty.RecipientType);
     
     private string commandLabel()
     {

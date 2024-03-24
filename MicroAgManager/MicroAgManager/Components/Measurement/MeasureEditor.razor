@@ -1,5 +1,6 @@
 ﻿@using BackEnd.BusinessLogic.Measure
 @using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Components.Unit
@@ -35,10 +36,10 @@
                 <ChildContent>
                 <InputSelect @bind-Value="@measure.UnitId">
                         <option value="">Select Units ...</option>
-                        @foreach (var unit in ApplicationState._dbContext.Units.OrderBy(u=>u.Category).ThenBy(u=>u.Name))
-                        {
-                            <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
-                        }
+                    @foreach (var unit in UnitLogic.UnitSelections(appState.DbContext, null))
+                    {
+                        <option value="@unit.Id">@($"{unit.Name} ({unit.Symbol})")</option>
+                    }
                     </InputSelect>
                 </ChildContent>
             </ValidatedField>

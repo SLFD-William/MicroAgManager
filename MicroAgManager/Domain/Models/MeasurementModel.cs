@@ -16,7 +16,7 @@ namespace Domain.Models
         [Required][ForeignKey("MeasurementUnit")] public long MeasurementUnitId { get; set; }
         public virtual UnitModel MeasurementUnit { get; set; }
         public string? Notes { get; set; }
-        [Required] public DateTime DatePerformed { get; set; }
+        [Required] public DateTime DatePerformed { get; set; } = DateTime.MinValue;
         public long RecipientTypeId { get; set; }
         public string RecipientType { get; set; }
         public long RecipientId { get; set; }
@@ -66,5 +66,6 @@ namespace Domain.Models
             ((MeasurementModel)measurement).RecipientType = RecipientType;
             return measurement;
         }
+        
     }
 }

@@ -12,7 +12,7 @@ namespace Domain.Models
         public virtual RegistrarModel Registrar { get; set; }
         [Required][MaxLength(40)] public string Identifier { get; set; }
         [Required] public bool DefaultIdentification { get; set; } = false;
-        [Required] public DateTime RegistrationDate { get; set; }
+        [Required] public DateTime RegistrationDate { get; set; } = DateTime.MinValue;
         public long RecipientTypeId { get; set; }
         public string RecipientType { get; set; }
         public long RecipientId { get; set; }

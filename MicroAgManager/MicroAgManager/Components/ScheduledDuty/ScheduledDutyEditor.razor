@@ -66,11 +66,11 @@
         <SecondaryContent>
             <section style="display:flex;grid-column:1/-1;width:100%;">
             <button type="button" @onclick="@(()=>OnScheduledDutySubmit(editContext))">@(scheduledDuty.Id <= 0 ? "Create" : "Update")</button>
-                <TimePrompt @ref=_rescheduleEditor Legend="@($"Reschedule {scheduledDuty.Duty.Name}")" Show=showReschedule Cancelled="RescheduleCancel" Submitted="RescheduleSubmitted" SuggestedTime="newDue"></TimePrompt>
+                <TimePrompt @ref=_rescheduleEditor Legend="@($"Reschedule {scheduledDuty.Duty.Name}")" Show=showReschedule Cancelled="RescheduleCancel" Submitted="RescheduleSubmitted" ></TimePrompt>
             @if(scheduledDuty.Id > 0 && !scheduledDuty.CompletedOn.HasValue)
             {
                   <button type="button" @onclick="Snooze">@SnoozeLabel()</button>
-                    <TimePrompt @ref=_snoozeEditor Show=showSnooze Cancelled="SnoozeCancel" Submitted="SnoozeSubmitted" SuggestedTime="SuggestedSnooze"></TimePrompt>
+                    <TimePrompt @ref=_snoozeEditor Show=showSnooze Cancelled="SnoozeCancel" Submitted="SnoozeSubmitted" ></TimePrompt>
                     <button type="button" @onclick="Dismiss">Dismiss</button>
                     <ConfirmationYesNo Prompt="Are you sure you want to Dismiss this Duty?" Show=showDismiss Cancelled="DismissCancel" Submitted="DismissedConfirmed"></ConfirmationYesNo>
             }

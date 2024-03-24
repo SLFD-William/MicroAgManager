@@ -122,7 +122,7 @@ namespace MicroAgManager.Components.ScheduledDuty
             {
                 scheduledDuty.Record = ((BaseModel)recordModel).GetEntityName();
                 scheduledDuty.RecordId = ((BaseModel)recordModel).Id;
-                scheduledDuty.RecipientId = ((IHasRecipient)recordModel).RecipientId;
+                scheduledDuty.RecipientId = recordModel.RecipientId;
             }
 
 
@@ -187,10 +187,14 @@ namespace MicroAgManager.Components.ScheduledDuty
         }
         private async Task<bool> RescheduleIsNeeded()
         {
-            showReschedule = (scheduledDuty?.Duty is IHasFrequencyAndDuration || scheduledDuty?.ScheduleSource == ScheduledDutySourceConstants.Chore);
-            if (!showReschedule) return showReschedule;
-            _rescheduleEditor.SuggestedTime =await GetNextScheduledDutyDueDate();
-            return _rescheduleEditor.SuggestedTime.HasValue;
+            var command = await DutyLogic.GetCommandItem(appState.DbContext, scheduledDuty?.Duty);
+            var show= command is IHasFrequencyAndDuration || scheduledDuty?.ScheduleSource == ScheduledDutySourceConstants.Chore;
+            if (!show) return show;
+            newDue = await GetNextScheduledDutyDueDate();
+            if(newDue.HasValue)
+                _rescheduleEditor.SetSuggestedTime(newDue.Value);
+            showReschedule = newDue.HasValue;
+            return showReschedule;
         }
         private async Task< DateTime?> GetNextScheduledDutyDueDate()
         {
@@ -206,28 +210,6 @@ namespace MicroAgManager.Components.ScheduledDuty
         private TimePrompt? _snoozeEditor;
         private void Snooze() => showSnooze = true;
         private void SnoozeCancel() => showSnooze = false;
-
-        private async Task SetSuggestedSnooze()
-        {
-            var snoozeTime = DateTime.Today;
-            if (_recordType == typeof(BreedingRecordEditor))
-            {
-                var breedingRecord = await appState.DbContext.BreedingRecords.FindAsync(scheduledDuty?.RecordId);
-                if (breedingRecord is not null)
-                {
-                    var animal = await appState.DbContext.Livestocks
-                        .Include(p => p.Breed)
-                        .FirstOrDefaultAsync(i => i.Id == breedingRecord.FemaleId);
-                    double.TryParse(animal?.Breed?.GestationPeriod.ToString(), out var days);
-                    snoozeTime = breedingRecord.ServiceDate.AddDays(days);
-
-                }
-            }
-            if (snoozeTime <= DateTime.Today) return;
-            _snoozeEditor.SuggestedTime = snoozeTime;
-            SuggestedSnooze = snoozeTime;
-            StateHasChanged();
-        }
 
         private string SnoozeLabel() => SuggestedSnooze.HasValue ? $"Snooze until {SuggestedSnooze.Value.ToShortDateString()}" : "Snooze";
         public DateTime? SuggestedSnooze { get; private set; }
@@ -434,7 +416,6 @@ namespace MicroAgManager.Components.ScheduledDuty
                     {
                         ((RegistrationModel)model).RegistrarId = scheduledDuty.Duty.CommandId;
                         ((RegistrationModel)model).Registrar = appState.DbContext.Registrars.Find(scheduledDuty.Duty.CommandId);
-                        ((RegistrationModel)model).RegistrationDate = DateTime.Today;
                     }
                     _recordType = typeof(RegistrationEditor);
                     break;
@@ -445,7 +426,6 @@ namespace MicroAgManager.Components.ScheduledDuty
                     {
                         ((MeasurementModel)model).MeasureId = scheduledDuty.Duty.CommandId;
                         ((MeasurementModel)model).Measure = appState.DbContext.Measures.Find(scheduledDuty.Duty.CommandId);
-                        ((MeasurementModel)model).DatePerformed = DateTime.Today;
                     }
                     _recordType = typeof(MeasurementEditor);
                     break;
@@ -473,7 +453,6 @@ namespace MicroAgManager.Components.ScheduledDuty
                     {
                         ((TreatmentRecordModel)model).TreatmentId = scheduledDuty.Duty.CommandId;
                         ((TreatmentRecordModel)model).Treatment = appState.DbContext.Treatments.Find(scheduledDuty.Duty.CommandId);
-                        ((TreatmentRecordModel)model).DatePerformed = DateTime.Today;
                     }
                     _recordType = typeof(TreatmentRecordEditor);
                     break;

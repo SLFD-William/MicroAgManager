@@ -4,12 +4,6 @@ using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Logic
 {
@@ -125,7 +119,7 @@ namespace Domain.Logic
             if (source is EventModel)
                 startDate = ((EventModel)source).StartDate;
 
-            var recordQuery = DutyLogic.GetCommandRecordPerformedAfter(context as DbContext, duty, startDate);
+            var recordQuery = DutyLogic.GetCommandRecordPerformedAfter(context as DbContext, duty, startDate,completedScheduledDuty.RecipientId);
             var completedRecords = await recordQuery?.ToListAsync() ?? new List<BaseModel>();
 
             var completedDate = completedScheduledDuty.CompletedOn.Value;
@@ -173,7 +167,6 @@ namespace Domain.Logic
             };
 
         }
-
         public static IQueryable<ScheduledDutyModel> CommandDuties(DbContext genericContext, string command)
         {
             var context = genericContext as IFrontEndDbContext;

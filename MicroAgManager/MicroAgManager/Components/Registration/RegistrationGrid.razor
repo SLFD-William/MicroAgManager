@@ -1,4 +1,5 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -61,7 +62,7 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @HasRecipientHelper.RecipientTypeName(appState.DbContext, registration.RecipientType, registration.RecipientTypeId)
+                @RecipientLogic.RecipientTypeName(appState.DbContext, registration.RecipientType, registration.RecipientTypeId)
             </ChildContent>
         </TemplateColumn>
     }
@@ -74,7 +75,7 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @HasRecipientHelper.RecipientName(appState.DbContext, registration.RecipientType, registration.RecipientId)
+                @RecipientLogic.RecipientName(appState.DbContext, registration.RecipientType, registration.RecipientId)
             </ChildContent>
         </TemplateColumn>
     }

@@ -179,28 +179,26 @@ namespace MicroAgManager.Data
 
                     Console.WriteLine("Fetching Data From Server");
                     // Begin fetching any updates to the dataset from the backend server
-
-                    await Task.WhenAll(
-                        BulkUpdateEntities<TenantModel, GetTenantList>(entityModels, db, _api, "api/GetTenants"),
-                        BulkUpdateEntities<UnitModel, GetUnitList>(entityModels, db, _api, "api/GetUnits"),
-                        BulkUpdateEntities<MeasureModel, GetMeasureList>(entityModels, db, _api, "api/GetMeasures"),
-                        BulkUpdateEntities<TreatmentModel, GetTreatmentList>(entityModels, db, _api, "api/GetTreatments"),
-                        BulkUpdateEntities<RegistrarModel, GetRegistrarList>(entityModels, db, _api, "api/GetRegistrars"),
-                        BulkUpdateEntities<FarmLocationModel, GetFarmList>(entityModels, db, _api, "api/GetFarms"),
-                        BulkUpdateEntities<LandPlotModel, GetLandPlotList>(entityModels, db, _api, "api/GetLandPlots"),
-                        BulkUpdateEntities<LivestockAnimalModel, GetLivestockAnimalList>(entityModels, db, _api, "api/GetLivestockAnimals"),
-                        BulkUpdateEntities<LivestockBreedModel, GetLivestockBreedList>(entityModels, db, _api, "api/GetLivestockBreeds"),
-                        BulkUpdateEntities<LivestockStatusModel, GetLivestockStatusList>(entityModels, db, _api, "api/GetLivestockStatuses"),
-                        BulkUpdateEntities<LivestockModel, GetLivestockList>(entityModels, db, _api, "api/GetLivestocks"),
-                        BulkUpdateEntities<MilestoneModel, GetMilestoneList>(entityModels, db, _api, "api/GetMilestones"),
-                        BulkUpdateEntities<DutyModel, GetDutyList>(entityModels, db, _api, "api/GetDuties"),
-                        BulkUpdateEntities<EventModel, GetEventList>(entityModels, db, _api, "api/GetEvents"),
-                        BulkUpdateEntities<ChoreModel, GetChoreList>(entityModels, db, _api, "api/GetChores"),
-                        BulkUpdateEntities<BreedingRecordModel, GetBreedingRecordList>(entityModels, db, _api, "api/GetBreedingRecords"),
-                        BulkUpdateEntities<ScheduledDutyModel, GetScheduledDutyList>(entityModels, db, _api, "api/GetScheduledDuties"),
-                        BulkUpdateEntities<RegistrationModel, GetRegistrationList>(entityModels, db, _api, "api/GetRegistrations"),
-                        BulkUpdateEntities<MeasurementModel, GetMeasurementList>(entityModels, db, _api, "api/GetMeasurements"),
-                        BulkUpdateEntities<TreatmentRecordModel, GetTreatmentRecordList>(entityModels, db, _api, "api/GetTreatmentRecords"));
+                    await BulkUpdateEntities<TenantModel, GetTenantList>(entityModels, db, _api, "api/GetTenants");
+                    await BulkUpdateEntities<UnitModel, GetUnitList>(entityModels, db, _api, "api/GetUnits");
+                    await BulkUpdateEntities<MeasureModel, GetMeasureList>(entityModels, db, _api, "api/GetMeasures");
+                    await BulkUpdateEntities<TreatmentModel, GetTreatmentList>(entityModels, db, _api, "api/GetTreatments");
+                    await BulkUpdateEntities<RegistrarModel, GetRegistrarList>(entityModels, db, _api, "api/GetRegistrars");
+                    await BulkUpdateEntities<FarmLocationModel, GetFarmList>(entityModels, db, _api, "api/GetFarms");
+                    await BulkUpdateEntities<LandPlotModel, GetLandPlotList>(entityModels, db, _api, "api/GetLandPlots");
+                    await BulkUpdateEntities<LivestockAnimalModel, GetLivestockAnimalList>(entityModels, db, _api, "api/GetLivestockAnimals");
+                    await BulkUpdateEntities<LivestockBreedModel, GetLivestockBreedList>(entityModels, db, _api, "api/GetLivestockBreeds");
+                    await BulkUpdateEntities<LivestockStatusModel, GetLivestockStatusList>(entityModels, db, _api, "api/GetLivestockStatuses");
+                    await BulkUpdateEntities<LivestockModel, GetLivestockList>(entityModels, db, _api, "api/GetLivestocks");
+                    await BulkUpdateEntities<MilestoneModel, GetMilestoneList>(entityModels, db, _api, "api/GetMilestones");
+                    await BulkUpdateEntities<DutyModel, GetDutyList>(entityModels, db, _api, "api/GetDuties");
+                    await BulkUpdateEntities<EventModel, GetEventList>(entityModels, db, _api, "api/GetEvents");
+                    await BulkUpdateEntities<ChoreModel, GetChoreList>(entityModels, db, _api, "api/GetChores");
+                    await BulkUpdateEntities<BreedingRecordModel, GetBreedingRecordList>(entityModels, db, _api, "api/GetBreedingRecords");
+                    await BulkUpdateEntities<ScheduledDutyModel, GetScheduledDutyList>(entityModels, db, _api, "api/GetScheduledDuties");
+                    await BulkUpdateEntities<RegistrationModel, GetRegistrationList>(entityModels, db, _api, "api/GetRegistrations");
+                    await BulkUpdateEntities<MeasurementModel, GetMeasurementList>(entityModels, db, _api, "api/GetMeasurements");
+                    await BulkUpdateEntities<TreatmentRecordModel, GetTreatmentRecordList>(entityModels, db, _api, "api/GetTreatmentRecords");
 
 
                     db.ChangeTracker.AutoDetectChangesEnabled = false;

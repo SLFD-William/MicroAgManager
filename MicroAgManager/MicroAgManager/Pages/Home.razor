@@ -17,10 +17,10 @@
 }
 else 
 {
-    @if (!appState.DbContext.LandPlots.Any())
-    {
-            <FarmEditor Modal=true Show=true editContext=@(new EditContext(new FarmLocationModel())) OnCancel=StateHasChanged OnSubmit=StateHasChanged></FarmEditor>
-    }
+        @if (!appState.DbContext.LandPlots.Any())
+        {
+            <NavLink href="/Land?LandPlotId=-1">Create a Plot of Land</NavLink>
+        }
     else{
             <CascadingValue Value="@appState.DbContext.Farms.First()">
                 <FarmNameplate ShowAddress="true" ShowStreet="true" ShowCity="true" ShowState="true" ShowZip="true" ShowWeather="true" ShowEdit="true" ShowPlotUse="true">

@@ -89,6 +89,7 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private BreedingRecordModel? breedingRecord;
+    private BreedingRecordModel original;
     private BaseModel? recipientType;
     protected override void OnInitialized()
     {
@@ -124,6 +125,7 @@
                 maleQuery = maleQuery.Where(l => l.Breed.LivestockAnimalId == breedingRecord.RecipientTypeId);
             MaleSelections = maleQuery.Select(l => new Tuple<long, string>(l.Id, $"{l.Name}")).ToList();
         }
+        original = breedingRecord.Clone() as BreedingRecordModel;
         StateHasChanged();
     }
     public async override Task<IHasRecipient> SubmitEditContext()
@@ -137,6 +139,8 @@
 
         try
         {
+            if (original.ResolutionDate != breedingRecord.ResolutionDate && breedingRecord.ResolutionDate.HasValue)
+                breedingRecord.ResolutionDate = breedingRecord.ResolutionDate.Value.Date + DateTime.Now.TimeOfDay;
             var creating = (breedingRecord.Id <= 0);
 
             var id = creating ?
