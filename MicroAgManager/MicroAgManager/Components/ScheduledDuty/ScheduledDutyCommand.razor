@@ -1,4 +1,5 @@
 ﻿@using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using MicroAgManager.Components.Measurement
 @using MicroAgManager.Data
@@ -7,7 +8,12 @@
 @using Microsoft.EntityFrameworkCore
 @inherits BaseEditor
 
-    <button type="button" @onclick=ShowDutyEditor>Do @Command</button>
+<button type="button" @onclick=ShowDutyEditor>
+    <span class="fa-stack">
+        <i class="fas fa-stack-1x @DutyLogic.GetCommandIcon(_scheduledDuty.Duty)"></i>
+    </span> 
+    <span>@Command</span>
+</button>
     @if (showDutyModal)
     {
     <ScheduledDutyEditor Modal=true Show=@showDutyModal editContext=dutyEditContext
@@ -22,7 +28,10 @@
     [Parameter] public Dictionary<string, long>? RecipientTypes { get; set; }
     [Parameter] public long RecipientId { get; set; }
     private ScheduledDutyModel _scheduledDuty;
-
+    protected override void OnInitialized()
+    {
+        _scheduledDuty = new() { RecipientId = RecipientId, Duty = new() { Command = Command } };
+    }
     private void InitializeScheduledDuty()
     {
         _scheduledDuty = new() { RecipientId = RecipientId, Duty = new() {Command = Command} };
@@ -48,7 +57,7 @@
     }
     private void DutyCanceled(object e)
     {
-        _scheduledDuty = new();
+        _scheduledDuty = new() { RecipientId = RecipientId, Duty = new() { Command = Command } };
         editContext = new EditContext(_scheduledDuty);
         showDutyModal = false;
         StateHasChanged();

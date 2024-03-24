@@ -35,7 +35,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                         await context.SaveChangesAsync(cancellationToken);
                         if (duty.CompletedOn.HasValue)
                         { 
-                            var command = await DutyLogic.OnScheduledDutyCompleted(context, request,duty);
+                            var command = await ScheduledDutyLogic.OnCompleted(context, request,duty);
                             if(command is ICreateScheduledDuty)
                                 await _mediator.Send(command, cancellationToken);
                         }

@@ -2,9 +2,9 @@
 {
     public static class RecipientTypeConstants
     {
-        public static string None { get; private set; } = "None";
-        public static string LivestockAnimal { get; private set; } = nameof(Entity.LivestockAnimal);
-        public static string LivestockBreed { get; private set; } = nameof(Entity.LivestockBreed);
+        public const string None  = "None";
+        public const string LivestockAnimal  = nameof(Entity.LivestockAnimal);
+        public const string LivestockBreed  = nameof(Entity.LivestockBreed);
 
     }
 }

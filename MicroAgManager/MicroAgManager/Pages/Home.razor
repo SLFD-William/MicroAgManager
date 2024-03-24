@@ -1,7 +1,9 @@
 ﻿@page "/Home"
 @using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using FrontEnd.Persistence
+@using MicroAgManager.Components.Farm
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
 @using MicroAgManager.Components.ScheduledDuty
@@ -17,17 +19,28 @@ else
 {
     @if (!appState.DbContext.LandPlots.Any())
     {
-        <NavLink href="/Land?LandPlotId=-1">Create a Plot of Land</NavLink>
+            <FarmEditor Modal=true Show=true editContext=@(new EditContext(new FarmLocationModel())) OnCancel=StateHasChanged OnSubmit=StateHasChanged></FarmEditor>
     }
     else{
-        @foreach (var command in DutyCommandConstants.AllCommands.OrderBy(x => x))
-        {
-            @if (appState.DbContext.ScheduledDuties.Include(s => s.Duty).Any(s => !s.CompletedOn.HasValue && s.Duty.Command == command))
+            <CascadingValue Value="@appState.DbContext.Farms.First()">
+                <FarmNameplate ShowAddress="true" ShowStreet="true" ShowCity="true" ShowState="true" ShowZip="true" ShowWeather="true" ShowEdit="true" ShowPlotUse="true">
+                    
+                </FarmNameplate>
+            </CascadingValue>
+            <section style="display:flex; gap:1rem;">
+            @foreach (var command in DutyCommandConstants.AllCommands.OrderBy(x => x))
             {
-                <span>@command Due</span>
-                <ScheduledDutyCarousel Items="@CommandDuties(command)"></ScheduledDutyCarousel>
+                <ScheduledDutyCommand Command="@command"></ScheduledDutyCommand>
             }
-        }
+            </section>
+            @foreach (var command in DutyCommandConstants.AllCommands.OrderBy(x => x))
+            {
+                @if (ScheduledDutyLogic.OpenScheduledDutyQuery(appState.DbContext).Any(s => s.Duty.Command == command))
+                {
+                    <span>@command Due</span>
+                    <ScheduledDutyCarousel Items="@ScheduledDutyLogic.CommandDuties(appState.DbContext,command)"></ScheduledDutyCarousel>
+                }
+            }
     }
 }
 </div>
@@ -46,7 +59,4 @@ else
         appState.OnDbInitialized -= appState_OnDbInitialized;
         appState.OnDbUpdate -= appState_OnDbUpdate;
     }
-    private IQueryable<ScheduledDutyModel> CommandDuties(string command)=> appState.DbContext.ScheduledDuties.Include(s => s.Duty)
-                                .Where(s => !s.CompletedOn.HasValue && s.Duty.Command == command);
-
 }

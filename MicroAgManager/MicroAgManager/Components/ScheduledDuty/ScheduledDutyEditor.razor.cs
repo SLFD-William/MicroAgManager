@@ -195,8 +195,8 @@ namespace MicroAgManager.Components.ScheduledDuty
         private async Task< DateTime?> GetNextScheduledDutyDueDate()
         {
             if (scheduledDuty?.ScheduleSource == ScheduledDutySourceConstants.Chore)
-                return await DutyLogic.GetNextChoreDueDate(appState.DbContext, scheduledDuty);
-            return await DutyLogic.GetNextFreqAndDurationDueDate(appState.DbContext, scheduledDuty);
+                return await ScheduledDutyLogic.GetNextChoreDueDate(appState.DbContext, scheduledDuty);
+            return await ScheduledDutyLogic.GetNextFreqAndDurationDueDate(appState.DbContext, scheduledDuty);
         }
 
 

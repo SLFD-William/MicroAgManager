@@ -2,13 +2,13 @@
 {
     public class TreatmentConstants
     {
-        public static string Grooming { get; private set; } = nameof(Grooming);
-        public static string Intramuscular { get; private set; } = nameof(Intramuscular);
-        public static string Intravenous { get; private set; } = nameof(Intravenous);
-        public static string Oral { get; private set; } = nameof(Oral);
-        public static string Subcutaneous { get; private set; } = nameof(Subcutaneous);
-        public static string Surgical { get; private set; } = nameof(Surgical);
-        public static string Topical { get; private set; } = nameof(Topical);
+        public const string Grooming  = nameof(Grooming);
+        public const string Intramuscular  = nameof(Intramuscular);
+        public const string Intravenous  = nameof(Intravenous);
+        public const string Oral  = nameof(Oral);
+        public const string Subcutaneous  = nameof(Subcutaneous);
+        public const string Surgical  = nameof(Surgical);
+        public const string Topical  = nameof(Topical);
         public static readonly List<string> MethodsByInvasiveness = new List<string>()
         {
             Grooming,

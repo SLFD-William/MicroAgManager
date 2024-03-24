@@ -2,59 +2,59 @@
 {
     public static class LivestockFeedTypeConstants
     {
-        public static string Hay = "Hay";
-        public static string Haylage = "Haylage";
-        public static string Silage = "Silage";
-        public static string Concentrate = "Concentrate";
-        public static string Supplement = "Supplement";
+        public const string Hay = "Hay";
+        public const string Haylage = "Haylage";
+        public const string Silage = "Silage";
+        public const string Concentrate = "Concentrate";
+        public const string Supplement = "Supplement";
     }
     public static class LivestockCareConstants
     {
-        public static string Individual = "Individual";
-        public static string Collective = "Collective";
+        public const string Individual = "Individual";
+        public const string Collective = "Collective";
     }
     public static class LivestockStatusModeConstants
     {
-        public static string Unchanged = "Unchanged";
-        public static string True = "True";
-        public static string False = "False";
+        public const string Unchanged = "Unchanged";
+        public const string True = "True";
+        public const string False = "False";
     }
     public static class LivestockFeedQuantityUnitsConstants
     {
-        public static string Pounds = "Pounds";
-        public static string Bales = "Bales";
+        public const string Pounds = "Pounds";
+        public const string Bales = "Bales";
     }
     public static class LivestockFeedDistributionConstants
     {
-        public static string FreeRange = "Free Range";
-        public static string Serving = "Serving";
+        public const string FreeRange = "Free Range";
+        public const string Serving = "Serving";
     }
     public static class LivestockFeedServingFrequenceConstants
     {
-        public static string NoServing = "No Serving";
-        public static string OnceADay = "One Serving Per Day";
-        public static string TwiceADay = "Two Servings Per Day";
+        public const string NoServing = "No Serving";
+        public const string OnceADay = "One Serving Per Day";
+        public const string TwiceADay = "Two Servings Per Day";
     }
     public static class LivestockFeedAnalysisParameterConstants
     {
-        public static string DryMatter = "Dry Matter";
-        public static string Protein = "Protein";
-        public static string Fibres = "Fibres";
-        public static string Energy = "Energy";
-        public static string Minerals = "Minerals";
-        public static string Calculation = "Calculation";
-        public static string Other = "Other";
+        public const string DryMatter = "Dry Matter";
+        public const string Protein = "Protein";
+        public const string Fibres = "Fibres";
+        public const string Energy = "Energy";
+        public const string Minerals = "Minerals";
+        public const string Calculation = "Calculation";
+        public const string Other = "Other";
     }
     public static class MilestoneSystemRequiredConstants
     { 
-        public static string Parturition = "Parturition";
-        public static string Birth = DutyCommandConstants.Birth;
-        public static string Death = "Death";
-        public static string Breed = DutyCommandConstants.Breed;
+        public const string Parturition = "Parturition";
+        public const string Birth = DutyCommandConstants.Birth;
+        public const string Death = "Death";
+        public const string Breed = DutyCommandConstants.Breed;
     }
     public static class BreedingResolutionConstants
     {
-        public static string Success = "Success";
-        public static string NotImpregnated = "Not Impregnated";
+        public const string Success = "Success";
+        public const string NotImpregnated = "Not Impregnated";
     }
 }

@@ -2,7 +2,7 @@
 {
     public static class MeasurementMethodConstants
     {
-        public static string Direct { get; private set; } = "Direct";
+        public const string Direct = "Direct";
     }
     public static class UnitCategoryConstants
     {

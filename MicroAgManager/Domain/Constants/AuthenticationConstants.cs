@@ -2,15 +2,15 @@
 {
     public static class AuthenticationConstants
     {
-        public static string LoginLocked { get; private set; } = "User is locked out";
-        public static string LoginUnauthorized { get; private set; } = "User is unauthorized";
-        public static string LoginInvalid { get; private set; } = "Login is Invalid";
-        public static string RegistrationUserExists { get; private set; } = "User already Exists";
-        public static string RegistrationFailed { get; private set; } = "User creation failed! Please check user details and try again.";
+        public const string LoginLocked  = "User is locked out";
+        public const string LoginUnauthorized  = "User is unauthorized";
+        public const string LoginInvalid  = "Login is Invalid";
+        public const string RegistrationUserExists  = "User already Exists";
+        public const string RegistrationFailed  = "User creation failed! Please check user details and try again.";
     }
     public static class TennantAccessLevelConstants
     { 
-        public static string Admin { get; private set; } = "Admin";
-        public static string SingleUser { get; private set; } = "Single User";
+        public const string Admin  = "Admin";
+        public const string SingleUser  = "Single User";
     }
 }

@@ -2,16 +2,16 @@
 {
     public static class DutyCommandConstants
     {
-        public static string Complete { get; private set; } = "Complete";
-        public static string Measurement { get; private set; } = "Measurement";
-        public static string Treatment { get; private set; } = "Treatment";
-        public static string Photograph { get; private set; } = "Photograph";
-        public static string Registration { get; private set; } = "Registration";
-        public static string Breed { get; private set; } = "Breed";
-        public static string Service { get; private set; } = "Service";
-        public static string Birth { get; private set; } = "Birth";
-        public static string Feed { get; private set; } = "Feed";
-        public static string Reap { get; private set; } = "Reap";
+        public const string Complete  = "Complete";
+        public const string Measurement = "Measurement";
+        public const string Treatment = "Treatment";
+        public const string Photograph = "Photograph";
+        public const string Registration = "Registration";
+        public const string Breed = "Breed";
+        public const string Service = "Service";
+        public const string Birth = "Birth";
+        public const string Feed = "Feed";
+        public const string Reap = "Reap";
         public static readonly List<string> NonRecordCommands = new List<string>()
         {
             Birth,Breed,Complete,Reap,Service
@@ -20,24 +20,28 @@
         {
             Birth,Breed,Complete,Reap,Service,Measurement,Treatment,Photograph,Registration
         };
+        public static readonly List<string> AvailableCommands = new List<string>()
+        {
+            Breed,Service,Measurement,Treatment,Registration
+        };
     }
     public static class DutyRelationshipConstants
     {
-        public static string Self { get; private set; } = "Self";
-        public static string Mother { get; private set; } = "Mother";
-        public static string Father { get; private set; } = "Father";
+        public const string Self = "Self";
+        public const string Mother  = "Mother";
+        public const string Father  = "Father";
     }
     public static class ScheduledDutySourceConstants
     {
-        public static string Milestone { get; private set; } = "Milestone";
-        public static string Event { get; private set; } = "Event";
-        public static string Chore { get; private set; } = "Chore";
+        public const string Milestone  = "Milestone";
+        public const string Event  = "Event";
+        public const string Chore  = "Chore";
     }
     public static class ScheduledDutyRecordConstants
     {
-        public static string BreedingRecord { get; private set; } = "BreedingRecord";
-        public static string Measurement { get; private set; } = "Measurement";
-        public static string TreatmentRecord { get; private set; } = "TreatmentRecord";
-        public static string Registration { get; private set; } = "Registration";
+        public const string BreedingRecord  = "BreedingRecord";
+        public const string Measurement  = "Measurement";
+        public const string TreatmentRecord  = "TreatmentRecord";
+        public const string Registration  = "Registration";
     }
 }

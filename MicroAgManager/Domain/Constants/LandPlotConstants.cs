@@ -2,12 +2,12 @@
 {
     public static class LandPlotUseConstants
     {
-        public static string GeneralUse = "General Use";
-        public static string Crop = "Crop";
-        public static string Pasture = "Pasture";
-        public static string NutrientRecycling = "Nutrient Recycling";
-        public static string Garden = "Garden";
-        public static string Outbuilding = "Outbuilding";
-        public static string Livestock = "Livestock";
+        public const string GeneralUse = "General Use";
+        public const string Crop = "Crop";
+        public const string Pasture = "Pasture";
+        public const string NutrientRecycling = "Nutrient Recycling";
+        public const string Garden = "Garden";
+        public const string Outbuilding = "Outbuilding";
+        public const string Livestock = "Livestock";
     }
 }

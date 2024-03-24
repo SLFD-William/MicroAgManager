@@ -1,4 +1,5 @@
 ﻿@page "/Livestock"
+@page "/Livestock/{Id}"
 @using Domain.Constants
 @using Domain.Models
 @using FrontEnd.Persistence
@@ -223,7 +224,7 @@
         appState.OnDbUpdate -= Refresh;
         appState.OnLocationChange -= Refresh;
     }
-   
+    [Parameter] public string Id { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockId")] public long? LivestockId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LocationId")] public long? LocationId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockAnimalId")] public long? LivestockAnimalId { get; set; }
@@ -231,8 +232,14 @@
     [Parameter][SupplyParameterFromQuery(Name = "LivestockBreedId")] public long? LivestockBreedId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockStatusId")] public long? LivestockStatusId { get; set; }
 
-    [Parameter] public bool ShowTree { get; set; } = true;
-
+    [Parameter] public bool ShowTree { get; set; } = false;
+    private void SetLivestockId(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            LivestockId = null;
+        else
+            LivestockId = long.Parse(value);
+    }
     LivestockModel LivestockObject = new();
 
     private long _livestockId = -1;
@@ -280,6 +287,8 @@
 
     protected override void OnParametersSet()
     {
+        if (!string.IsNullOrWhiteSpace(Id) && Id.All(c=>char.IsNumber(c)))
+            LivestockId = long.Parse(Id);
         if ((!LivestockBreedId.HasValue && !LivestockAnimalId.HasValue && !LivestockId.HasValue) || (appState.DbContext?.Tenants.Any() != true))
         {
             base.OnParametersSet();
@@ -312,7 +321,13 @@
             if (LocationId.HasValue)
                 LivestockObject.LocationId = LocationId.Value;
         }
-        
+        if (!LivestockBreedId.HasValue)
+        {
+            var breed = appState.DbContext.LivestockBreeds.Find(LivestockObject.LivestockBreedId);
+            LivestockBreedId = breed?.Id;
+            LivestockAnimalId = breed?.LivestockAnimalId;
+        }
+
         _addLivestockContext = new EditContext(LivestockObject);
         _addingLivestock = LivestockId < 1;
         StateHasChanged();

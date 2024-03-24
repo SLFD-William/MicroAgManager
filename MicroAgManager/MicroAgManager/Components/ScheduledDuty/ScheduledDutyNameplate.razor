@@ -10,7 +10,7 @@
     <section>
         <label>
         <span class="fa-stack">
-            <i class="fas fa-stack-1x @DutyLogic.GetDutyCommandIcon(ScheduledDuty.Duty)"></i>
+            <i class="fas fa-stack-1x @DutyLogic.GetCommandIcon(ScheduledDuty.Duty)"></i>
         </span>
         </label>
         @ScheduledDuty.Duty.Name
@@ -20,7 +20,7 @@
     <section class="schedule">
         <label>
             <span class="fa-stack">
-                <i class="fas fa-stack-1x @DutyLogic.GetScheduledDutySourceIcon(ScheduledDuty)"></i>
+                <i class="fas fa-stack-1x @ScheduledDutyLogic.GetSourceIcon(ScheduledDuty)"></i>
             </span>
         </label>
         <span>@ScheduledDuty.ScheduleSourceItem</span>
@@ -51,7 +51,9 @@
     {
         <section>
             <label>@ScheduledDuty.Duty.RecipientTypeItem</label>
-            <span>@ScheduledDuty.RecipientItem</span>
+            <NavLink href="@ScheduledDutyLogic.GetRecipientHref(ScheduledDuty)" Match="NavLinkMatch.Prefix">
+                @ScheduledDuty.RecipientItem
+            </NavLink>
         </section>
     }
     @if (ScheduledDuty.RecordId > 0 && ScheduledDuty.CompletedOn.HasValue)
