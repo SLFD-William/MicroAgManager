@@ -1,5 +1,4 @@
 ﻿@page "/Livestock"
-@page "/Livestock/{Id}"
 @using Domain.Constants
 @using Domain.Models
 @using FrontEnd.Persistence
@@ -224,7 +223,6 @@
         appState.OnDbUpdate -= Refresh;
         appState.OnLocationChange -= Refresh;
     }
-    [Parameter] public string Id { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockId")] public long? LivestockId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LocationId")] public long? LocationId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockAnimalId")] public long? LivestockAnimalId { get; set; }
@@ -287,13 +285,6 @@
 
     protected override void OnParametersSet()
     {
-        if (!string.IsNullOrWhiteSpace(Id) && Id.All(c => char.IsNumber(c)))
-        {
-            var id = Id;
-            Id = string.Empty;
-            ApplicationState.NavigateTo(new() { { nameof(LivestockId), id } });
-            return;
-        }
         if ((!LivestockBreedId.HasValue && !LivestockAnimalId.HasValue && !LivestockId.HasValue) || (appState.DbContext?.Tenants.Any() != true))
         {
             base.OnParametersSet();

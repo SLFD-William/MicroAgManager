@@ -203,22 +203,20 @@ namespace MicroAgManager.Services
         //public static ILogger _log;
 
         public static void NavigateTo(Dictionary<string, string> NewParameters)=>_navigationManager.NavigateTo(CorrectedParametersUri(NewParameters));
-        
+
         public static string CorrectedParametersUri(Dictionary<string, string> NewParameters)
         {
             var uri = new Uri(_navigationManager.Uri);
-            var queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query) ?? new();
+            var queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
             foreach (var parameter in NewParameters)
             {
                 queryParameters.Remove(parameter.Key);
                 if (!string.IsNullOrWhiteSpace(parameter.Value))
                     queryParameters.Add(parameter.Key, parameter.Value);
             }
-            var authority = uri.Authority;
-            var localpath = uri.AbsolutePath.Split('/')[1];
-            var path= queryParameters.Count == 0 ? $"https://{authority}/{localpath}" : $"https://{authority}/{localpath}?{queryParameters}";
 
-            return path;
+            var baseUri = uri.GetLeftPart(UriPartial.Path);
+            return queryParameters.Count == 0 ? baseUri : $"{baseUri}?{queryParameters}";
         }
         public static bool FieldIsInQueryString(string field) => _navigationManager.Uri.Contains(field);
         private async Task RedirectLandingToHomeIfAuthenticated()
