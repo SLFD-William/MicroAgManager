@@ -8,6 +8,8 @@
         padding: 0.2em;
         border-radius: 1em;
         width: fit-content;
+        max-width:30ch;
+        text-wrap:pretty;
 
         &::before {
             margin-right: 0.1em;

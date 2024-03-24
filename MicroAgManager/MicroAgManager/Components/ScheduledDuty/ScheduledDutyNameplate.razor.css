@@ -1,9 +1,20 @@
 ﻿.ScheduledDutyNameplate {
   display: grid;
   grid-template-columns: max-content;
-  border: 2px solid black;
+  border: 1px solid var(--typography-primary-color);
   padding: 0.25em;
   border-radius: 1em;
+}
+.ScheduledDutyNameplate.overdue {
+  border: 3px solid var(--red);
+}
+.ScheduledDutyNameplate.warning {
+  border: 2px solid var(--yellow);
+}
+.ScheduledDutyNameplate .duty {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: center;
 }
 .ScheduledDutyNameplate .schedule {
   display: grid;

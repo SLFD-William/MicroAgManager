@@ -207,16 +207,18 @@ namespace MicroAgManager.Services
         public static string CorrectedParametersUri(Dictionary<string, string> NewParameters)
         {
             var uri = new Uri(_navigationManager.Uri);
-            var queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            var queryParameters = System.Web.HttpUtility.ParseQueryString(uri.Query) ?? new();
             foreach (var parameter in NewParameters)
             {
                 queryParameters.Remove(parameter.Key);
                 if (!string.IsNullOrWhiteSpace(parameter.Value))
                     queryParameters.Add(parameter.Key, parameter.Value);
             }
+            var authority = uri.Authority;
+            var localpath = uri.AbsolutePath.Split('/')[1];
+            var path= queryParameters.Count == 0 ? $"https://{authority}/{localpath}" : $"https://{authority}/{localpath}?{queryParameters}";
 
-            var baseUri = uri.GetLeftPart(UriPartial.Path);
-            return queryParameters.Count == 0 ? baseUri : $"{baseUri}?{queryParameters}";
+            return path;
         }
         public static bool FieldIsInQueryString(string field) => _navigationManager.Uri.Contains(field);
         private async Task RedirectLandingToHomeIfAuthenticated()

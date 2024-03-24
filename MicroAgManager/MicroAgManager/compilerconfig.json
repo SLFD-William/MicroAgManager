@@ -82,5 +82,9 @@
   {
     "outputFile": "Components/ScheduledDuty/ScheduledDutyCarousel.razor.css",
     "inputFile": "Components/ScheduledDuty/ScheduledDutyCarousel.razor.scss"
+  },
+  {
+    "outputFile": "Components/Shared/ValidatedField.razor.css",
+    "inputFile": "Components/Shared/ValidatedField.razor.scss"
   }
 ]

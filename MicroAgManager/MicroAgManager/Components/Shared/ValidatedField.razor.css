@@ -10,6 +10,8 @@
   padding: 0.2em;
   border-radius: 1em;
   width: fit-content;
+  max-width: 30ch;
+  text-wrap: pretty;
 }
 .ValidatedField legend::before {
   margin-right: 0.1em;

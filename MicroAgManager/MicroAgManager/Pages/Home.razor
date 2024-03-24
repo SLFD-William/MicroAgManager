@@ -28,7 +28,7 @@ else
                 </FarmNameplate>
             </CascadingValue>
             <section style="display:flex; gap:1rem;">
-            @foreach (var command in DutyCommandConstants.AllCommands.OrderBy(x => x))
+            @foreach (var command in DutyCommandConstants.AvailableCommands.OrderBy(x => x))
             {
                 <ScheduledDutyCommand Command="@command"></ScheduledDutyCommand>
             }

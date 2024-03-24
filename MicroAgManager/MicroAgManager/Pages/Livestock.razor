@@ -287,8 +287,13 @@
 
     protected override void OnParametersSet()
     {
-        if (!string.IsNullOrWhiteSpace(Id) && Id.All(c=>char.IsNumber(c)))
-            LivestockId = long.Parse(Id);
+        if (!string.IsNullOrWhiteSpace(Id) && Id.All(c => char.IsNumber(c)))
+        {
+            var id = Id;
+            Id = string.Empty;
+            ApplicationState.NavigateTo(new() { { nameof(LivestockId), id } });
+            return;
+        }
         if ((!LivestockBreedId.HasValue && !LivestockAnimalId.HasValue && !LivestockId.HasValue) || (appState.DbContext?.Tenants.Any() != true))
         {
             base.OnParametersSet();

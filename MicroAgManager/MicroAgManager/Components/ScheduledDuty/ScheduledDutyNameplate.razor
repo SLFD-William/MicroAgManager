@@ -1,22 +1,22 @@
 ﻿@using Domain.Logic
 @using Domain.Models
 @using Domain.Constants
+@using MicroAgManager.Components.Duty
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
-<section class="ScheduledDutyNameplate">
-    
-        
-    <section>
-        <label>
-        <span class="fa-stack">
-            <i class="fas fa-stack-1x @DutyLogic.GetCommandIcon(ScheduledDuty.Duty)"></i>
-        </span>
-        </label>
-        @ScheduledDuty.Duty.Name
-               
-
+<section class="ScheduledDutyNameplate @StatusClass()">
+    <section class="duty">
+                        <span>Duty</span>
+        <button type="button" @onclick=ShowDutyEditor>
+            <span class="fa-stack">
+                <i class="fas fa-stack-1x @DutyLogic.GetCommandIcon(ScheduledDuty.Duty)"></i>
+            </span>
+            <span>@ScheduledDuty.Duty.Name</span>
+        </button>
     </section>
+    
+
     <section class="schedule">
         <label>
             <span class="fa-stack">
@@ -41,8 +41,8 @@
         }
         else
         {
-            <label>Due:</label> 
-            <span>@ScheduledDuty.DueOn</span>
+            <label>Due:</label>
+            <span>@ScheduledDuty.DueOn.ToShortDateString()</span>
 @*             <label>Reminder:</label>
         <span>@ScheduledDuty.ReminderDays Days Before</span>*@
          }
@@ -67,11 +67,9 @@
                     EditText="Complete Duty"
                     OnEditClick="ShowScheduledDutyEditor"></NavCrudButtons>
     }
-    @if (showScheduledDutyModal)
-    {
-        <ScheduledDutyEditor Modal=true Show=@showScheduledDutyModal editContext=scheduledDutyEditContext
-                             OnCancel=ScheduledDutyCanceled OnSubmit=ScheduledDutySubmitted></ScheduledDutyEditor>
-    }
+    
+    <ScheduledDutyEditor Modal=true Show=@showScheduledDutyModal editContext=scheduledDutyEditContext OnCancel=Canceled OnSubmit=Submitted></ScheduledDutyEditor>
+    <DutyEditor Modal=true Show=@_showingDutyEditor editContext=dutyEditContext OnCancel=Canceled OnSubmit=Submitted></DutyEditor>
 </section>
 @ChildContent
 @code {
@@ -88,32 +86,50 @@
 
     [Parameter] public bool ShowRecipient { get; set; } = true;
 
+
+    private string StatusClass()
+    {
+        if (ScheduledDuty.DueOn <= DateTime.Now)
+            return "overdue";
+
+        if (ScheduledDuty.DueOn.AddDays(-(double)ScheduledDuty.ReminderDays) <= DateTime.Now)
+            return "warning";
+
+        return string.Empty;
+    }
     private bool showScheduledDutyModal = false;
     protected override void OnInitialized()
     {
         ScheduledDuty.Duty?.PopulateDynamicRelations(appState.DbContext);
         ScheduledDuty.PopulateDynamicRelations(appState.DbContext);
         scheduledDutyEditContext = new EditContext(ScheduledDuty);
+        dutyEditContext = new EditContext(ScheduledDuty.Duty);
+
     }
     private EditContext scheduledDutyEditContext;
     private void ShowScheduledDutyEditor()
     {
-        var scheduledDuty = ApplicationState._dbContext.ScheduledDuties.Find(ScheduledDuty.Id) ?? new ScheduledDutyModel();
-        scheduledDutyEditContext = new EditContext(scheduledDuty);
         showScheduledDutyModal = true;
         OnEditClick.InvokeAsync();
         StateHasChanged();
     }
-    private void ScheduledDutySubmitted(EditContext e)
+    private void Submitted(EditContext e)
     {
-        var model = e.Model as ScheduledDutyModel;
         showScheduledDutyModal = false;
-        if (model == null) return;
+        _showingDutyEditor = false;
         StateHasChanged();
     }
-    private void ScheduledDutyCanceled(object e)
+    private void Canceled(object e)
     {
         showScheduledDutyModal = false;
+        _showingDutyEditor = false;
+        StateHasChanged();
+    }
+    private bool _showingDutyEditor = false;
+    private EditContext dutyEditContext = new EditContext(new DutyModel());
+    private void ShowDutyEditor()
+    {
+        _showingDutyEditor = true;
         StateHasChanged();
     }
 }
