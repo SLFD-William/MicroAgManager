@@ -1,6 +1,7 @@
 ﻿@page "/Ancillaries/ScheduledDuties"
 @using Domain.Constants
 @using Domain.Models
+@using MicroAgManager.Components.Duty
 @using MicroAgManager.Components.ScheduledDuty
 @using MicroAgManager.Services
 @using Microsoft.EntityFrameworkCore
@@ -13,7 +14,22 @@
     
         </TreeView>
         <div>
-            @if (!ScheduledDutyId.HasValue)
+                        @if (showEditor)
+            {
+                @if (ScheduledDutyId.HasValue)
+                {
+                    <ScheduledDutyEditor Show=@ScheduledDutyId.HasValue Modal=false editContext="_recordContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </ScheduledDutyEditor>
+                }
+                @if (DutyId.HasValue)
+                {
+                    <DutyEditor Show=@DutyId.HasValue Modal=false editContext="_treatmentContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </DutyEditor>
+                }
+            }
+            else
             {
                 <div>
                     <ScheduledDutyCommand Command="@DutyCommandConstants.Service"></ScheduledDutyCommand>
@@ -36,8 +52,15 @@
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "ScheduledDutyId")] public long? ScheduledDutyId { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "DutyId")] public long? DutyId { get; set; }
     private long _scheduledDutyId = -1;
     private int _scheduledDutyCount = 0;
+
+    private void EditorClosed(EditContext context) => ApplicationState.NavigateTo(new() { { "ScheduledDutyId", string.Empty }, { "DutyId", string.Empty } });
+    private EditContext _recordContext;
+    private EditContext _treatmentContext;
+    private bool showEditor = false;
+
     private IQueryable<ScheduledDutyModel> baseScheduledDutyQuery()
     {
 
@@ -57,13 +80,36 @@
     {
         appState.OnDbInitialized += Refresh;
         appState.OnDbUpdate += Refresh;
-        appState.OnLocationChange += Refresh;
+        appState.OnLocationChange += LocationChanged;
     }
     private void Refresh() => StateHasChanged();
+    private void LocationChanged()
+    {
+        showEditor = ScheduledDutyId.HasValue || DutyId.HasValue;
+        _recordContext = new EditContext(new ScheduledDutyModel());
+        _treatmentContext = new EditContext(new DutyModel());
+        if (showEditor)
+        {
+            if (ScheduledDutyId.HasValue)
+            {
+                var unit = appState.DbContext.ScheduledDuties.Find(ScheduledDutyId);
+                if (unit is ScheduledDutyModel)
+                    _recordContext = new EditContext(unit);
+            }
+            if (DutyId.HasValue)
+            {
+                var unit = appState.DbContext.Duties.Find(DutyId);
+                if (unit is DutyModel)
+                    _treatmentContext = new EditContext(unit);
+            }
+        }
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
         appState.OnDbInitialized -= Refresh;
         appState.OnDbUpdate -= Refresh;
-        appState.OnLocationChange -= Refresh;
+        appState.OnLocationChange -= LocationChanged;
     }
 }

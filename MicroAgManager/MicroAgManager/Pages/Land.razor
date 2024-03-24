@@ -3,6 +3,7 @@
 @page "/FarmLocation"
 
 @using Domain.Constants
+@using Domain.Logic
 @using Domain.Models
 @using FrontEnd.Persistence
 @using MicroAgManager.Components.ScheduledDuty
@@ -71,7 +72,7 @@
                                    >
                         <NavCrudButtons ShowCreate=true CreateText="add plot" Editting="@_addingPlot"
                             OnCreateClick="@(()=> ApplicationState.NavigateTo(new() { { nameof(LandPlotId), "-1" } }))"></NavCrudButtons>
-                        <ScheduledDutyGrid Items="baseScheduledDutyQuery()"></ScheduledDutyGrid>
+                        <ScheduledDutyCarousel Items="ScheduledDutyLogic.OpenScheduledDutyQuery(appState.DbContext)"></ScheduledDutyCarousel>
                         @if (LandPlotId.HasValue || _addingPlot)
                         {
                             @if (_addingPlot)
@@ -272,14 +273,5 @@
         _LandPlotCount = query.Count();
         return query.ToList().AsQueryable();
     }
-    private IQueryable<ScheduledDutyModel> baseScheduledDutyQuery()
-    {
-        var query = appState.DbContext.ScheduledDuties.Include(p => p.Duty).Where(d => !d.CompletedOn.HasValue).ToList();
-        foreach (var sd in query)
-        {
-            sd.PopulateDynamicRelations(appState.DbContext);
-            sd.Duty.PopulateDynamicRelations(appState.DbContext);
-        }
-        return query.AsQueryable();
-    }
+
 }

@@ -1,0 +1,66 @@
+﻿@page "/Ancillaries/Units"
+@using Domain.Constants
+@using Domain.Entity
+@using Domain.Logic
+@using Domain.Models
+@using MicroAgManager.Components.Unit
+@using MicroAgManager.Components.ScheduledDuty
+@using MicroAgManager.Services
+@using Microsoft.EntityFrameworkCore
+@implements IDisposable
+<PageTitle>Units</PageTitle>
+<div class="Units">
+      @if (appState.DbContext?.Tenants.Any() == true)
+    {
+        <TreeView Id="Unit">
+    
+        </TreeView>
+        <div>
+            @if (showEditor)
+            {
+                <UnitEditor Show=@UnitId.HasValue Modal=false editContext="_unitContext" OnSubmit="EditorClosed" OnCancel="EditorClosed"></UnitEditor>
+            }
+            else
+            {
+                <UnitGrid Items="@UnitLogic.BaseQuery(appState.DbContext,null).Select(c=>c as UnitModel)"></UnitGrid>
+            }
+        </div>
+    }
+    else
+    {
+        <span>Initializing application </span>
+    }
+</div>
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter][SupplyParameterFromQuery(Name = "UnitId")] public long? UnitId { get; set; }
+    private void EditorClosed(EditContext context) => ApplicationState.NavigateTo(new() { { "UnitId", string.Empty } });
+    private EditContext _unitContext;
+    private bool showEditor=false;
+    protected override void OnInitialized()
+    {
+        appState.OnDbInitialized += Refresh;
+        appState.OnDbUpdate += Refresh;
+        appState.OnLocationChange += LocationChanged;
+        LocationChanged();
+    }
+    private void LocationChanged()
+    {
+        showEditor = UnitId.HasValue;
+        _unitContext = new EditContext(new UnitModel());
+        if (showEditor)
+        {
+            var unit = appState.DbContext.Units.Find(UnitId);
+            if (unit is IUnit)
+                _unitContext = new EditContext(unit);
+        }
+        StateHasChanged();
+    }
+    private void Refresh() => StateHasChanged();
+    public void Dispose()
+    {
+        appState.OnDbInitialized -= Refresh;
+        appState.OnDbUpdate -= Refresh;
+        appState.OnLocationChange -= LocationChanged;
+    }
+}

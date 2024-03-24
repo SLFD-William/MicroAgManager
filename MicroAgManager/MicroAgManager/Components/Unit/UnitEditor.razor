@@ -16,7 +16,7 @@
                    Show=Show
                    Title="@(unit.Id< 1 ? "Create Unit" : $"Edit {unit.Name}")">
         <ChildContent>
-            <ValidatedField Legend="Unit" ValidationMessageFor="@(() => unit.Category)">
+            <ValidatedField Legend="Category" ValidationMessageFor="@(() => unit.Category)">
                 <InputSelect @bind-Value="@unit.Category">
                     <option value="">Select Category ...</option>
                     @foreach (var category in UnitCategoryConstants.Units.Keys.Order().ToList())

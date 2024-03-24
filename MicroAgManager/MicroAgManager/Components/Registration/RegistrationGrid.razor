@@ -14,7 +14,10 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            @registrar.Registrar.Name
+            <NavLink href=@($"/Ancillaries/Registrations?RegistrarId={registrar.RegistrarId}")>
+                @registrar.Registrar.Name
+            </NavLink>
+            
             @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
         </ChildContent>
     </TemplateColumn>
@@ -68,24 +71,34 @@
     }
     @if (ShowRecipient)
     {
-        <TemplateColumn Title="Recipient" Sortable="true" Context="registration" SortBy="@OrderByRegistrarName">
+        <TemplateColumn Title="Recipient" Sortable="true" Context="registration">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @RecipientLogic.RecipientName(appState.DbContext, registration.RecipientType, registration.RecipientId)
+                <NavLink href=@RecipientLogic.GetRecipientHref(registration.RecipientType, registration.RecipientId)>
+                    @RecipientLogic.RecipientName(appState.DbContext, registration.RecipientType, registration.RecipientId)
+                </NavLink>
+
             </ChildContent>
         </TemplateColumn>
     }
-    <PropertyColumn Property="@(p => p.Identifier)" Title="Identifier" Sortable="true">
+    <TemplateColumn Title="Identifier" Sortable="false" Context="registrar">
         @* <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
+                <input type="search" autofocus @bind="registrarNameFilter" @bind:event="oninput" placeholder="Registrar..." />
             </div>
         </ColumnOptions> *@
-    </PropertyColumn>
+        <ChildContent>
+            <NavLink href=@($"/Ancillaries/Registrations?RegistrationId={registrar.Id}")>
+                @registrar.Identifier
+            </NavLink>
+
+            @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.DefaultIdentification)" Title="Default" Sortable="true">
         @* <ColumnOptions>
             <div class="search-box">

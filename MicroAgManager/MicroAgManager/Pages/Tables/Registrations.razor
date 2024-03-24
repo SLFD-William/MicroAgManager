@@ -14,15 +14,30 @@
     
         </TreeView>
         <div>
-            @if (!RegistrationId.HasValue)
+            @if (showEditor)
+            {
+                @if (RegistrationId.HasValue)
+                {
+                    <RegistrationEditor Show=@RegistrationId.HasValue Modal=false editContext="_recordContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </RegistrationEditor>
+                }
+                @if (RegistrarId.HasValue)
+                {
+                    <RegistrarEditor Show=@RegistrarId.HasValue Modal=false editContext="_registrarContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </RegistrarEditor>
+                }
+            }
+            else
             {
                 <div>
-                    <ScheduledDutyCommand Command="@DutyCommandConstants.Registration" ></ScheduledDutyCommand>
+                    <ScheduledDutyCommand Command="@DutyCommandConstants.Registration"></ScheduledDutyCommand>
                     <RegistrationGrid Items="baseRegistrationQuery()">
 
                     </RegistrationGrid>
                 </div>
-            } 
+            }
         </div>
     }
     else
@@ -37,6 +52,14 @@
     [Parameter][SupplyParameterFromQuery(Name = "RegistrationId")] public long? RegistrationId { get; set; }
     private long _RegistrationId = -1;
     private int _RegistrationCount = 0;
+
+
+    private void EditorClosed(EditContext context) => ApplicationState.NavigateTo(new() { { "RegistrationId", string.Empty }, { "RegistrarId", string.Empty } });
+    private EditContext _recordContext;
+    private EditContext _registrarContext;
+    private bool showEditor = false;
+
+
     private IQueryable<RegistrationModel> baseRegistrationQuery()
     {
         var query = appState.DbContext.Registrations.Include(p => p.Registrar).AsQueryable();
@@ -58,13 +81,35 @@
     {
         appState.OnDbInitialized += Refresh;
         appState.OnDbUpdate += Refresh;
-        appState.OnLocationChange += Refresh;
+        appState.OnLocationChange += LocationChanged;
+    }
+    private void LocationChanged()
+    {
+        showEditor = RegistrarId.HasValue || RegistrationId.HasValue;
+        _recordContext = new EditContext(new RegistrationModel());
+        _registrarContext = new EditContext(new RegistrarModel());
+        if (showEditor)
+        {
+            if (RegistrationId.HasValue)
+            {
+                var unit = appState.DbContext.Registrations.Find(RegistrationId);
+                if (unit is RegistrationModel)
+                    _recordContext = new EditContext(unit);
+            }
+            if (RegistrarId.HasValue)
+            {
+                var unit = appState.DbContext.Registrars.Find(RegistrarId);
+                if (unit is RegistrarModel)
+                    _registrarContext = new EditContext(unit);
+            }
+        }
+        StateHasChanged();
     }
     private void Refresh() => StateHasChanged();
     public void Dispose()
     {
         appState.OnDbInitialized -= Refresh;
         appState.OnDbUpdate -= Refresh;
-        appState.OnLocationChange -= Refresh;
+        appState.OnLocationChange -= LocationChanged;
     }
 }

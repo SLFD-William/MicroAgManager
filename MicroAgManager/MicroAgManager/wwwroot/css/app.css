@@ -10375,6 +10375,7 @@ form {
   display: grid;
   margin-inline: auto;
   grid-gap: 1rem;
+  max-width: 130ch;
 }
 form .dataSection {
   width: 100%;

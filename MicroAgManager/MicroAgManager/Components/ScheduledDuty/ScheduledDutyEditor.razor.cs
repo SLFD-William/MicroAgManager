@@ -16,7 +16,6 @@ using MicroAgManager.Data;
 using MicroAgManager.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore;
 
 namespace MicroAgManager.Components.ScheduledDuty
 {

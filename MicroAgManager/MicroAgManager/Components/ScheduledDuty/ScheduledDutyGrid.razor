@@ -1,4 +1,6 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
+@using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
@@ -25,7 +27,9 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            <span>@scheduledDuty.Duty.Name</span>
+            <NavLink href=@($"/Ancillaries/ScheduledDuties?DutyId={scheduledDuty.DutyId}")>
+                @scheduledDuty.Duty.Name
+            </NavLink>
          </ChildContent>
      </TemplateColumn>
     <TemplateColumn Title="Command" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyCommand">
@@ -77,16 +81,18 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
-    <TemplateColumn Title="Recipient Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientItem">
-        <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="dutyRecipientTypeFilter" @bind:event="oninput" placeholder="Animal..." />
-            </div>
-        </ColumnOptions>
-        <ChildContent>
-            <span>@scheduledDuty.RecipientItem</span>
-        </ChildContent>
-    </TemplateColumn>
+        <TemplateColumn Title="Recipient Item" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyRecipientItem">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="dutyRecipientTypeFilter" @bind:event="oninput" placeholder="Animal..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                    <NavLink href=@RecipientLogic.GetRecipientHref(scheduledDuty.Duty.RecipientType,scheduledDuty.RecipientId)>
+                        @RecipientLogic.RecipientName(appState.DbContext, scheduledDuty.Duty.RecipientType, scheduledDuty.RecipientId)
+                    </NavLink>
+                </ChildContent>
+        </TemplateColumn>
     }
     <PropertyColumn Property="@(p => p.DueOn)" Title="DueOn" Sortable="true">
         <ColumnOptions>
@@ -116,11 +122,21 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            <span>@($"{scheduledDuty.Record} {scheduledDuty.RecordId}")</span>
+            @if (scheduledDuty.RecordId > 0)
+            {
+                <NavLink href=@ScheduledDutyLogic.GetRecordHref(scheduledDuty)>
+                    @($"{scheduledDuty.Record} {scheduledDuty.RecordId}")
+                </NavLink>
+            }
+            else
+            {
+                <span>@scheduledDuty.Record</span>
+            }
         </ChildContent>
     </TemplateColumn>
 </QuickGrid>
 @code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] public bool ShowRecipientType { get; set; } = true;
     [Parameter] public bool ShowRecipient { get; set; } = true;
     [Parameter] required public IQueryable<ScheduledDutyModel> Items { get; set; }

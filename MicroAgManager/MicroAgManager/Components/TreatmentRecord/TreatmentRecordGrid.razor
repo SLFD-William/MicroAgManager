@@ -13,7 +13,9 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            @treatmentRecord.Treatment.Name
+            <NavLink href=@($"/Ancillaries/TreatmentRecords?TreatmentId={treatmentRecord.TreatmentId}")>
+                @treatmentRecord.Treatment.Name
+            </NavLink>
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.Treatment.BrandName)" Title="Brand Name" Sortable="true">
@@ -59,10 +61,25 @@
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @RecipientLogic.RecipientName(appState.DbContext, treatment.RecipientType, treatment.RecipientId)
+                <NavLink href=@RecipientLogic.GetRecipientHref(treatment.RecipientType,treatment.RecipientId)>
+                    @RecipientLogic.RecipientName(appState.DbContext, treatment.RecipientType, treatment.RecipientId)
+                </NavLink>
+                
             </ChildContent>
         </TemplateColumn>
     }
+    <TemplateColumn Sortable="false" Context="treatment">
+        @*             <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
+        </div>
+        </ColumnOptions> *@
+        <ChildContent>
+            <NavLink href=@($"/Ancillaries/TreatmentRecords?TreatmentRecordId={treatment.Id}")>
+                Edit Record
+            </NavLink>
+        </ChildContent>
+    </TemplateColumn>
     <PropertyColumn Property="@(p => p.Treatment.LabelMethod)" Title="Label Method" Sortable="true">
         @* <ColumnOptions>
             <div class="search-box">

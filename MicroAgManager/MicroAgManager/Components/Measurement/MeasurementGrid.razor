@@ -14,8 +14,9 @@
             </div>
         </ColumnOptions>
         <ChildContent>
-            @measure.Measure?.Name
-            @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
+            <NavLink href=@($"/Ancillaries/Measurements?MeasureId={measure.MeasureId}")>
+                @measure.Measure?.Name
+            </NavLink>
         </ChildContent>
     </TemplateColumn>
     <TemplateColumn Title="Measure Unit" Context="measurement">
@@ -25,7 +26,9 @@
         </div>
         </ColumnOptions>*@
         <ChildContent>
-            @UnitLogic.UnitName(appState.DbContext, measurement.Measure.UnitId)
+            <NavLink href=@($"/Ancillaries/Units?UnitId={measurement.Measure.UnitId}")>
+                @UnitLogic.UnitName(appState.DbContext, measurement.Measure.UnitId)
+            </NavLink>
         </ChildContent>
     </TemplateColumn>
     @if (ShowRecipientType)
@@ -50,14 +53,17 @@
     }
     @if (ShowRecipient)
     {
-        <TemplateColumn Title="Recipient" Sortable="true" Context="measurement" SortBy="@OrderByMeasureName">
+        <TemplateColumn Title="Recipient" Sortable="true" Context="measurement">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @RecipientLogic.RecipientName(appState.DbContext, measurement.RecipientType, measurement.RecipientId)
+                <NavLink href=@RecipientLogic.GetRecipientHref(measurement.RecipientType,measurement.RecipientId)>
+                    @RecipientLogic.RecipientName(appState.DbContext, measurement.RecipientType, measurement.RecipientId)
+                </NavLink>
+
             </ChildContent>
         </TemplateColumn>
     }
@@ -68,7 +74,9 @@
         </div>
         </ColumnOptions>*@
         <ChildContent>
-            @($"{measurement.Value} {UnitLogic.UnitName(appState.DbContext, measurement.MeasurementUnitId)}")
+            <NavLink href=@($"/Ancillaries/Measurements?MeasurementId={measurement.Id}")>
+                @($"{measurement.Value} {UnitLogic.UnitName(appState.DbContext, measurement.MeasurementUnitId)}")
+            </NavLink>
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">

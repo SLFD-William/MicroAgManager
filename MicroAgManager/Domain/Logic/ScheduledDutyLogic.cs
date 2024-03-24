@@ -22,6 +22,20 @@ namespace Domain.Logic
             return query.AsQueryable();
         }
         public static string GetRecipientHref(IScheduledDuty? duty) => $"/{duty?.Recipient}?{duty?.Recipient}Id={duty?.RecipientId}";
+        public static string GetRecordHref(IScheduledDuty? duty)
+        {
+            if(duty.RecordId<1) return string.Empty;
+            if (duty.Record == ScheduledDutyRecordConstants.TreatmentRecord)
+                return $"/Ancillaries/TreatmentRecords?TreatmentRecordId={duty.RecordId}";
+            if (duty.Record == ScheduledDutyRecordConstants.Measurement)
+                return $"/Ancillaries/Measurements?MeasurementId={duty.RecordId}";
+            if (duty.Record == ScheduledDutyRecordConstants.Registration)
+                return $"/Ancillaries/Registrations?RegistrationId={duty.RecordId}";
+            if (duty.Record == ScheduledDutyRecordConstants.BreedingRecord)
+                return $"/Ancillaries/BreedingRecords?BreedingRecordId={duty.RecordId}";
+            return string.Empty;
+        }
+        
         public static string GetSourceIcon(IScheduledDuty scheduledDuty)
         {
             if (!(scheduledDuty is IScheduledDuty)) return null;

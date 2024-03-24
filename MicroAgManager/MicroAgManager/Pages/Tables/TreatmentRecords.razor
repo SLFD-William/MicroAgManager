@@ -11,10 +11,25 @@
   @if (appState.DbContext?.Tenants.Any() == true)
     {
         <TreeView Id="TreatmentRecord">
-    
+
         </TreeView>
         <div>
-            @if (!TreatmentRecordId.HasValue)
+            @if (showEditor)
+            {
+                @if (TreatmentRecordId.HasValue)
+                { 
+                    <TreatmentRecordEditor Show=@TreatmentRecordId.HasValue Modal=false editContext="_recordContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </TreatmentRecordEditor>
+                }
+                @if (TreatmentId.HasValue)
+                {
+                    <TreatmentEditor Show=@TreatmentId.HasValue Modal=false editContext="_treatmentContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </TreatmentEditor>
+                }
+            }
+            else
             {
                 <div>
                     <ScheduledDutyCommand Command="@DutyCommandConstants.Treatment" ></ScheduledDutyCommand>
@@ -37,6 +52,12 @@
     [Parameter][SupplyParameterFromQuery(Name = "TreatmentRecordId")] public long? TreatmentRecordId { get; set; }
     private long _treatmentRecordId = -1;
     private int _treatmentRecordCount = 0;
+
+    private void EditorClosed(EditContext context) => ApplicationState.NavigateTo(new() { { "TreatmentRecordId", string.Empty }, { "TreatmentId", string.Empty } });
+    private EditContext _recordContext;
+    private EditContext _treatmentContext;
+    private bool showEditor = false;
+
     private IQueryable<TreatmentRecordModel> baseTreatmentRecordQuery()
     {
         var query = appState.DbContext.TreatmentRecords.Include(p => p.Treatment).Include(p => p.DosageUnit).AsQueryable();
@@ -58,13 +79,35 @@
     {
         appState.OnDbInitialized += Refresh;
         appState.OnDbUpdate += Refresh;
-        appState.OnLocationChange += Refresh;
+        appState.OnLocationChange += LocationChanged;
+    }
+    private void LocationChanged()
+    {
+        showEditor = TreatmentRecordId.HasValue || TreatmentId.HasValue ;
+        _recordContext = new EditContext(new TreatmentRecordModel());
+        _treatmentContext = new EditContext(new TreatmentModel());
+        if (showEditor)
+        {
+            if (TreatmentRecordId.HasValue)
+            {
+                var unit = appState.DbContext.TreatmentRecords.Find(TreatmentRecordId);
+                if (unit is TreatmentRecordModel)
+                    _recordContext = new EditContext(unit);
+            }
+            if (TreatmentId.HasValue)
+            {
+                var unit = appState.DbContext.Treatments.Find(TreatmentId);
+                if (unit is TreatmentModel)
+                    _treatmentContext = new EditContext(unit);
+            }
+        }
+        StateHasChanged();
     }
     private void Refresh() => StateHasChanged();
     public void Dispose()
     {
         appState.OnDbInitialized -= Refresh;
         appState.OnDbUpdate -= Refresh;
-        appState.OnLocationChange -= Refresh;
+        appState.OnLocationChange -= LocationChanged;
     }
 }

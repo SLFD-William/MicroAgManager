@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using Domain.Entity;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,14 @@ namespace Domain.Logic
 
             return string.Empty;
         }
+
+        public static string GetRecipientHref(string recipientType, long? recipientId)
+        {
+            if (recipientType == RecipientTypeConstants.LivestockAnimal || recipientType == RecipientTypeConstants.LivestockBreed)
+                return $"/Livestock?LivestockId={recipientId}";
+            return string.Empty ;
+        }
+
         public static List<KeyValuePair<long, string>> RecipientTypeIds(DbContext genericContext, string recipientType)
         {
             var db = genericContext as IFrontEndDbContext;

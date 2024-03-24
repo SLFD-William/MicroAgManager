@@ -14,7 +14,22 @@
     
         </TreeView>
         <div>
-            @if (!MeasurementId.HasValue)
+                        @if (showEditor)
+            {
+                @if (MeasurementId.HasValue)
+                { 
+                    <MeasurementEditor Show=@MeasurementId.HasValue Modal=false editContext="_recordContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </MeasurementEditor>
+                }
+                @if (MeasureId.HasValue)
+                {
+                    <MeasureEditor Show=@MeasureId.HasValue Modal=false editContext="_treatmentContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </MeasureEditor>
+                }
+            }
+            else
             {
                 <div>
                     <ScheduledDutyCommand Command="@DutyCommandConstants.Measurement" ></ScheduledDutyCommand>
@@ -37,6 +52,10 @@
     [Parameter][SupplyParameterFromQuery(Name = "MeasurementId")] public long? MeasurementId { get; set; }
     private long _measurementId = -1;
     private int _measurementCount = 0;
+    private void EditorClosed(EditContext context) => ApplicationState.NavigateTo(new() { { "MeasurementId", string.Empty }, { "MeasureId", string.Empty } });
+    private EditContext _recordContext;
+    private EditContext _treatmentContext;
+    private bool showEditor = false;
     private IQueryable<MeasurementModel> baseMeasurementQuery()
     {
         var query = appState.DbContext.Measurements.Include(p => p.Measure).ThenInclude(m=>m.Unit).Include(p => p.MeasurementUnit).AsQueryable();
@@ -58,13 +77,35 @@
     {
         appState.OnDbInitialized += Refresh;
         appState.OnDbUpdate += Refresh;
-        appState.OnLocationChange += Refresh;
+        appState.OnLocationChange += LocationChanged;
+    }
+    private void LocationChanged()
+    {
+        showEditor = MeasurementId.HasValue || MeasureId.HasValue;
+        _recordContext = new EditContext(new MeasurementModel());
+        _treatmentContext = new EditContext(new MeasureModel());
+        if (showEditor)
+        {
+            if (MeasurementId.HasValue)
+            {
+                var unit = appState.DbContext.Measurements.Find(MeasurementId);
+                if (unit is MeasurementModel)
+                    _recordContext = new EditContext(unit);
+            }
+            if (MeasureId.HasValue)
+            {
+                var unit = appState.DbContext.Measures.Find(MeasureId);
+                if (unit is MeasureModel)
+                    _treatmentContext = new EditContext(unit);
+            }
+        }
+        StateHasChanged();
     }
     private void Refresh() => StateHasChanged();
     public void Dispose()
     {
         appState.OnDbInitialized -= Refresh;
         appState.OnDbUpdate -= Refresh;
-        appState.OnLocationChange -= Refresh;
+        appState.OnLocationChange -= LocationChanged;
     }
 }

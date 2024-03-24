@@ -1,0 +1,48 @@
+﻿@using Domain.Logic
+@using Domain.Models
+@using MicroAgManager.Data
+@using MicroAgManager.Services
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.EntityFrameworkCore
+<QuickGrid Theme="microagmanager" @ref=unitGrid TGridItem=UnitModel Virtualize=true Items="Items">
+    <PropertyColumn Property="@(p => p.Category)" Title="Category" Sortable="true">
+        @* <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+            </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <TemplateColumn Title="Name" Sortable="false" Context="unit">
+        @*             <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
+        </div>
+        </ColumnOptions> *@
+
+        <ChildContent>
+            <NavLink href=@($"/Ancillaries/Units?UnitId={unit.Id}")>
+                @unit.Name
+            </NavLink>
+        </ChildContent>
+    </TemplateColumn>
+    <PropertyColumn Property="@(p => p.Symbol)" Title="Symbol" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.ConversionFactorToSIUnit)" Title="SI Conversion" Sortable="true">
+        @* <ColumnOptions>
+        <div class="search-box">
+        <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
+        </div>
+        </ColumnOptions> *@
+    </PropertyColumn>
+</QuickGrid>
+
+@code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
+    [Parameter] required public IQueryable<UnitModel> Items { get; set; }
+    QuickGrid<UnitModel> unitGrid;
+}

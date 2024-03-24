@@ -22,5 +22,15 @@ namespace Domain.Logic
             if (context is null) return string.Empty;
             return context.Units.Find(unitId)?.Name ?? string.Empty;
          }
+        public static IQueryable<IUnit>? BaseQuery(DbContext genericContext, long? unitId)
+        {
+            var context = genericContext as IFrontEndDbContext;
+            if (context is null) return null;
+
+            var query = context.Units.AsQueryable();
+            if (unitId > 0)
+                query = query.Where(p => p.Id == unitId);
+            return query;
+        }
     }
 }
