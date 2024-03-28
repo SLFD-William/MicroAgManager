@@ -1,5 +1,4 @@
 ﻿using Domain.Constants;
-using Domain.Entity;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

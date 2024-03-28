@@ -5,7 +5,7 @@
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=scheduleDutyGrid TGridItem=ScheduledDutyModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=scheduleDutyGrid TGridItem=ScheduledDutyModel Virtualize=true Items="FilteredItems()">
     <PropertyColumn Property="@(p => p.ScheduleSource)" Title="Source" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
@@ -32,10 +32,10 @@
             </NavLink>
          </ChildContent>
      </TemplateColumn>
-    <TemplateColumn Title="Command" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyCommand">
+    <TemplateColumn Title="Command" Sortable="true" Context="scheduledDuty" SortBy="@OrderByDutyCommandItem">
         <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="dutyCommandFilter" @bind:event="oninput" placeholder="Animal..." />
+                <input type="search" autofocus @bind="dutyCommandItemFilter" @bind:event="oninput" placeholder="Command..." />
             </div>
         </ColumnOptions>
         <ChildContent>
@@ -97,7 +97,23 @@
     <PropertyColumn Property="@(p => p.DueOn)" Title="DueOn" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="dueOnFilter" @bind:event="oninput" placeholder="Source..." />
+                <select @bind="dueOnFilterOperator">
+                    <option value="">Select operator...</option>
+                    <option value="eq">Equals</option>
+                    <option value="neq">Not equals</option>
+                    <option value="gt">Greater than</option>
+                    <option value="lt">Less than</option>
+                    <option value="gte">Greater than or equal</option>
+                    <option value="lte">Less than or equal</option>
+                    <option value="between">Between</option>
+                    <option value="null">Is Null</option>
+                    <option value="notnull">Is Not Null</option>
+                </select>
+                <input type="date" @bind="dueOnFilter" @bind:event="oninput" />
+                @if (dueOnFilterOperator == "between")
+                {
+                    <input type="date" @bind="dueOnFilterEnd" @bind:event="oninput" />
+                }
             </div>
         </ColumnOptions>
     </PropertyColumn>
@@ -111,7 +127,23 @@
     <PropertyColumn Property="@(p => p.CompletedOn)" Title="Completed On" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="completedOnFilter" @bind:event="oninput" placeholder="Source..." />
+                <select @bind="completedOnFilterOperator">
+                    <option value="">Select operator...</option>
+                    <option value="eq">Equals</option>
+                    <option value="neq">Not equals</option>
+                    <option value="gt">Greater than</option>
+                    <option value="lt">Less than</option>
+                    <option value="gte">Greater than or equal</option>
+                    <option value="lte">Less than or equal</option>
+                    <option value="between">Between</option>
+                    <option value="null">Is Null</option>
+                    <option value="notnull">Is Not Null</option>
+                </select>
+                <input type="date" @bind="completedOnFilter" @bind:event="oninput" />
+                @if (completedOnFilterOperator == "between")
+                {
+                    <input type="date" @bind="completedOnFilterEnd" @bind:event="oninput" />
+                }
             </div>
         </ColumnOptions>
     </PropertyColumn>
@@ -135,170 +167,70 @@
         </ChildContent>
     </TemplateColumn>
 </QuickGrid>
+
+
+
+
+
+
+
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] public bool ShowRecipientType { get; set; } = true;
     [Parameter] public bool ShowRecipient { get; set; } = true;
     [Parameter] required public IQueryable<ScheduledDutyModel> Items { get; set; }
     QuickGrid<ScheduledDutyModel> scheduleDutyGrid;
-   
-    string sourceFilter
+    string sourceFilter { get; set; }
+    string sourceItemFilter { get; set; }
+    string dutyNameFilter { get; set; }
+    string dutyCommandItemFilter { get; set; }
+    string dutyRecipientTypeFilter { get; set; }
+    string dutyRecipientTypeItemFilter { get; set; }
+    string recipientFilter { get; set; }
+    string dutyRecipientItemFilter { get; set; }
+    string reminderFilter { get; set; } //numeric
+    DateTime? dueOnFilter { get; set; } //date
+    string dueOnFilterOperator { get; set; }
+    DateTime? dueOnFilterEnd { get; set; }
+    DateTime? completedOnFilter { get; set; } //date
+    string completedOnFilterOperator { get; set; }
+    DateTime? completedOnFilterEnd { get; set; }
+    string recordFilter { get; set; }
+    
+    private IQueryable<ScheduledDutyModel> FilteredItems()
     {
-        get => _sourceFilter; set
-        {
-            sourceFilterChanged.Invoke(value);
-            _sourceFilter = value;
-        }
+        var query = Items.ToList().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(sourceFilter))
+            query = query.Where(s => s.ScheduleSource.Contains(sourceFilter));
+        if (!string.IsNullOrWhiteSpace(sourceItemFilter))
+            query = query.Where(s => s.ScheduleSourceItem.Contains(sourceItemFilter));
+        if (!string.IsNullOrWhiteSpace(dutyNameFilter))
+            query = query.Where(s => s.Duty.Name.Contains(dutyNameFilter));
+        if (!string.IsNullOrWhiteSpace(dutyCommandItemFilter))
+            query = query.Where(s => s.Duty.CommandItem.Contains(dutyCommandItemFilter));
+        if (!string.IsNullOrWhiteSpace(dutyRecipientTypeFilter))
+            query = query.Where(s => s.Duty.RecipientType.Contains(dutyRecipientTypeFilter));
+        if (!string.IsNullOrWhiteSpace(dutyRecipientTypeItemFilter))
+            query = query.Where(s => s.Duty.RecipientType.Contains(dutyRecipientTypeItemFilter));
+        if (!string.IsNullOrWhiteSpace(recipientFilter))
+            query = query.Where(s => s.Recipient.Contains(recipientFilter));
+        if (!string.IsNullOrWhiteSpace(reminderFilter))
+            query = query.Where(s => s.ReminderDays.ToString().Contains(reminderFilter));
+        // if (!string.IsNullOrWhiteSpace(dutyRecipientItemFilter))
+        //     query = query.Where(s => s.Re.Contains(dutyRecipientItemFilter));
+
+             // query = FilteringHelpers.ApplyDateFilter(query, s => s.DueOn, dueOnFilter, dueOnFilterOperator, dueOnFilterEnd);
+             // query = FilteringHelpers.ApplyDateFilter(query, s => s.CompletedOn, completedOnFilter, completedOnFilterOperator, completedOnFilterEnd);
+
+            return query;
     }
-
-    [Parameter] public Action<string> sourceFilterChanged { get; set; }
-    private string _sourceFilter;
-    string sourceItemFilter
-    {
-        get => _sourceItemFilter; set
-        {
-            sourceItemFilterChanged.Invoke(value);
-            _sourceItemFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> sourceItemFilterChanged { get; set; }
-    private string _sourceItemFilter;
-
     GridSort<ScheduledDutyModel> OrderByDutyName = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.Name);
-    string dutyNameFilter
-    {
-        get => _dutyNameFilter; set
-        {
-            dutyNameFilterChanged.Invoke(value);
-            _dutyNameFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> dutyNameFilterChanged { get; set; }
-    private string _dutyNameFilter;
-
     GridSort<ScheduledDutyModel> OrderByDutyCommand = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.Command);
-    string dutyCommandFilter
-    {
-        get => _dutyCommandFilter; set
-        {
-            dutyCommandFilterChanged.Invoke(value);
-            _dutyCommandFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> dutyCommandFilterChanged { get; set; }
-    private string _dutyCommandFilter;
     GridSort<ScheduledDutyModel> OrderByDutyCommandItem = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.CommandItem);
-    string dutyCommandItemFilter
-    {
-        get => _dutyCommandItemFilter; set
-        {
-            dutyCommandItemFilterChanged.Invoke(value);
-            _dutyCommandItemFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> dutyCommandItemFilterChanged { get; set; }
-    private string _dutyCommandItemFilter;
-
     GridSort<ScheduledDutyModel> OrderByDutyRecipientType = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.RecipientType);
-    string dutyRecipientTypeFilter
-    {
-        get => _dutyRecipientTypeFilter; set
-        {
-            dutyRecipientTypeFilterChanged.Invoke(value);
-            _dutyRecipientTypeFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> dutyRecipientTypeFilterChanged { get; set; }
-    private string _dutyRecipientTypeFilter;
-
     GridSort<ScheduledDutyModel> OrderByDutyRecipientTypeItem = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.RecipientTypeItem);
-    string dutyRecipientTypeItemFilter
-    {
-        get => _dutyRecipientTypeItemFilter; set
-        {
-            dutyRecipientTypeItemFilterChanged.Invoke(value);
-            _dutyRecipientTypeItemFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> dutyRecipientTypeItemFilterChanged { get; set; }
-    private string _dutyRecipientTypeItemFilter;
-    
-    string recipientFilter
-    {
-        get => _recipientFilter; set
-        {
-            recipientFilterChanged.Invoke(value);
-            _recipientFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> recipientFilterChanged { get; set; }
-    private string _recipientFilter;
-    
     GridSort<ScheduledDutyModel> OrderByDutyRecipientItem = GridSort<ScheduledDutyModel>.ByAscending(p => p.RecipientItem);
-    string DutyRecipientItemFilter
-    {
-        get => _DutyRecipientItemFilter; set
-        {
-            DutyRecipientItemFilterChanged.Invoke(value);
-            _DutyRecipientItemFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> DutyRecipientItemFilterChanged { get; set; }
-    private string _DutyRecipientItemFilter;
-
-    string dueOnFilter
-    {
-        get => _dueOnFilter; set
-        {
-            dueOnFilterChanged.Invoke(value);
-            _dueOnFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> dueOnFilterChanged { get; set; }
-    private string _dueOnFilter;
-    string reminderFilter
-    {
-        get => _reminderFilter; set
-        {
-            reminderFilterChanged.Invoke(value);
-            _reminderFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> reminderFilterChanged { get; set; }
-    private string _reminderFilter;
-
-    string completedOnFilter
-    {
-        get => _completedOnFilter; set
-        {
-            completedOnFilterChanged.Invoke(value);
-            _completedOnFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> completedOnFilterChanged { get; set; }
-    private string _completedOnFilter;
-
     GridSort<ScheduledDutyModel> OrderByRecord = GridSort<ScheduledDutyModel>.ByAscending(p => p.Record).ThenAscending(p=>p.RecipientId);
-    string recordFilter
-    {
-        get => _recordFilter; set
-        {
-            RecordFilterChanged.Invoke(value);
-            _recordFilter = value;
-        }
-    }
-
-    [Parameter] public Action<string> RecordFilterChanged { get; set; }
-    private string _recordFilter;
+    
 }

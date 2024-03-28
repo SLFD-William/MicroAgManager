@@ -1,6 +1,27 @@
 ﻿@page "/"
+@page "/login"
+@page "/register"
+@inject NavigationManager nm
+@implements IDisposable
 <h3>Landing</h3>
 
-@code {
+@if (isLogin)
+{
+<MicroAgManager.Components.Identity.IdentityForm></MicroAgManager.Components.Identity.IdentityForm>    
+}
 
+@code {
+    private bool isLogin = true;
+    protected override void OnInitialized()
+    {
+        isLogin = nm.Uri.Contains("login") ||  nm.Uri.Contains("register");
+        nm.LocationChanged += NavigationManager_LocationChanged;
+        base.OnInitialized();
+    }
+    public void Dispose() => nm.LocationChanged -= NavigationManager_LocationChanged;
+    private void NavigationManager_LocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        isLogin = e.Location.Contains("login") || e.Location.Contains("register");
+        StateHasChanged();
+    }
 }

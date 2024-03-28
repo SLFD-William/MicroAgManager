@@ -24,7 +24,6 @@
     <ProjectReference Include="..\BackEnd.Persistence\BackEnd.Persistence.csproj" />
     <ProjectReference Include="..\BackEnd\BackEnd.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\FrontEnd.Persistence\FrontEnd.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

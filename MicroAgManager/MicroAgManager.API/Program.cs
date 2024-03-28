@@ -85,44 +85,59 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
+app.Logger.LogDebug("App is built");
 // create routes for the identity endpoints
+
+app.Logger.LogDebug("mapping IdentityApi");
 app.MapGroup("/account").MapIdentityApi<ApplicationUser>( );
 
-
+app.Logger.LogDebug("mapping Custom Registration");
 BusinessLogicAPI.MapCustomRegistration(app);
+app.Logger.LogDebug("mapping Test");
 BusinessLogicAPI.MapTest(app);
+app.Logger.LogDebug("mapping Ancillary");
 BusinessLogicAPI.MapAnciliary(app);
+app.Logger.LogDebug("mapping Farm");
 BusinessLogicAPI.MapFarm(app);
+app.Logger.LogDebug("mapping Joins");
 BusinessLogicAPI.MapJoins(app);
+app.Logger.LogDebug("mapping Livestock");
 BusinessLogicAPI.MapLivestock(app);
+app.Logger.LogDebug("mapping Scheduling");
 BusinessLogicAPI.MapScheduling(app);
+app.Logger.LogDebug("mapping SignalR Hub");
 app.MapHub<NotificationHub>("/notificationhub");
 
 
 
 // activate the CORS policy
+app.Logger.LogDebug("activating CORS");
 app.UseCors("wasm");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-
+//}
+app.Logger.LogDebug("Setting Redirect");
 app.UseHttpsRedirection();
-bool migratingDb = false;
-using (var scope = app.Services.CreateScope())
-{
-    do
-    {
-        if (migratingDb) Task.Delay(1000).Wait();
-    } while (migratingDb);
-    migratingDb = true;
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<MicroAgManagementDbContext>();
-    context.Database.Migrate();
-}
-migratingDb = false;
+//if (app.Environment.IsDevelopment())
+//{
+//    app.Logger.LogDebug("Migrating DB");
+//    bool migratingDb = false;
+//    using (var scope = app.Services.CreateScope())
+//    {
+//        do
+//        {
+//            if (migratingDb) Task.Delay(1000).Wait();
+//        } while (migratingDb);
+//        migratingDb = true;
+//        var services = scope.ServiceProvider;
+//        var context = services.GetRequiredService<MicroAgManagementDbContext>();
+//        context.Database.Migrate();
+//    }
+//    migratingDb = false;
+//}
+    app.Logger.LogDebug("Running APP");
 app.Run();

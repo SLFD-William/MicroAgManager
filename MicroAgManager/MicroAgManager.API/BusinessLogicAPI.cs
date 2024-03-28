@@ -67,16 +67,19 @@ namespace MicroAgManager.API
             });
             app.MapGroup("/account").MapPost("/customregister", async Task<Results<Ok, ValidationProblem>>
             ([FromBody] RegisterRequest registration, HttpContext context,
-            UserManager<ApplicationUser> userManager,
-            IUserStore<ApplicationUser> userStore,
-            RoleManager<IdentityRole> roleManager,
+            UserManager < ApplicationUser > userManager,
+            IUserStore < ApplicationUser > userStore,
+            RoleManager < IdentityRole > roleManager,
+            ILogger<Log> logger,
             IMicroAgManagementDbContext dbContext, IEmailSender<ApplicationUser> emailSender, LinkGenerator linkGenerator) =>
             {
+                try { 
+                logger.LogDebug("In custom register");
                 if (!userManager.SupportsUserEmail)
                 {
                     throw new NotSupportedException($" requires a user store with email support.");
                 }
-
+                
                 var newUser = Guid.NewGuid();
                 var newTenant = newUser;
                 ApplicationUser user = new()
@@ -117,7 +120,8 @@ namespace MicroAgManager.API
 
                 var confirmEmailUrl = linkGenerator.GetUriByName(context, "MapIdentityApi-/account/confirmEmail", routeValues);
                 await emailSender.SendConfirmationLinkAsync(user, registration.Email, HtmlEncoder.Default.Encode(confirmEmailUrl));
-
+                }
+                catch(Exception ex) { logger.LogError($"{ex.Message} {ex.InnerException}"); }
                 return TypedResults.Ok();
             });
         }
