@@ -1,8 +1,0 @@
-﻿@using Domain.Models
-@inherits DataComponent<ScheduledDutyModel>
-<div>
-    <button type="button" @onclick=ShowModal>@(ScheduledDuty.Id<1 ? "Create ": ScheduledDuty.CompletedOn.HasValue ? "Update ": "Complete ")@ScheduledDuty.DutyId </button>
-    <CascadingValue Value="ScheduledDuty">
-        <ScheduledDutyEditor Show=@_modalOpen @ref="_scheduledDutyEditor" Modal="true" Submitted="@ScheduledDutyUpdated" Cancelled="@EditCancelled" showUpdateCancelButtons="true"></ScheduledDutyEditor>
-    </CascadingValue>
-</div>

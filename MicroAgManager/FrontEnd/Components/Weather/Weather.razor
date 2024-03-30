@@ -1,8 +1,0 @@
-﻿
-@if (weather is not null)
-{ 
-    <div class="Weather">
-        <p class="degreesF">@weather.CurrentConditions.Temp</p>
-        <p><i class="@MapToFontAwesome(weather.CurrentConditions.Icon)"></i> @weather.CurrentConditions.Conditions</p>
-    </div>
-}

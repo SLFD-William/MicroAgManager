@@ -1,1 +1,0 @@
-﻿@charset "UTF-8";.Weather{display:flex;flex-wrap:wrap;gap:1rem;}.Weather .degreesF::after{content:"°F";}

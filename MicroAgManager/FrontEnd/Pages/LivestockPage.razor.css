@@ -1,9 +1,0 @@
-﻿.LivestockPage {
-  display: grid;
-  grid-template-columns: min-content 1fr;
-  grid-gap: 0.5em;
-  height: 100%;
-}
-.LivestockPage ::deep fluent-tree-view {
-  overflow: auto;
-}
