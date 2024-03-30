@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -89,16 +90,40 @@ namespace Domain.Models
             var db = genericContext as IFrontEndDbContext;
             if (db is null) return;
             if (ScheduleSource == nameof(Chore))
-                ScheduleSourceItem = db.Chores.Find(ScheduleSourceId)?.Name;
+                ScheduleSourceItem = $"Chore: {db.Chores.Find(ScheduleSourceId)?.Name}";
             if (ScheduleSource == nameof(Event))
-                ScheduleSourceItem = db.Events.Find(ScheduleSourceId)?.Name;
+                ScheduleSourceItem = $"Event: {db.Events.Find(ScheduleSourceId)?.Name}";
             if (ScheduleSource == nameof(Milestone))
-                ScheduleSourceItem = db.Milestones.Find(ScheduleSourceId)?.Name;
+                ScheduleSourceItem = $"Milestone: {db.Milestones.Find(ScheduleSourceId)?.Name}";
             if (Recipient == nameof(Livestock))
                 RecipientItem = db.Livestocks.Find(RecipientId)?.Name;
+            
+            RecordItem=Record;
+            if (Record == ScheduledDutyRecordConstants.Registration)
+            {
+                var reg = db.Registrations.Include(r => r.Registrar).FirstOrDefault(r => r.Id == RecordId);
+                RecordItem = reg is null ? Record : $"{Record}: {reg.Registrar.Name} {reg.Identifier}";
+            }
+            if (Record == ScheduledDutyRecordConstants.TreatmentRecord)
+            {
+                var reg = db.TreatmentRecords.Include(r=>r.DosageUnit).Include(r => r.Treatment).FirstOrDefault(r => r.Id == RecordId);
+                RecordItem = reg is null ? Record : $"{Record}: {reg.Treatment.Name} {reg.DosageAmount} {reg.DosageUnit.Symbol}";
+            }
+            if (Record == ScheduledDutyRecordConstants.Measurement)
+            {
+                var reg = db.Measurements.Include(r => r.MeasurementUnit).Include(r => r.Measure).FirstOrDefault(r => r.Id == RecordId);
+                RecordItem = reg is null ? Record : $"{Record}: {reg.Measure.Name} {reg.Value} {reg.MeasurementUnit.Symbol}";
+            }
+            if (Record == ScheduledDutyRecordConstants.BreedingRecord)
+            {
+                var reg = db.BreedingRecords.Find(RecordId);
+                RecordItem = reg is null ? Record : $"{Record}: {reg.Resolution} {reg.ResolutionDate}";
+            }
+            
         }
         [NotMapped] public string ScheduleSourceItem { get; private set; } = string.Empty;
         [NotMapped] public string RecipientItem { get; private set; } = string.Empty;
-       
+        [NotMapped] public string RecordItem { get; private set; } = string.Empty;
+
     }
 }

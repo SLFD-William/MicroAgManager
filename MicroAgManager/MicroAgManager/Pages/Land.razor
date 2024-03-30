@@ -94,7 +94,7 @@
                                         
                                         @if (LandPlot.Usage == nameof(LandPlotUseConstants.Livestock))
                                         {
-                                            <Livestock ShowTree=false LocationId="@LandPlot.Id"></Livestock>
+                                            <Livestock ShowTree=false LocationId="@LandPlot.Id" ManagedOnly="true"></Livestock>
                                         }
                                     </LandPlotNameplate>
                                 </CascadingValue>

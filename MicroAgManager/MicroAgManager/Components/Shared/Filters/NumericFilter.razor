@@ -1,0 +1,88 @@
+﻿@typeparam T
+
+<div class="search-box">
+    <select @bind="@FilterOperator">
+        <option value="">Select operator...</option>
+        <option value="eq">Equals</option>
+        <option value="neq">Not equals</option>
+        <option value="gt">Greater than</option>
+        <option value="lt">Less than</option>
+        <option value="gte">Greater than or equal</option>
+        <option value="lte">Less than or equal</option>
+        <option value="between">Between</option>
+        <option value="null">Is Null</option>
+        <option value="notnull">Is Not Null</option>
+    </select>
+    @if (FilterOperator != "null" && FilterOperator != "notnull" && !string.IsNullOrEmpty(FilterOperator))
+    {
+        <input type="@htmlType" @bind="FilterValue" />
+    }
+
+    @if (FilterOperator == "between")
+    {
+        <input type="@htmlType" @bind="FilterEndValue" />
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<(string? FilterOperator, T? FilterValue, T? FilterEndValue)> OnFilterChanged { get; set; }
+    private string? _filterOperator;
+    [Parameter]
+    public string? FilterOperator
+    {
+        get => _filterOperator;
+        set
+        {
+            if (_filterOperator != value)
+            {
+                _filterOperator = value;
+                if (string.IsNullOrEmpty(_filterOperator))
+                    _filterValue = _filterEndValue = default(T);
+
+                OnFilterChanged.InvokeAsync((FilterOperator, FilterValue, FilterEndValue));
+            }
+        }
+    }
+
+    private T? _filterValue;
+    [Parameter]
+    public T? FilterValue
+    {
+        get => _filterValue;
+        set
+        {
+            if (!_filterValue.Equals(value))
+            {
+                _filterValue = value;
+                OnFilterChanged.InvokeAsync((FilterOperator, FilterValue, FilterEndValue));
+            }
+        }
+    }
+
+    private T? _filterEndValue;
+    [Parameter]
+    public T? FilterEndValue
+    {
+        get => _filterEndValue;
+        set
+        {
+            if (!_filterEndValue.Equals(value))
+            {
+                _filterEndValue = value;
+                OnFilterChanged.InvokeAsync((FilterOperator, FilterValue, FilterEndValue));
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        htmlType = "number";
+        if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
+            htmlType="date";
+    }
+
+    private string htmlType { get; set; }
+
+    
+
+}

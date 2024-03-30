@@ -229,6 +229,7 @@
     [Parameter][SupplyParameterFromQuery(Name = "StatusId")] public long? StatusId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockBreedId")] public long? LivestockBreedId { get; set; }
     [Parameter][SupplyParameterFromQuery(Name = "LivestockStatusId")] public long? LivestockStatusId { get; set; }
+    [Parameter] public bool ManagedOnly { get; set; } = false;
 
     [Parameter] public bool ShowTree { get; set; } = false;
     private void SetLivestockId(string value)
@@ -245,8 +246,12 @@
     {
         var query = appState.DbContext.Livestocks.Include(l=>l.Breed).ThenInclude(b=>b.Animal)
             .Include(s => s.Status).Include(p => p.Father).Include(p => p.Mother).Include(l=>l.Location).AsQueryable();
+        
         if (_livestockId > 0)
             query = query.Where(p => p.Id == _livestockId);
+        if (ManagedOnly && _livestockId < 1)
+            query = query.Where(a => a.BeingManaged == true && a.Deleted == false);
+        
         else
         {
             // if (ApplicationState.FarmSelectedFilter.Any())
