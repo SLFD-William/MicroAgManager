@@ -14,7 +14,16 @@
     
         </TreeView>
         <div>
-            @if (!BreedingRecordId.HasValue)
+            @if (showEditor)
+            {
+                @if (BreedingRecordId.HasValue)
+                {
+                    <BreedingRecordEditor Show=@BreedingRecordId.HasValue Modal=false editContext="_recordContext" OnSubmit="EditorClosed" OnCancel="EditorClosed">
+
+                    </BreedingRecordEditor>
+                }
+            }
+            else
             {
                 <div>
                     <ScheduledDutyCommand Command="@DutyCommandConstants.Service"></ScheduledDutyCommand>
@@ -36,6 +45,8 @@
     [Parameter][SupplyParameterFromQuery(Name = "BreedingRecordId")] public long? BreedingRecordId { get; set; }
     private long _breedingRecordId = -1;
     private int _breedingRecordCount = 0;
+    private bool showEditor = false;
+    private EditContext _recordContext;
     private IQueryable<BreedingRecordModel> baseBreedingRecordQuery()
     {
         var query = appState.DbContext.BreedingRecords.AsQueryable();
@@ -49,8 +60,25 @@
     {
         appState.OnDbInitialized += Refresh;
         appState.OnDbUpdate += Refresh;
-        appState.OnLocationChange += Refresh;
+        appState.OnLocationChange += LocationChanged;
     }
+    private void LocationChanged()
+    {
+        showEditor = BreedingRecordId.HasValue;
+        _recordContext = new EditContext(new BreedingRecordModel());
+        if (showEditor)
+        {
+            if (BreedingRecordId.HasValue)
+            {
+                var unit = appState.DbContext.BreedingRecords.Find(BreedingRecordId);
+                if (unit is BreedingRecordModel)
+                    _recordContext = new EditContext(unit);
+            }
+        }
+        StateHasChanged();
+    }
+    private void EditorClosed(EditContext context) => ApplicationState.NavigateTo(new(){{ "BreedingRecordId", string.Empty }});
+
     private void Refresh() => StateHasChanged();
     public void Dispose()
     {

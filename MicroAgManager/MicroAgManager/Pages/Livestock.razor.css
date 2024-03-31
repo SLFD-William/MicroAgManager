@@ -6,6 +6,7 @@
   align-items: start;
 }
 .Livestock > div {
+  height: 100%;
   overflow: auto;
 }
 .Livestock ::deep > .TreeView {

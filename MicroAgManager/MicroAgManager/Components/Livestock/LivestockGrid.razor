@@ -1,18 +1,19 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
-
-<QuickGrid Theme="microagmanager" @ref=livestockGrid TGridItem=LivestockModel Items="@Items">
+<QuickGrid Theme="microagmanager" @ref=livestockGrid TGridItem=LivestockModel Items="@FilteredItems()" >
     @if (ShowAnimalNameColumn)
     {
         <TemplateColumn Title="Animal" Sortable="true" Context="livestock" SortBy="@OrderByAnimalName">
-@*             <ColumnOptions>
+            <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions>
             <ChildContent>
                 <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", livestock.Breed.Animal.Id.ToString() }}))>@livestock.Breed.Animal.Name</NavLink>
             </ChildContent>
@@ -21,38 +22,32 @@
     @if (ShowBreedColumns)
     {
         <TemplateColumn Title="Breed" Sortable="true" Context="livestock" SortBy="@OrderByBreedName">
-@*             <ColumnOptions>
+             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="breedNameFilter" @bind:event="oninput" placeholder="Breed..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions> 
             <ChildContent>
                 <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", livestock.Breed.Animal.Id.ToString() },{ "LivestockBreedId", livestock.Breed.Id.ToString() }}))>@livestock.Breed.Name</NavLink>
             </ChildContent>
         </TemplateColumn>
-        <PropertyColumn Property="@(p => p.Breed.EmojiChar)" Title="Emoji" Sortable="true">
-@*             <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="breedEmojiFilter" @bind:event="oninput" placeholder="Emoji..." />
-                </div>
-            </ColumnOptions> *@
-        </PropertyColumn>
+        <PropertyColumn Property="@(p => p.Breed.EmojiChar)" Title="Emoji" Sortable="true" />
     }
         <PropertyColumn Property="@(p => p.Variety)" Sortable="true">
-@*             <ColumnOptions>
+            <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="varietyFilter" @bind:event="oninput" placeholder="Variety..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions>
         </PropertyColumn>
        @if (ShowLocationColumn)
     { 
         <TemplateColumn Title="Location" Sortable="false" Context="landplot" >
-            @*             <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+            <input type="search" autofocus @bind="locationFilter" @bind:event="oninput" placeholder="Animal..." />
+            </div>
+        </ColumnOptions>
             <ChildContent>
                 @if (landplot.LocationId.HasValue)
                 {
@@ -64,170 +59,245 @@
             </ChildContent>
         </TemplateColumn>
     }
-    
-
         <PropertyColumn Property="@(p => p.BatchNumber)" Title="Batch Number" Sortable="true">
-@*             <ColumnOptions>
+            <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="batchNumberFilter" @bind:event="oninput" placeholder="Batch Number..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions>
         </PropertyColumn>
         <PropertyColumn Property="@(p => p.Gender)" Sortable="true">
-@*             <ColumnOptions>
+            <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="@genderFilter" @bind:event="oninput" placeholder="Gender..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions>
         </PropertyColumn>
-@*     <PropertyColumn Property="@(p => p.Status.Status)" Title="Status" Sortable="true">
+    <PropertyColumn Property="@(p => p.StatusName)" Title="Status" Sortable="true">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="@statusFilter" @bind:event="oninput" placeholder="Status..." />
                 </div>
             </ColumnOptions>
-        </PropertyColumn> *@
+        </PropertyColumn> 
     <TemplateColumn Title="Name" SortBy="@OrderByName" Context="livestock">
-@*         <ColumnOptions>
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="@nameFilter" @bind:event="oninput" placeholder="Name..." />
             </div>
-        </ColumnOptions> *@
+        </ColumnOptions>
         <ChildContent>
             <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "LivestockAnimalId", livestock.Breed.Animal.Id.ToString() },{ "LivestockBreedId", livestock.Breed.Id.ToString() }
                      ,{ "LivestockId", livestock.Id.ToString() }}))>@livestock.Name</NavLink>
         </ChildContent>
     </TemplateColumn>
-@*         <PropertyColumn Property="@(p => p.Name)" Sortable="true">
+        <PropertyColumn Property="@(p => p.Birthdate)" Format="yyyy-MM-dd" Sortable="true" >    
             <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="@nameFilter" @bind:event="oninput" placeholder="Name..." />
-                </div>
+                <GenericFilter T="DateTime?" FilterOperator="@birthdateFilterOperator" FilterValue="@birthdateFilter" FilterEndValue="@birthdateFilterEnd" OnFilterChanged="HandleBirthdateFilterChanged" />
             </ColumnOptions>
-            
-        </PropertyColumn> *@
-        <PropertyColumn Property="@(p => p.Birthdate)" Format="yyyy-MM-dd" Sortable="true" />
-        <PropertyColumn Property="@(p => p.BeingManaged)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.Sterile)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.InMilk)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.BottleFed)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.ForSale)" Sortable="true" />
-@*         <PropertyColumn Property="@(p => p.Mother.Name)" Title="Mother" Sortable="false" />
-        <PropertyColumn Property="@(p => p.Father.Name)" Title="Father" Sortable="false" /> *@
-        <PropertyColumn Property="@(p => p.BornDefective)" Sortable="true" />
-        <PropertyColumn Property="@(p => p.BirthDefect)" Title="Defect Description" Sortable="true" />
+        </PropertyColumn>
+    <PropertyColumn Property="@(p => p.BeingManaged)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@beingManagedFilterOperator" FilterValue="@beingManagedFilter" FilterEndValue="@beingManagedFilterEnd" OnFilterChanged="HandleBeingManagedFilterChanged" />
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.Sterile)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@sterileFilterOperator" FilterValue="@sterileFilter" FilterEndValue="@sterileFilterEnd" OnFilterChanged="HandleSterileFilterChanged" />
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.InMilk)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@inMilkFilterOperator" FilterValue="@inMilkFilter" FilterEndValue="@inMilkFilterEnd" OnFilterChanged="HandleInMilkFilterChanged" />
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.BottleFed)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@bottleFedFilterOperator" FilterValue="@bottleFedFilter" FilterEndValue="@bottleFedFilterEnd" OnFilterChanged="HandleBottleFedFilterChanged" />
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.ForSale)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@forSaleFilterOperator" FilterValue="@forSaleFilter" FilterEndValue="@forSaleFilterEnd" OnFilterChanged="HandleForSaleFilterChanged" />
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.MotherName)" Title="Mother" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="@motherFilter" @bind:event="oninput" placeholder="Mother..." />
+            </div>
+        </ColumnOptions>
+
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.FatherName)" Title="Father" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="@fatherFilter" @bind:event="oninput" placeholder="Father..." />
+            </div>
+        </ColumnOptions>
+
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.BornDefective)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@bornDefectiveFilterOperator" FilterValue="@bornDefectiveFilter" FilterEndValue="@bornDefectiveFilterEnd" OnFilterChanged="HandleBornDefectiveFilterChanged" />
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="@(p => p.BirthDefect)" Title="Defect Description" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="@defectFilter" @bind:event="oninput" placeholder="Defect..." />
+            </div>
+        </ColumnOptions>
+
+    </PropertyColumn>
     </QuickGrid>
         
 @code {
+    [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<LivestockModel> Items { get; set; }
-    [Parameter] public EventCallback<long> OnNavigateClick { get; set; }
-    [Parameter] public EventCallback<long> OnDeleteClick { get; set; }
-    [Parameter] public EventCallback<long> OnCreateClick { get; set; }
-    [Parameter] public EventCallback<long> OnEditClick { get; set; }
-
-    QuickGrid<LivestockModel> livestockGrid;
-    GridSort<LivestockModel> OrderByName = GridSort<LivestockModel>.ByAscending(p => p.Name);
-    GridSort<LivestockModel> OrderByAnimalName = GridSort<LivestockModel>.ByAscending(p => p.Breed.Animal.Name);
-    GridSort<LivestockModel> OrderByBreedName = GridSort<LivestockModel>.ByAscending(p => p.Breed.Name);
     [Parameter] public bool ShowAnimalNameColumn { get; set; } = true;
     [Parameter] public bool ShowBreedColumns { get; set; } = true;
     [Parameter] public bool ShowLocationColumn { get; set; } = true;
-    #region Filtering
+    QuickGrid<LivestockModel> livestockGrid;
 
-    [Parameter] public Action<string> animalNameFilterChanged { get; set; }
-    private string _animalNameFilter;
-    string animalNameFilter { get => _animalNameFilter; set
-        {
-            animalNameFilterChanged.Invoke(value);
-            _animalNameFilter = value;
-        }  
+    GridSort<LivestockModel> OrderByName = GridSort<LivestockModel>.ByAscending(p => p.Name);
+    GridSort<LivestockModel> OrderByAnimalName = GridSort<LivestockModel>.ByAscending(p => p.Breed.Animal.Name);
+    GridSort<LivestockModel> OrderByBreedName = GridSort<LivestockModel>.ByAscending(p => p.Breed.Name);
+
+    string defectFilter { get; set; }
+    string fatherFilter { get; set; }
+    string motherFilter { get; set; }
+    string animalNameFilter { get; set; }
+    string breedNameFilter { get; set; }
+    string breedEmojiFilter { get; set; }
+    string varietyFilter { get; set; }
+    string batchNumberFilter { get; set; }
+    string locationFilter { get; set; }
+    string genderFilter { get; set; }
+    string statusFilter { get; set; }
+    string nameFilter { get; set; }
+    DateTime? birthdateFilter { get; set; } //date
+    string birthdateFilterOperator { get; set; }
+    DateTime? birthdateFilterEnd { get; set; }
+    private void HandleBirthdateFilterChanged((string? FilterOperator, DateTime? FilterValue, DateTime? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        birthdateFilter = filterValue;
+        birthdateFilterOperator = filterOperator ?? string.Empty;
+        birthdateFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    bool? beingManagedFilter { get; set; } //bool
+    string beingManagedFilterOperator { get; set; }
+    bool? beingManagedFilterEnd { get; set; }
+    private void HandleBeingManagedFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        beingManagedFilter = filterValue;
+        beingManagedFilterOperator = filterOperator ?? string.Empty;
+        beingManagedFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    bool? sterileFilter { get; set; } //bool
+    string sterileFilterOperator { get; set; }
+    bool? sterileFilterEnd { get; set; }
+    private void HandleSterileFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        sterileFilter = filterValue;
+        sterileFilterOperator = filterOperator ?? string.Empty;
+        sterileFilterEnd = filterEndValue;
+        StateHasChanged();
     }
 
-    [Parameter] public Action<string> breedNameFilterChanged { get; set; }
-    private string _breedNameFilter;
-    string breedNameFilter
+    bool? bornDefectiveFilter { get; set; } //bool
+    bool? bornDefectiveFilterEnd { get; set; }
+    string bornDefectiveFilterOperator { get; set; }
+    void HandleBornDefectiveFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
     {
-        get => _breedNameFilter; set
-        {
-            breedNameFilterChanged.Invoke(value);
-            _breedNameFilter = value;
-        }
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        bornDefectiveFilter = filterValue;
+        bornDefectiveFilterOperator = filterOperator ?? string.Empty;
+        bornDefectiveFilterEnd = filterEndValue;
+        StateHasChanged();
     }
-    
-    [Parameter] public Action<string> breedEmojiFilterChanged { get; set; }
-    private string _breedEmojiFilter;
-    string breedEmojiFilter
+
+    bool? bottleFedFilter { get; set; } //bool
+    bool? bottleFedFilterEnd { get; set; }
+    string bottleFedFilterOperator { get; set; }
+    void HandleBottleFedFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
     {
-        get => _breedEmojiFilter; set
-        {
-            breedEmojiFilterChanged.Invoke(value);
-            _breedEmojiFilter = value;
-        }
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        bottleFedFilter = filterValue;
+        bottleFedFilterOperator = filterOperator ?? string.Empty;
+        bottleFedFilterEnd = filterEndValue;
+        StateHasChanged();
     }
-    
-    [Parameter] public Action<string> varietyFilterChanged { get; set; }
-    private string _varietyFilter;
-    string varietyFilter
+
+    bool? forSaleFilter { get; set; } //bool
+    bool? forSaleFilterEnd { get; set; }
+    string forSaleFilterOperator { get; set; }
+    void HandleForSaleFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
     {
-        get => _varietyFilter; set
-        {
-            varietyFilterChanged.Invoke(value);
-            _varietyFilter = value;
-        }
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        forSaleFilter = filterValue;
+        forSaleFilterOperator = filterOperator ?? string.Empty;
+        forSaleFilterEnd = filterEndValue;
+        StateHasChanged();
     }
-    
-    [Parameter] public Action<string> batchNumberFilterChanged { get; set; }
-    private string _batchNumberFilter;
-    string batchNumberFilter
+    bool? inMilkFilter { get; set; } //bool
+    bool? inMilkFilterEnd { get; set; }
+    string inMilkFilterOperator { get; set; }
+    void HandleInMilkFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
     {
-        get => _batchNumberFilter; set
-        {
-            batchNumberFilterChanged.Invoke(value);
-            _batchNumberFilter = value;
-        }
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        inMilkFilter = filterValue;
+        inMilkFilterOperator = filterOperator ?? string.Empty;
+        inMilkFilterEnd = filterEndValue;
+        StateHasChanged();
     }
-    [Parameter] public Action<string> locationFilterChanged { get; set; }
-    private string _locationFilter;
-    string locationFilter
+    private IQueryable<LivestockModel> FilteredItems()
     {
-        get => _locationFilter; set
-        {
-            locationFilterChanged.Invoke(value);
-            _locationFilter = value;
-        }
+        var query = Items.ToList().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(defectFilter))
+            query = query.Where(s => s.BirthDefect.Contains(defectFilter));
+        if (!string.IsNullOrWhiteSpace(fatherFilter))
+            query = query.Where(s => s.FatherName.Contains(fatherFilter));
+        if (!string.IsNullOrWhiteSpace(motherFilter))
+            query = query.Where(s => s.MotherName.Contains(motherFilter));
+        if (!string.IsNullOrWhiteSpace(animalNameFilter))
+            query = query.Where(s => s.Breed.Animal.Name.Contains(animalNameFilter));
+        if (!string.IsNullOrWhiteSpace(breedNameFilter))
+            query = query.Where(s => s.Breed.Name.Contains(breedNameFilter));
+        if (!string.IsNullOrWhiteSpace(varietyFilter))
+            query = query.Where(s => s.Variety.Contains(varietyFilter));
+        if (!string.IsNullOrWhiteSpace(batchNumberFilter))
+            query = query.Where(s => s.BatchNumber.Contains(batchNumberFilter));
+        if (!string.IsNullOrWhiteSpace(locationFilter))
+            query = query.Where(s => s.LocationName.Contains(locationFilter));
+        if (!string.IsNullOrWhiteSpace(genderFilter))
+            query = query.Where(s => s.Gender.Contains(genderFilter));
+        if (!string.IsNullOrWhiteSpace(statusFilter))
+            query = query.Where(s => s.StatusName.Contains(statusFilter));
+        if (!string.IsNullOrWhiteSpace(nameFilter))
+            query = query.Where(s => s.Name.Contains(nameFilter));
+
+        if (!string.IsNullOrWhiteSpace(birthdateFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.Birthdate, birthdateFilter, birthdateFilterOperator, birthdateFilterEnd);
+        if (!string.IsNullOrWhiteSpace(beingManagedFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.BeingManaged, beingManagedFilter, beingManagedFilterOperator, beingManagedFilterEnd);
+        if (!string.IsNullOrWhiteSpace(sterileFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.Sterile, sterileFilter, sterileFilterOperator, sterileFilterEnd);
+        if (!string.IsNullOrWhiteSpace(bornDefectiveFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.BornDefective, bornDefectiveFilter, bornDefectiveFilterOperator, bornDefectiveFilterEnd);
+        if (!string.IsNullOrWhiteSpace(bottleFedFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.BottleFed, bottleFedFilter, bottleFedFilterOperator, bottleFedFilterEnd);
+        if (!string.IsNullOrWhiteSpace(forSaleFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.ForSale, forSaleFilter, forSaleFilterOperator, forSaleFilterEnd);
+        if (!string.IsNullOrWhiteSpace(inMilkFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.InMilk, inMilkFilter, inMilkFilterOperator, inMilkFilterEnd);
+        return query;
     }
-    [Parameter] public Action<string> genderFilterChanged { get; set; }
-    private string _genderFilter;
-    string genderFilter
-    {
-        get => _genderFilter; set
-        {
-            genderFilterChanged.Invoke(value);
-            _genderFilter = value;
-        }
-    }
-    
-    [Parameter] public Action<string> statusFilterChanged { get; set; }
-    private string _statusFilter;
-    string statusFilter
-    {
-        get => _statusFilter; set
-        {
-            statusFilterChanged.Invoke(value);
-            _statusFilter = value;
-        }
-    }
-    
-    [Parameter] public Action<string> nameFilterChanged { get; set; }
-    private string _nameFilter;
-    string nameFilter
-    {
-        get => _nameFilter; set
-        {
-            nameFilterChanged.Invoke(value);
-            _nameFilter = value;
-        }
-    }
-    #endregion
-    
+
+       
 }

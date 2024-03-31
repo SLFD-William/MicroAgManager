@@ -6,6 +6,15 @@
 @using Microsoft.EntityFrameworkCore
 
 <QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel Virtualize=true Items="Items">
+    <TemplateColumn Sortable="false" Context="breedingRecord">
+        <ChildContent>
+            <NavLink href=@($"/Ancillaries/BreedingRecords?BreedingRecordId={breedingRecord.Id}")>
+                <span>Edit</span>
+            </NavLink>
+        </ChildContent>
+    </TemplateColumn>
+    
+    
     @if (ShowRecipientType)
     {
         <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">

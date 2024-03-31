@@ -106,5 +106,10 @@ namespace Domain.Models
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
+
+        [NotMapped] public string MotherName { get => Mother?.Name ?? string.Empty; }
+        [NotMapped] public string FatherName { get => Father?.Name ?? string.Empty; }
+        [NotMapped] public string LocationName { get => Location?.Name ?? string.Empty; }
+        [NotMapped] public string StatusName { get => Status?.Status ?? string.Empty; }
     }
 }

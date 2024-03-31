@@ -83,17 +83,17 @@
     }
     <PropertyColumn Property="@(p => p.DueOn)" Title="DueOn" Sortable="true">
         <ColumnOptions>
-            <NumericFilter T="DateTime?" FilterOperator="@dueOnFilterOperator" FilterValue="@dueOnFilter" FilterEndValue="@dueOnFilterEnd" OnFilterChanged="HandleDueFilterChanged" />
+            <GenericFilter T="DateTime?" FilterOperator="@dueOnFilterOperator" FilterValue="@dueOnFilter" FilterEndValue="@dueOnFilterEnd" OnFilterChanged="HandleDueFilterChanged" />
         </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.ReminderDays)" Title="Reminder Days" Sortable="true">
         <ColumnOptions>
-            <NumericFilter T="decimal?" OnFilterChanged="HandleReminderFilterChanged" FilterValue="@reminderFilter" FilterEndValue="@reminderFilterEnd" FilterOperator="@reminderFilterOperator" />
+            <GenericFilter T="decimal?" OnFilterChanged="HandleReminderFilterChanged" FilterValue="@reminderFilter" FilterEndValue="@reminderFilterEnd" FilterOperator="@reminderFilterOperator" />
         </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.CompletedOn)" Title="Completed On" Sortable="true">
         <ColumnOptions>
-            <NumericFilter T="DateTime?" FilterOperator="@completedOnFilterOperator" FilterValue="@completedOnFilter" FilterEndValue="@completedOnFilterEnd" OnFilterChanged="HandleCompletedFilterChanged" />
+            <GenericFilter T="DateTime?" FilterOperator="@completedOnFilterOperator" FilterValue="@completedOnFilter" FilterEndValue="@completedOnFilterEnd" OnFilterChanged="HandleCompletedFilterChanged" />
         </ColumnOptions>
     </PropertyColumn>
     <TemplateColumn Title="Record" Sortable="true" Context="scheduledDuty" SortBy="@OrderByRecord">
@@ -116,12 +116,6 @@
         </ChildContent>
     </TemplateColumn>
 </QuickGrid>
-
-
-
-
-
-
 
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }

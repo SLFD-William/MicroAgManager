@@ -5,17 +5,40 @@
         <option value="">Select operator...</option>
         <option value="eq">Equals</option>
         <option value="neq">Not equals</option>
-        <option value="gt">Greater than</option>
-        <option value="lt">Less than</option>
-        <option value="gte">Greater than or equal</option>
-        <option value="lte">Less than or equal</option>
-        <option value="between">Between</option>
+        @if (htmlType != "radio")
+        { 
+            <option value="gt">Greater than</option>
+            <option value="lt">Less than</option>
+            <option value="gte">Greater than or equal</option>
+            <option value="lte">Less than or equal</option>
+            <option value="between">Between</option>
+        }
         <option value="null">Is Null</option>
         <option value="notnull">Is Not Null</option>
     </select>
     @if (FilterOperator != "null" && FilterOperator != "notnull" && !string.IsNullOrEmpty(FilterOperator))
     {
-        <input type="@htmlType" @bind="FilterValue" />
+        @if (htmlType == "radio")
+        {
+            <div style="display:flex;flex-wrap:wrap;">
+                <label>
+                    <input type="@htmlType" name="myOption" value="true" @onchange="@UpdateBooleanFilterValue" checked="@(FilterValue != null && FilterValue.Equals(true))">
+                    True
+                </label>
+                <label>
+                    <input type="@htmlType" name="myOption" value="false" @onchange="@UpdateBooleanFilterValue" checked="@(FilterValue != null && FilterValue.Equals(false))">
+                    False
+                </label>
+            </div>
+        }
+        else if (htmlType == "date")
+        {
+            <InputDate @bind-Value="DateFilterValue"></InputDate>
+        }
+        else
+        {
+            <input type="@htmlType" @bind="FilterValue" />
+        }
     }
 
     @if (FilterOperator == "between")
@@ -59,6 +82,16 @@
         }
     }
 
+    private DateTime? DateFilterValue
+    {
+        get => FilterValue as DateTime?;
+        set
+        {
+            FilterValue = (T)(object)value;
+        }
+    }
+
+
     private T? _filterEndValue;
     [Parameter]
     public T? FilterEndValue
@@ -79,10 +112,18 @@
         htmlType = "number";
         if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
             htmlType="date";
+        if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
+            htmlType = "radio";
     }
 
     private string htmlType { get; set; }
+    void UpdateBooleanFilterValue(ChangeEventArgs e)
+    {
+        if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
+            FilterValue = (T)(object)bool.Parse(e.Value.ToString());
 
+    }
     
+
 
 }

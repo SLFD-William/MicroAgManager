@@ -46,7 +46,7 @@
                     <option value="@RecipientTypeConstants.LivestockBreed">@RecipientTypeConstants.LivestockBreed</option>
                 </InputSelect>
             </ValidatedField>
-            <ValidatedField Legend="Recipient Type Id" ValidationMessageFor="@(() => measurement.RecipientTypeId)">
+            <ValidatedField Legend="Recipient Item" ValidationMessageFor="@(() => measurement.RecipientTypeId)">
                 <InputSelect @bind-Value="@measurement.RecipientTypeId">
                     <option value="0">Select Recipient Type Instance ...</option>
                     @foreach (var recipient in RecipientLogic.RecipientTypeIds(appState.DbContext, measurement.RecipientType))
