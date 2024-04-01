@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -28,7 +27,7 @@ namespace BackEnd.BusinessLogic.Registrar
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(registrar.Id.ToString(), registrar.GetType().Name, "Created", registrar.ModifiedBy, registrar.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, RegistrarModel.Create(registrar).GetJsonString(), nameof(RegistrarModel)), cancellationToken);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }

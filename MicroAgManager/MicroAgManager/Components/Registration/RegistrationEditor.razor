@@ -107,17 +107,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save registration");
-            if (creating)
-            {
-                registration.Id = id;
-                appState.DbContext.Registrations.Add(registration);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Registrations.FindAsync(registration.Id);
-                updated = registration.Map(updated) as RegistrationModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            registration.Id = id;
+            //     if (creating)
+            // {
+            //     registration.Id = id;
+            //     appState.DbContext.Registrations.Add(registration);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Registrations.FindAsync(registration.Id);
+            //     updated = registration.Map(updated) as RegistrationModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(registration);
             await OnSubmit.InvokeAsync(editContext);
         }

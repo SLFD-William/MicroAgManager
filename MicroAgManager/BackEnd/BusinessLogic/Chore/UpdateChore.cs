@@ -25,7 +25,7 @@ namespace BackEnd.BusinessLogic.Chore
                     var chore =await context.Chores.FirstAsync(d => d.TenantId == request.TenantId && d.Id == request.Chore.Id);
                     chore = request.Chore.Map(chore) as Domain.Entity.Chore;
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(chore.Id.ToString(), chore.GetType().Name, "Modified", chore.ModifiedBy, chore.ModifiedOn) }), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification(chore.TenantId, ChoreModel.Create(chore).GetJsonString(), nameof(ChoreModel)), cancellationToken);
                     return chore.Id;
                 }
             }

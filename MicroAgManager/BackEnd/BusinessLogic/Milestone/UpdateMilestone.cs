@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -40,7 +39,8 @@ namespace BackEnd.BusinessLogic.Milestone
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(milestone.Id.ToString(), milestone.GetType().Name, "Modified", milestone.ModifiedBy, milestone.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MilestoneModel.Create(milestone).GetJsonString(), nameof(MilestoneModel)), cancellationToken);
+
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Update Milestone"); }
                     return milestone.Id;

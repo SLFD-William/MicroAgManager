@@ -23,14 +23,14 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
             {
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    var farm = await context.Plots.FirstAsync(f => f.TenantId == request.TenantId && f.Id == request.LandPlot.Id);
-                    farm = request.LandPlot.Map(farm) as Domain.Entity.LandPlot;
-                    farm.ModifiedBy = request.ModifiedBy;
+                    var plot = await context.Plots.FirstAsync(f => f.TenantId == request.TenantId && f.Id == request.LandPlot.Id);
+                    plot = request.LandPlot.Map(plot) as Domain.Entity.LandPlot;
+                    plot.ModifiedBy = request.ModifiedBy;
 
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(farm.Id.ToString(), farm.GetType().Name, "Modified", farm.ModifiedBy, farm.ModifiedOn) }), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification (plot.TenantId, LandPlotModel.Create(plot).GetJsonString(), nameof(LandPlotModel)), cancellationToken);
 
-                    return farm.Id;
+                    return plot.Id;
                 }
             }
         }

@@ -1,7 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
-using Domain.ValueObjects;
+using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -30,7 +30,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockStatus.Id.ToString(), livestockStatus.GetType().Name, "Modified", livestockStatus.ModifiedBy, livestockStatus.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, LivestockStatusModel.Create(livestockStatus).GetJsonString(), nameof(LivestockStatusModel)), cancellationToken);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 

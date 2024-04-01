@@ -32,7 +32,7 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(plot.Id.ToString(), plot.GetType().Name, "Created", plot.ModifiedBy, plot.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification (plot.TenantId, LandPlotModel.Create(plot).GetJsonString(), nameof(LandPlotModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Land Plot"); }
                 }

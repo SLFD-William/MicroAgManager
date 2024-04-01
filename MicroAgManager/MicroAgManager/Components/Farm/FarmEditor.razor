@@ -132,17 +132,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save farm location");
-            if (creating)
-            {
-                farm.Id = id;
-                appState.DbContext.Farms.Add(farm);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Farms.FindAsync(farm.Id);
-                updated = farm.Map(updated) as FarmLocationModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            farm.Id = id;
+            //     if (creating)
+            // {
+            //     farm.Id = id;
+            //     appState.DbContext.Farms.Add(farm);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Farms.FindAsync(farm.Id);
+            //     updated = farm.Map(updated) as FarmLocationModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(farm);
             await OnSubmit.InvokeAsync(editContext);
         }

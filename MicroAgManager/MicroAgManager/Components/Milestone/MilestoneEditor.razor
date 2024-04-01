@@ -87,17 +87,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save land plot");
-            if (creating)
-            {
-                milestone.Id = id;
-                appState.DbContext.Milestones.Add(milestone);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Milestones.FindAsync(milestone.Id);
-                updated = milestone.Map(updated) as MilestoneModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            milestone.Id = id;
+            //     if (creating)
+            // {
+            //     milestone.Id = id;
+            //     appState.DbContext.Milestones.Add(milestone);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Milestones.FindAsync(milestone.Id);
+            //     updated = milestone.Map(updated) as MilestoneModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(milestone);
             await OnSubmit.InvokeAsync(editContext);
         }

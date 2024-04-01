@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -22,18 +21,18 @@ namespace BackEnd.BusinessLogic.Milestone
 
             public override async Task<long> Handle(CreateMilestone request, CancellationToken cancellationToken)
             {
-                var duty = request.Milestone.Map(new Domain.Entity.Milestone(request.ModifiedBy, request.TenantId)) as Domain.Entity.Milestone;
+                var milestone = request.Milestone.Map(new Domain.Entity.Milestone(request.ModifiedBy, request.TenantId)) as Domain.Entity.Milestone;
                 using (var context = new DbContextFactory().CreateDbContext())
                 {
-                    context.Milestones.Add(duty);
+                    context.Milestones.Add(milestone);
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Created", duty.ModifiedBy, duty.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MilestoneModel.Create(milestone).GetJsonString(), nameof(MilestoneModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Milestone"); }
                 }
-                return duty.Id;
+                return milestone.Id;
             }
         }
 

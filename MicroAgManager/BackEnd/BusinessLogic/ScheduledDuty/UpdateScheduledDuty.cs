@@ -3,7 +3,6 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -30,7 +29,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                     request.ScheduledDuty.Map(duty);
                     duty.ModifiedBy = request.ModifiedBy;
                     await context.SaveChangesAsync(cancellationToken);
-                    var notice = new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(duty.Id.ToString(), duty.GetType().Name, "Modified", duty.ModifiedBy, duty.ModifiedOn) });
+                    await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, ScheduledDutyModel.Create(duty).GetJsonString(), nameof(ScheduledDutyModel)), cancellationToken);
                     if (originalDuty.CompletedOn != duty.CompletedOn && duty.CompletedOn.HasValue)
                     {
                         var command = await ScheduledDutyLogic.OnCompleted(context, request, duty);
@@ -39,10 +38,9 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                             var rescheduled = command.ScheduledDuty.Map(new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId)) as Domain.Entity.ScheduledDuty;
                             context.ScheduledDuties.Add(rescheduled);
                             await context.SaveChangesAsync(cancellationToken);
-                            notice.EntitiesModified.Add(new ModifiedEntity(rescheduled.Id.ToString(), rescheduled.GetType().Name, "Created", rescheduled.ModifiedBy, rescheduled.ModifiedOn));
+                            await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, ScheduledDutyModel.Create(rescheduled).GetJsonString(), nameof(ScheduledDutyModel)), cancellationToken);
                         }
                     }
-                    await _mediator.Publish(notice, cancellationToken);
                     return duty.Id;
                 }
             }

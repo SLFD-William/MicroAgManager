@@ -4,6 +4,7 @@ using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -30,7 +31,9 @@ namespace BackEnd.BusinessLogic.Livestock.Animals
                     {
                         await context.SaveChangesAsync(cancellationToken);
                         var modifiedNotice = await LivestockAnimalLogic.OnLivestockAnimalCreated(context, livestockAnimal.Id, cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
+                        foreach(var mod in modifiedNotice)
+                            await _mediator.Publish(new ModifiedEntityPushNotification (mod.TenantId,mod.ModelJson,mod.ModelType), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification (livestockAnimal.TenantId, LivestockAnimalModel.Create(livestockAnimal).GetJsonString(), nameof(LivestockAnimalModel)), cancellationToken);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }

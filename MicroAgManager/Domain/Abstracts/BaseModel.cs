@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Abstracts
@@ -30,6 +31,19 @@ namespace Domain.Abstracts
         public virtual object Clone()
         {
             return MemberwiseClone();
+        }
+        public string GetJsonString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+        public static object ParseJsonString(string jsonString, Type type)
+        {
+            return JsonConvert.DeserializeObject(jsonString, type);
+        }
+
+        public static T ParseJsonString<T>(string jsonString) where T : BaseModel
+        {
+            return JsonConvert.DeserializeObject<T>(jsonString);
         }
 
         public virtual string GetEntityName()=>GetType().Name.Replace("Model", "");

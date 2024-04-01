@@ -67,17 +67,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save unit");
-            if (creating)
-            {
-                unit.Id = id;
-                appState.DbContext.Units.Add(unit);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Units.FindAsync(unit.Id);
-                updated = unit.Map(updated) as UnitModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            unit.Id = id;
+            //     if (creating)
+            // {
+            //     unit.Id = id;
+            //     appState.DbContext.Units.Add(unit);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Units.FindAsync(unit.Id);
+            //     updated = unit.Map(updated) as UnitModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(unit);
             await OnSubmit.InvokeAsync(editContext);
         }

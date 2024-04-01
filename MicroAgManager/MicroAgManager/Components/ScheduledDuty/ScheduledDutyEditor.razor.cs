@@ -147,17 +147,18 @@ namespace MicroAgManager.Components.ScheduledDuty
 
                 if (id <= 0)
                     throw new Exception("Unable to save scheduled duty");
-                if (creating)
-                {
-                    scheduledDuty.Id = id;
-                    appState.DbContext.ScheduledDuties.Add(scheduledDuty);
-                }
-                else
-                {
-                    var updated = await appState.DbContext.ScheduledDuties.FindAsync(scheduledDuty.Id);
-                    updated = scheduledDuty.Map(updated) as ScheduledDutyModel;
-                }
-                await appState.DbContext.SaveChangesAsync();
+                scheduledDuty.Id = id;
+                //if (creating)
+                //{
+                //    scheduledDuty.Id = id;
+                //    appState.DbContext.ScheduledDuties.Add(scheduledDuty);
+                //}
+                //else
+                //{
+                //    var updated = await appState.DbContext.ScheduledDuties.FindAsync(scheduledDuty.Id);
+                //    updated = scheduledDuty.Map(updated) as ScheduledDutyModel;
+                //}
+                //await appState.DbContext.SaveChangesAsync();
                 editContext = new EditContext(scheduledDuty);
                 await OnSubmit.InvokeAsync(editContext);
             }

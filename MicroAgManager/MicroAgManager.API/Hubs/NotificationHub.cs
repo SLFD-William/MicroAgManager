@@ -25,19 +25,34 @@ namespace MicroAgManager.API.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId.ToString());
         }
     }
-    public class NotificationHandler : INotificationHandler<EntitiesModifiedNotification>
+    //public class EntitiesModifiedNotificationHandler : INotificationHandler<EntitiesModifiedNotification>
+    //{
+    //    private readonly IHubContext<NotificationHub> _hubContext;
+
+    //    public EntitiesModifiedNotificationHandler(IHubContext<NotificationHub> hubContext)
+    //    {
+    //        _hubContext = hubContext;
+    //    }
+
+    //    public async Task Handle(EntitiesModifiedNotification notification, CancellationToken cancellationToken)
+    //    {
+    //        if (notification.TenantId == Guid.NewGuid()) return;
+    //        await _hubContext.Clients.Group(notification.TenantId.ToString()).SendAsync("ReceiveEntitiesModifiedMessage", notification);
+    //    }
+    //}
+    public class ModifiedEntityPushNotificationHandler : INotificationHandler<ModifiedEntityPushNotification>
     {
         private readonly IHubContext<NotificationHub> _hubContext;
 
-        public NotificationHandler(IHubContext<NotificationHub> hubContext)
+        public ModifiedEntityPushNotificationHandler(IHubContext<NotificationHub> hubContext)
         {
             _hubContext = hubContext;
         }
 
-        public async Task Handle(EntitiesModifiedNotification notification, CancellationToken cancellationToken)
+        public async Task Handle(ModifiedEntityPushNotification notification, CancellationToken cancellationToken)
         {
             if (notification.TenantId == Guid.NewGuid()) return;
-            await _hubContext.Clients.Group(notification.TenantId.ToString()).SendAsync("ReceiveEntitiesModifiedMessage", notification);
+            await _hubContext.Clients.Group(notification.TenantId.ToString()).SendAsync("ReceiveModifiedEntityPush", notification);
         }
     }
 }

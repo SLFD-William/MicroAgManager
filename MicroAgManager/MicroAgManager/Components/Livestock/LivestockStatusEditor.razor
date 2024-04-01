@@ -120,17 +120,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save status");
-            if (creating)
-            {
-                status.Id = id;
-                appState.DbContext.LivestockStatuses.Add(status);
-            }
-            else
-            {
-                var updated = await appState.DbContext.LivestockStatuses.FindAsync(status.Id);
-                updated = status.Map(updated) as LivestockStatusModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            status.Id = id;
+            //     if (creating)
+            // {
+            //     status.Id = id;
+            //     appState.DbContext.LivestockStatuses.Add(status);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.LivestockStatuses.FindAsync(status.Id);
+            //     updated = status.Map(updated) as LivestockStatusModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(status);
             await OnSubmit.InvokeAsync(editContext);
         }

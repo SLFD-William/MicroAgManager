@@ -1,5 +1,6 @@
 ﻿using BackEnd.Infrastructure;
 using FrontEnd.Persistence;
+using MediatR;
 using MicroAgManager.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -21,7 +22,9 @@ namespace MicroAgManager.Services
         private static NavigationManager _navigationManager;
         private static HubConnection? _hubConnection;
         private static IConfiguration? _config;
-        private static List<EntitiesModifiedNotification> _notifications=new();
+        //private static List<EntitiesModifiedNotification> _notifications=new();
+        private static Queue<ModifiedEntityPushNotification> _entityPush = new Queue<ModifiedEntityPushNotification>();
+
 
         public FrontEndDbContext DbContext { get => _dbContext; }
         public ApplicationState(AuthenticationStateProvider authentication, DataSynchronizer dbSynchonizer, NavigationManager navigationManager, IConfiguration config)
@@ -133,7 +136,8 @@ namespace MicroAgManager.Services
             _hubConnection.Closed += _hubConnection_Closed;
             _hubConnection.Reconnected += _hubConnection_Reconnected;
             _hubConnection.Reconnecting += _hubConnection_Reconnecting;
-            _hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",async (notifications) => { _notifications.Add(notifications); await UpdateClientModels(); } );
+            //_hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",async (notifications) => { _notifications.Add(notifications); await UpdateClientModels(); } );
+            _hubConnection.On<ModifiedEntityPushNotification>("ReceiveModifiedEntityPush", async (notifications) => { _entityPush.Enqueue(notifications); await UpdateModelsFromPush(); });
             try
             {
                 Console.WriteLine("Starting Signalr Listener");
@@ -149,14 +153,21 @@ namespace MicroAgManager.Services
                 throw;
             }
         }
-        private async Task UpdateClientModels()
+        private async Task UpdateModelsFromPush()
         {
-            if (!_notifications.Any(n=> n.EntitiesModified.Any())) return;
-            Console.WriteLine("Server Data Updated");
-            foreach(var notification in _notifications) 
-                await _dbSynchonizer.HandleModifiedEntities(UserId ?? Guid.NewGuid(), notification);
-            _notifications.Clear();
+            while (_entityPush.Any())
+                await _dbSynchonizer.HandleEntityPushNotification(UserId ?? Guid.NewGuid(), _entityPush.Dequeue());
         }
+
+
+        //private async Task UpdateClientModels()
+        //{
+        //    if (!_notifications.Any(n=> n.EntitiesModified.Any())) return;
+        //    Console.WriteLine("Server Data Updated");
+        //    foreach(var notification in _notifications) 
+        //        await _dbSynchonizer.HandleModifiedEntities(UserId ?? Guid.NewGuid(), notification);
+        //    _notifications.Clear();
+        //}
         private Task _hubConnection_Reconnecting(Exception? arg)
         {
             throw new NotImplementedException();

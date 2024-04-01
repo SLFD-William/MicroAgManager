@@ -149,17 +149,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save breeding record");
-            if (creating)
-            {
-                breedingRecord.Id = id;
-                appState.DbContext.BreedingRecords.Add(breedingRecord);
-            }
-            else
-            {
-                var updated = await appState.DbContext.BreedingRecords.FindAsync(breedingRecord.Id);
-                updated = breedingRecord.Map(updated) as BreedingRecordModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            breedingRecord.Id = id;
+            // if (creating)
+            // {
+            //     breedingRecord.Id = id;
+            //     appState.DbContext.BreedingRecords.Add(breedingRecord);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.BreedingRecords.FindAsync(breedingRecord.Id);
+            //     updated = breedingRecord.Map(updated) as BreedingRecordModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(breedingRecord);
             await OnSubmit.InvokeAsync(editContext);
         }

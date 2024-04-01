@@ -77,7 +77,8 @@ builder.Services.AddCors(
 
 builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
                .AddMessagePackProtocol();
-builder.Services.AddScoped<INotificationHandler<EntitiesModifiedNotification>, NotificationHandler>();
+//builder.Services.AddScoped<INotificationHandler<EntitiesModifiedNotification>, EntitiesModifiedNotificationHandler>();
+builder.Services.AddScoped<INotificationHandler<ModifiedEntityPushNotification>, ModifiedEntityPushNotificationHandler>();
 
 // Learn more about configuring Swagger/OpenAPI at
 // https://aka.ms/aspnetcore/swashbuckle

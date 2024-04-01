@@ -63,17 +63,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save animal");
-            if (creating)
-            {
-                animal.Id = id;
-                appState.DbContext.LivestockAnimals.Add(animal);
-            }
-            else
-            {
-                var updated = await appState.DbContext.LivestockAnimals.FindAsync(animal.Id);
-                updated = animal.Map(updated) as LivestockAnimalModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            animal.Id = id;
+            //     if (creating)
+            // {
+            //     animal.Id = id;
+            //     appState.DbContext.LivestockAnimals.Add(animal);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.LivestockAnimals.FindAsync(animal.Id);
+            //     updated = animal.Map(updated) as LivestockAnimalModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(animal);
             await OnSubmit.InvokeAsync(editContext);
         }

@@ -24,8 +24,7 @@ namespace Domain.Logic.Tests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(8, result.Count);
-            Assert.AreEqual("FarmLocation", result[0].EntityName);
-            Assert.AreEqual("Created", result[0].Modification);
+            Assert.AreEqual("FarmLocationModel", result[0].ModelType);
         }
 
         [TestMethod()]

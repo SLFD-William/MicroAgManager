@@ -3,6 +3,7 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
+using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -31,7 +32,9 @@ namespace BackEnd.BusinessLogic.FarmLocation
                     {
                         await context.SaveChangesAsync(cancellationToken);
                         var modifiedNotice = await FarmLocationLogic.OnFarmLocationCreated(context, farm.Id, cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
+                        foreach(var mod in modifiedNotice)
+                            await _mediator.Publish(new ModifiedEntityPushNotification (mod.TenantId, mod.ModelJson, mod.ModelType), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification (farm.TenantId, FarmLocationModel.Create(farm).GetJsonString(), nameof(FarmLocationModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Farm Location"); }
                 }

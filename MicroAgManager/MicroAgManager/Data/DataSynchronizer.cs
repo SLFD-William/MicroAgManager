@@ -117,11 +117,76 @@ namespace MicroAgManager.Data
             var link = await module.InvokeAsync<string>("generateDownloadLink");
             return link ?? string.Empty;
         }
-        public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
+        //public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
+        //{
+        //    if(!notifications.EntitiesModified.Any()) return;
+        //    await EnsureSynchronizingAsync(notifications.EntitiesModified);
+        //}
+        public async Task HandleEntityPushNotification(Guid UserId, ModifiedEntityPushNotification notice)
         {
-            if(!notifications.EntitiesModified.Any()) return;
-            await EnsureSynchronizingAsync(notifications.EntitiesModified);
+            using (var db = await GetPreparedDbContextAsync())
+            {
+                Type type = GetType(notice.ModelType);
+                var model= BaseModel.ParseJsonString(notice.ModelJson,type) as BaseModel;
+                if (model == null) return;
+                var local = await db.FindAsync(type, model.Id);
+                if (local == null)
+                    db.Add(model);
+                else
+                    db.Entry(local).CurrentValues.SetValues(model);
+                await db.SaveChangesAsync();
+                OnUpdate?.Invoke();
+            }
         }
+        private Type GetType(string entityTypeName)
+        {
+            switch (entityTypeName)
+            {
+                case "TenantModel":
+                    return typeof(TenantModel);
+                case "UnitModel":
+                    return typeof(UnitModel);
+                case "MeasureModel":
+                    return typeof(MeasureModel);
+                case "TreatmentModel":
+                    return typeof(TreatmentModel);
+                case "RegistrarModel":
+                    return typeof(RegistrarModel);
+                case "FarmLocationModel":
+                    return typeof(FarmLocationModel);
+                case "LandPlotModel":
+                    return typeof(LandPlotModel);
+                case "LivestockAnimalModel":
+                    return typeof(LivestockAnimalModel);
+                case "LivestockBreedModel":
+                    return typeof(LivestockBreedModel);
+                case "LivestockStatusModel":
+                    return typeof(LivestockStatusModel);
+                case "LivestockModel":
+                    return typeof(LivestockModel);
+                case "MilestoneModel":
+                    return typeof(MilestoneModel);
+                case "DutyModel":
+                    return typeof(DutyModel);
+                case "EventModel":
+                    return typeof(EventModel);
+                case "ChoreModel":
+                    return typeof(ChoreModel);
+                case "BreedingRecordModel":
+                    return typeof(BreedingRecordModel);
+                case "ScheduledDutyModel":
+                    return typeof(ScheduledDutyModel);
+                case "RegistrationModel":
+                    return typeof(RegistrationModel);
+                case "MeasurementModel":
+                    return typeof(MeasurementModel);
+                case "TreatmentRecordModel":
+                    return typeof(TreatmentRecordModel);
+                default:
+                    throw new ArgumentException($"Unknown entity type: {entityTypeName}");
+            }
+        }
+
         private static bool ShouldEntityBeUpdated(List<ModifiedEntity>? entityModels, string modelName) => !(entityModels?.Any() ?? false) || (entityModels?.Select(m => m.EntityName + "Model").Contains(modelName) ?? false);
         private async static Task BulkUpdateEntities<TModel, TRequest>(List<ModifiedEntity>? entityModels, FrontEndDbContext db, IAPIService api, string apiEndpoint)
             where TModel : BaseModel, new()

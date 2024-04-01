@@ -153,17 +153,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save land plot");
-            if (creating)
-            {
-                landPlot.Id = id;
-                appState.DbContext.LandPlots.Add(landPlot);
-            }
-            else
-            {
-                var updated = await appState.DbContext.LandPlots.FindAsync(landPlot.Id);
-                updated = landPlot.Map(updated) as LandPlotModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            landPlot.Id = id;
+            //     if (creating)
+            // {
+            //     landPlot.Id = id;
+            //     appState.DbContext.LandPlots.Add(landPlot);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.LandPlots.FindAsync(landPlot.Id);
+            //     updated = landPlot.Map(updated) as LandPlotModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(landPlot);
             await OnSubmit.InvokeAsync(editContext);
         }

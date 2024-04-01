@@ -2,6 +2,7 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
+using Domain.Models;
 using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -64,11 +65,14 @@ namespace BackEnd.BusinessLogic.Livestock
                             {
                                 try { 
                                     var modifiedNotice = await LivestockLogic.OnLivestockBred(context, dam.Id, request.ScheduleSource, request.ScheduleSourceId, cancellationToken);
-                                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modifiedNotice), cancellationToken);
+                                    foreach (var mod in modifiedNotice)
+                                        await _mediator.Publish(new ModifiedEntityPushNotification(mod.TenantId, mod.ModelJson, mod.ModelType), cancellationToken);
+                                   
                                 }
                                 catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                             }
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, modified.Select(b => new ModifiedEntity(b.Id.ToString(), b.GetType().Name, "Created", b.ModifiedBy, b.ModifiedOn)).ToList()), cancellationToken);
+                        foreach(var breedingRecord in modified)
+                            await _mediator.Publish(new ModifiedEntityPushNotification(breedingRecord.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                 }

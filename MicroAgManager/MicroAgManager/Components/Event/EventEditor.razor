@@ -101,17 +101,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save event");
-            if (creating)
-            {
-                eventModel.Id = id;
-                appState.DbContext.Events.Add(eventModel);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Events.FindAsync(eventModel.Id);
-                updated = eventModel.Map(updated) as EventModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            eventModel.Id = id;
+            //     if (creating)
+            // {
+            //     eventModel.Id = id;
+            //     appState.DbContext.Events.Add(eventModel);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Events.FindAsync(eventModel.Id);
+            //     updated = eventModel.Map(updated) as EventModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(eventModel);
             await OnSubmit.InvokeAsync(editContext);
         }

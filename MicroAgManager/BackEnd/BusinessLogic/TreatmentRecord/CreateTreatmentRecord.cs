@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -29,7 +28,8 @@ namespace BackEnd.BusinessLogic.TreatmentRecord
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(treatmentRecord.Id.ToString(), treatmentRecord.GetType().Name, "Created", treatmentRecord.ModifiedBy, treatmentRecord.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, TreatmentRecordModel.Create(treatmentRecord).GetJsonString(), nameof(TreatmentRecordModel)), cancellationToken);
+
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create TreatmentRecord"); }
                 }

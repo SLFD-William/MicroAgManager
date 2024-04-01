@@ -1,5 +1,6 @@
 ﻿using Domain.Constants;
 using Domain.Interfaces;
+using Domain.Models;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,15 +8,15 @@ namespace Domain.Logic
 {
     public static class FarmLocationLogic
     {
-        public async static Task<List<ModifiedEntity>> OnFarmLocationCreated(DbContext genericContext, long id, CancellationToken cancellationToken)
+        public async static Task<List<EntityPushNotification>> OnFarmLocationCreated(DbContext genericContext, long id, CancellationToken cancellationToken)
         {
             var context = genericContext as IMicroAgManagementDbContext;
-            var entitiesModified = new List<ModifiedEntity>();
+            var entitiesModified = new List<EntityPushNotification>();
             if (context is null) return entitiesModified;
 
             var farmLocation = await context.Farms.FindAsync(id);
             if (farmLocation == null) throw new Exception("FarmLocation not found");
-            entitiesModified.Add(new ModifiedEntity(farmLocation.Id.ToString(), farmLocation.GetType().Name, "Created", farmLocation.ModifiedBy,farmLocation.ModifiedOn));
+            entitiesModified.Add(new EntityPushNotification(farmLocation.TenantId,FarmLocationModel.Create(farmLocation).GetJsonString(),nameof(FarmLocationModel)));
             AddAncilliaries(farmLocation, context as DbContext);
             entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context as DbContext));
             await context.SaveChangesAsync(cancellationToken);

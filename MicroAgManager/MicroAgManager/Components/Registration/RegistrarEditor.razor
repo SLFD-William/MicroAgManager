@@ -57,17 +57,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save registrar");
-            if (creating)
-            {
-                registrar.Id = id;
-                appState.DbContext.Registrars.Add(registrar);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Registrars.FindAsync(registrar.Id);
-                updated = registrar.Map(updated) as RegistrarModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            registrar.Id = id;
+            //     if (creating)
+            // {
+            //     registrar.Id = id;
+            //     appState.DbContext.Registrars.Add(registrar);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Registrars.FindAsync(registrar.Id);
+            //     updated = registrar.Map(updated) as RegistrarModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(registrar);
             await OnSubmit.InvokeAsync(editContext);
         }

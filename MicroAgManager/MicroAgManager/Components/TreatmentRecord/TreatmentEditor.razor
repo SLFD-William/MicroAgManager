@@ -186,17 +186,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save treatment");
-            if (creating)
-            {
-                treatment.Id = id;
-                appState.DbContext.Treatments.Add(treatment);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Treatments.FindAsync(treatment.Id);
-                updated = treatment.Map(updated) as TreatmentModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            treatment.Id = id;
+            //     if (creating)
+            // {
+            //     treatment.Id = id;
+            //     appState.DbContext.Treatments.Add(treatment);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Treatments.FindAsync(treatment.Id);
+            //     updated = treatment.Map(updated) as TreatmentModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(treatment);
             await OnSubmit.InvokeAsync(editContext);
         }

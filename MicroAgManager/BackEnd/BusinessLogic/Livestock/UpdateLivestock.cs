@@ -1,7 +1,7 @@
 ﻿using BackEnd.Abstracts;
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
-using Domain.ValueObjects;
+using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,7 +28,8 @@ namespace BackEnd.BusinessLogic.Livestock
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestock.Id.ToString(), livestock.GetType().Name, "Modified", livestock.ModifiedBy, livestock.ModifiedOn) }), cancellationToken);
+                        
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, LivestockModel.Create(livestock).GetJsonString(),nameof(LivestockModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Update Livestock"); }
                     return livestock.Id;

@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,7 +27,7 @@ namespace BackEnd.BusinessLogic.Measure
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(measure.Id.ToString(), measure.GetType().Name, "Modified", measure.ModifiedBy, measure.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MeasureModel.Create(measure).GetJsonString(), nameof(MeasureModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Update Measure"); }
 

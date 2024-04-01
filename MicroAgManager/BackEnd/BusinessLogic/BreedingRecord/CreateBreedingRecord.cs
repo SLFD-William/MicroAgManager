@@ -3,7 +3,6 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
@@ -47,7 +46,8 @@ namespace BackEnd.BusinessLogic.BreedingRecord
                                 await _mediator.Send(command, cancellationToken);
                             }
                         }
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Created", breedingRecord.ModifiedBy, breedingRecord.ModifiedOn) }), cancellationToken);
+
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create BreedingRecord"); }
                 }

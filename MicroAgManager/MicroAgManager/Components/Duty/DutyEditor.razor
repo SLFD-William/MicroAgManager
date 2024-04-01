@@ -137,17 +137,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save duty");
-            if (creating)
-            {
-                duty.Id = id;
-                appState.DbContext.Duties.Add(duty);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Duties.FindAsync(duty.Id);
-                updated = duty.Map(updated) as DutyModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            duty.Id = id;
+            // if (creating)
+            // {
+            //     duty.Id = id;
+            //     appState.DbContext.Duties.Add(duty);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Duties.FindAsync(duty.Id);
+            //     updated = duty.Map(updated) as DutyModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(duty);
             await OnSubmit.InvokeAsync(editContext);
         }

@@ -1,6 +1,7 @@
 ﻿using Domain.Constants;
 using Domain.Entity;
 using Domain.Interfaces;
+using Domain.Models;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,17 +9,17 @@ namespace Domain.Logic
 {
     public static class LivestockAnimalLogic
     {
-        public async static Task<List<ModifiedEntity>> OnLivestockAnimalCreated(DbContext genericContext, long id, CancellationToken cancellationToken)
+        public async static Task<List<EntityPushNotification>> OnLivestockAnimalCreated(DbContext genericContext, long id, CancellationToken cancellationToken)
         {
             var context = genericContext as IMicroAgManagementDbContext;
-            var entitiesModified = new List<ModifiedEntity>();
+            var entitiesModified = new List<EntityPushNotification>();
             if (context is null) return entitiesModified;
 
-            var LivestockAnimal = await context.LivestockAnimals.FindAsync(id);
-                if (LivestockAnimal == null) throw new Exception("LivestockAnimal not found");
-                entitiesModified.Add(new ModifiedEntity(LivestockAnimal.Id.ToString(), LivestockAnimal.GetType().Name, "Created", LivestockAnimal.ModifiedBy, LivestockAnimal.ModifiedOn));
+            var livestockAnimal = await context.LivestockAnimals.FindAsync(id);
+                if (livestockAnimal == null) throw new Exception("LivestockAnimal not found");
+                entitiesModified.Add(new EntityPushNotification(livestockAnimal.TenantId, LivestockAnimalModel.Create(livestockAnimal).GetJsonString(),nameof(LivestockAnimalModel)));
 
-                AddRequiredMilestones(LivestockAnimal, context);
+                AddRequiredMilestones(livestockAnimal, context);
                 entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context as DbContext));
                 await context.SaveChangesAsync(cancellationToken);
 

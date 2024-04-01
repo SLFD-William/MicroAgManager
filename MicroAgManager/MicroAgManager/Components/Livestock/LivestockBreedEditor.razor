@@ -89,17 +89,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save breed");
-            if (creating)
-            {
-                breed.Id = id;
-                appState.DbContext.LivestockBreeds.Add(breed);
-            }
-            else
-            {
-                var updated = await appState.DbContext.LivestockBreeds.FindAsync(breed.Id);
-                updated = breed.Map(updated) as LivestockBreedModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            breed.Id = id;
+            //     if (creating)
+            // {
+            //     breed.Id = id;
+            //     appState.DbContext.LivestockBreeds.Add(breed);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.LivestockBreeds.FindAsync(breed.Id);
+            //     updated = breed.Map(updated) as LivestockBreedModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(breed);
             await OnSubmit.InvokeAsync(editContext);
         }

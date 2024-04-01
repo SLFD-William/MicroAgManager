@@ -3,7 +3,6 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -40,10 +39,9 @@ public class Handler: BaseCommandHandler<UpdateBreedingRecord>
                             await _mediator.Send(command, cancellationToken);
                         }
                     }
-                    await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(breedingRecord.Id.ToString(), breedingRecord.GetType().Name, "Modified", breedingRecord.ModifiedBy, breedingRecord.ModifiedOn) }), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel)), cancellationToken);
                     return breedingRecord.Id;
                 }
-
             }
         }
     }

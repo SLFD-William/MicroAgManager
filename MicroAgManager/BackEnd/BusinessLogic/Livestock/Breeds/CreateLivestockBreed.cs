@@ -31,7 +31,7 @@ namespace BackEnd.BusinessLogic.Livestock.Breeds
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new EntitiesModifiedNotification(request.TenantId, new() { new ModifiedEntity(livestockBreed.Id.ToString(), livestockBreed.GetType().Name, "Created", livestockBreed.ModifiedBy, livestockBreed.ModifiedOn) }), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification (livestockBreed.TenantId, LivestockBreedModel.Create(livestockBreed).GetJsonString(), nameof(LivestockBreedModel)), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Livestock Breed"); }
                 }

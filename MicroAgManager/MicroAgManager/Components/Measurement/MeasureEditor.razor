@@ -94,17 +94,18 @@
 
             if (id <= 0)
                 throw new Exception("Unable to save measure");
-            if (creating)
-            {
-                measure.Id = id;
-                appState.DbContext.Measures.Add(measure);
-            }
-            else
-            {
-                var updated = await appState.DbContext.Measures.FindAsync(measure.Id);
-                updated = measure.Map(updated) as MeasureModel;
-            }
-            await appState.DbContext.SaveChangesAsync();
+            measure.Id = id; 
+            // if (creating)
+            // {
+            //     measure.Id = id;
+            //     appState.DbContext.Measures.Add(measure);
+            // }
+            // else
+            // {
+            //     var updated = await appState.DbContext.Measures.FindAsync(measure.Id);
+            //     updated = measure.Map(updated) as MeasureModel;
+            // }
+            // await appState.DbContext.SaveChangesAsync();
             editContext = new EditContext(measure);
             await OnSubmit.InvokeAsync(editContext);
         }
