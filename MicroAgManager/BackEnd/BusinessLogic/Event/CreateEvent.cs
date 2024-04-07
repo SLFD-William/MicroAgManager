@@ -32,7 +32,7 @@ namespace BackEnd.BusinessLogic.Event
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(eventEntity.TenantId, EventModel.Create(eventEntity).GetJsonString(), nameof(EventModel)), cancellationToken); return eventEntity.Id;
+                        await _mediator.Publish(new ModifiedEntityPushNotification(eventEntity.TenantId, EventModel.Create(eventEntity).GetJsonString(), nameof(EventModel), eventEntity.ModifiedOn), cancellationToken); return eventEntity.Id;
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Event"); }
                 }

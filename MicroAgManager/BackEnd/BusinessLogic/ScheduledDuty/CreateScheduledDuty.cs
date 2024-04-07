@@ -32,7 +32,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, ScheduledDutyModel.Create(duty).GetJsonString(), nameof(ScheduledDutyModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, ScheduledDutyModel.Create(duty).GetJsonString(), nameof(ScheduledDutyModel), duty.ModifiedOn), cancellationToken);
                         if (duty.CompletedOn.HasValue)
                         { 
                             var command = await ScheduledDutyLogic.OnCompleted(context, request,duty);
@@ -41,7 +41,7 @@ namespace BackEnd.BusinessLogic.ScheduledDuty
                                 var rescheduled=command.ScheduledDuty.Map(new Domain.Entity.ScheduledDuty(request.ModifiedBy, request.TenantId)) as Domain.Entity.ScheduledDuty;
                                 context.ScheduledDuties.Add(rescheduled);
                                 await context.SaveChangesAsync(cancellationToken);
-                                await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, ScheduledDutyModel.Create(rescheduled).GetJsonString(), nameof(ScheduledDutyModel)), cancellationToken);
+                                await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, ScheduledDutyModel.Create(rescheduled).GetJsonString(), nameof(ScheduledDutyModel), rescheduled.ModifiedOn ), cancellationToken);
                             }
                         }
                     }

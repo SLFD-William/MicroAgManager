@@ -58,7 +58,6 @@
     </ValidatedForm>
     }
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private LivestockBreedModel? breed;
@@ -69,6 +68,7 @@
     {
         breed = editContext.Model as LivestockBreedModel;
         if (breed is null) return;
+        base.OnInitialized();
         LivestockAnimalId = breed.LivestockAnimalId;
     }
     private async Task OnBreedSubmit(EditContext editContext)

@@ -89,7 +89,6 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private LivestockStatusModel? status;
@@ -100,6 +99,7 @@
     {
         status = editContext.Model as LivestockStatusModel;
         if (status is null) return;
+        base.OnInitialized();
         LivestockAnimalId = status.LivestockAnimalId;
 
     }

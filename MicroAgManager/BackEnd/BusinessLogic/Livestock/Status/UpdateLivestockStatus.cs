@@ -30,7 +30,7 @@ namespace BackEnd.BusinessLogic.Livestock.Status
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, LivestockStatusModel.Create(livestockStatus).GetJsonString(), nameof(LivestockStatusModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, LivestockStatusModel.Create(livestockStatus).GetJsonString(), nameof(LivestockStatusModel), livestockStatus.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 

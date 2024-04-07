@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.Measurement
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MeasurementModel.Create(measurement).GetJsonString(), nameof(MeasurementModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MeasurementModel.Create(measurement).GetJsonString(), nameof(MeasurementModel), measurement.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Measurement"); }
                 }

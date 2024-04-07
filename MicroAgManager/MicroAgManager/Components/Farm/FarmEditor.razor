@@ -3,6 +3,7 @@
 @using MicroAgManager.Components.Shared
 @using MicroAgManager.Data
 @using MicroAgManager.Services
+
 @inherits BaseEditor
 @if (farm is not null)
 {
@@ -59,7 +60,6 @@
 
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     private ValidatedForm _validatedForm;
     bool locationEnabled { get; set; } = true;
     [Inject] protected IGeolocationService GeoLoc { get; set; }
@@ -100,12 +100,18 @@
     }
     private async Task GetGeoLocation()
     {
-        var geoLoc = await api.GetClosestGeoLocation(farm);
-        var point = geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Point;
-        if (point == null) return;
-        farm.Latitude = point.Coordinates[0];
-        farm.Longitude = point.Coordinates[1];
-        StateHasChanged();
+        try { 
+            var geoLoc = await api.GetClosestGeoLocation(farm);
+            var point = geoLoc?.ResourceSets.FirstOrDefault()?.Resources.FirstOrDefault()?.Point;
+            if (point == null) return;
+            farm.Latitude = point.Coordinates[0];
+            farm.Longitude = point.Coordinates[1];
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+
+        }
     }
     [JSInvokable]
     public void OnErrorRequestingCoordinates(GeolocationPositionError error)
@@ -155,4 +161,5 @@
         
 
     }
+
 }

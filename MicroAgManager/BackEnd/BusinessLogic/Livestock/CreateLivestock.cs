@@ -32,15 +32,16 @@ namespace BackEnd.BusinessLogic.Livestock
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
+                        
                         if (request.CreationMode == "Birth")
                         {
                             var modifiedNotice = await LivestockLogic.OnLivestockBorn(context, livestock.Id, cancellationToken);
-                            foreach(var mod in modifiedNotice)
-                                await _mediator.Publish(new ModifiedEntityPushNotification (mod.TenantId, mod.ModelJson, mod.ModelType), cancellationToken);
+                            foreach (var mod in modifiedNotice)
+                                await _mediator.Publish(new ModifiedEntityPushNotification(mod.TenantId, mod.ModelJson, mod.ModelType, mod.ServerModifiedTime), cancellationToken);
                         }
-                        else
-                            await _mediator.Publish(new ModifiedEntityPushNotification (livestock.TenantId, LivestockModel.Create(livestock).GetJsonString(), nameof(LivestockModel)), cancellationToken);
-
+                        else {
+                            await _mediator.Publish(new ModifiedEntityPushNotification(livestock.TenantId, LivestockModel.Create(livestock).GetJsonString(), nameof(LivestockModel), livestock.ModifiedOn), cancellationToken);
+                        }
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                 }

@@ -115,13 +115,13 @@
 
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private DutyModel? duty;
     protected override void OnInitialized()
     {
         duty = editContext.Model as DutyModel;
         if (duty is null) return;
+        base.OnInitialized();
     }
     private async Task OnDutySubmit(EditContext editContext)
     {

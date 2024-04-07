@@ -27,7 +27,7 @@ namespace BackEnd.BusinessLogic.Measure
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MeasureModel.Create(measure).GetJsonString(), nameof(MeasureModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MeasureModel.Create(measure).GetJsonString(), nameof(MeasureModel), measure.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Update Measure"); }
 

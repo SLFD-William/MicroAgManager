@@ -39,7 +39,7 @@ public class Handler: BaseCommandHandler<UpdateBreedingRecord>
                             await _mediator.Send(command, cancellationToken);
                         }
                     }
-                    await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel)), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel), breedingRecord.ModifiedOn), cancellationToken);
                     return breedingRecord.Id;
                 }
             }

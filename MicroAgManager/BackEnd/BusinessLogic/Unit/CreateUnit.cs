@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.Unit
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, UnitModel.Create(unit).GetJsonString(), nameof(UnitModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, UnitModel.Create(unit).GetJsonString(), nameof(UnitModel),unit.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Unit"); }
                 }

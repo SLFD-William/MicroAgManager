@@ -73,7 +73,6 @@
 
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private RegistrationModel registration;
     private RegistrationModel original;
@@ -81,6 +80,7 @@
     {
         registration = editContext.Model as RegistrationModel;
         if (registration is null) return;
+        base.OnInitialized();
         original = registration.Clone() as RegistrationModel;
         if (registration.RegistrationDate == DateTime.MinValue)
             registration.RegistrationDate = DateTime.Now;

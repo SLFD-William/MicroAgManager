@@ -79,8 +79,8 @@ namespace Domain.Logic
             var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == breedingRecord.FemaleId);
             if (livestock == null || livestock.Gender == GenderConstants.Male) throw new Exception("Female Livestock not found");
 
-            entitiesModified.Add(new EntityPushNotification(livestock.TenantId,LivestockModel.Create(livestock).GetJsonString(),nameof(LivestockModel)));
-            entitiesModified.Add(new EntityPushNotification(breedingRecord.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(),nameof(BreedingRecordModel)));
+            entitiesModified.Add(new EntityPushNotification(livestock.TenantId,LivestockModel.Create(livestock).GetJsonString(),nameof(LivestockModel), livestock.ModifiedOn));
+            entitiesModified.Add(new EntityPushNotification(breedingRecord.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(),nameof(BreedingRecordModel), breedingRecord.ModifiedOn  ));
 
             var birthDuty = await context.Duties.FirstOrDefaultAsync(d => d.RecipientType == livestock.Breed.LivestockAnimal.GetType().Name && d.RecipientTypeId == livestock.Breed.LivestockAnimalId && d.Command == DutyCommandConstants.Birth);
             if (birthDuty == null) throw new Exception("Birth Duty not found");
@@ -100,7 +100,7 @@ namespace Domain.Logic
 
             await context.SaveChangesAsync(cancellationToken);
             
-            entitiesModified.Add(new EntityPushNotification(scheduledDuty.TenantId, ScheduledDutyModel.Create(scheduledDuty).GetJsonString(),nameof(ScheduledDutyModel)));
+            entitiesModified.Add(new EntityPushNotification(scheduledDuty.TenantId, ScheduledDutyModel.Create(scheduledDuty).GetJsonString(),nameof(ScheduledDutyModel), scheduledDuty.ModifiedOn));
             return entitiesModified;
         }
         public async static Task<List<EntityPushNotification>> OnLivestockBorn(DbContext genericContext, long livestockId, CancellationToken cancellationToken)
@@ -112,7 +112,7 @@ namespace Domain.Logic
 
             var livestock = await context.Livestocks.Include(b => b.Breed).ThenInclude(a => a.LivestockAnimal).FirstOrDefaultAsync(l => l.Id == livestockId);
             if (livestock == null) throw new Exception("Livestock not found");
-            entitiesModified.Add(new EntityPushNotification(livestock.TenantId, LivestockModel.Create(livestock).GetJsonString(), nameof(LivestockModel)));
+            entitiesModified.Add(new EntityPushNotification(livestock.TenantId, LivestockModel.Create(livestock).GetJsonString(), nameof(LivestockModel), livestock.ModifiedOn));
             if (!livestock.StatusId.HasValue)
             { 
                 var status = await context.LivestockStatuses.FirstOrDefaultAsync(l => l.LivestockAnimalId == livestock.Breed.LivestockAnimalId && l.DefaultStatus);
@@ -140,12 +140,12 @@ namespace Domain.Logic
                     Recipient = livestock.GetType().Name,
                 };
                 context.ScheduledDuties.Add(scheduledDuty);
-                entitiesModified.Add(new EntityPushNotification(scheduledDuty.TenantId, ScheduledDutyModel.Create(scheduledDuty).GetJsonString(), nameof(ScheduledDutyModel)));
+                entitiesModified.Add(new EntityPushNotification(scheduledDuty.TenantId, ScheduledDutyModel.Create(scheduledDuty).GetJsonString(), nameof(ScheduledDutyModel), scheduledDuty.ModifiedOn));
             }
 
             var mother = await context.Livestocks.FindAsync(livestock.MotherId);
             if (mother == null) throw new Exception("Livestock mother not found");
-            entitiesModified.Add(new EntityPushNotification(livestock.TenantId, LivestockModel.Create(mother).GetJsonString(), nameof(LivestockModel)));
+            entitiesModified.Add(new EntityPushNotification(livestock.TenantId, LivestockModel.Create(mother).GetJsonString(), nameof(LivestockModel), livestock.ModifiedOn));
             var parturitionMilestoneDuties = await context.Milestones.Include(m => m.Duties).Where(m => m.Name == MilestoneSystemRequiredConstants.Parturition).SelectMany(m => m.Duties).ToListAsync();
             foreach (var duty in parturitionMilestoneDuties.Where(d => (d.Gender is null || d.Gender == mother.Gender) && d.Relationship == DutyRelationshipConstants.Self))
             {
@@ -163,7 +163,7 @@ namespace Domain.Logic
                     Recipient = mother.GetType().Name,
                 };
                 context.ScheduledDuties.Add(scheduledDuty);
-                entitiesModified.Add(new EntityPushNotification(scheduledDuty.TenantId, ScheduledDutyModel.Create(scheduledDuty).GetJsonString(), nameof(ScheduledDutyModel)));
+                entitiesModified.Add(new EntityPushNotification(scheduledDuty.TenantId, ScheduledDutyModel.Create(scheduledDuty).GetJsonString(), nameof(ScheduledDutyModel), scheduledDuty.ModifiedOn));
             }
             await context.SaveChangesAsync(cancellationToken);
             return entitiesModified;

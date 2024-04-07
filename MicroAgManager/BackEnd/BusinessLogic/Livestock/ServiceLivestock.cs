@@ -66,13 +66,14 @@ namespace BackEnd.BusinessLogic.Livestock
                                 try { 
                                     var modifiedNotice = await LivestockLogic.OnLivestockBred(context, dam.Id, request.ScheduleSource, request.ScheduleSourceId, cancellationToken);
                                     foreach (var mod in modifiedNotice)
-                                        await _mediator.Publish(new ModifiedEntityPushNotification(mod.TenantId, mod.ModelJson, mod.ModelType), cancellationToken);
+                                        await _mediator.Publish(new ModifiedEntityPushNotification(mod.TenantId, mod.ModelJson, mod.ModelType,mod.ServerModifiedTime), cancellationToken);
                                    
                                 }
                                 catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                             }
-                        foreach(var breedingRecord in modified)
-                            await _mediator.Publish(new ModifiedEntityPushNotification(breedingRecord.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel)), cancellationToken);
+                        foreach (var breedingRecord in modified)
+                            await _mediator.Publish(new ModifiedEntityPushNotification(breedingRecord.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel),breedingRecord.ModifiedOn), cancellationToken);
+
                     }
                     catch (Exception ex) { _log.LogError(ex, $"{ex.Message} {ex.StackTrace}"); }
                 }

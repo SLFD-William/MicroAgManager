@@ -1,4 +1,5 @@
 ﻿using Domain.Abstracts;
+using Domain.Models;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -15,33 +16,84 @@ namespace Domain.Logic
             {
                 var changedEntity = change.Entity as BaseEntity;
                 if (changedEntity is null) continue;
-                var modification = change.State == EntityState.Added ? "Created" : "Modified";
+                try { 
+                var model = CreateModelInstance(changedEntity.GetType().Name + "Model",changedEntity);
                 entitiesModified.Add(
                     new EntityPushNotification(
                         changedEntity.TenantId,
-                        CreateModelInstance(changedEntity.GetType().Name+"Model").GetJsonString(), 
-                        changedEntity.GetType().Name 
+                        model.GetJsonString(), 
+                        changedEntity.GetType().Name,
+                        changedEntity.ModifiedOn
                         ));
+                }
+                catch (Exception ex) { Console.WriteLine(ex); }
             }
             return Task.FromResult(entitiesModified);
         }
-        public static BaseModel CreateModelInstance(string modelName)
+        public static BaseModel CreateModelInstance(string modelName, BaseEntity entity )
         {
-            // Assuming your models are in the "Models" namespace
-            var type = Type.GetType($"Models.{modelName}");
-
+            var type = GetModelType(modelName);
             if (type != null)
             {
-                var createMethod = type.GetMethod("Create", BindingFlags.Static | BindingFlags.Public);
+                var createMethod = type.GetMethod("ShallowCreate", BindingFlags.Static | BindingFlags.Public);
+                if (createMethod == null)
+                    createMethod = type.GetMethod("Create", BindingFlags.Static | BindingFlags.Public);
 
                 if (createMethod != null)
-                {
-                    return createMethod.Invoke(null, null) as BaseModel;
-                }
+                    return createMethod.Invoke(null, [entity]) as BaseModel;
+
             }
 
             return null;
         }
-
+        public static Type GetModelType(string entityModelName)
+        {
+            if (!entityModelName.EndsWith("Model")) entityModelName += "Model";
+            switch (entityModelName)
+            {
+                case "TenantModel":
+                    return typeof(TenantModel);
+                case "UnitModel":
+                    return typeof(UnitModel);
+                case "MeasureModel":
+                    return typeof(MeasureModel);
+                case "TreatmentModel":
+                    return typeof(TreatmentModel);
+                case "RegistrarModel":
+                    return typeof(RegistrarModel);
+                case "FarmLocationModel":
+                    return typeof(FarmLocationModel);
+                case "LandPlotModel":
+                    return typeof(LandPlotModel);
+                case "LivestockAnimalModel":
+                    return typeof(LivestockAnimalModel);
+                case "LivestockBreedModel":
+                    return typeof(LivestockBreedModel);
+                case "LivestockStatusModel":
+                    return typeof(LivestockStatusModel);
+                case "LivestockModel":
+                    return typeof(LivestockModel);
+                case "MilestoneModel":
+                    return typeof(MilestoneModel);
+                case "DutyModel":
+                    return typeof(DutyModel);
+                case "EventModel":
+                    return typeof(EventModel);
+                case "ChoreModel":
+                    return typeof(ChoreModel);
+                case "BreedingRecordModel":
+                    return typeof(BreedingRecordModel);
+                case "ScheduledDutyModel":
+                    return typeof(ScheduledDutyModel);
+                case "RegistrationModel":
+                    return typeof(RegistrationModel);
+                case "MeasurementModel":
+                    return typeof(MeasurementModel);
+                case "TreatmentRecordModel":
+                    return typeof(TreatmentRecordModel);
+                default:
+                    throw new ArgumentException($"Unknown entity type: {entityModelName}");
+            }
+        }
     }
 }

@@ -15,8 +15,7 @@ using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddResponseCompression(opts =>
 {
-    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-        new[] { "application/octet-stream" });
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
 });
 
 builder.Services.AddMediatR(cfg =>
@@ -25,7 +24,6 @@ builder.Services.AddMediatR(cfg =>
 });
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
 
-
 // cookie authentication
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
 
@@ -33,9 +31,7 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdent
 builder.Services.AddAuthorizationBuilder();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<IMicroAgManagementDbContext, MicroAgManagementDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDbContext<MicroAgManagementDbContext>(options => options.UseSqlServer());
+builder.Services.AddDbContext<IMicroAgManagementDbContext, MicroAgManagementDbContext>(options =>options.UseSqlServer(connectionString));
 
 builder.Services.AddLogging(bu =>
 {
@@ -77,7 +73,7 @@ builder.Services.AddCors(
 
 builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
                .AddMessagePackProtocol();
-//builder.Services.AddScoped<INotificationHandler<EntitiesModifiedNotification>, EntitiesModifiedNotificationHandler>();
+
 builder.Services.AddScoped<INotificationHandler<ModifiedEntityPushNotification>, ModifiedEntityPushNotificationHandler>();
 
 // Learn more about configuring Swagger/OpenAPI at
@@ -140,5 +136,5 @@ app.UseHttpsRedirection();
 //    }
 //    migratingDb = false;
 //}
-    app.Logger.LogDebug("Running APP");
+app.Logger.LogDebug("Running APP");
 app.Run();

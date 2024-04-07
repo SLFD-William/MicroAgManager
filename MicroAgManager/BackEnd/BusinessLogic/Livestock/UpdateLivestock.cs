@@ -29,7 +29,7 @@ namespace BackEnd.BusinessLogic.Livestock
                     {
                         await context.SaveChangesAsync(cancellationToken);
                         
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, LivestockModel.Create(livestock).GetJsonString(),nameof(LivestockModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, LivestockModel.Create(livestock).GetJsonString(),nameof(LivestockModel), livestock.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Update Livestock"); }
                     return livestock.Id;

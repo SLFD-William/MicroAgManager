@@ -33,6 +33,7 @@ using BackEnd.BusinessLogic.ScheduledDuty;
 using BackEnd.BusinessLogic.TreatmentRecord;
 using System.Net.Http.Json;
 using System.Data.Common;
+using Domain.Logic;
 namespace MicroAgManager.Data
 {
     public class DataSynchronizer
@@ -68,7 +69,6 @@ namespace MicroAgManager.Data
                 await FirstTimeSetupAsync();
                 DatabaseInitialized = true;
                 OnDbInitialized?.Invoke();
-                // await EnsureSynchronizingAsync(null);
             }
             _isInitializing = false;
             OnUpdate?.Invoke();
@@ -117,87 +117,58 @@ namespace MicroAgManager.Data
             var link = await module.InvokeAsync<string>("generateDownloadLink");
             return link ?? string.Empty;
         }
-        //public async Task HandleModifiedEntities(Guid UserId, EntitiesModifiedNotification notifications)
-        //{
-        //    if(!notifications.EntitiesModified.Any()) return;
-        //    await EnsureSynchronizingAsync(notifications.EntitiesModified);
-        //}
-        public async Task HandleEntityPushNotification(Guid UserId, ModifiedEntityPushNotification notice)
+        public async Task HandleEntityPushNotification(ModifiedEntityPushNotification notice)
         {
             using (var db = await GetPreparedDbContextAsync())
             {
-                Type type = GetType(notice.ModelType);
+                Type type = EntityLogic.GetModelType(notice.ModelType);
                 var model= BaseModel.ParseJsonString(notice.ModelJson,type) as BaseModel;
                 if (model == null) return;
-                var local = await db.FindAsync(type, model.Id);
-                if (local == null)
-                    db.Add(model);
-                else
-                    db.Entry(local).CurrentValues.SetValues(model);
-                await db.SaveChangesAsync();
-                OnUpdate?.Invoke();
+                try { 
+                    var local = db.Find(type, model.Id);
+                    if (local == null)
+                        db.Add(model);
+                    else
+                    {
+                        if (((BaseModel)local).EntityModifiedOn == model.EntityModifiedOn) return;
+                        db.Entry(local).CurrentValues.SetValues(model);
+                    }
+                    await db.SaveChangesAsync();
+                    if (HasManyToMany.Contains(type.Name))
+                        await SynchManyToMany(db,_api, type);
+                    OnUpdate?.Invoke();
+                }
+                catch (Exception ex) { Console.WriteLine(ex); }
             }
         }
-        private Type GetType(string entityTypeName)
+        private static readonly List<string> HasManyToMany = new List<string>() {nameof(ChoreModel),nameof(EventModel),nameof(MilestoneModel), nameof(DutyModel) };
+        private async Task SynchManyToMany(FrontEndDbContext db, IAPIService api, Type modelType)
         {
-            switch (entityTypeName)
+            db.ChangeTracker.AutoDetectChangesEnabled = false;
+            db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            using (var connection = db.Database.GetDbConnection())
             {
-                case "TenantModel":
-                    return typeof(TenantModel);
-                case "UnitModel":
-                    return typeof(UnitModel);
-                case "MeasureModel":
-                    return typeof(MeasureModel);
-                case "TreatmentModel":
-                    return typeof(TreatmentModel);
-                case "RegistrarModel":
-                    return typeof(RegistrarModel);
-                case "FarmLocationModel":
-                    return typeof(FarmLocationModel);
-                case "LandPlotModel":
-                    return typeof(LandPlotModel);
-                case "LivestockAnimalModel":
-                    return typeof(LivestockAnimalModel);
-                case "LivestockBreedModel":
-                    return typeof(LivestockBreedModel);
-                case "LivestockStatusModel":
-                    return typeof(LivestockStatusModel);
-                case "LivestockModel":
-                    return typeof(LivestockModel);
-                case "MilestoneModel":
-                    return typeof(MilestoneModel);
-                case "DutyModel":
-                    return typeof(DutyModel);
-                case "EventModel":
-                    return typeof(EventModel);
-                case "ChoreModel":
-                    return typeof(ChoreModel);
-                case "BreedingRecordModel":
-                    return typeof(BreedingRecordModel);
-                case "ScheduledDutyModel":
-                    return typeof(ScheduledDutyModel);
-                case "RegistrationModel":
-                    return typeof(RegistrationModel);
-                case "MeasurementModel":
-                    return typeof(MeasurementModel);
-                case "TreatmentRecordModel":
-                    return typeof(TreatmentRecordModel);
-                default:
-                    throw new ArgumentException($"Unknown entity type: {entityTypeName}");
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    if (modelType is MilestoneModel || modelType is DutyModel)
+                        await BulkUpdateDutyMilestone(connection, api);
+                    if (modelType is EventModel || modelType is DutyModel)
+                        await BulkUpdateDutyEvent(connection, api);
+                    if (modelType is ChoreModel || modelType is DutyModel)
+                        await BulkUpdateDutyChore(connection, api);
+                    transaction.Commit();
+                }
             }
         }
 
-        private static bool ShouldEntityBeUpdated(List<ModifiedEntity>? entityModels, string modelName) => !(entityModels?.Any() ?? false) || (entityModels?.Select(m => m.EntityName + "Model").Contains(modelName) ?? false);
-        private async static Task BulkUpdateEntities<TModel, TRequest>(List<ModifiedEntity>? entityModels, FrontEndDbContext db, IAPIService api, string apiEndpoint)
+        private async static Task BulkUpdateEntities<TModel, TRequest>( FrontEndDbContext db, IAPIService api, string apiEndpoint)
             where TModel : BaseModel, new()
             where TRequest : BaseQuery, new()
         {
-            if (!ShouldEntityBeUpdated(entityModels, typeof(TModel).Name)) return;
-
-            DateTime? entityModelTime = entityModels?.FirstOrDefault(e => e.EntityName+"Model" == typeof(TModel).Name)?.ModifiedOn.AddTicks(-1) ?? DateTime.MaxValue;
             DateTime? dbTime = db.Set<TModel>().OrderByDescending(p => p.EntityModifiedOn).FirstOrDefault()?.EntityModifiedOn.AddTicks(-1) ?? DateTime.MinValue;
 
-            if (dbTime == entityModelTime) return;
+  
 
             long totalCount = 0;
             long expectedCount = 1;
@@ -206,7 +177,7 @@ namespace MicroAgManager.Data
                 var request = new TRequest()
                 {
                     Skip = (int)totalCount,
-                    LastModified = entityModelTime < dbTime ? entityModelTime.Value : dbTime.Value
+                    LastModified = dbTime.Value
                 };
 
                 var returned = await api.ProcessQuery<TModel, TRequest>(apiEndpoint, request);
@@ -226,7 +197,7 @@ namespace MicroAgManager.Data
                 }
             }
         }
-        public async Task EnsureSynchronizingAsync(List<ModifiedEntity>? entityModels)
+        public async Task EnsureSynchronizingAsync()
         {
             if (_isSynchronizing)
                 while (_isSynchronizing)
@@ -244,27 +215,32 @@ namespace MicroAgManager.Data
 
                     Console.WriteLine("Fetching Data From Server");
                     // Begin fetching any updates to the dataset from the backend server
-                    await BulkUpdateEntities<TenantModel, GetTenantList>(entityModels, db, _api, "api/GetTenants");
-                    await BulkUpdateEntities<UnitModel, GetUnitList>(entityModels, db, _api, "api/GetUnits");
-                    await BulkUpdateEntities<MeasureModel, GetMeasureList>(entityModels, db, _api, "api/GetMeasures");
-                    await BulkUpdateEntities<TreatmentModel, GetTreatmentList>(entityModels, db, _api, "api/GetTreatments");
-                    await BulkUpdateEntities<RegistrarModel, GetRegistrarList>(entityModels, db, _api, "api/GetRegistrars");
-                    await BulkUpdateEntities<FarmLocationModel, GetFarmList>(entityModels, db, _api, "api/GetFarms");
-                    await BulkUpdateEntities<LandPlotModel, GetLandPlotList>(entityModels, db, _api, "api/GetLandPlots");
-                    await BulkUpdateEntities<LivestockAnimalModel, GetLivestockAnimalList>(entityModels, db, _api, "api/GetLivestockAnimals");
-                    await BulkUpdateEntities<LivestockBreedModel, GetLivestockBreedList>(entityModels, db, _api, "api/GetLivestockBreeds");
-                    await BulkUpdateEntities<LivestockStatusModel, GetLivestockStatusList>(entityModels, db, _api, "api/GetLivestockStatuses");
-                    await BulkUpdateEntities<LivestockModel, GetLivestockList>(entityModels, db, _api, "api/GetLivestocks");
-                    await BulkUpdateEntities<MilestoneModel, GetMilestoneList>(entityModels, db, _api, "api/GetMilestones");
-                    await BulkUpdateEntities<DutyModel, GetDutyList>(entityModels, db, _api, "api/GetDuties");
-                    await BulkUpdateEntities<EventModel, GetEventList>(entityModels, db, _api, "api/GetEvents");
-                    await BulkUpdateEntities<ChoreModel, GetChoreList>(entityModels, db, _api, "api/GetChores");
-                    await BulkUpdateEntities<BreedingRecordModel, GetBreedingRecordList>(entityModels, db, _api, "api/GetBreedingRecords");
-                    await BulkUpdateEntities<ScheduledDutyModel, GetScheduledDutyList>(entityModels, db, _api, "api/GetScheduledDuties");
-                    await BulkUpdateEntities<RegistrationModel, GetRegistrationList>(entityModels, db, _api, "api/GetRegistrations");
-                    await BulkUpdateEntities<MeasurementModel, GetMeasurementList>(entityModels, db, _api, "api/GetMeasurements");
-                    await BulkUpdateEntities<TreatmentRecordModel, GetTreatmentRecordList>(entityModels, db, _api, "api/GetTreatmentRecords");
+                    await BulkUpdateEntities<TenantModel, GetTenantList>(db, _api, "api/GetTenants");
+                    await Task.WhenAll(
+                        BulkUpdateEntities<FarmLocationModel, GetFarmList>(db, _api, "api/GetFarms"),
+                        BulkUpdateEntities<LivestockAnimalModel, GetLivestockAnimalList>(db, _api, "api/GetLivestockAnimals"),
+                        BulkUpdateEntities<UnitModel, GetUnitList>(db, _api, "api/GetUnits"));
+                    await Task.WhenAll(
+                        BulkUpdateEntities<MeasureModel, GetMeasureList>(db, _api, "api/GetMeasures"),
+                        BulkUpdateEntities<TreatmentModel, GetTreatmentList>(db, _api, "api/GetTreatments"),
+                        BulkUpdateEntities<RegistrarModel, GetRegistrarList>(db, _api, "api/GetRegistrars"),
+                        BulkUpdateEntities<MilestoneModel, GetMilestoneList>(db, _api, "api/GetMilestones"),
+                        BulkUpdateEntities<DutyModel, GetDutyList>(db, _api, "api/GetDuties"),
+                        BulkUpdateEntities<EventModel, GetEventList>(db, _api, "api/GetEvents"),
+                        BulkUpdateEntities<ChoreModel, GetChoreList>(db, _api, "api/GetChores"));
+                    
+                    await Task.WhenAll(
+                        BulkUpdateEntities<LandPlotModel, GetLandPlotList>(db, _api, "api/GetLandPlots"),
+                        BulkUpdateEntities<LivestockBreedModel, GetLivestockBreedList>(db, _api, "api/GetLivestockBreeds"),
+                        BulkUpdateEntities<LivestockStatusModel, GetLivestockStatusList>(db, _api, "api/GetLivestockStatuses"),
+                        BulkUpdateEntities<ScheduledDutyModel, GetScheduledDutyList>(db, _api, "api/GetScheduledDuties"));
 
+                    await Task.WhenAll(
+                        BulkUpdateEntities<LivestockModel, GetLivestockList>(db, _api, "api/GetLivestocks"),
+                        BulkUpdateEntities<BreedingRecordModel, GetBreedingRecordList>(db, _api, "api/GetBreedingRecords"),
+                        BulkUpdateEntities<RegistrationModel, GetRegistrationList>(db, _api, "api/GetRegistrations"),
+                        BulkUpdateEntities<MeasurementModel, GetMeasurementList>(db, _api, "api/GetMeasurements"),
+                        BulkUpdateEntities<TreatmentRecordModel, GetTreatmentRecordList>(db, _api, "api/GetTreatmentRecords"));
 
                     db.ChangeTracker.AutoDetectChangesEnabled = false;
                     db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -274,9 +250,9 @@ namespace MicroAgManager.Data
                         using (var transaction = connection.BeginTransaction())
                         {
                             await Task.WhenAll(
-                                BulkUpdateDutyMilestone(entityModels, connection, _api),
-                                BulkUpdateDutyEvent(entityModels, connection, _api),
-                                BulkUpdateDutyChore(entityModels, connection, _api));
+                                BulkUpdateDutyMilestone(connection, _api),
+                                BulkUpdateDutyEvent(connection, _api),
+                                BulkUpdateDutyChore(connection, _api));
                             transaction.Commit();
                         }
                     }
@@ -293,9 +269,8 @@ namespace MicroAgManager.Data
                 _isSynchronizing = false;
             }
         }
-        public async static Task BulkUpdateDutyChore(List<ModifiedEntity>? entityModels, DbConnection connection, IAPIService api)
+        public async static Task BulkUpdateDutyChore(DbConnection connection, IAPIService api)
         {
-            if (!ShouldEntityBeUpdated(entityModels, nameof(ChoreModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
             var dataReceived = new List<DutyChore>();
             long totalCount = 0;
             long expectedCount = 1;
@@ -326,10 +301,8 @@ namespace MicroAgManager.Data
                 await command.ExecuteNonQueryAsync();
             }
         }
-
-        public async static Task BulkUpdateDutyEvent(List<ModifiedEntity>? entityModels, DbConnection connection, IAPIService api)
+        public async static Task BulkUpdateDutyEvent(DbConnection connection, IAPIService api)
         {
-            if (!ShouldEntityBeUpdated(entityModels, nameof(EventModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
             var dataReceived = new List<DutyEvent>();
             long totalCount = 0;
             long expectedCount = 1;
@@ -360,9 +333,8 @@ namespace MicroAgManager.Data
                 await command.ExecuteNonQueryAsync();
             }
         }
-        public async static Task BulkUpdateDutyMilestone(List<ModifiedEntity>? entityModels, DbConnection connection, IAPIService api)
+        public async static Task BulkUpdateDutyMilestone(DbConnection connection, IAPIService api)
         {
-            if (!ShouldEntityBeUpdated(entityModels, nameof(MilestoneModel)) && !ShouldEntityBeUpdated(entityModels, nameof(DutyModel))) return;
             var dataReceived = new List<DutyMilestone>();
             long totalCount = 0;
             long expectedCount = 1;

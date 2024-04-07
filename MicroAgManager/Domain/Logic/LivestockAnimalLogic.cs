@@ -17,7 +17,7 @@ namespace Domain.Logic
 
             var livestockAnimal = await context.LivestockAnimals.FindAsync(id);
                 if (livestockAnimal == null) throw new Exception("LivestockAnimal not found");
-                entitiesModified.Add(new EntityPushNotification(livestockAnimal.TenantId, LivestockAnimalModel.Create(livestockAnimal).GetJsonString(),nameof(LivestockAnimalModel)));
+                entitiesModified.Add(new EntityPushNotification(livestockAnimal.TenantId, LivestockAnimalModel.Create(livestockAnimal).GetJsonString(),nameof(LivestockAnimalModel), livestockAnimal.ModifiedOn ));
 
                 AddRequiredMilestones(livestockAnimal, context);
                 entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context as DbContext));

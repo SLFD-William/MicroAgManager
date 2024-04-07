@@ -62,7 +62,6 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     [Parameter] public bool ShowDutySelections { get; set; }
     private EventModel? eventModel;
@@ -83,8 +82,10 @@
     }
     protected override void OnInitialized()
     {
+        
         eventModel = editContext.Model as EventModel;
         if (eventModel is null) return;
+        base.OnInitialized();
         if (!eventModel.EndDate.HasValue) eventModel.EndDate = eventModel.StartDate;
     }
     private async Task OnEventSubmit(EditContext editContext)

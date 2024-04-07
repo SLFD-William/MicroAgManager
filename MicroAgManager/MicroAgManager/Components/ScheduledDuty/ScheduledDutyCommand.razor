@@ -21,7 +21,7 @@
                          RecipientTypes=@RecipientTypes ></ScheduledDutyEditor>
     }
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
+   
     [Inject] protected IAPIService api { get; set; }
     [Parameter] public long? ScheduledDutyId { get; set; }
     [Parameter] public string Command { get; set; }
@@ -30,6 +30,7 @@
     private ScheduledDutyModel _scheduledDuty;
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         _scheduledDuty = new() { RecipientId = RecipientId, Duty = new() { Command = Command } };
     }
     private void InitializeScheduledDuty()

@@ -86,7 +86,6 @@
 
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private BreedingRecordModel? breedingRecord;
     private BreedingRecordModel original;
@@ -95,6 +94,7 @@
     {
         breedingRecord = editContext.Model as BreedingRecordModel;
         if (breedingRecord is null) return;
+        base.OnInitialized();
         switch (breedingRecord.RecipientType)
         {
 

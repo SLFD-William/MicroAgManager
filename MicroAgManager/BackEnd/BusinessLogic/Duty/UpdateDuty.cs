@@ -26,7 +26,7 @@ namespace BackEnd.BusinessLogic.Duty
                     duty = request.Duty.Map(duty) as Domain.Entity.Duty;
                     duty.ModifiedBy = request.ModifiedBy;
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new ModifiedEntityPushNotification(duty.TenantId, DutyModel.Create(duty).GetJsonString(), nameof(DutyModel)), cancellationToken); 
+                    await _mediator.Publish(new ModifiedEntityPushNotification(duty.TenantId, DutyModel.Create(duty).GetJsonString(), nameof(DutyModel), duty.ModifiedOn), cancellationToken); 
                     return duty.Id;
                 }
             }

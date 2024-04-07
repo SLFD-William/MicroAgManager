@@ -32,7 +32,7 @@ namespace BackEnd.BusinessLogic.Chore
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(chore.TenantId, ChoreModel.Create(chore).GetJsonString(), nameof(ChoreModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(chore.TenantId, ChoreModel.Create(chore).GetJsonString(), nameof(ChoreModel), chore.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Chore"); }
                 }

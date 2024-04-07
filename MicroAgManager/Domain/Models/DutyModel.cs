@@ -35,7 +35,24 @@ namespace Domain.Models
         ICollection<IEvent>? IDuty.Events { get => Events as ICollection<IEvent>; set => Events = value as ICollection<EventModel?> ?? new List<EventModel?>(); }
         ICollection<IMilestone>? IDuty.Milestones { get => Milestones as ICollection<IMilestone>; set => Milestones = value as ICollection<MilestoneModel?> ?? new List<MilestoneModel?>(); }
         ICollection<IScheduledDuty>? IDuty.ScheduledDuties { get => ScheduledDuties as ICollection<IScheduledDuty>; set => ScheduledDuties = value as ICollection<ScheduledDutyModel?> ?? new List<ScheduledDutyModel?>(); }
-
+        public static DutyModel? ShallowCreate(Duty? duty)
+        {
+            if (duty == null) return null;
+            var model = PopulateBaseModel(duty, new DutyModel
+            {
+                Name = duty.Name,
+                DaysDue = duty.DaysDue,
+                Command = duty.Command,
+                CommandId = duty.CommandId,
+                RecipientType = duty.RecipientType,
+                RecipientTypeId = duty.RecipientTypeId,
+                Relationship = duty.Relationship,
+                Gender = duty.Gender,
+                SystemRequired = duty.SystemRequired,
+                ProcedureLink = duty.ProcedureLink
+            }) as DutyModel;
+            return model;
+        }
         public static DutyModel? Create(Duty? duty)
         {
             if (duty == null) return null;

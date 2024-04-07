@@ -47,13 +47,13 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     protected override void OnInitialized()
     {
         measure = editContext.Model as MeasureModel;
         if (measure is null) return;
+        base.OnInitialized();
     }
 
     private MeasureModel? measure;

@@ -107,14 +107,14 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
-    [Inject] protected IAPIService api { get; set; }
+     [Inject] protected IAPIService api { get; set; }
     private TreatmentRecordModel? treatmentRecord;
     private TreatmentRecordModel original;
     protected override void OnInitialized()
     {
         treatmentRecord = editContext.Model as TreatmentRecordModel;
         if (treatmentRecord is null) return;
+        base.OnInitialized();
         treatmentRecord.AppliedMethod = treatmentRecord.Treatment.LabelMethod;
         treatmentRecord.DosageAmount = treatmentRecord.Treatment.DosageAmount;
         treatmentRecord.DosageUnitId = treatmentRecord.Treatment.DosageUnitId;

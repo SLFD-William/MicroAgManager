@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.TreatmentRecord
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, TreatmentRecordModel.Create(treatmentRecord).GetJsonString(), nameof(TreatmentRecordModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, TreatmentRecordModel.Create(treatmentRecord).GetJsonString(), nameof(TreatmentRecordModel), treatmentRecord.ModifiedOn), cancellationToken);
 
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create TreatmentRecord"); }

@@ -149,13 +149,14 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
+   
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     protected override void OnInitialized()
     {
         treatment = editContext.Model as TreatmentModel;
         if (treatment is null) return;
+        base.OnInitialized();
     }
 
     private TreatmentModel? treatment;

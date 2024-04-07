@@ -47,7 +47,7 @@ namespace BackEnd.BusinessLogic.BreedingRecord
                             }
                         }
 
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, BreedingRecordModel.Create(breedingRecord).GetJsonString(), nameof(BreedingRecordModel),breedingRecord.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create BreedingRecord"); }
                 }

@@ -32,18 +32,9 @@
                 <ChildContent>
                     <InputSelect @bind-Value="@BreedId">
                         <option value="0">Select Breed ...</option>
-                        @if (appState.DbContext.LivestockBreeds.Any())
+                        @foreach (var g in BreedSelections())
                         {
-                            @if (LivestockAnimalId.HasValue)
-                                foreach (var g in appState.DbContext.LivestockBreeds.Where(s => s.LivestockAnimalId == LivestockAnimalId).OrderBy(a => a.Name))
-                                {
-                                    <option value="@g.Id">@g.Name</option>
-                                }
-                            else
-                                foreach (var g in appState.DbContext.LivestockBreeds.OrderBy(a=>a.Animal.Name).ThenBy(a => a.Name))
-                                {
-                                    <option value="@g.Id">@($"{g.Animal?.Name} {g.Name}")</option>
-                                }
+                            <option value="@g.Id">@g.Name</option>
                         }
                     </InputSelect>
                 </ChildContent>
@@ -168,7 +159,6 @@
 
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private LivestockModel? livestock;
@@ -177,10 +167,23 @@
     [Parameter] public long? LivestockAnimalId { get; set; }
     private LivestockAnimalModel? animal;
     private string FormTitle() => $"{animal?.Name} {livestock?.Breed?.Name} {livestock?.Name}".Trim();
+    private List<LivestockBreedModel> BreedSelections()
+    {
+        if (appState.DbContext.LivestockBreeds.Any())
+        {
+            if (LivestockAnimalId.HasValue)
+                return appState.DbContext.LivestockBreeds.Where(s => s.LivestockAnimalId == LivestockAnimalId).OrderBy(a => a.Name).ToList();
+
+            return appState.DbContext.LivestockBreeds.OrderBy(a => a.Animal.Name).ThenBy(a => a.Name).ToList();
+        }
+        return new();
+    }
+
     protected override void OnInitialized()
     {
-        livestock = editContext.Model as LivestockModel;
+         livestock = editContext.Model as LivestockModel;
         if (livestock is null) return;
+        base.OnInitialized();
         if (LivestockBreedId<1)
             LivestockBreedId = livestock.LivestockBreedId;
         if (LivestockBreedId > 0)
@@ -193,18 +196,20 @@
             animal = appState.DbContext.LivestockAnimals.Find(LivestockAnimalId);
     }
     private LivestockStatusEditor _livestockStatusEditor;
+    private long _BreedId;
     public long BreedId
     {
-        get => livestock.LivestockBreedId;
+        get => _BreedId
+    ;
         set
         {
-            if (value != livestock.LivestockBreedId)
+            if (value != _BreedId)
             {
-                livestock.LivestockBreedId = value;
-                livestock.Breed = appState.DbContext.LivestockBreeds.Include(b => b.Animal).First(c=>c.Id== value);
+                _BreedId = value;
+                livestock.Breed = appState.DbContext.LivestockBreeds.Include(b => b.Animal).First(c => c.Id == _BreedId);
                 animal = livestock.Breed.Animal;
                 LivestockAnimalId = animal.Id;
-                StateHasChanged();
+                livestock.LivestockBreedId = _BreedId;
             }
         }
     }
@@ -303,6 +308,7 @@
         if (model == null) return;
         BreedId = model.Id;
         LivestockAnimalId = model.LivestockAnimalId;
+        livestock.LivestockBreedId = model.Id;
         editContext = new EditContext(livestock);
         OnInitialized();
         StateHasChanged();

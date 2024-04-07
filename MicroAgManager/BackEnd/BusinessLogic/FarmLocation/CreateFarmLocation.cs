@@ -33,8 +33,8 @@ namespace BackEnd.BusinessLogic.FarmLocation
                         await context.SaveChangesAsync(cancellationToken);
                         var modifiedNotice = await FarmLocationLogic.OnFarmLocationCreated(context, farm.Id, cancellationToken);
                         foreach(var mod in modifiedNotice)
-                            await _mediator.Publish(new ModifiedEntityPushNotification (mod.TenantId, mod.ModelJson, mod.ModelType), cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification (farm.TenantId, FarmLocationModel.Create(farm).GetJsonString(), nameof(FarmLocationModel)), cancellationToken);
+                            await _mediator.Publish(new ModifiedEntityPushNotification (mod.TenantId, mod.ModelJson, mod.ModelType,mod.ServerModifiedTime), cancellationToken);
+                        
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Farm Location"); }
                 }

@@ -27,19 +27,26 @@
             }
             else
             {
-                <label for="email">
-                    Email:
-                </label>
-                <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
-                <label for="password">
-                    Password:
-                </label>
-                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
-                <label for="confirmPassword">
-                    Retype password:
-                </label>
-                <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Re-enter your password" type="password" @bind-value="confirmPassword" />
-                <button class="btn btn-primary" @onclick="DoRegisterAsync">Register</button>
+                @if (success)
+                {
+                 <span>Confirmation email has been sent. Please confirm and then login.</span>   
+                }
+                else
+                {
+                    <label for="email">
+                        Email:
+                    </label>
+                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+                    <label for="password">
+                        Password:
+                    </label>
+                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
+                    <label for="confirmPassword">
+                        Retype password:
+                    </label>
+                    <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Re-enter your password" type="password" @bind-value="confirmPassword" />
+                    <button class="btn btn-primary" @onclick="DoRegisterAsync">Register</button>
+                }
             }
             @if (errors)
             {
@@ -119,7 +126,7 @@
         {
             success = true;
             email = password = confirmPassword = string.Empty;
-            nm.NavigateTo("/Home");
+            //nm.NavigateTo("/Home");
         }
         else
         {

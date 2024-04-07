@@ -64,7 +64,6 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private MilestoneModel? milestone;
@@ -72,6 +71,7 @@
     {
         milestone = editContext.Model as MilestoneModel;
         if (milestone is null) return;
+        base.OnInitialized();
     }
     private async Task OnMilestoneSubmit(EditContext editContext)
     {

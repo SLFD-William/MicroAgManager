@@ -16,7 +16,7 @@ namespace Domain.Logic
 
             var farmLocation = await context.Farms.FindAsync(id);
             if (farmLocation == null) throw new Exception("FarmLocation not found");
-            entitiesModified.Add(new EntityPushNotification(farmLocation.TenantId,FarmLocationModel.Create(farmLocation).GetJsonString(),nameof(FarmLocationModel)));
+            entitiesModified.Add(new EntityPushNotification(farmLocation.TenantId,FarmLocationModel.Create(farmLocation).GetJsonString(),nameof(FarmLocationModel), farmLocation.ModifiedOn));
             AddAncilliaries(farmLocation, context as DbContext);
             entitiesModified.AddRange(await EntityLogic.GetModifiedEntities(context as DbContext));
             await context.SaveChangesAsync(cancellationToken);

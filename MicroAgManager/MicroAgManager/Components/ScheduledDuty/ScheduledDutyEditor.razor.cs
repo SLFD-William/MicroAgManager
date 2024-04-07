@@ -21,7 +21,6 @@ namespace MicroAgManager.Components.ScheduledDuty
 {
     public partial class ScheduledDutyEditor: BaseEditor
     {
-        [CascadingParameter] private ApplicationState appState { get; set; }
         [Inject] protected IAPIService api { get; set; }
         [Parameter] public Dictionary<string, long>? RecipientTypes { get; set; }
 
@@ -66,6 +65,7 @@ namespace MicroAgManager.Components.ScheduledDuty
         {
             scheduledDuty = editContext.Model as ScheduledDutyModel;
             if (scheduledDuty is null) return;
+            base.OnInitialized();
             if (string.IsNullOrEmpty(scheduledDuty.ScheduleSource)) scheduledDuty.ScheduleSource = ScheduledDutySourceConstants.Event;
             if (scheduledDuty.DueOn == DateTime.MinValue) scheduledDuty.DueOn = DateTime.Today;
             if (scheduledDuty.DutyId > 0)

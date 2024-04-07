@@ -33,7 +33,7 @@ public class CreateDuty : BaseCommand, ICreateCommand
                 try
                 {
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new ModifiedEntityPushNotification(duty.TenantId, DutyModel.Create(duty).GetJsonString(), nameof(DutyModel)), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification(duty.TenantId, DutyModel.Create(duty).GetJsonString(), nameof(DutyModel), duty.ModifiedOn), cancellationToken);
                 }
                 catch (Exception ex) { _log.LogError(ex, "error creating Duty"); }
             }

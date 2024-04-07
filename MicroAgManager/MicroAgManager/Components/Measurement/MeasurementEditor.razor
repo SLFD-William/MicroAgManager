@@ -95,7 +95,6 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private MeasurementModel? measurement;
     private MeasurementModel? original;
@@ -103,6 +102,7 @@
     {
         measurement = editContext.Model as MeasurementModel;
         if (measurement is null) return;
+        base.OnInitialized();
         if (measurement.MeasurementUnitId < 1)
             measurement.MeasurementUnitId = measurement.Measure.UnitId;
 

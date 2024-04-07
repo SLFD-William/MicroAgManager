@@ -43,13 +43,13 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private UnitModel? unit;
     protected override void OnInitialized()
     {
         unit = editContext.Model as UnitModel;
         if (unit is null) return;
+        base.OnInitialized();
     }
     private async Task OnUnitSubmit(EditContext editContext)
     {

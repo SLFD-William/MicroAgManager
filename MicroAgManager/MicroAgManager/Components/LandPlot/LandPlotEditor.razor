@@ -86,7 +86,7 @@
 
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
+
     [Inject] protected IAPIService api { get; set; }
     private LandPlotModel? landPlot;
     #region ModalEditors
@@ -138,6 +138,7 @@
     {
         landPlot = editContext.Model as LandPlotModel;
         if (landPlot is null) return;
+        base.OnInitialized();
     }
     private async Task OnLandPlotSubmit(EditContext editContext)
     {

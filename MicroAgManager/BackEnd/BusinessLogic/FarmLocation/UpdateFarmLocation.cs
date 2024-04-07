@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.FarmLocation
                     farm.ModifiedBy = request.ModifiedBy;
 
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new ModifiedEntityPushNotification (farm.TenantId, FarmLocationModel.Create(farm).GetJsonString(), nameof(FarmLocationModel)), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification (farm.TenantId, FarmLocationModel.Create(farm).GetJsonString(), nameof(FarmLocationModel), farm.ModifiedOn), cancellationToken);
                     return farm.Id;
                 }
             }

@@ -34,13 +34,14 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
+    
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     protected override void OnInitialized()
     {
         registrar = editContext.Model as RegistrarModel;
         if (registrar is null) return;
+        base.OnInitialized();
     }
     private RegistrarModel? registrar;
     private async Task OnRegistrarSubmit(EditContext editContext)

@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.Milestone
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MilestoneModel.Create(milestone).GetJsonString(), nameof(MilestoneModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, MilestoneModel.Create(milestone).GetJsonString(), nameof(MilestoneModel), milestone.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { _log.LogError(ex, "Unable to Create Milestone"); }
                 }

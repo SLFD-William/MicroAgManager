@@ -5,5 +5,6 @@
         string ModelJson { get; set; }
         string ModelType { get; set; }
         Guid TenantId { get; set; }
+        DateTime ServerModifiedTime { get; set; }
     }
 }

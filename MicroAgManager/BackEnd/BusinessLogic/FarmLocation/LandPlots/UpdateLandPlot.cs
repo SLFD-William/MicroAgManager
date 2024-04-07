@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.FarmLocation.LandPlots
                     plot.ModifiedBy = request.ModifiedBy;
 
                     await context.SaveChangesAsync(cancellationToken);
-                    await _mediator.Publish(new ModifiedEntityPushNotification (plot.TenantId, LandPlotModel.Create(plot).GetJsonString(), nameof(LandPlotModel)), cancellationToken);
+                    await _mediator.Publish(new ModifiedEntityPushNotification (plot.TenantId, LandPlotModel.Create(plot).GetJsonString(), nameof(LandPlotModel), plot.ModifiedOn), cancellationToken);
 
                     return plot.Id;
                 }

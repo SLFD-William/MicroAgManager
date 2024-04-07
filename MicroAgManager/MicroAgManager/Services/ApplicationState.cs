@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace MicroAgManager.Services
 {
-    internal class ApplicationState:ComponentBase,IDisposable
+    public class ApplicationState:ComponentBase,IDisposable
     {
         public static FrontEndDbContext _dbContext;
         public event Action? OnDbInitialized;
@@ -22,8 +22,7 @@ namespace MicroAgManager.Services
         private static NavigationManager _navigationManager;
         private static HubConnection? _hubConnection;
         private static IConfiguration? _config;
-        //private static List<EntitiesModifiedNotification> _notifications=new();
-        private static Queue<ModifiedEntityPushNotification> _entityPush = new Queue<ModifiedEntityPushNotification>();
+        private static HashSet<ModifiedEntityPushNotification> _entityPush = new HashSet<ModifiedEntityPushNotification>();
 
 
         public FrontEndDbContext DbContext { get => _dbContext; }
@@ -38,6 +37,7 @@ namespace MicroAgManager.Services
             _dbSynchonizer.OnDbInitialized += _dbSynchonizer_OnDbInitialized;
             _dbSynchonizer.OnUpdate += _dbSynchonizer_OnUpdate;
             Task.Run(InitializeApp);
+            Task.Run(StartPushHandlerTimer);
             Task.Run(RedirectLandingToHomeIfAuthenticated);
         }
         #region Tree Nodes
@@ -83,7 +83,6 @@ namespace MicroAgManager.Services
         #endregion
         public static bool CanAddFarm() => _dbContext.Farms.Count() < 1;
         private void _dbSynchonizer_OnUpdate()=>OnDbUpdate?.Invoke();
-
         private void _dbSynchonizer_OnDbInitialized()=>OnDbInitialized?.Invoke();
         public Guid? TenantId { get; private set; }
         public Guid? UserId { get; private set; }
@@ -91,6 +90,18 @@ namespace MicroAgManager.Services
         {
             _dbContext = await _dbSynchonizer.InitializeDbContextAsync();
             await SetupAuthenticatedServices();
+        }
+        private async Task StartPushHandlerTimer()
+        {
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+            while (await timer.WaitForNextTickAsync())
+                while (_entityPush.Any())
+                { 
+                    var entities=_entityPush.OrderBy(x=>x.ServerModifiedTime).ToList();
+                    _entityPush.Clear();
+                    foreach (var entity in entities)
+                        await _dbSynchonizer.HandleEntityPushNotification(entity);
+                }
         }
         private async Task<bool> UserIsAuthenticated()
         {
@@ -108,16 +119,12 @@ namespace MicroAgManager.Services
             {
                 try
                 {
-                    //Console.WriteLine("Initializing SignalR");
-                    //await InitializeNotificationHub();
-                    await _dbSynchonizer.EnsureSynchronizingAsync(null);
-                    OnDbUpdate?.Invoke();
+                    await _dbSynchonizer.EnsureSynchronizingAsync();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message + e.StackTrace);
                 }
-
             }
         }
 
@@ -136,8 +143,7 @@ namespace MicroAgManager.Services
             _hubConnection.Closed += _hubConnection_Closed;
             _hubConnection.Reconnected += _hubConnection_Reconnected;
             _hubConnection.Reconnecting += _hubConnection_Reconnecting;
-            //_hubConnection.On<EntitiesModifiedNotification>("ReceiveEntitiesModifiedMessage",async (notifications) => { _notifications.Add(notifications); await UpdateClientModels(); } );
-            _hubConnection.On<ModifiedEntityPushNotification>("ReceiveModifiedEntityPush", async (notifications) => { _entityPush.Enqueue(notifications); await UpdateModelsFromPush(); });
+            _hubConnection.On<ModifiedEntityPushNotification>("ReceiveModifiedEntityPush",(notification)=> _entityPush.Add(notification));
             try
             {
                 Console.WriteLine("Starting Signalr Listener");
@@ -153,21 +159,9 @@ namespace MicroAgManager.Services
                 throw;
             }
         }
-        private async Task UpdateModelsFromPush()
-        {
-            while (_entityPush.Any())
-                await _dbSynchonizer.HandleEntityPushNotification(UserId ?? Guid.NewGuid(), _entityPush.Dequeue());
-        }
+        
 
-
-        //private async Task UpdateClientModels()
-        //{
-        //    if (!_notifications.Any(n=> n.EntitiesModified.Any())) return;
-        //    Console.WriteLine("Server Data Updated");
-        //    foreach(var notification in _notifications) 
-        //        await _dbSynchonizer.HandleModifiedEntities(UserId ?? Guid.NewGuid(), notification);
-        //    _notifications.Clear();
-        //}
+        
         private Task _hubConnection_Reconnecting(Exception? arg)
         {
             throw new NotImplementedException();
@@ -199,8 +193,9 @@ namespace MicroAgManager.Services
                 await DisposeNotificationHub();
                 return;
             }
-            await EnsureDbSynchronizing();
             await InitializeNotificationHub();
+            await EnsureDbSynchronizing();
+            
         }
 
         public void Dispose()

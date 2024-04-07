@@ -28,7 +28,7 @@ namespace BackEnd.BusinessLogic.Registrar
                     try
                     {
                         await context.SaveChangesAsync(cancellationToken);
-                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, RegistrarModel.Create(registrar).GetJsonString(), nameof(RegistrarModel)), cancellationToken);
+                        await _mediator.Publish(new ModifiedEntityPushNotification(request.TenantId, RegistrarModel.Create(registrar).GetJsonString(), nameof(RegistrarModel), registrar.ModifiedOn), cancellationToken);
                     }
                     catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                     return registrar.Id;

@@ -34,6 +34,19 @@ namespace Domain.Models
             }) as MilestoneModel;
             return model;
         }
+        public static MilestoneModel? ShallowCreate(Milestone? milestone)
+        {
+            if (milestone == null) return null;
+            var model = PopulateBaseModel(milestone, new MilestoneModel
+            {
+                RecipientTypeId = milestone.RecipientTypeId,
+                RecipientType = milestone.RecipientType,
+                Name = milestone.Name,
+                Description = milestone.Description,
+                SystemRequired = milestone.SystemRequired
+            }) as MilestoneModel;
+            return model;
+        }
 
         public override BaseModel Map(BaseModel milestone)
         {

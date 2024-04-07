@@ -79,7 +79,6 @@
 }
 
 @code {
-    [CascadingParameter] private ApplicationState appState { get; set; }
     [Inject] protected IAPIService api { get; set; }
     private ValidatedForm _validatedForm;
     private ServiceLivestock? serviceLivestock { get; set; }
@@ -88,6 +87,7 @@
     {
         serviceLivestock = editContext.Model as ServiceLivestock;
         if (serviceLivestock is null) return;
+        base.OnInitialized();
     }
   
     public async override Task<IHasRecipient> SubmitEditContext()
