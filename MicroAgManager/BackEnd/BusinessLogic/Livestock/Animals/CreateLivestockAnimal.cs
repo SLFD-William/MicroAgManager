@@ -4,7 +4,6 @@ using Domain.Entity;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;

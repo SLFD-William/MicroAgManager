@@ -1,6 +1,5 @@
 ﻿using BackEnd.Infrastructure;
 using FrontEnd.Persistence;
-using MediatR;
 using MicroAgManager.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;

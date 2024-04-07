@@ -3,6 +3,8 @@ using Domain.Entity;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Domain.Logic;
 
 namespace Domain.Models
 {
@@ -59,8 +61,16 @@ namespace Domain.Models
             ((Registration)registration).RegistrationDate = RegistrationDate;
             return registration;
         }
+        public void PopulateDynamicRelations(DbContext genericContext) => RecipientLogic.PopulateDynamicRelations(genericContext, this);
+        [NotMapped] public string RegistrarName { get => Registrar?.Name ?? string.Empty; }
+        [NotMapped] public string RegistrarEmail { get => Registrar?.Email ?? string.Empty; }
+        [NotMapped] public string RegistrarWebsite { get => Registrar?.Website ?? string.Empty; }
+        [NotMapped] public string RegistrarApi { get => Registrar?.API ?? string.Empty; }
+        [NotMapped] public string RegistrarFarmId { get => Registrar?.RegistrarFarmID ?? string.Empty; }
 
-        
-        
+        [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
+        [NotMapped] public string RecipientItem { get; set; } = string.Empty;
+
+
     }
 }

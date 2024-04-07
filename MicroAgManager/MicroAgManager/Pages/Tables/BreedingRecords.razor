@@ -54,7 +54,10 @@
             query = query.Where(p => p.Id == _breedingRecordId);
 
         _breedingRecordCount = query.Count();
-        return query.ToList().AsQueryable();
+        foreach (var sd in query)
+            sd.PopulateDynamicRelations(appState.DbContext);
+
+        return query;
     }
     protected override void OnInitialized()
     {

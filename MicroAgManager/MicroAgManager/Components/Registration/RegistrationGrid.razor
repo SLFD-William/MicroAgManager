@@ -1,5 +1,6 @@
 ﻿@using Domain.Logic
 @using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -17,37 +18,35 @@
             <NavLink href=@($"/Ancillaries/Registrations?RegistrarId={registrar.RegistrarId}")>
                 @registrar.Registrar.Name
             </NavLink>
-            
-            @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.Registrar.Email)" Title="Email" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+            <input type="search" autofocus @bind="registrarEmailFilter" @bind:event="oninput" placeholder="Identifier..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Registrar.Website)" Title="Website" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrarWebFilter" @bind:event="oninput" placeholder="Identifier..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Registrar.API)" Title="API Format" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrarApiFilter" @bind:event="oninput" placeholder="Identifier..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Registrar.RegistrarFarmID)" Title="Farm Id" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Identifier..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="registrarFarmFilter" @bind:event="oninput" placeholder="Identifier..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
     @if (ShowRecipientType)
     {
@@ -58,20 +57,20 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
-        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="registration" SortBy="@OrderByRegistrarName">
+        <TemplateColumn Title="Recipient Type Item" Sortable="true" Context="registration" SortBy="@OrderByRecipientTypeItem">
             <ColumnOptions>
                 <div class="search-box">
-                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                    <input type="search" autofocus @bind="recipientTypeItemFilter" @bind:event="oninput" placeholder="Recipient Type Item..." />
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @RecipientLogic.RecipientTypeName(appState.DbContext, registration.RecipientType, registration.RecipientTypeId)
+                @registration.RecipientTypeItem
             </ChildContent>
         </TemplateColumn>
     }
     @if (ShowRecipient)
     {
-        <TemplateColumn Title="Recipient" Sortable="true" Context="registration">
+        <TemplateColumn Title="Recipient" Sortable="true" Context="registration" SortBy="@OrderByRecipientItem">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
@@ -85,85 +84,125 @@
             </ChildContent>
         </TemplateColumn>
     }
-    <TemplateColumn Title="Identifier" Sortable="false" Context="registrar">
-        @* <ColumnOptions>
+    <TemplateColumn Title="Identifier" Sortable="true" SortBy="OrderByIdentifier" Context="registrar">
+        <ColumnOptions>
             <div class="search-box">
-                <input type="search" autofocus @bind="registrarNameFilter" @bind:event="oninput" placeholder="Registrar..." />
+                <input type="search" autofocus @bind="identifierFilter" @bind:event="oninput" placeholder="Registrar..." />
             </div>
-        </ColumnOptions> *@
+        </ColumnOptions>
         <ChildContent>
             <NavLink href=@($"/Ancillaries/Registrations?RegistrationId={registrar.Id}")>
                 @registrar.Identifier
             </NavLink>
-
-            @* <NavLink href=@(ApplicationState.CorrectedParametersUri(new(){{ "FarmLocationId", farm.Farm.Id.ToString()}}))>@farm.Farm.Name</NavLink> *@
         </ChildContent>
     </TemplateColumn>
-    <PropertyColumn Property="@(p => p.DefaultIdentification)" Title="Default" Sortable="true">
-        @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Default..." />
-            </div>
-        </ColumnOptions> *@
+    <PropertyColumn Property="@(p => p.DefaultIdentification)" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="bool?" FilterOperator="@defaultIdentificationFilterOperator" FilterValue="@defaultIdentificationFilter" FilterEndValue="@defaultIdentificationFilterEnd" OnFilterChanged="HandleDefaultIdentificationFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.RegistrationDate)" Title="Registration Date" Sortable="true">
-@*         <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="registrationIdentifierFilter" @bind:event="oninput" placeholder="Date..." />
-            </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <GenericFilter T="DateTime?" FilterOperator="@registrationDateFilterOperator" FilterValue="@registrationDateFilter" FilterEndValue="@registrationDateFilterEnd" OnFilterChanged="HandleRegistrationDateFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
 </QuickGrid>
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<RegistrationModel> Items { get; set; }
     QuickGrid<RegistrationModel> registrationGrid;
-
-
-    private GridSort<RegistrationModel> OrderByRegistrarName = GridSort<RegistrationModel>.ByAscending(p => p.Registrar.Name);
-    [Parameter] public Action<string> registrarNameFilterChanged { get; set; }
-    private string _registrarNameFilter;
-    string registrarNameFilter
+    [Parameter]
+    public bool ShowRecipientType
     {
-        get => _registrarNameFilter; set
+        get => _showRecipientType;
+        set
         {
-            registrarNameFilterChanged.Invoke(value);
-            _registrarNameFilter = value;
+            _showRecipientType = value;
+            if (!value)
+            {
+                recipientTypeFilter = string.Empty;
+                recipientTypeItemFilter = string.Empty;
+            }
+
         }
     }
+    private bool _showRecipientType = true;
+    [Parameter]
+    public bool ShowRecipient
+    {
+        get => _showRecipient;
+        set
+        {
+            _showRecipient = value;
+            if (!value)
+                recipientFilter = string.Empty;
+        }
+    }
+    private bool _showRecipient = true;
 
-    [Parameter] public bool ShowRecipientType { get; set; } = true;
-    [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
-    private string _recipientTypeFilter;
-    string recipientTypeFilter
-    {
-        get => _recipientTypeFilter; set
-        {
-            recipientTypeFilterChanged.Invoke(value);
-            _recipientTypeFilter = value;
-        }
-    }
-    [Parameter] public Action<string> recipientTypeInstanceFilterChanged { get; set; }
-    private string _recipientTypeInstanceFilter;
-    string recipientTypeInstanceFilter
-    {
-        get => _recipientTypeInstanceFilter; set
-        {
-            recipientTypeInstanceFilterChanged.Invoke(value);
-            _recipientTypeInstanceFilter = value;
-        }
-    }
-    [Parameter] public bool ShowRecipient { get; set; } = true;
-    [Parameter] public Action<string> recipientFilterChanged { get; set; }
-    private string _recipientFilter;
-    string recipientFilter
-    {
-        get => _recipientFilter; set
-        {
-            recipientFilterChanged.Invoke(value);
-            _recipientFilter = value;
-        }
-    }
-    
 
+    GridSort<RegistrationModel> OrderByRegistrarName = GridSort<RegistrationModel>.ByAscending(p => p.Registrar.Name);
+    GridSort<RegistrationModel> OrderByRecipientTypeItem = GridSort<RegistrationModel>.ByAscending(p => p.RecipientTypeItem);
+    GridSort<RegistrationModel> OrderByRecipientItem = GridSort<RegistrationModel>.ByAscending(p => p.RecipientItem);
+    GridSort<RegistrationModel> OrderByIdentifier = GridSort<RegistrationModel>.ByAscending(p => p.Identifier);
+    string registrarNameFilter { get; set; }
+    string recipientTypeFilter { get; set; }
+    string recipientTypeItemFilter { get; set; }
+    string recipientFilter { get; set; }
+    string registrarEmailFilter { get; set; }
+    string registrarWebFilter { get; set; }
+    string registrarApiFilter { get; set; }
+    string registrarFarmFilter { get; set; }
+    string identifierFilter { get; set; }
+    bool? defaultIdentificationFilter { get; set; } //bool
+    bool? defaultIdentificationFilterEnd { get; set; }
+    string defaultIdentificationFilterOperator { get; set; }
+    void HandleDefaultIdentificationFilterChanged((string? FilterOperator, bool? FilterValue, bool? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        defaultIdentificationFilter = filterValue;
+        defaultIdentificationFilterOperator = filterOperator ?? string.Empty;
+        defaultIdentificationFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    DateTime? registrationDateFilter { get; set; } //bool
+    DateTime? registrationDateFilterEnd { get; set; }
+    string registrationDateFilterOperator { get; set; }
+    void HandleRegistrationDateFilterChanged((string? FilterOperator, DateTime? FilterValue, DateTime? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        registrationDateFilter = filterValue;
+        registrationDateFilterOperator = filterOperator ?? string.Empty;
+        registrationDateFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private IQueryable<RegistrationModel> FilteredItems()
+    {
+        var query = Items.ToList().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(recipientTypeFilter))
+            query = query.Where(s => s.RecipientType.Contains(recipientTypeFilter));
+        if (!string.IsNullOrWhiteSpace(recipientTypeItemFilter))
+            query = query.Where(s => s.RecipientTypeItem.Contains(recipientTypeItemFilter));
+        if (!string.IsNullOrWhiteSpace(recipientFilter))
+            query = query.Where(s => s.RecipientItem.Contains(recipientFilter));
+        if (!string.IsNullOrWhiteSpace(registrarNameFilter))
+            query = query.Where(s => s.RegistrarName.Contains(registrarNameFilter));
+        if (!string.IsNullOrWhiteSpace(registrarEmailFilter))
+            query = query.Where(s => s.RegistrarEmail.Contains(registrarEmailFilter));
+        if (!string.IsNullOrWhiteSpace(registrarWebFilter))
+            query = query.Where(s => s.RegistrarWebsite.Contains(registrarWebFilter));
+        if (!string.IsNullOrWhiteSpace(registrarApiFilter))
+            query = query.Where(s => s.RegistrarApi.Contains(registrarApiFilter));
+        if (!string.IsNullOrWhiteSpace(registrarFarmFilter))
+            query = query.Where(s => s.RegistrarFarmId.Contains(registrarFarmFilter));
+        if (!string.IsNullOrWhiteSpace(identifierFilter))
+            query = query.Where(s => s.Identifier.Contains(identifierFilter));
+        if (!string.IsNullOrWhiteSpace(defaultIdentificationFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.DefaultIdentification, defaultIdentificationFilter, defaultIdentificationFilterOperator, defaultIdentificationFilterEnd);
+        if (!string.IsNullOrWhiteSpace(registrationDateFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.RegistrationDate, registrationDateFilter, registrationDateFilterOperator, registrationDateFilterEnd);
+
+
+        return query;  
+    }
 }

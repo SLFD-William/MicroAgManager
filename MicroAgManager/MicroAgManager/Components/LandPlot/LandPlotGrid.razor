@@ -1,10 +1,12 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=plotGrid TGridItem=LandPlotModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=plotGrid TGridItem=LandPlotModel Virtualize=true Items="FilteredItems()">
     
     @if (ShowFarmColumn)
     {
@@ -31,10 +33,7 @@
     </TemplateColumn>
     @if (ShowUsageColumn)
     {
-        <PropertyColumn Property
-        ="@(p => p.Usage)" Title
-        ="Usage" Sortable
-        ="true">
+        <PropertyColumn Property="@(p => p.Usage)" Title="Usage" Sortable="true">
             <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="usageFilter" @bind:event="oninput" placeholder="Farm..." />
@@ -59,16 +58,14 @@
     
     <PropertyColumn Property="@(p => p.Area)" Title="Area" Sortable="true">
         <ColumnOptions>
-            @* <div class="search-box">
-            <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
-            </div> *@
+            <GenericFilter T="decimal?" FilterOperator="@areaFilterOperator" FilterValue="@areaFilter" FilterEndValue="@areaFilterEnd" OnFilterChanged="HandleAreaFilterChanged" />
         </ColumnOptions>
     </PropertyColumn>
-     <PropertyColumn Property="@(p => p.AreaUnit.Symbol)" Title="Area Unit" Sortable="true">
+     <PropertyColumn Property="@(p => p.UnitSymbol)" Title="Area Unit" Sortable="true">
         <ColumnOptions>
-            @* <div class="search-box">
-            <input type="search" autofocus @bind="farmNameFilter" @bind:event="oninput" placeholder="Farm..." />
-            </div>         *@
+            <div class="search-box">
+                <input type="search" autofocus @bind="unitSymbolFilter" @bind:event="oninput" placeholder="Farm..." />
+            </div>        
         </ColumnOptions>
     </PropertyColumn>
 
@@ -76,56 +73,70 @@
 </QuickGrid>
 @code {
     [Parameter] required public IQueryable<LandPlotModel> Items { get; set; }
+    [Parameter]   public bool ShowFarmColumn
+    {
+        get => _showFarmColumn;
+        set
+        {
+            _showFarmColumn = value;
+            if (!value)
+                farmNameFilter = string.Empty;
+        }
+    }
+    private bool _showFarmColumn = true;
+
+    [Parameter]
+    public bool ShowUsageColumn
+    {
+        get => _showUsageColumn;
+        set
+        {
+            _showUsageColumn = value;
+            if (!value)
+                usageFilter = string.Empty;
+        }
+    }
+    private bool _showUsageColumn = true;
+
     QuickGrid<LandPlotModel> plotGrid;
     private GridSort<LandPlotModel> OrderByPlotName = GridSort<LandPlotModel>.ByAscending(p => p.Name);
     private GridSort<LandPlotModel> OrderByParentPlotName = GridSort<LandPlotModel>.ByAscending(p => p.ParentPlotName);
-    private GridSort<LandPlotModel> OrderByFarmName = GridSort<LandPlotModel>.ByAscending(p => p.Farm.Name);
-
-    [Parameter] public bool ShowFarmColumn { get; set; } = true;
-    [Parameter] public Action<string> farmNameFilterChanged { get; set; }
-    private string _farmNameFilter;
-    string farmNameFilter
+    private GridSort<LandPlotModel> OrderByFarmName = GridSort<LandPlotModel>.ByAscending(p => p.FarmName);
+    private IQueryable<LandPlotModel> FilteredItems()
     {
-        get => _farmNameFilter; set
-        {
-            farmNameFilterChanged.Invoke(value);
-            _farmNameFilter = value;
-        }
+        var query = Items.ToList().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(farmNameFilter))
+            query = query.Where(s => s.FarmName.Contains(farmNameFilter));
+        if (!string.IsNullOrWhiteSpace(plotNameFilter))
+            query = query.Where(s => s.Name.Contains(plotNameFilter));
+        if (!string.IsNullOrWhiteSpace(parentPlotNameFilter))
+            query = query.Where(s => s.ParentPlotName.Contains(parentPlotNameFilter));
+        if (!string.IsNullOrWhiteSpace(usageFilter))
+            query = query.Where(s => s.Usage.Contains(usageFilter));
+        if (!string.IsNullOrWhiteSpace(unitSymbolFilter))
+            query = query.Where(s => s.UnitSymbol.Contains(unitSymbolFilter));
+        if (!string.IsNullOrWhiteSpace(areaFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.Area, areaFilter, areaFilterOperator, areaFilterEnd);
+
+        return query;
     }
 
-    [Parameter] public Action<string> plotNameFilterChanged { get; set; }
-    private string _plotNameFilter;
-    string plotNameFilter
-    {
-        get => _plotNameFilter; set
-        {
-            plotNameFilterChanged.Invoke(value);
-            _plotNameFilter = value;
-        }
-    }
-    [Parameter] public Action<string> parentPlotNameFilterChanged { get; set; }
-    private string _parentPlotNameFilter;
-    string parentPlotNameFilter
-    {
-        get => _parentPlotNameFilter; set
-        {
-            parentPlotNameFilterChanged.Invoke(value);
-            _parentPlotNameFilter = value;
-        }
-    }
+    string farmNameFilter { get; set; }
+    string plotNameFilter { get; set; }
+    string parentPlotNameFilter { get; set; }
+    string usageFilter { get; set; }
+    string unitSymbolFilter { get; set; }
+    decimal? areaFilter { get; set; } //numeric
+    string areaFilterOperator { get; set; } //numeric
+    decimal? areaFilterEnd { get; set; }
 
-
-    [Parameter] public bool ShowUsageColumn { get; set; } = true;
-    [Parameter] public Action<string> usageFilterChanged { get; set; }
-    private string _usageFilter;
-    string usageFilter
+    private void HandleAreaFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
     {
-        get => _usageFilter; set
-        {
-            usageFilterChanged.Invoke(value);
-            _usageFilter = value;
-        }
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        areaFilter = filterValue;
+        areaFilterOperator = filterOperator ?? string.Empty;
+        areaFilterEnd = filterEndValue;
+        StateHasChanged();
     }
-
 
 }

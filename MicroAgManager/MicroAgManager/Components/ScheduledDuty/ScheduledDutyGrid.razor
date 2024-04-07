@@ -119,8 +119,34 @@
 
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
-    [Parameter] public bool ShowRecipientType { get; set; } = true;
-    [Parameter] public bool ShowRecipient { get; set; } = true;
+    [Parameter]
+    public bool ShowRecipientType
+    {
+        get => _showRecipientType;
+        set
+        {
+            _showRecipientType = value;
+            if (!value)
+            {
+                dutyRecipientTypeFilter = string.Empty;
+                dutyRecipientTypeItemFilter = string.Empty;
+            }
+
+        }
+    }
+    private bool _showRecipientType = true; 
+    [Parameter]
+    public bool ShowRecipient
+    {
+        get => _showRecipient;
+        set
+        {
+            _showRecipient = value;
+            if (!value)
+                dutyRecipientItemFilter = string.Empty;
+        }
+    }
+    private bool _showRecipient = true;
     [Parameter] required public IQueryable<ScheduledDutyModel> Items { get; set; }
     QuickGrid<ScheduledDutyModel> scheduleDutyGrid;
     string sourceItemFilter { get; set; }
@@ -177,7 +203,7 @@
         if (!string.IsNullOrWhiteSpace(dutyRecipientTypeFilter))
             query = query.Where(s => s.Duty.RecipientType.Contains(dutyRecipientTypeFilter));
         if (!string.IsNullOrWhiteSpace(dutyRecipientTypeItemFilter))
-            query = query.Where(s => s.Duty.RecipientType.Contains(dutyRecipientTypeItemFilter));
+            query = query.Where(s => s.Duty.RecipientTypeItem.Contains(dutyRecipientTypeItemFilter));
         if (!string.IsNullOrWhiteSpace(recipientItemFilter))
             query = query.Where(s => s.RecipientItem.Contains(recipientItemFilter));
         if (!string.IsNullOrWhiteSpace(recordFilter))
@@ -190,9 +216,7 @@
         if (!string.IsNullOrWhiteSpace(dueOnFilterOperator))
             query = FilteringHelpers.ApplyFilter(query, s => s.DueOn, dueOnFilter, dueOnFilterOperator, dueOnFilterEnd);
 
-
-
-            return query;
+        return query;
     }
     GridSort<ScheduledDutyModel> OrderByDutyName = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.Name);
     GridSort<ScheduledDutyModel> OrderByDutyCommand = GridSort<ScheduledDutyModel>.ByAscending(p => p.Duty.Command);

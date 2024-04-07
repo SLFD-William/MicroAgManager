@@ -2,7 +2,6 @@
 using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

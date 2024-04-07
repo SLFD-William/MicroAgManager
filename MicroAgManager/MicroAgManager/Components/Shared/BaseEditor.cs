@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using Domain.Entity;
-using Domain.Models;
-using System.Net.NetworkInformation;
 using MicroAgManager.Services;
 
 namespace MicroAgManager.Components.Shared

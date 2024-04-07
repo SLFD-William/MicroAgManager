@@ -23,7 +23,7 @@ namespace Domain.Models
         public string Usage { get; set; } = nameof(LandPlotUseConstants.GeneralUse);
         [ForeignKey(nameof(ParentPlot))] public long? ParentPlotId { get; set; }
         public virtual LandPlotModel? ParentPlot { get; set; }
-        [NotMapped]public string ParentPlotName { get => ParentPlot?.Name ?? string.Empty; }
+        
         public virtual ICollection<LandPlotModel> Subplots { get; set; }=new List<LandPlotModel>();
         public virtual ICollection<LivestockModel> Livestocks { get; set; } = new List<LivestockModel>();
         [NotMapped] DateTime ILandPlot.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
@@ -47,8 +47,6 @@ namespace Domain.Models
             }) as LandPlotModel;
             return model;
         }
-
-
         public override BaseModel Map(BaseModel entity)
         {
             if (entity is not LandPlotModel || entity is null) return null;
@@ -62,7 +60,6 @@ namespace Domain.Models
             ((LandPlotModel)entity).EntityModifiedOn = EntityModifiedOn;
             return entity;
         }
-
         public override BaseEntity Map(BaseEntity entity)
         {
             if (entity is not LandPlot || entity is null) return null;
@@ -76,5 +73,9 @@ namespace Domain.Models
             entity.ModifiedOn = DateTime.UtcNow;
             return entity;
         }
+        [NotMapped] public string FarmName { get => Farm?.Name ?? string.Empty; }
+        [NotMapped] public string ParentPlotName { get => ParentPlot?.Name ?? string.Empty; }
+        [NotMapped] public string UnitSymbol { get => AreaUnit?.Symbol ?? string.Empty; }
+
     }
 }

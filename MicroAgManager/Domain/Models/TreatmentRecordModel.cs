@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Domain.Interfaces;
+using Domain.Logic;
 
 namespace Domain.Models
 {
@@ -68,5 +69,25 @@ namespace Domain.Models
             ((TreatmentRecord)entity).ModifiedOn = DateTime.UtcNow;
             return entity;
         }
+        public void PopulateDynamicRelations(DbContext genericContext) => RecipientLogic.PopulateDynamicRelations(genericContext, this);
+        [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
+        [NotMapped] public string RecipientItem { get; set; } = string.Empty;
+        [NotMapped] public string TreatmentName { get => Treatment?.Name ?? string.Empty; }
+        [NotMapped] public string TreatmentBrandName { get => Treatment?.BrandName ?? string.Empty; }
+        [NotMapped] public string TreatmentReason { get => Treatment?.Reason ?? string.Empty; }
+        [NotMapped] public string TreatmentLabelMethod { get => Treatment?.LabelMethod ?? string.Empty; }
+        [NotMapped] public decimal TreatmentDosage { get => Treatment?.DosageAmount ?? 0; }
+        [NotMapped] public string TreatmentDosageUnit { get =>(Treatment?.DosageUnit is UnitModel) ? $"{Treatment?.DosageUnit?.Name} ({Treatment?.DosageUnit?.Symbol})" : string.Empty; }
+        [NotMapped] public decimal TreatmentRecipientMass { get => Treatment?.RecipientMass ?? 0; }
+        [NotMapped] public string TreatmentRecipientMassUnit { get => (Treatment?.RecipientMassUnit is UnitModel) ? $"{Treatment?.RecipientMassUnit?.Name} ({Treatment?.DosageUnit?.Symbol})" : string.Empty; }
+        [NotMapped] public int TreatmentMeatWithdrawal { get => Treatment?.MeatWithdrawal ?? 0; }
+        [NotMapped] public int TreatmentMilkWithdrawal { get => Treatment?.MilkWithdrawal ?? 0; }
+        [NotMapped] public decimal TreatmentPer { get => Treatment?.PerScalar ?? 0; }
+        [NotMapped] public string TreatmentPerUnit { get => (Treatment?.PerUnit is UnitModel) ? $"{Treatment?.PerUnit?.Name} ({Treatment?.PerUnit?.Symbol})" : string.Empty; }
+        [NotMapped] public decimal TreatmentEvery { get => Treatment?.EveryScalar ?? 0; }
+        [NotMapped] public string TreatmentEveryUnit { get => (Treatment?.EveryUnit is UnitModel) ? $"{Treatment?.EveryUnit?.Name} ({Treatment?.EveryUnit?.Symbol})" : string.Empty; }
+        [NotMapped] public decimal TreatmentDuration { get => Treatment?.DurationScalar ?? 0; }
+        [NotMapped] public string TreatmentDurationUnit { get => (Treatment?.DurationUnit is UnitModel) ? $"{Treatment?.DurationUnit?.Name} ({Treatment?.DurationUnit?.Symbol})" : string.Empty; }
+        [NotMapped] public string AppliedUnit { get => DosageUnit?.Name ?? string.Empty; }
     }
 }

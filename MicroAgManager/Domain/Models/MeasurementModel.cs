@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 using Domain.Interfaces;
+using Domain.Logic;
 
 namespace Domain.Models
 {
-    public class MeasurementModel : BaseModel,IHasRecipient,IMeasurement
+    public class MeasurementModel : BaseModel, IMeasurement, IHasRecipient
     {
         [Required][ForeignKey("Measure")] public long MeasureId { get; set; }
         public virtual MeasureModel Measure { get; set; }
@@ -66,6 +67,11 @@ namespace Domain.Models
             ((MeasurementModel)measurement).RecipientType = RecipientType;
             return measurement;
         }
-        
+        public void PopulateDynamicRelations(DbContext genericContext) => RecipientLogic.PopulateDynamicRelations(genericContext, this);
+        [NotMapped] public string MeasureName { get => Measure?.Name ?? string.Empty; }
+        [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
+        [NotMapped] public string RecipientItem { get; set; } = string.Empty;
+        [NotMapped] public string MeasureUnitName { get => Measure?.Unit?.Name ?? string.Empty; }
+        [NotMapped] public string MeasurementUnitName { get => MeasurementUnit?.Name ?? string.Empty; }
     }
 }

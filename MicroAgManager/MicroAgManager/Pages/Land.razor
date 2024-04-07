@@ -111,11 +111,7 @@
             @if (!LandPlotId.HasValue)
             {
                 <div>
-                    <LandPlotGrid farmNameFilterChanged="@((x) => {farmNameFilter=x; StateHasChanged();})"
-                                  parentPlotNameFilterChanged="@((x) => {parentPlotNameFilter=x; StateHasChanged();})"
-                                  plotNameFilterChanged="@((x) => {plotNameFilter=x; StateHasChanged();})"
-                                  usageFilterChanged="@((x) => {usageFilter=x; StateHasChanged();})"
-                                  Items="baseLandPlotQuery()"
+                    <LandPlotGrid Items="baseLandPlotQuery()"
                                   ShowFarmColumn=@(ApplicationState.FarmSelectedFilter.Count!=1)
                                   ShowUsageColumn=@(ApplicationState.UsageSelectedFilter.Count!=1)>
                     </LandPlotGrid>
@@ -152,11 +148,6 @@
         if (LandPlot.Usage == LandPlotUseConstants.Livestock)
             ApplicationState.NavigateTo(new() { { "LivestockId", "-1" } });
     }
-
-    string farmNameFilter;
-    string parentPlotNameFilter;
-    string usageFilter;
-    string plotNameFilter;
 
     private EditContext _addPlotContext;
     private bool _addingPlot = false;
@@ -261,17 +252,7 @@
         var query = appState.DbContext.LandPlots.Include(p => p.Farm).Include(p => p.ParentPlot).Include(p => p.AreaUnit).AsQueryable();
         if (_landPlotId > 0)
             query = query.Where(p => p.Id == _landPlotId);
-        else
-        {
-            if (ApplicationState.FarmSelectedFilter.Any())
-                query = query.Where(p => ApplicationState.FarmSelectedFilter.Contains(p.FarmLocationId));
-            if (ApplicationState.UsageSelectedFilter.Any())
-                query = query.Where(p => ApplicationState.UsageSelectedFilter.Contains(p.Usage));
-            if (!string.IsNullOrEmpty(plotNameFilter))
-                query = query.Where(p => p.Name.Contains(plotNameFilter));
-        }
         _LandPlotCount = query.Count();
-        return query.ToList().AsQueryable();
+        return query;
     }
-
 }

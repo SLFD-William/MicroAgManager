@@ -1,9 +1,11 @@
-﻿@using Domain.Models
+﻿@using Domain.Logic
+@using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=farmGrid TGridItem=FarmLocationModel Virtualize=true Items="FilteredItems()">
     <PropertyColumn Property="@(p => p.Name)" Title="Farm" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
@@ -55,113 +57,74 @@
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Latitude)" Title="Latitude" Sortable="true">
         <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="latitudeFilter" @bind:event="oninput" placeholder="Latitude..." />
-            </div>
+            <GenericFilter T="double?" FilterOperator="@latitudeFilterOperator" FilterValue="@latitudeFilter" FilterEndValue="@latitudeFilterEnd" OnFilterChanged="HandleLatitudeFilterChanged" />
         </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Longitude)" Title="Longitude" Sortable="true">
         <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="longitudeFilter" @bind:event="oninput" placeholder="Longitude..." />
-            </div>
+            <GenericFilter T="double?" FilterOperator="@longitudeFilterOperator" FilterValue="@longitudeFilter" FilterEndValue="@longitudeFilterEnd" OnFilterChanged="HandleLatitudeFilterChanged" />
         </ColumnOptions>
     </PropertyColumn>
 </QuickGrid>
 @code {
     [Parameter] required public IQueryable<FarmLocationModel> Items { get; set; }
     QuickGrid<FarmLocationModel> farmGrid;
-    string farmNameFilter
-    {
-        get => _farmNameFilter; set
-        {
-            farmNameFilterChanged.Invoke(value);
-            _farmNameFilter = value;
-        }
-    }
-    string streetFilter
-    {
-        get => _streetFilter; set
-        {
-            streetFilterChanged.Invoke(value);
-            _streetFilter = value;
-        }
-    }
-    string cityFilter
-    {
-        get => _cityFilter; set
-        {
-            cityFilterChanged.Invoke(value);
-            _cityFilter = value;
-        }
-    }
-    string stateFilter
-    {
-        get => _stateFilter; set
-        {
-            stateFilterChanged.Invoke(value);
-            _stateFilter = value;
-        }
-    }
-    string zipFilter
-    {
-        get => _zipFilter; set
-        {
-            zipFilterChanged.Invoke(value);
-            _zipFilter = value;
-        }
-    }
-    string countryFilter
-    {
-        get => _countryFilter; set
-        {
-            countryFilterChanged.Invoke(value);
-            _countryFilter = value;
-        }
-    }
-    string countryCodeFilter
-    {
-        get => _countryCodeFilter; set
-        {
-            countryCodeFilterChanged.Invoke(value);
-            _countryCodeFilter = value;
-        }
-    }
-    string latitudeFilter
-    {
-        get => _latitudeFilter; set
-        {
-            latitudeFilterChanged.Invoke(value);
-            _latitudeFilter = value;
-        }
-    }
-    string longitudeFilter
-    {
-        get => _longitudeFilter; set
-        {
-            longitudeFilterChanged.Invoke(value);
-            _longitudeFilter = value;
-        }
-    }
-    [Parameter] public Action<string> farmNameFilterChanged { get; set; }
-    [Parameter] public Action<string> streetFilterChanged { get; set; }
-    [Parameter] public Action<string> cityFilterChanged { get; set; }
-    [Parameter] public Action<string> stateFilterChanged { get; set; }
-    [Parameter] public Action<string> zipFilterChanged { get; set; }
-    [Parameter] public Action<string> countryFilterChanged { get; set; }
-    [Parameter] public Action<string> countryCodeFilterChanged { get; set; }
-    [Parameter] public Action<string> latitudeFilterChanged { get; set; }
-    [Parameter] public Action<string> longitudeFilterChanged { get; set; }
+    string farmNameFilter { get; set; }
+    string streetFilter { get; set; }
+    string cityFilter { get; set; }
+    string stateFilter { get; set; }
+    string zipFilter { get; set; }
+    string countryFilter { get; set; }
+    string countryCodeFilter { get; set; }
+    double? latitudeFilter { get; set; } //date
+    string latitudeFilterOperator { get; set; }
+    double? latitudeFilterEnd { get; set; }
 
-    private string _farmNameFilter;
-    private string _streetFilter;
-    private string _cityFilter;
-    private string _stateFilter;
-    private string _zipFilter;
-    private string _countryFilter;
-    private string _countryCodeFilter;
-    private string _latitudeFilter;
-    private string _longitudeFilter;
+    double? longitudeFilter { get; set; } //date
+    string longitudeFilterOperator { get; set; }
+    double? longitudeFilterEnd { get; set; }
 
+   
+    private IQueryable<FarmLocationModel> FilteredItems()
+    {
+        var query = Items.ToList().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(farmNameFilter))
+            query = query.Where(s => s.Name.Contains(farmNameFilter));
+        if (!string.IsNullOrWhiteSpace(streetFilter))
+            query = query.Where(s => s.StreetAddress.Contains(streetFilter));
+        if (!string.IsNullOrWhiteSpace(cityFilter))
+            query = query.Where(s => s.City.Contains(cityFilter));
+        if (!string.IsNullOrWhiteSpace(stateFilter))
+            query = query.Where(s => s.State.Contains(stateFilter));
+        if (!string.IsNullOrWhiteSpace(zipFilter))
+            query = query.Where(s => s.Zip.Contains(zipFilter));
+        if (!string.IsNullOrWhiteSpace(countryFilter))
+            query = query.Where(s => s.Country.Contains(countryFilter));
+        if (!string.IsNullOrWhiteSpace(countryCodeFilter))
+            query = query.Where(s => s.CountryCode.Contains(countryCodeFilter));
+
+        if (!string.IsNullOrWhiteSpace(latitudeFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.Latitude, latitudeFilter, latitudeFilterOperator, latitudeFilterEnd);
+        if (!string.IsNullOrWhiteSpace(longitudeFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.Longitude, longitudeFilter, longitudeFilterOperator, longitudeFilterEnd);
+        return query;
+    }
+    private void HandleLatitudeFilterChanged((string? FilterOperator, double? FilterValue, double? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        latitudeFilter = filterValue;
+        latitudeFilterOperator = filterOperator ?? string.Empty;
+        latitudeFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleLongitudeFilterChanged((string? FilterOperator, double? FilterValue, double? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        longitudeFilter = filterValue;
+        longitudeFilterOperator = filterOperator ?? string.Empty;
+        longitudeFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
 
 }

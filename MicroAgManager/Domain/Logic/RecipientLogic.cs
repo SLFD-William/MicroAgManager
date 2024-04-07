@@ -1,4 +1,5 @@
 ﻿using Domain.Constants;
+using Domain.Entity;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,6 +62,18 @@ namespace Domain.Logic
 
             return new List<KeyValuePair<long, string>>();
 
+        }
+
+        public static void PopulateDynamicRelations(DbContext genericContext, IHasRecipient hasRecipientModel)
+        {
+            var db = genericContext as IFrontEndDbContext;
+            if (db is null) return;
+            if (hasRecipientModel.RecipientType == nameof(LivestockAnimal))
+                hasRecipientModel.RecipientTypeItem = db.LivestockAnimals.Find(hasRecipientModel.RecipientTypeId).Name ?? string.Empty;
+            if (hasRecipientModel.RecipientType == nameof(LivestockBreed))
+                hasRecipientModel.RecipientTypeItem = db.LivestockBreeds.Find(hasRecipientModel.RecipientTypeId).Name ?? string.Empty;
+            if (hasRecipientModel.RecipientType == nameof(LivestockAnimal) || hasRecipientModel.RecipientType == nameof(LivestockBreed))
+                hasRecipientModel.RecipientItem = db.Livestocks.Find(hasRecipientModel.RecipientId)?.Name ?? string.Empty;
         }
     }
 }

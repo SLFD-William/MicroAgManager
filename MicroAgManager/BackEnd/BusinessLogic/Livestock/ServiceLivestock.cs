@@ -3,11 +3,11 @@ using BackEnd.Infrastructure;
 using Domain.Interfaces;
 using Domain.Logic;
 using Domain.Models;
-using Domain.ValueObjects;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BackEnd.BusinessLogic.Livestock
 {
@@ -24,6 +24,8 @@ namespace BackEnd.BusinessLogic.Livestock
 
         public string RecipientType { get; set; }
         public long RecipientId { get => StudId; set => StudId=value; }
+        [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
+        [NotMapped] public string RecipientItem { get; set; } = string.Empty;
 
         public class Handler : BaseCommandHandler<ServiceLivestock>
         {

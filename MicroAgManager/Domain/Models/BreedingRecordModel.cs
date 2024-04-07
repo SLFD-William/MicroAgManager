@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Domain.Entity;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Domain.Logic;
 
 namespace Domain.Models
 {
@@ -84,5 +86,18 @@ namespace Domain.Models
             ((BreedingRecordModel)breedingRecord).EntityModifiedOn = EntityModifiedOn;
             return breedingRecord;
         }
+        public void PopulateDynamicRelations(DbContext genericContext)
+        {
+            var db = genericContext as IFrontEndDbContext;
+            if (db is null) return;
+            RecipientLogic.PopulateDynamicRelations(genericContext, this);
+            if (RecipientType == nameof(LivestockAnimal) || RecipientType == nameof(LivestockBreed))
+                MaleName = db.Livestocks.Find(MaleId)?.Name ?? string.Empty;
+        }
+        [NotMapped] public string FemaleName { get; set; } = string.Empty;
+        [NotMapped] public string MaleName { get; private set; } = string.Empty;
+        [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
+        
+        [NotMapped] string IHasRecipient.RecipientItem { get=> FemaleName; set => FemaleName=value; }
     }
 }

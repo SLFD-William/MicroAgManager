@@ -155,9 +155,47 @@
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<LivestockModel> Items { get; set; }
-    [Parameter] public bool ShowAnimalNameColumn { get; set; } = true;
-    [Parameter] public bool ShowBreedColumns { get; set; } = true;
-    [Parameter] public bool ShowLocationColumn { get; set; } = true;
+    [Parameter]
+    public bool ShowAnimalNameColumn
+    {
+        get => _showAnimalNameColumn;
+        set
+        {
+            _showAnimalNameColumn = value;
+            if (!value)
+                animalNameFilter = string.Empty;
+        }
+    }
+    private bool _showAnimalNameColumn = true;
+
+    [Parameter]
+    public bool ShowBreedColumns
+    {
+        get => _showBreedColumn;
+        set
+        {
+            _showBreedColumn = value;
+            if (!value)
+            {
+                breedNameFilter = string.Empty;
+                breedEmojiFilter = string.Empty;
+            }
+
+        }
+    }
+    private bool _showBreedColumn = true;
+    [Parameter]
+    public bool ShowLocationColumn
+    {
+        get => _showLocationColumn;
+        set
+        {
+            _showLocationColumn = value;
+            if (!value)
+                locationFilter = string.Empty;
+        }
+    }
+    private bool _showLocationColumn = true;
     QuickGrid<LivestockModel> livestockGrid;
 
     GridSort<LivestockModel> OrderByName = GridSort<LivestockModel>.ByAscending(p => p.Name);

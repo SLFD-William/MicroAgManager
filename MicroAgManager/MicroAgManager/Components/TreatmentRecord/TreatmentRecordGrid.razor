@@ -1,11 +1,19 @@
 ﻿@using Domain.Logic
 @using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
-<QuickGrid Theme="microagmanager" @ref=treatmentRecordGrid TGridItem=TreatmentRecordModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=treatmentRecordGrid TGridItem=TreatmentRecordModel Virtualize=true Items="FilteredItems()">
+    <TemplateColumn Sortable="false" Context="treatment">
+        <ChildContent>
+            <NavLink href=@($"/Ancillaries/TreatmentRecords?TreatmentRecordId={treatment.Id}")>
+                Edit Record
+            </NavLink>
+        </ChildContent>
+    </TemplateColumn>
   <TemplateColumn Title="Treatment" Sortable="true" Context="treatmentRecord" SortBy="@OrderByTreatmentName">
         <ColumnOptions>
             <div class="search-box">
@@ -14,23 +22,23 @@
         </ColumnOptions>
         <ChildContent>
             <NavLink href=@($"/Ancillaries/TreatmentRecords?TreatmentId={treatmentRecord.TreatmentId}")>
-                @treatmentRecord.Treatment.Name
+                @treatmentRecord.TreatmentName
             </NavLink>
         </ChildContent>
     </TemplateColumn>
-    <PropertyColumn Property="@(p => p.Treatment.BrandName)" Title="Brand Name" Sortable="true">
+    <PropertyColumn Property="@(p => p.TreatmentBrandName)" Title="Brand Name" Sortable="true">
         <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="brandNameFilter" @bind:event="oninput" placeholder="Brand Name..." />
             </div>
         </ColumnOptions>
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.Reason)" Title="Reason" Sortable="true">
-        @* <ColumnOptions>
+    <PropertyColumn Property="@(p => p.TreatmentReason)" Title="Reason" Sortable="true">
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="reasonFilter" @bind:event="oninput" placeholder="Reason..." />
             </div>
-        </ColumnOptions> *@
+        </ColumnOptions>
     </PropertyColumn>
     @if (ShowRecipientType)
     {
@@ -41,14 +49,14 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
-        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="treatment">
+        <TemplateColumn Title="Recipient Type Item" Sortable="true" Context="treatment">
             <ColumnOptions>
                 <div class="search-box">
-                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                    <input type="search" autofocus @bind="recipientTypeItemFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @RecipientLogic.RecipientTypeName(appState.DbContext, treatment.RecipientType, treatment.RecipientTypeId)
+                @treatment.RecipientTypeItem
             </ChildContent>
         </TemplateColumn>
     }
@@ -62,127 +70,96 @@
             </ColumnOptions>
             <ChildContent>
                 <NavLink href=@RecipientLogic.GetRecipientHref(treatment.RecipientType,treatment.RecipientId)>
-                    @RecipientLogic.RecipientName(appState.DbContext, treatment.RecipientType, treatment.RecipientId)
+                    @treatment.RecipientItem
                 </NavLink>
-                
             </ChildContent>
         </TemplateColumn>
     }
-    <TemplateColumn Sortable="false" Context="treatment">
-        @*             <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="animalNameFilter" @bind:event="oninput" placeholder="Animal..." />
-        </div>
-        </ColumnOptions> *@
-        <ChildContent>
-            <NavLink href=@($"/Ancillaries/TreatmentRecords?TreatmentRecordId={treatment.Id}")>
-                Edit Record
-            </NavLink>
-        </ChildContent>
-    </TemplateColumn>
-    <PropertyColumn Property="@(p => p.Treatment.LabelMethod)" Title="Label Method" Sortable="true">
-        @* <ColumnOptions>
+    <PropertyColumn Property="@(p => p.TreatmentLabelMethod)" Title="Label Method" Sortable="true">
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="labelMethodFilter" @bind:event="oninput" placeholder="Label Method..." />
             </div>
-        </ColumnOptions> *@
+        </ColumnOptions>
     </PropertyColumn>
     <TemplateColumn Title="Dosage" Context="treatment">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@treatmentDosageFilterOperator" FilterValue="@treatmentDosageFilter" FilterEndValue="@treatmentDosageFilterEnd" OnFilterChanged="HandleTreatmentDosageFilterChanged" />
+        </ColumnOptions>
         <ChildContent>
-            @($"{treatment.Treatment.DosageAmount} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.DosageUnitId)}")
+            @($"{treatment.TreatmentDosage} {treatment.TreatmentDosageUnit}")
          </ChildContent>
     </TemplateColumn>
     <TemplateColumn Title="Mass" Context="treatment">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@treatmentMassFilterOperator" FilterValue="@treatmentMassFilter" FilterEndValue="@treatmentMassFilterEnd" OnFilterChanged="HandleTreatmentMassFilterChanged" />
+        </ColumnOptions>
         <ChildContent>
-            @($"{treatment.Treatment.RecipientMass} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.RecipientMassUnitId)}")
-            @UnitLogic.UnitName(appState.DbContext, treatment.Treatment.RecipientMassUnitId)
+            @($"{treatment.TreatmentRecipientMass} {treatment.TreatmentRecipientMassUnit}")
         </ChildContent>
     </TemplateColumn>
-    <PropertyColumn Property="@(p => p.Treatment.MeatWithdrawal)" Title="Meat Withdrawal" Sortable="true">
-        @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="meatWithdrawalFilter" @bind:event="oninput" placeholder="Meat Withdrawal..." />
-            </div>
-        </ColumnOptions> *@
+    <PropertyColumn Property="@(p => p.TreatmentMeatWithdrawal)" Title="Meat Withdrawal" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="int?" FilterOperator="@treatmentMeatFilterOperator" FilterValue="@treatmentMeatFilter" FilterEndValue="@treatmentMeatFilterEnd" OnFilterChanged="HandleTreatmentMeatFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
-    <PropertyColumn Property="@(p => p.Treatment.MilkWithdrawal)" Title="Milk Withdrawal" Sortable="true">
-        @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="milkWithdrawalFilter" @bind:event="oninput" placeholder="Milk Withdrawal..." />
-            </div>
-        </ColumnOptions> *@
+    <PropertyColumn Property="@(p => p.TreatmentMilkWithdrawal)" Title="Milk Withdrawal" Sortable="true">
+        <ColumnOptions>
+            <GenericFilter T="int?" FilterOperator="@treatmentMilkFilterOperator" FilterValue="@treatmentMilkFilter" FilterEndValue="@treatmentMilkFilterEnd" OnFilterChanged="HandleTreatmentMilkFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <TemplateColumn Title="Per" Context="treatment">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@treatmentPerFilterOperator" FilterValue="@treatmentPerFilter" FilterEndValue="@treatmentPerFilterEnd" OnFilterChanged="HandleTreatmentPerFilterChanged" />
+        </ColumnOptions>
         <ChildContent>
-            @($"{treatment.Treatment.PerScalar} per {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.PerUnitId)}")
+            @($"{treatment.TreatmentPer} per {treatment.TreatmentPerUnit}")
         </ChildContent>
     </TemplateColumn>
     <TemplateColumn Title="Every" Context="treatment">
-        @* <ColumnOptions>
-           <div class="search-box">
-            <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-            </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@treatmentEveryFilterOperator" FilterValue="@treatmentEveryFilter" FilterEndValue="@treatmentEveryFilterEnd" OnFilterChanged="HandleTreatmentEveryFilterChanged" />
+        </ColumnOptions>
 
         <ChildContent>
-            @($"every {treatment.Treatment.EveryScalar} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.EveryUnitId)}")
+            @($"every {treatment.TreatmentEvery} {treatment.TreatmentEveryUnit}")
         </ChildContent>
     </TemplateColumn>
     <TemplateColumn Title="Duration" Context="treatment">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@treatmentDurationFilterOperator" FilterValue="@treatmentDurationFilter" FilterEndValue="@treatmentDurationFilterEnd" OnFilterChanged="HandleTreatmentDurationFilterChanged" />
+        </ColumnOptions>
         <ChildContent>
-            @($"for {treatment.Treatment.DurationScalar} {UnitLogic.UnitName(appState.DbContext, treatment.Treatment.DurationUnitId)}")
+            @($"for {treatment.TreatmentDuration} {treatment.TreatmentDurationUnit}")
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.AppliedMethod)" Title="Applied Method" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="labelMethodFilter" @bind:event="oninput" placeholder="Label Method..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="appliedMethodFilter" @bind:event="oninput" placeholder="Label Method..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
     <TemplateColumn Title="Applied Dosage" Context="treatment">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@treatmentAppliedFilterOperator" FilterValue="@treatmentAppliedFilter" FilterEndValue="@treatmentAppliedFilterEnd" OnFilterChanged="HandleTreatmentAppliedFilterChanged" />
+        </ColumnOptions>
+
         <ChildContent>
-            @($"{treatment.DosageAmount} {UnitLogic.UnitName(appState.DbContext, treatment.DosageUnitId)}")
+            @($"{treatment.DosageAmount} {treatment.AppliedUnit}")
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <GenericFilter T="DateTime?" FilterOperator="@treatmentPerformedFilterOperator" FilterValue="@treatmentPerformedFilter" FilterEndValue="@treatmentPerformedFilterEnd" OnFilterChanged="HandleTreatmentPerformedFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="notesFilter" @bind:event="oninput" placeholder="Duration Unit..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
 </QuickGrid>
 
@@ -190,60 +167,195 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<TreatmentRecordModel> Items { get; set; }
     QuickGrid<TreatmentRecordModel> treatmentRecordGrid;
+    private GridSort<TreatmentRecordModel> OrderByTreatmentName = GridSort<TreatmentRecordModel>.ByAscending(p => p.TreatmentName);
+    [Parameter]
+    public bool ShowRecipientType
+    {
+        get => _showRecipientType;
+        set
+        {
+            _showRecipientType = value;
+            if (!value)
+            {
+                recipientTypeFilter = string.Empty;
+                recipientTypeItemFilter = string.Empty;
+            }
 
-    private GridSort<TreatmentRecordModel> OrderByTreatmentName = GridSort<TreatmentRecordModel>.ByAscending(p => p.Treatment.Name);
-    [Parameter] public Action<string> treatmentNameFilterChanged { get; set; }
-    private string _treatmentNameFilter;
-    string treatmentNameFilter
-    {
-        get => _treatmentNameFilter; set
-        {
-            treatmentNameFilterChanged.Invoke(value);
-            _treatmentNameFilter = value;
         }
     }
+    private bool _showRecipientType = true;
+    [Parameter]
+    public bool ShowRecipient
+    {
+        get => _showRecipient;
+        set
+        {
+            _showRecipient = value;
+            if (!value)
+                recipientFilter = string.Empty;
+        }
+    }
+    private bool _showRecipient = true;
 
-    [Parameter] public Action<string> brandNameFilterChanged { get; set; }
-    private string _brandNameFilter;
-    string brandNameFilter
+    string recipientTypeFilter { get; set; }
+    string recipientTypeItemFilter { get; set; }
+    string recipientFilter { get; set; }
+
+    string reasonFilter { get; set; }
+    string treatmentNameFilter { get; set; }
+
+    string brandNameFilter { get; set; }
+    string labelMethodFilter { get; set; }
+    string appliedMethodFilter { get; set; }
+    string notesFilter { get; set; }
+
+    decimal? treatmentDosageFilter { get; set; } //numeric
+    string treatmentDosageFilterOperator { get; set; } //numeric
+    decimal? treatmentDosageFilterEnd { get; set; } //numeric
+    private void HandleTreatmentDosageFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
     {
-        get => _brandNameFilter; set
-        {
-            brandNameFilterChanged.Invoke(value);
-            _brandNameFilter = value;
-        }
-    }
-    [Parameter] public bool ShowRecipientType { get; set; } = true;
-    [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
-    private string _recipientTypeFilter;
-    string recipientTypeFilter
-    {
-        get => _recipientTypeFilter; set
-        {
-            recipientTypeFilterChanged.Invoke(value);
-            _recipientTypeFilter = value;
-        }
-    }
-    [Parameter] public Action<string> recipientTypeInstanceFilterChanged { get; set; }
-    private string _recipientTypeInstanceFilter;
-    string recipientTypeInstanceFilter
-    {
-        get => _recipientTypeInstanceFilter; set
-        {
-            recipientTypeInstanceFilterChanged.Invoke(value);
-            _recipientTypeInstanceFilter = value;
-        }
-    }
-    [Parameter] public bool ShowRecipient { get; set; } = true;
-    [Parameter] public Action<string> recipientFilterChanged { get; set; }
-    private string _recipientFilter;
-    string recipientFilter
-    {
-        get => _recipientFilter; set
-        {
-            recipientFilterChanged.Invoke(value);
-            _recipientFilter = value;
-        }
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentDosageFilter = filterValue;
+        treatmentDosageFilterOperator = filterOperator ?? string.Empty;
+        treatmentDosageFilterEnd = filterEndValue;
+        StateHasChanged();
     }
 
+    decimal? treatmentMassFilter { get; set; } //numeric
+    string treatmentMassFilterOperator { get; set; } //numeric
+    decimal? treatmentMassFilterEnd { get; set; } //numeric
+    private void HandleTreatmentMassFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentMassFilter = filterValue;
+        treatmentMassFilterOperator = filterOperator ?? string.Empty;
+        treatmentMassFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    int? treatmentMeatFilter { get; set; } //numeric
+    string treatmentMeatFilterOperator { get; set; } //numeric
+    int? treatmentMeatFilterEnd { get; set; } //numeric
+    private void HandleTreatmentMeatFilterChanged((string? FilterOperator, int? FilterValue, int? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentMeatFilter = filterValue;
+        treatmentMeatFilterOperator = filterOperator ?? string.Empty;
+        treatmentMeatFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    int? treatmentMilkFilter { get; set; } //numeric
+    string treatmentMilkFilterOperator { get; set; } //numeric
+    int? treatmentMilkFilterEnd { get; set; } //numeric
+    private void HandleTreatmentMilkFilterChanged((string? FilterOperator, int? FilterValue, int? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentMilkFilter = filterValue;
+        treatmentMilkFilterOperator = filterOperator ?? string.Empty;
+        treatmentMilkFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    decimal? treatmentPerFilter { get; set; } //numeric
+    string treatmentPerFilterOperator { get; set; } //numeric
+    decimal? treatmentPerFilterEnd { get; set; } //numeric
+    private void HandleTreatmentPerFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentPerFilter = filterValue;
+        treatmentPerFilterOperator = filterOperator ?? string.Empty;
+        treatmentPerFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    decimal? treatmentEveryFilter { get; set; } //numeric
+    string treatmentEveryFilterOperator { get; set; } //numeric
+    decimal? treatmentEveryFilterEnd { get; set; } //numeric
+    private void HandleTreatmentEveryFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentEveryFilter = filterValue;
+        treatmentEveryFilterOperator = filterOperator ?? string.Empty;
+        treatmentEveryFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    decimal? treatmentDurationFilter { get; set; } //numeric
+    string treatmentDurationFilterOperator { get; set; } //numeric
+    decimal? treatmentDurationFilterEnd { get; set; } //numeric
+    private void HandleTreatmentDurationFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentDurationFilter = filterValue;
+        treatmentDurationFilterOperator = filterOperator ?? string.Empty;
+        treatmentDurationFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    decimal? treatmentAppliedFilter { get; set; } //numeric
+    string treatmentAppliedFilterOperator { get; set; } //numeric
+    decimal? treatmentAppliedFilterEnd { get; set; } //numeric
+    private void HandleTreatmentAppliedFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentAppliedFilter = filterValue;
+        treatmentAppliedFilterOperator = filterOperator ?? string.Empty;
+        treatmentAppliedFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
+    DateTime? treatmentPerformedFilter { get; set; } //numeric
+    string treatmentPerformedFilterOperator { get; set; } //numeric
+    DateTime? treatmentPerformedFilterEnd { get; set; } //numeric
+    private void HandleTreatmentPerformedFilterChanged((string? FilterOperator, DateTime? FilterValue, DateTime? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        treatmentPerformedFilter = filterValue;
+        treatmentPerformedFilterOperator = filterOperator ?? string.Empty;
+        treatmentPerformedFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private IQueryable<TreatmentRecordModel> FilteredItems()
+    {
+        var query = Items.ToList().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(recipientTypeFilter))
+            query = query.Where(s => s.RecipientType.Contains(recipientTypeFilter));
+        if (!string.IsNullOrWhiteSpace(recipientTypeItemFilter))
+            query = query.Where(s => s.RecipientTypeItem.Contains(recipientTypeItemFilter));
+        if (!string.IsNullOrWhiteSpace(recipientFilter))
+            query = query.Where(s => s.RecipientItem.Contains(recipientFilter));
+
+        if (!string.IsNullOrWhiteSpace(reasonFilter))
+            query = query.Where(s => s.TreatmentReason.Contains(reasonFilter));
+        if (!string.IsNullOrWhiteSpace(treatmentNameFilter))
+            query = query.Where(s => s.TreatmentName.Contains(treatmentNameFilter));
+        if (!string.IsNullOrWhiteSpace(brandNameFilter))
+            query = query.Where(s => s.TreatmentBrandName.Contains(brandNameFilter));
+        if (!string.IsNullOrWhiteSpace(labelMethodFilter))
+            query = query.Where(s => s.TreatmentLabelMethod.Contains(labelMethodFilter));
+        if (!string.IsNullOrWhiteSpace(appliedMethodFilter))
+            query = query.Where(s => s.AppliedMethod.Contains(appliedMethodFilter));
+        if (!string.IsNullOrWhiteSpace(notesFilter))
+            query = query.Where(s => s.Notes.Contains(notesFilter));
+        if (!string.IsNullOrWhiteSpace(treatmentDosageFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentDosage, treatmentDosageFilter, treatmentDosageFilterOperator, treatmentDosageFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentMassFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentRecipientMass, treatmentMassFilter, treatmentMassFilterOperator, treatmentMassFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentMeatFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentMeatWithdrawal, treatmentMeatFilter, treatmentMeatFilterOperator, treatmentMeatFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentMilkFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentMilkWithdrawal, treatmentMilkFilter, treatmentMilkFilterOperator, treatmentMilkFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentPerFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentPer, treatmentPerFilter, treatmentPerFilterOperator, treatmentPerFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentEveryFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentEvery, treatmentEveryFilter, treatmentEveryFilterOperator, treatmentEveryFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentDurationFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.TreatmentDuration, treatmentDurationFilter, treatmentDurationFilterOperator, treatmentDurationFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentAppliedFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.DosageAmount, treatmentAppliedFilter, treatmentAppliedFilterOperator, treatmentAppliedFilterEnd);
+        if (!string.IsNullOrWhiteSpace(treatmentPerformedFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.DatePerformed, treatmentPerformedFilter, treatmentPerformedFilterOperator, treatmentPerformedFilterEnd);
+        return query;
+    }
 }

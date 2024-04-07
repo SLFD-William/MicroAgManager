@@ -1,11 +1,12 @@
 ﻿@using Domain.Logic
 @using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
-<QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel Virtualize=true Items="FilteredItems()">
     <TemplateColumn Sortable="false" Context="breedingRecord">
         <ChildContent>
             <NavLink href=@($"/Ancillaries/BreedingRecords?BreedingRecordId={breedingRecord.Id}")>
@@ -18,18 +19,18 @@
     @if (ShowRecipientType)
     {
         <PropertyColumn Property="@(p => p.RecipientType)" Title="Recipient Type" Sortable="true">
-  @*           <ColumnOptions>
+            <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="recipientTypeFilter" @bind:event="oninput" placeholder="Recipient Type..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions>
         </PropertyColumn>
         <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="breedingRecord">
-@*             <ColumnOptions>
+            <ColumnOptions>
                 <div class="search-box">
-                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                    <input type="search" autofocus @bind="recipientTypeItemFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
                 </div>
-            </ColumnOptions> *@
+            </ColumnOptions>
             <ChildContent>
                 @RecipientLogic.RecipientTypeName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.RecipientTypeId)
             </ChildContent>
@@ -37,85 +38,75 @@
     }
     @if (ShowFemale)
     {
-        <TemplateColumn Title="Female" Sortable="true" Context="breedingRecord" >
-            @* <ColumnOptions>
-            <div class="search-box">
-                <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-            </div>
-        </ColumnOptions> *@
-        <ChildContent>
-            @RecipientLogic.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.FemaleId)
-        </ChildContent>
-    </TemplateColumn>
+        <TemplateColumn Title="Female" Sortable="true" Context="breedingRecord">
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="femaleFilter" @bind:event="oninput" placeholder="Recipient..." />
+                </div>
+            </ColumnOptions>
+            <ChildContent>
+                @RecipientLogic.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.FemaleId)
+            </ChildContent>
+        </TemplateColumn>
     }
     @if (ShowMale)
     {
         <TemplateColumn Title="Male" Sortable="true" Context="breedingRecord">
-            @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions> *@
+            <ColumnOptions>
+                <div class="search-box">
+                    <input type="search" autofocus @bind="maleFilter" @bind:event="oninput" placeholder="Recipient..." />
+                </div>
+            </ColumnOptions>
         <ChildContent>
             @RecipientLogic.RecipientName(appState.DbContext, breedingRecord.RecipientType, breedingRecord.MaleId)
         </ChildContent>
     </TemplateColumn>
     }
     <PropertyColumn Property="@(p => p.ServiceDate)" Title="Service Date" Sortable="true">
-        @*     <ColumnOptions>
-        <div class="search-box">
-        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="DateTime?" FilterOperator="@serviceDateFilterOperator" FilterValue="@serviceDateFilter" FilterEndValue="@serviceDateFilterEnd" OnFilterChanged="HandleServiceDateFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Resolution)" Title="Resolution" Sortable="true">
-        @*     <ColumnOptions>
-        <div class="search-box">
-        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="resolutionFilter" @bind:event="oninput" placeholder="Recipient..." />
+            </div>
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.ResolutionDate)" Title="Resolution Date" Sortable="true">
-        @*     <ColumnOptions>
-            <div class="search-box">
-                <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-            </div> 
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="DateTime?" FilterOperator="@resolutionDateFilterOperator" FilterValue="@resolutionDateFilter" FilterEndValue="@resolutionDateFilterEnd" OnFilterChanged="HandleResolutionDateFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.BornMales)" Title="Males Born" Sortable="true">
-        @*     <ColumnOptions>
-        <div class="search-box">
-        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="int?" FilterOperator="@maleBornFilterOperator" FilterValue="@maleBornFilter" FilterEndValue="@maleBornFilterEnd" OnFilterChanged="HandleMaleBornFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.BornFemales)" Title="Females Born" Sortable="true">
-        @*     <ColumnOptions>
-        <div class="search-box">
-        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="int?" FilterOperator="@femaleBornFilterOperator" FilterValue="@femaleBornFilter" FilterEndValue="@femaleBornFilterEnd" OnFilterChanged="HandleFemaleBornFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.StillbornMales)" Title="Males Stillborn" Sortable="true">
-        @*     <ColumnOptions>
-        <div class="search-box">
-        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="int?" FilterOperator="@maleStillbornFilterOperator" FilterValue="@maleStillbornFilter" FilterEndValue="@maleStillbornFilterEnd" OnFilterChanged="HandleMaleStillbornFilterChanged" />
+        </ColumnOptions>
+
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.StillbornFemales)" Title="Females Stillborn" Sortable="true">
-        @*     <ColumnOptions>
-        <div class="search-box">
-        <input type="date" autofocus @bind="dateFilter" @bind:event="oninput" placeholder="Date..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="int?" FilterOperator="@femaleStillbornFilterOperator" FilterValue="@femaleStillbornFilter" FilterEndValue="@femaleStillbornFilterEnd" OnFilterChanged="HandleFemaleStillbornFilterChanged" />
+        </ColumnOptions>
+
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
-        @* <ColumnOptions>
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="notesFilter" @bind:event="oninput" placeholder="Notes..." />
             </div>
-        </ColumnOptions> *@
+        </ColumnOptions>
     </PropertyColumn> 
 </QuickGrid>
 
@@ -123,8 +114,154 @@
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<BreedingRecordModel> Items { get; set; }
     QuickGrid<BreedingRecordModel> breedingRecordGrid;
-    [Parameter] public bool ShowRecipientType { get; set; } = true;
-    [Parameter] public bool ShowRecipient { get; set; } = true;
-    [Parameter] public bool ShowMale { get; set; } = true;
-    [Parameter] public bool ShowFemale { get; set; } = true;
+    [Parameter]
+    public bool ShowRecipientType
+    {
+        get => _showRecipientType;
+        set
+        {
+            _showRecipientType = value;
+            if (!value)
+                recipientTypeFilter = string.Empty;
+        }
+    }
+    private bool _showRecipientType = true;
+    [Parameter]
+    public bool ShowMale
+    {
+        get => _showMale;
+        set
+        {
+            _showMale = value;
+            if (!value)
+                maleFilter = string.Empty;
+        }
+    }
+    private bool _showMale = true;
+
+    [Parameter]
+    public bool ShowFemale
+    {
+        get => _showFemale;
+        set
+        {
+            _showFemale = value;
+            if (!value)
+                femaleFilter = string.Empty;
+        }
+    }
+    private bool _showFemale = true;
+
+    string recipientTypeFilter { get; set; }
+    string recipientTypeItemFilter { get; set; }
+    string resolutionFilter { get; set; }
+    string femaleFilter { get; set; }
+    string maleFilter { get; set; }
+    string notesFilter { get; set; }
+    DateTime? serviceDateFilter { get; set; } //date
+    string serviceDateFilterOperator { get; set; }
+    DateTime? serviceDateFilterEnd { get; set; }
+    DateTime? resolutionDateFilter { get; set; } //date
+    string resolutionDateFilterOperator { get; set; }
+    DateTime? resolutionDateFilterEnd { get; set; }
+    int? maleBornFilter { get; set; } //date
+    string maleBornFilterOperator { get; set; }
+    int? maleBornFilterEnd { get; set; }
+    int? maleStillbornFilter { get; set; } //date
+    string maleStillbornFilterOperator { get; set; }
+    int? maleStillbornFilterEnd { get; set; }
+    int? femaleBornFilter { get; set; } //date
+    string femaleBornFilterOperator { get; set; }
+    int? femaleBornFilterEnd { get; set; }
+    int? femaleStillbornFilter { get; set; } //date
+    string femaleStillbornFilterOperator { get; set; }
+    int? femaleStillbornFilterEnd { get; set; }
+    private IQueryable<BreedingRecordModel> FilteredItems()
+    {
+        var query = Items;
+
+        if (!string.IsNullOrWhiteSpace(recipientTypeFilter))
+            query = query.Where(br => br.RecipientType.Contains(recipientTypeFilter));
+
+        if (!string.IsNullOrWhiteSpace(recipientTypeItemFilter))
+            query = query.Where(br =>br.RecipientTypeItem.Contains(recipientTypeItemFilter));
+
+        if (!string.IsNullOrWhiteSpace(resolutionFilter))
+            query = query.Where(br => br.Resolution.Contains(resolutionFilter));
+
+        if (!string.IsNullOrWhiteSpace(femaleFilter))
+            query = query.Where(br => br.FemaleName.Contains(femaleFilter));
+
+        if (!string.IsNullOrWhiteSpace(maleFilter))
+            query = query.Where(br => br.MaleName.Contains(maleFilter));
+
+        if (!string.IsNullOrWhiteSpace(notesFilter))
+            query = query.Where(br => br.Notes.Contains(notesFilter));
+      
+        if (!string.IsNullOrWhiteSpace(serviceDateFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.ServiceDate, serviceDateFilter, serviceDateFilterOperator, serviceDateFilterEnd);
+        if (!string.IsNullOrWhiteSpace(resolutionDateFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.ResolutionDate, resolutionDateFilter, resolutionDateFilterOperator, resolutionDateFilterEnd);
+        if (!string.IsNullOrWhiteSpace(maleBornFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.BornMales, maleBornFilter, maleBornFilterOperator, maleBornFilterEnd);
+        if (!string.IsNullOrWhiteSpace(maleStillbornFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.StillbornMales, maleStillbornFilter, maleStillbornFilterOperator, maleStillbornFilterEnd);
+        if (!string.IsNullOrWhiteSpace(femaleBornFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.BornFemales, femaleBornFilter, femaleBornFilterOperator, femaleBornFilterEnd);
+        if (!string.IsNullOrWhiteSpace(femaleStillbornFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.StillbornFemales, femaleStillbornFilter, femaleStillbornFilterOperator, femaleStillbornFilterEnd);
+
+        
+        return query;
+    }
+
+    private void HandleServiceDateFilterChanged((string? FilterOperator, DateTime? FilterValue, DateTime? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        serviceDateFilter = filterValue;
+        serviceDateFilterOperator = filterOperator ?? string.Empty;
+        serviceDateFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleResolutionDateFilterChanged((string? FilterOperator, DateTime? FilterValue, DateTime? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        resolutionDateFilter = filterValue;
+        resolutionDateFilterOperator = filterOperator ?? string.Empty;
+        resolutionDateFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleMaleBornFilterChanged((string? FilterOperator, int? FilterValue, int? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        maleBornFilter = filterValue;
+        maleBornFilterOperator = filterOperator ?? string.Empty;
+        maleBornFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleMaleStillbornFilterChanged((string? FilterOperator, int? FilterValue, int? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        maleStillbornFilter = filterValue;
+        maleStillbornFilterOperator = filterOperator ?? string.Empty;
+        maleStillbornFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleFemaleBornFilterChanged((string? FilterOperator, int? FilterValue, int? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        femaleBornFilter = filterValue;
+        femaleBornFilterOperator = filterOperator ?? string.Empty;
+        femaleBornFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleFemaleStillbornFilterChanged((string? FilterOperator, int? FilterValue, int? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        femaleStillbornFilter = filterValue;
+        femaleStillbornFilterOperator = filterOperator ?? string.Empty;
+        femaleStillbornFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+
 }

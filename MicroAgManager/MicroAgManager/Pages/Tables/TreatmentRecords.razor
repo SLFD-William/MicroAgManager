@@ -63,17 +63,11 @@
         var query = appState.DbContext.TreatmentRecords.Include(p => p.Treatment).Include(p => p.DosageUnit).AsQueryable();
         if (_treatmentRecordId > 0)
             query = query.Where(p => p.Id == _treatmentRecordId);
-        else
-        {
-            // if (ApplicationState.FarmSelectedFilter.Any())
-            //     query = query.Where(p => ApplicationState.FarmSelectedFilter.Contains(p.FarmLocationId));
-            // if (ApplicationState.UsageSelectedFilter.Any())
-            //     query = query.Where(p => ApplicationState.UsageSelectedFilter.Contains(p.Usage));
-            // if (!string.IsNullOrEmpty(plotNameFilter))
-            //     query = query.Where(p => p.Name.Contains(plotNameFilter));
-        }
         _treatmentRecordCount = query.Count();
-        return query.ToList().AsQueryable();
+        foreach (var sd in query)
+            sd.PopulateDynamicRelations(appState.DbContext);
+
+        return query;
     }
     protected override void OnInitialized()
     {

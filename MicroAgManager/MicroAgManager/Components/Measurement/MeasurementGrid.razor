@@ -1,12 +1,13 @@
 ﻿@using Domain.Logic
 @using Domain.Models
+@using MicroAgManager.Components.Shared.Filters
 @using MicroAgManager.Data
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=measurementGrid TGridItem=MeasurementModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=measurementGrid TGridItem=MeasurementModel Virtualize=true Items="FilteredItems()">
     <TemplateColumn Title="Measure" Sortable="true" Context="measure" SortBy="@OrderByMeasureName">
         <ColumnOptions>
             <div class="search-box">
@@ -19,12 +20,12 @@
             </NavLink>
         </ChildContent>
     </TemplateColumn>
-    <TemplateColumn Title="Measure Unit" Context="measurement">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+    <TemplateColumn Title="Measure Unit" Context="measurement" SortBy="@OrderByMeasureUnit">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="measureUnitFilter" @bind:event="oninput" placeholder="Recipient..." />
+            </div>
+        </ColumnOptions>
         <ChildContent>
             <NavLink href=@($"/Ancillaries/Units?UnitId={measurement.Measure.UnitId}")>
                 @UnitLogic.UnitName(appState.DbContext, measurement.Measure.UnitId)
@@ -40,20 +41,20 @@
                 </div>
             </ColumnOptions>
         </PropertyColumn>
-        <TemplateColumn Title="Recipient Type Instance" Sortable="true" Context="measurement" SortBy="@OrderByMeasureName">
+        <TemplateColumn Title="Recipient Type Item" Sortable="true" Context="measurement" SortBy="@OrderByRecipientTypeItem">
             <ColumnOptions>
                 <div class="search-box">
-                    <input type="search" autofocus @bind="recipientTypeInstanceFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
+                    <input type="search" autofocus @bind="recipientTypeItemFilter" @bind:event="oninput" placeholder="Recipient Type Instance..." />
                 </div>
             </ColumnOptions>
             <ChildContent>
-                @RecipientLogic.RecipientTypeName(appState.DbContext, measurement.RecipientType, measurement.RecipientTypeId)
+                @measurement.RecipientTypeItem
             </ChildContent> 
         </TemplateColumn>
     }
     @if (ShowRecipient)
     {
-        <TemplateColumn Title="Recipient" Sortable="true" Context="measurement">
+        <TemplateColumn Title="Recipient" Sortable="true" Context="measurement" SortBy="@OrderByRecipientItem">
             <ColumnOptions>
                 <div class="search-box">
                     <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
@@ -61,128 +62,123 @@
             </ColumnOptions>
             <ChildContent>
                 <NavLink href=@RecipientLogic.GetRecipientHref(measurement.RecipientType,measurement.RecipientId)>
-                    @RecipientLogic.RecipientName(appState.DbContext, measurement.RecipientType, measurement.RecipientId)
+                    @measurement.RecipientItem
                 </NavLink>
 
             </ChildContent>
         </TemplateColumn>
     }
     <TemplateColumn Title="Measured Value" Context="measurement">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="recipientFilter" @bind:event="oninput" placeholder="Recipient..." />
-        </div>
-        </ColumnOptions>*@
+        <ColumnOptions>
+            <GenericFilter T="decimal?" FilterOperator="@measurementFilterOperator" FilterValue="@measurementFilter" FilterEndValue="@measurementFilterEnd" OnFilterChanged="HandleMeasurementFilterChanged" />
+        </ColumnOptions>
         <ChildContent>
             <NavLink href=@($"/Ancillaries/Measurements?MeasurementId={measurement.Id}")>
-                @($"{measurement.Value} {UnitLogic.UnitName(appState.DbContext, measurement.MeasurementUnitId)}")
+                @($"{measurement.Value} {measurement.MeasurementUnitName}")
             </NavLink>
         </ChildContent>
     </TemplateColumn>
     <PropertyColumn Property="@(p => p.DatePerformed)" Title="Performed On" Sortable="true">
-        @* <ColumnOptions>
-        <div class="search-box">
-        <input type="search" autofocus @bind="durationUnitFilter" @bind:event="oninput" placeholder="Duration Unit..." />
-        </div>
-        </ColumnOptions> *@
+        <ColumnOptions>
+            <GenericFilter T="DateTime?" FilterOperator="@completedOnFilterOperator" FilterValue="@completedOnFilter" FilterEndValue="@completedOnFilterEnd" OnFilterChanged="HandleCompletedFilterChanged" />
+        </ColumnOptions>
     </PropertyColumn>
     <PropertyColumn Property="@(p => p.Notes)" Title="Notes" Sortable="true">
-@*         <ColumnOptions>
+        <ColumnOptions>
             <div class="search-box">
                 <input type="search" autofocus @bind="measurementNotesFilter" @bind:event="oninput" placeholder="Notes..." />
             </div>
-        </ColumnOptions> *@
+        </ColumnOptions>
     </PropertyColumn>
 </QuickGrid>
 @code {
     [CascadingParameter] private ApplicationState appState { get; set; }
     [Parameter] required public IQueryable<MeasurementModel> Items { get; set; }
     QuickGrid<MeasurementModel> measurementGrid;
+    [Parameter]
+    public bool ShowRecipientType
+    {
+        get => _showRecipientType;
+        set
+        {
+            _showRecipientType = value;
+            if (!value)
+            {
+                recipientTypeFilter = string.Empty;
+                recipientTypeItemFilter = string.Empty;
+            }
 
+        }
+    }
+    private bool _showRecipientType = true;
+    [Parameter]
+    public bool ShowRecipient
+    {
+        get => _showRecipient;
+        set
+        {
+            _showRecipient = value;
+            if (!value)
+                recipientFilter = string.Empty;
+        }
+    }
+    private bool _showRecipient = true;
 
-    private GridSort<MeasurementModel> OrderByMeasureName = GridSort<MeasurementModel>.ByAscending(p => p.Measure.Name);
-    [Parameter] public Action<string> measureNameFilterChanged { get; set; }
-    private string _measureNameFilter;
-    string measureNameFilter
-    {
-        get => _measureNameFilter; set
-        {
-            measureNameFilterChanged.Invoke(value);
-            _measureNameFilter = value;
-        }
-    }
+    GridSort<MeasurementModel> OrderByMeasureName = GridSort<MeasurementModel>.ByAscending(p => p.Measure.Name);
+    GridSort<MeasurementModel> OrderByMeasureUnit = GridSort<MeasurementModel>.ByAscending(p => p.MeasureUnitName);
+    GridSort<MeasurementModel> OrderByRecipientTypeItem = GridSort<MeasurementModel>.ByAscending(p => p.RecipientTypeItem);
+    GridSort<MeasurementModel> OrderByRecipientItem = GridSort < MeasurementModel>.ByAscending(p => p.RecipientItem);
 
-    [Parameter] public Action<string> measureUnitFilterChanged { get; set; }
-    private string _measureUnitFilter;
-    string measureUnitFilter
-    {
-        get => _measureUnitFilter; set
-        {
-            measureUnitFilterChanged.Invoke(value);
-            _measureUnitFilter = value;
-        }
-    }
-    [Parameter] public bool ShowRecipientType { get; set; } = true;
-    [Parameter] public Action<string> recipientTypeFilterChanged { get; set; }
-    private string _recipientTypeFilter;
-    string recipientTypeFilter
-    {
-        get => _recipientTypeFilter; set
-        {
-            recipientTypeFilterChanged.Invoke(value);
-            _recipientTypeFilter = value;
-        }
-    }
-    [Parameter] public Action<string> recipientTypeInstanceFilterChanged { get; set; }
-    private string _recipientTypeInstanceFilter;
-    string recipientTypeInstanceFilter
-    {
-        get => _recipientTypeInstanceFilter; set
-        {
-            recipientTypeInstanceFilterChanged.Invoke(value);
-            _recipientTypeInstanceFilter = value;
-        }
-    }
-    [Parameter] public bool ShowRecipient { get; set; } = true;
-    [Parameter] public Action<string> recipientFilterChanged { get; set; }
-    private string _recipientFilter;
-    string recipientFilter
-    {
-        get => _recipientFilter; set
-        {
-            recipientFilterChanged.Invoke(value);
-            _recipientFilter = value;
-        }
-    }
-    [Parameter] public Action<string> measurementUnitFilterChanged { get; set; }
-    private string _measurementUnitFilter;
-    string measurementUnitFilter
-    {
-        get => _measurementUnitFilter; set
-        {
-            measurementUnitFilterChanged.Invoke(value);
-            _measurementUnitFilter = value;
-        }
-    }
-    [Parameter] public Action<string> measurementValueFilterChanged { get; set; }
-    private string _measurementValueFilter;
-    string measurementValueFilter
-    {
-        get => _measurementValueFilter; set
-        {
-            measurementValueFilterChanged.Invoke(value);
-            _measurementValueFilter = value;
-        }
-    }
-    [Parameter] public Action<string> measurementNotesFilterChanged { get; set; }
-    private string _measurementNotesFilter;
-    string measurementNotesFilter
-    {
-        get => _measurementNotesFilter; set
-        {
-            measurementNotesFilterChanged.Invoke(value);
-            _measurementNotesFilter = value;
-        }
-    }
+    string measureNameFilter { get; set; }
+    string measureUnitFilter { get; set; }
 
+    string recipientTypeFilter { get; set; }
+    string recipientTypeItemFilter { get; set; }
+    string recipientFilter { get; set; }
+    string measurementNotesFilter { get; set; }
+
+    decimal? measurementFilter { get; set; } //numeric
+    string measurementFilterOperator { get; set; } //numeric
+    decimal? measurementFilterEnd { get; set; } //numeric
+    DateTime? completedOnFilter { get; set; } //date
+    string completedOnFilterOperator { get; set; }
+    DateTime? completedOnFilterEnd { get; set; }
+   
+    private void HandleMeasurementFilterChanged((string? FilterOperator, decimal? FilterValue, decimal? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        measurementFilter = filterValue;
+        measurementFilterOperator = filterOperator ?? string.Empty;
+        measurementFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private void HandleCompletedFilterChanged((string? FilterOperator, DateTime? FilterValue, DateTime? FilterEndValue) filterData)
+    {
+        var (filterOperator, filterValue, filterEndValue) = filterData;
+        completedOnFilter = filterValue;
+        completedOnFilterOperator = filterOperator ?? string.Empty;
+        completedOnFilterEnd = filterEndValue;
+        StateHasChanged();
+    }
+    private IQueryable<MeasurementModel> FilteredItems()
+    {
+        var query = Items.ToList().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(measureNameFilter))
+            query = query.Where(s => s.MeasureName.Contains(measureNameFilter));
+        if (!string.IsNullOrWhiteSpace(measureUnitFilter))
+            query = query.Where(s => s.MeasureUnitName.Contains(measureUnitFilter));
+        if (!string.IsNullOrWhiteSpace(recipientTypeFilter))
+            query = query.Where(s => s.RecipientType.Contains(recipientTypeFilter));
+        if (!string.IsNullOrWhiteSpace(recipientTypeItemFilter))
+            query = query.Where(s => s.RecipientTypeItem.Contains(recipientTypeItemFilter));
+        if (!string.IsNullOrWhiteSpace(recipientFilter))
+            query = query.Where(s => s.RecipientItem.Contains(recipientFilter));
+        if (!string.IsNullOrWhiteSpace(measurementNotesFilter))
+            query = query.Where(s => s.Notes.Contains(measurementNotesFilter));
+        if (!string.IsNullOrWhiteSpace(measurementFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.Value, measurementFilter, measurementFilterOperator, measurementFilterEnd);
+        if (!string.IsNullOrWhiteSpace(completedOnFilterOperator))
+            query = FilteringHelpers.ApplyFilter(query, s => s.DatePerformed, completedOnFilter, completedOnFilterOperator, completedOnFilterEnd);
+        return query;
+    }
 }

@@ -65,17 +65,11 @@
         var query = appState.DbContext.Registrations.Include(p => p.Registrar).AsQueryable();
         if (_RegistrationId > 0)
             query = query.Where(p => p.Id == _RegistrationId);
-        else
-        {
-            // if (ApplicationState.FarmSelectedFilter.Any())
-            //     query = query.Where(p => ApplicationState.FarmSelectedFilter.Contains(p.FarmLocationId));
-            // if (ApplicationState.UsageSelectedFilter.Any())
-            //     query = query.Where(p => ApplicationState.UsageSelectedFilter.Contains(p.Usage));
-            // if (!string.IsNullOrEmpty(plotNameFilter))
-            //     query = query.Where(p => p.Name.Contains(plotNameFilter));
-        }
         _RegistrationCount = query.Count();
-        return query.ToList().AsQueryable();
+        foreach (var sd in query)
+            sd.PopulateDynamicRelations(appState.DbContext);
+
+        return query;
     }
     protected override void OnInitialized()
     {
