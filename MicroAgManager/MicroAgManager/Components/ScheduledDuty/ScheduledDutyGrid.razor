@@ -6,7 +6,7 @@
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=scheduleDutyGrid TGridItem=ScheduledDutyModel Virtualize=true Items="FilteredItems()">
+<QuickGrid Theme="microagmanager" @ref=scheduleDutyGrid TGridItem=ScheduledDutyModel  Items="FilteredItems()">
     <PropertyColumn Property="@(p => p.ScheduleSourceItem)" Title="Source Item" Sortable="true">
         <ColumnOptions>
             <div class="search-box">

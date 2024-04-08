@@ -8,7 +8,7 @@ using Domain.Logic;
 
 namespace Domain.Models
 {
-    public class RegistrationModel : BaseModel,IRegistration,IHasRecipient
+    public class RegistrationModel : BaseModel,IRegistration,IHasRecipientModel
     {
         [Required][ForeignKey("Registrar")] public long RegistrarId { get; set; }
         public virtual RegistrarModel Registrar { get; set; }

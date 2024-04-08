@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
-<QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel Virtualize=true Items="FilteredItems()">
+<QuickGrid Theme="microagmanager" @ref=breedingRecordGrid TGridItem=BreedingRecordModel  Items="FilteredItems()">
     <TemplateColumn Sortable="false" Context="breedingRecord">
         <ChildContent>
             <NavLink href=@($"/Ancillaries/BreedingRecords?BreedingRecordId={breedingRecord.Id}")>

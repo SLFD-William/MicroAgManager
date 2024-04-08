@@ -7,7 +7,7 @@
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=registrationGrid TGridItem=RegistrationModel Virtualize=true Items="Items">
+<QuickGrid Theme="microagmanager" @ref=registrationGrid TGridItem=RegistrationModel  Items="Items">
     <TemplateColumn Title="Registrar" Sortable="true" Context="registrar" SortBy="@OrderByRegistrarName">
         <ColumnOptions>
             <div class="search-box">

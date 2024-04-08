@@ -1,5 +1,5 @@
 ﻿using Domain.Interfaces;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Abstracts
@@ -20,32 +20,18 @@ namespace Domain.Abstracts
 
             if (entity is IHasRecipient)
             {
-                ((IHasRecipient)model).RecipientId= ((IHasRecipient)entity).RecipientId;
-                ((IHasRecipient)model).RecipientType = ((IHasRecipient)entity).RecipientType;
-                ((IHasRecipient)model).RecipientTypeId = ((IHasRecipient)entity).RecipientTypeId;
+                ((IHasRecipientModel)model).RecipientId= ((IHasRecipient)entity).RecipientId;
+                ((IHasRecipientModel)model).RecipientType = ((IHasRecipient)entity).RecipientType;
+                ((IHasRecipientModel)model).RecipientTypeId = ((IHasRecipient)entity).RecipientTypeId;
             }
             return model;
         }
         public abstract BaseModel Map(BaseModel model);
         public abstract BaseEntity Map(BaseEntity entity);
-        public virtual object Clone()
-        {
-            return MemberwiseClone();
-        }
-        public string GetJsonString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
-        public static object ParseJsonString(string jsonString, Type type)
-        {
-            return JsonConvert.DeserializeObject(jsonString, type);
-        }
-
-        public static T ParseJsonString<T>(string jsonString) where T : BaseModel
-        {
-            return JsonConvert.DeserializeObject<T>(jsonString);
-        }
-
+        public virtual object Clone() => MemberwiseClone();
+        
+        public string GetJsonString()=> JsonSerializer.Serialize(this,GetType());
+        public static object? ParseJsonString(string jsonString, Type type)=>JsonSerializer.Deserialize(jsonString, type);
         public virtual string GetEntityName()=>GetType().Name.Replace("Model", "");
     }
 }

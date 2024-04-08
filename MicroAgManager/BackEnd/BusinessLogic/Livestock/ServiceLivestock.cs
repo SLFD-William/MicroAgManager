@@ -24,9 +24,6 @@ namespace BackEnd.BusinessLogic.Livestock
 
         public string RecipientType { get; set; }
         public long RecipientId { get => StudId; set => StudId=value; }
-        [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
-        [NotMapped] public string RecipientItem { get; set; } = string.Empty;
-
         public class Handler : BaseCommandHandler<ServiceLivestock>
         {
             public Handler(IMediator mediator, ILogger log) : base(mediator, log)

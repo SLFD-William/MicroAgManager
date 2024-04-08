@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
 
-<QuickGrid Theme="microagmanager" @ref=treatmentRecordGrid TGridItem=TreatmentRecordModel Virtualize=true Items="FilteredItems()">
+<QuickGrid Theme="microagmanager" @ref=treatmentRecordGrid TGridItem=TreatmentRecordModel  Items="FilteredItems()">
     <TemplateColumn Sortable="false" Context="treatment">
         <ChildContent>
             <NavLink href=@($"/Ancillaries/TreatmentRecords?TreatmentRecordId={treatment.Id}")>

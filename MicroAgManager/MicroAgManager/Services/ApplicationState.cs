@@ -131,7 +131,7 @@ namespace MicroAgManager.Services
         {
             Console.WriteLine("Entering Hub Initialization");
             if (_hubConnection != null && _hubConnection.State != HubConnectionState.Disconnected) return;
-            var address = new Uri($"{_config["BackendUrl"]}/notificationhub"); //_navigationManager.ToAbsoluteUri("/notificationhub");
+            var address = new Uri($"{_config["BackendUrl"]}notificationhub"); //_navigationManager.ToAbsoluteUri("/notificationhub");
             Console.WriteLine($"Hub Address {address.AbsoluteUri}");
 
             _hubConnection = new HubConnectionBuilder()

@@ -15,7 +15,8 @@ using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddResponseCompression(opts =>
 {
-    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
 });
 
 builder.Services.AddMediatR(cfg =>
@@ -24,6 +25,7 @@ builder.Services.AddMediatR(cfg =>
 });
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
 
+
 // cookie authentication
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
 
@@ -31,14 +33,8 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdent
 builder.Services.AddAuthorizationBuilder();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<IMicroAgManagementDbContext, MicroAgManagementDbContext>(options =>options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<IMicroAgManagementDbContext,MicroAgManagementDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddLogging(bu =>
-{
-    bu.AddConfiguration(builder.Configuration.GetSection("Logging"));
-    bu.AddProvider(new DatabaseLoggingProvider(builder.Services.BuildServiceProvider().GetService<MicroAgManagementDbContext>(), builder.Configuration));
-});
-builder.Services.AddSingleton(typeof(ILogger), typeof(Logger<Log>));
 
 
 // add identity and opt-in to endpoints
@@ -46,6 +42,13 @@ builder.Services.AddIdentityCore<ApplicationUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MicroAgManagementDbContext>()
     .AddApiEndpoints();
+builder.Services.AddLogging(bu =>
+{
+    bu.AddConfiguration(builder.Configuration.GetSection("Logging"));
+    bu.AddProvider(new DatabaseLoggingProvider(builder.Services.BuildServiceProvider().GetService<MicroAgManagementDbContext>(), builder.Configuration));
+});
+builder.Services.AddSingleton(typeof(ILogger), typeof(Logger<Log>));
+
 
 builder.Services.AddTransient<IClaimsTransformation, ApiClaimsTransformation>();
 
@@ -73,7 +76,6 @@ builder.Services.AddCors(
 
 builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
                .AddMessagePackProtocol();
-
 builder.Services.AddScoped<INotificationHandler<ModifiedEntityPushNotification>, ModifiedEntityPushNotificationHandler>();
 
 // Learn more about configuring Swagger/OpenAPI at
@@ -86,7 +88,7 @@ app.Logger.LogDebug("App is built");
 // create routes for the identity endpoints
 
 app.Logger.LogDebug("mapping IdentityApi");
-app.MapGroup("/account").MapIdentityApi<ApplicationUser>( );
+app.MapGroup("/account").MapIdentityApi<ApplicationUser>();
 
 app.Logger.LogDebug("mapping Custom Registration");
 BusinessLogicAPI.MapCustomRegistration(app);
@@ -114,8 +116,8 @@ app.UseCors("wasm");
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 app.Logger.LogDebug("Setting Redirect");
 app.UseHttpsRedirection();

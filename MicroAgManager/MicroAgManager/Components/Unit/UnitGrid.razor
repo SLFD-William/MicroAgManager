@@ -6,7 +6,7 @@
 @using MicroAgManager.Services
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using Microsoft.EntityFrameworkCore
-<QuickGrid Theme="microagmanager" @ref=unitGrid TGridItem=UnitModel Virtualize=true Items="FilteredItems()">
+<QuickGrid Theme="microagmanager" @ref=unitGrid TGridItem=UnitModel  Items="FilteredItems()">
     <TemplateColumn Title="Category" Sortable="true" Context="unit">
         <ColumnOptions>
             <div class="search-box">

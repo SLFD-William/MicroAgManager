@@ -46,7 +46,5 @@ namespace Domain.Entity
         public long RecipientTypeId { get; set; }
         public string RecipientType { get; set; }
         [NotMapped]long IHasRecipient.RecipientId { get => FemaleId; set => FemaleId=value; }
-        [NotMapped] string IHasRecipient.RecipientTypeItem { get; set; }
-        [NotMapped] string IHasRecipient.RecipientItem { get; set; }
-    }
+     }
 }

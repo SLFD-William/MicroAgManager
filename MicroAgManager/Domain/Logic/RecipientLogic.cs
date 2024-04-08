@@ -64,7 +64,7 @@ namespace Domain.Logic
 
         }
 
-        public static void PopulateDynamicRelations(DbContext genericContext, IHasRecipient hasRecipientModel)
+        public static void PopulateDynamicRelations(DbContext genericContext, IHasRecipientModel hasRecipientModel)
         {
             var db = genericContext as IFrontEndDbContext;
             if (db is null) return;

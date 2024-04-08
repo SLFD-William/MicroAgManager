@@ -7,12 +7,6 @@ namespace MicroAgManager.API.Hubs
 {
     public class NotificationHub : Hub<INotificationClient>
     {
-        //public async Task Handle(EntitiesModifiedNotification notification, CancellationToken cancellationToken)
-        //{
-        //    if (notification.TenantId == Guid.NewGuid()) return;
-        //    await Clients.Group(notification.TenantId.ToString()).ReceiveEntitiesModifiedMessage(notification);
-        //}
-
         //create signalR group for each tenant
         public async Task JoinGroup(Guid tenantId)
         {
@@ -25,21 +19,6 @@ namespace MicroAgManager.API.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId.ToString());
         }
     }
-    //public class EntitiesModifiedNotificationHandler : INotificationHandler<EntitiesModifiedNotification>
-    //{
-    //    private readonly IHubContext<NotificationHub> _hubContext;
-
-    //    public EntitiesModifiedNotificationHandler(IHubContext<NotificationHub> hubContext)
-    //    {
-    //        _hubContext = hubContext;
-    //    }
-
-    //    public async Task Handle(EntitiesModifiedNotification notification, CancellationToken cancellationToken)
-    //    {
-    //        if (notification.TenantId == Guid.NewGuid()) return;
-    //        await _hubContext.Clients.Group(notification.TenantId.ToString()).SendAsync("ReceiveEntitiesModifiedMessage", notification);
-    //    }
-    //}
     public class ModifiedEntityPushNotificationHandler : INotificationHandler<ModifiedEntityPushNotification>
     {
         private readonly IHubContext<NotificationHub> _hubContext;

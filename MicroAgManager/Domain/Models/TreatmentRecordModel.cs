@@ -9,8 +9,8 @@ using Domain.Logic;
 
 namespace Domain.Models
 {
-    public class TreatmentRecordModel :  BaseModel,ITreatmentRecord,IHasRecipient
-    {
+    public class TreatmentRecordModel :  BaseModel,ITreatmentRecord,IHasRecipientModel
+    {   
         [Required][ForeignKey("Treatment")] public long TreatmentId { get; set; }
         public virtual TreatmentModel Treatment { get; set; }
         public string? Notes { get; set; }

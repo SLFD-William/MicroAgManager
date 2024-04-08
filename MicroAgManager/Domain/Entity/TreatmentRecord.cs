@@ -40,7 +40,5 @@ namespace Domain.Entity
         public virtual Unit DosageUnit { get; set; }
         public string AppliedMethod { get; set; } = TreatmentConstants.Grooming;
         IUnit ITreatmentRecord.DosageUnit { get => DosageUnit; set => DosageUnit=value as Unit ?? DosageUnit; }
-        [NotMapped] string IHasRecipient.RecipientTypeItem { get; set; }
-        [NotMapped] string IHasRecipient.RecipientItem { get; set; }
     }
 }

@@ -8,7 +8,7 @@ using Domain.Logic;
 
 namespace Domain.Models
 {
-    public class MeasurementModel : BaseModel, IMeasurement, IHasRecipient
+    public class MeasurementModel : BaseModel, IMeasurement, IHasRecipientModel
     {
         [Required][ForeignKey("Measure")] public long MeasureId { get; set; }
         public virtual MeasureModel Measure { get; set; }

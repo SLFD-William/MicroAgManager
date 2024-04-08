@@ -7,7 +7,7 @@
 @using Microsoft.EntityFrameworkCore
 
 
-<QuickGrid Theme="microagmanager" @ref=measurementGrid TGridItem=MeasurementModel Virtualize=true Items="FilteredItems()">
+<QuickGrid Theme="microagmanager" @ref=measurementGrid TGridItem=MeasurementModel  Items="FilteredItems()">
     <TemplateColumn Title="Measure" Sortable="true" Context="measure" SortBy="@OrderByMeasureName">
         <ColumnOptions>
             <div class="search-box">

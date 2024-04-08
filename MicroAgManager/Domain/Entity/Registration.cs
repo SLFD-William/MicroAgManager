@@ -32,7 +32,5 @@ namespace Domain.Entity
         [Required][MaxLength(40)] public string Identifier { get; set; }
         [Required] public bool DefaultIdentification { get; set; } = false;
         [Required] public DateTime RegistrationDate { get; set; }
-        [NotMapped] string IHasRecipient.RecipientTypeItem { get; set; }
-        [NotMapped] string IHasRecipient.RecipientItem { get; set; }
     }
 }

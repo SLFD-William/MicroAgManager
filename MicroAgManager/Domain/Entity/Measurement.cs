@@ -37,7 +37,5 @@ namespace Domain.Entity
         public string? Notes { get; set; }
         [Required] public DateTime DatePerformed { get; set; }
         IUnit IMeasurement.MeasurementUnit { get => MeasurementUnit; set => MeasurementUnit=value as Unit ?? MeasurementUnit; }
-        [NotMapped] string IHasRecipient.RecipientTypeItem { get; set; }
-        [NotMapped] string IHasRecipient.RecipientItem { get; set; }
     }
 }

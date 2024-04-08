@@ -8,7 +8,7 @@ using Domain.Logic;
 
 namespace Domain.Models
 {
-    public class BreedingRecordModel :BaseModel, IHasRecipient, IBreedingRecord
+    public class BreedingRecordModel :BaseModel, IHasRecipientModel, IBreedingRecord
     {
         [NotMapped] DateTime IBreedingRecord.ModifiedOn { get => EntityModifiedOn; set => EntityModifiedOn = value == EntityModifiedOn ? EntityModifiedOn : EntityModifiedOn; }
         [Required][ForeignKey("Female")] public long FemaleId { get; set; }
@@ -97,7 +97,6 @@ namespace Domain.Models
         [NotMapped] public string FemaleName { get; set; } = string.Empty;
         [NotMapped] public string MaleName { get; private set; } = string.Empty;
         [NotMapped] public string RecipientTypeItem { get; set; } = string.Empty;
-        
-        [NotMapped] string IHasRecipient.RecipientItem { get=> FemaleName; set => FemaleName=value; }
+        [NotMapped] string IHasRecipientModel.RecipientItem { get=> FemaleName; set => FemaleName=value; }
     }
 }
